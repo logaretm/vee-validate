@@ -97,7 +97,7 @@ export const Field = defineComponent({
       type: ctx.attrs.type as string,
       initialValue: resolveInitialValue(props, ctx),
       // Only for checkboxes and radio buttons
-      valueProp: ctx.attrs.value,
+      checkedValue: ctx.attrs.value,
       uncheckedValue,
       label,
       validateOnValueUpdate: false,

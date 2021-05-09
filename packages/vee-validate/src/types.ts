@@ -47,7 +47,7 @@ export interface PrivateFieldComposite<TValue = unknown> {
   errors: Ref<string[]>;
   errorMessage: ComputedRef<string | undefined>;
   type?: string;
-  valueProp?: MaybeRef<TValue>;
+  checkedValue?: MaybeRef<TValue>;
   uncheckedValue?: MaybeRef<TValue>;
   checked?: ComputedRef<boolean>;
   resetField(state?: FieldState<TValue>): void;

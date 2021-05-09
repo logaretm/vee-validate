@@ -20,7 +20,7 @@ This is because of the nature of checkboxes behaving as **"multi-value"** form i
 
 With all of that in mind, vee-validate offers simple abstractions for checkboxes. You can build your own checkboxes with vee-validate's `useField` function which gives you the full capabilities of validation in a composable fashion.
 
-Because `useField` isn't aware of what kind of input will be composed with it, you will need to specify that the input is of type `checkbox` and pass a `valueProp` as well which represents that single field's value. By doing so, you gain access to `checked` prop which tells you if the checkbox should be selected.
+Because `useField` isn't aware of what kind of input will be composed with it, you will need to specify that the input is of type `checkbox` and pass a `checkedValue` as well which represents that single field's value. By doing so, you gain access to `checked` prop which tells you if the checkbox should be selected.
 
 ```js
 import { useField } from 'vee-validate';
@@ -47,7 +47,7 @@ export default {
     const { checked, handleChange } = useField(props.name, props.rules, {
       // 👇 These are important
       type: 'checkbox',
-      valueProp: props.value,
+      checkedValue: props.value,
     });
 
     // select/unselect the input
@@ -66,3 +66,18 @@ vee-validate handles some of the complexities of the checkbox inputs nature, by 
 Here is a live example of a custom checkbox input:
 
 <code-sandbox id="vee-validate-custom-checkboxes-v0rnv" title="vee-validate custom checkboxes"></code-sandbox>
+
+<doc-tip>
+
+You can also specify a custom `uncheckedValue` which sets the input value to when it is unchecked.
+
+```js
+const { checked, handleChange } = useField('toa', undefined, {
+  // Will make the checkbox set its value to true/false if it was checked or not
+  type: 'checkbox',
+  checkedValue: true,
+  uncheckedValue: false,
+});
+```
+
+</doc-tip>

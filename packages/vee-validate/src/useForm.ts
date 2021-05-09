@@ -267,7 +267,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
     // otherwise find the actual value in the current array of values and remove it
     const valueIdx: number | undefined = getFromPath<unknown[] | undefined>(formValues, fieldName)?.indexOf?.(
-      unref(field.valueProp)
+      unref(field.checkedValue)
     );
 
     if (valueIdx === undefined) {
