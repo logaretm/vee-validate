@@ -53,7 +53,7 @@ export interface PrivateFieldComposite<TValue = unknown> {
   resetField(state?: FieldState<TValue>): void;
   handleReset(state?: FieldState<TValue>): void;
   validate(): Promise<ValidationResult>;
-  handleChange(e: Event | unknown): void;
+  handleChange(e: Event | unknown, shouldValidate?: boolean): void;
   handleBlur(e?: Event): void;
   handleInput(e?: Event | unknown): void;
   setValidationState(state: ValidationResult): void;

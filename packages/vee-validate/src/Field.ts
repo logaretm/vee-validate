@@ -105,8 +105,8 @@ export const Field = defineComponent({
 
     // If there is a v-model applied on the component we need to emit the `update:modelValue` whenever the value binding changes
     const onChangeHandler = isPropPresent(props, 'modelValue')
-      ? function handleChangeWithModel(e: any) {
-          handleChange(e);
+      ? function handleChangeWithModel(e: unknown, shouldValidate = true) {
+          handleChange(e, shouldValidate);
           ctx.emit('update:modelValue', value.value);
         }
       : handleChange;
@@ -123,12 +123,8 @@ export const Field = defineComponent({
         props
       );
       const baseOnBlur = [handleBlur, ctx.attrs.onBlur, validateOnBlur ? validateField : undefined].filter(Boolean);
-      const baseOnInput = [onInputHandler, validateOnInput ? onChangeHandler : undefined, ctx.attrs.onInput].filter(
-        Boolean
-      );
-      const baseOnChange = [onInputHandler, validateOnChange ? onChangeHandler : undefined, ctx.attrs.onChange].filter(
-        Boolean
-      );
+      const baseOnInput = [(e: unknown) => onChangeHandler(e, validateOnInput), ctx.attrs.onInput].filter(Boolean);
+      const baseOnChange = [(e: unknown) => onChangeHandler(e, validateOnChange), ctx.attrs.onChange].filter(Boolean);
 
       const attrs: Record<string, any> = {
         name: props.name,

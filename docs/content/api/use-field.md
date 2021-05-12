@@ -115,8 +115,7 @@ type useField = (
   errorMessage: Ref<string | undefined>; // the first error message
   resetField: (state?: Partial<FieldState>) => void; // resets errors and field meta, updates the current value to its initial value
   validate: () => Promise<ValidationResult>; // validates and updates the errors and field meta
-  handleChange: (e: Event) => void; // updates the value
-  handleInput: (e: Event) => void; // updates the field meta associated with input event and syncs the field value
+  handleChange: (e: Event, shouldValidate?: boolean) => void; // updates the value and triggers validation
   handleBlur: (e: Event) => void; // updates the field meta associated with blur event
   setValidationState: (v: ValidationResult) => ValidationResult; // updates the field state
   checked: ComputedRef<boolean> | undefined; // Present if input type is checkbox
@@ -188,7 +187,7 @@ Contains useful information/flags about the field status, should be treated as *
 ```typescript
 interface FieldMeta {
   touched: boolean; // if the field has been blurred (via handleBlur)
-  dirty: boolean; // if the field has been manipulated (via handleInput or handleChange)
+  dirty: boolean; // if the field has been manipulated (via handleChange)
   valid: boolean; // if the field doesn't have any errors
   pending: boolean; // if validation is in progress
   initialValue?: any; // the field's initial value
@@ -321,39 +320,10 @@ export default {
     const { handleChange } = useField('field');
 
     handleChange('new value'); // update field value and validate it
+    handleChange('new value 2', false); // update field value without validating it (you have to turn off validateOnValueUpdate)
 
     return {
       handleChange,
-    };
-  },
-};
-</script>
-```
-
-<code-title level="4">
-
-`handleInput: (evt: Event | any) => void`
-
-</code-title>
-
-Updates the field value, **but does not validate the field**. Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
-
-It sets the `dirty` meta flag to `true`
-
-```vue
-<template>
-  <input @input="handleInput" type="text" />
-</template>
-
-<script>
-export default {
-  setup() {
-    const { handleInput } = useField('field');
-
-    handleInput('new value'); // update field value
-
-    return {
-      handleInput,
     };
   },
 };
