@@ -46,6 +46,7 @@ interface FieldOptions<TValue = unknown> {
   bails?: boolean;
   type?: string;
   valueProp?: MaybeRef<TValue>;
+  checkedValue?: MaybeRef<TValue>;
   uncheckedValue?: MaybeRef<TValue>;
   label?: MaybeRef<string>;
 }
@@ -74,7 +75,7 @@ export function useField<TValue = unknown>(
     validateOnMount,
     bails,
     type,
-    valueProp,
+    checkedValue,
     label,
     validateOnValueUpdate,
     uncheckedValue,
@@ -97,7 +98,7 @@ export function useField<TValue = unknown>(
     initValue: initialValue,
     form,
     type,
-    valueProp,
+    checkedValue,
   });
 
   const normalizedRules = computed(() => {
@@ -157,7 +158,7 @@ export function useField<TValue = unknown>(
     let newValue = normalizeEventValue(e) as TValue;
     // Single checkbox field without a form to toggle it's value
     if (checked && type === 'checkbox' && !form) {
-      newValue = resolveNextCheckboxValue(value.value, unref(valueProp), unref(uncheckedValue)) as TValue;
+      newValue = resolveNextCheckboxValue(value.value, unref(checkedValue), unref(uncheckedValue)) as TValue;
     }
 
     value.value = newValue;
@@ -207,7 +208,7 @@ export function useField<TValue = unknown>(
     errors,
     errorMessage,
     type,
-    valueProp,
+    checkedValue,
     uncheckedValue,
     checked,
     resetField,
@@ -311,9 +312,13 @@ function normalizeOptions<TValue>(name: string, opts: Partial<FieldOptions<TValu
     return defaults();
   }
 
+  // TODO: Deprecate this in next major release
+  const checkedValue = 'valueProp' in opts ? opts.valueProp : opts.checkedValue;
+
   return {
     ...defaults(),
     ...(opts || {}),
+    checkedValue,
   };
 }
 
@@ -325,10 +330,10 @@ function useValidationState<TValue>({
   initValue,
   form,
   type,
-  valueProp,
+  checkedValue,
 }: {
   name: MaybeRef<string>;
-  valueProp?: MaybeRef<TValue>;
+  checkedValue?: MaybeRef<TValue>;
   initValue?: MaybeRef<TValue>;
   form?: FormContext;
   type?: string;
@@ -348,10 +353,10 @@ function useValidationState<TValue>({
   const checked = hasCheckedAttr(type)
     ? computed(() => {
         if (Array.isArray(value.value)) {
-          return value.value.includes(unref(valueProp));
+          return value.value.includes(unref(checkedValue));
         }
 
-        return unref(valueProp) === value.value;
+        return unref(checkedValue) === value.value;
       })
     : undefined;
 

@@ -88,7 +88,8 @@ interface FieldOptions {
   bails?: boolean; // if the field validation should run all validations
   label?: string; // A friendly name to be used in `generateMessage` config instead of the field name
   type?: string; // The input type, can be any string. Toggles specific toggle mode for `checkbox`
-  valueProp?: string; // Used the input type is `checkbox` or `radio` otherwise ignored
+  checkedValue?: string; // Used the input type is `checkbox` or `radio` otherwise ignored
+  uncheckedValue?: string; // Used the input type is `checkbox` otherwise ignored
 }
 
 interface ValidationResult {
