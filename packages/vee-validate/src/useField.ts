@@ -197,7 +197,6 @@ export function useField<TValue = unknown>(
     fid,
     name,
     label,
-    kind: 'actual',
     value,
     meta,
     errors,

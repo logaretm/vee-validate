@@ -1,6 +1,6 @@
 import { inject, unref } from 'vue';
 import { FieldContextSymbol, FormContextSymbol } from './symbols';
-import { MaybeRef, PrivateFieldComposite, ValidationResult, VirtualFieldComposite } from './types';
+import { MaybeRef, PrivateFieldComposite, ValidationResult } from './types';
 import { injectWithSelf, normalizeField, warn } from './utils';
 
 /**
@@ -8,7 +8,7 @@ import { injectWithSelf, normalizeField, warn } from './utils';
  */
 export function useValidateField(path?: MaybeRef<string>) {
   const form = injectWithSelf(FormContextSymbol);
-  let field: PrivateFieldComposite | VirtualFieldComposite | undefined = path ? undefined : inject(FieldContextSymbol);
+  let field: PrivateFieldComposite | undefined = path ? undefined : inject(FieldContextSymbol);
 
   return function validateField(): Promise<ValidationResult> {
     if (path) {

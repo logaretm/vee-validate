@@ -42,7 +42,7 @@ function createConfig(pkg, format) {
       plugins: [
         tsPlugin,
         resolve({
-          dedupe: ['fast-deep-equal/es6', 'fast-deep-equal'],
+          dedupe: ['fast-deep-equal/es6', 'fast-deep-equal', 'klona', 'klona/lite'],
         }),
         commonjs(),
         replace({ __VERSION__: version }),

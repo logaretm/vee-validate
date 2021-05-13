@@ -1,7 +1,7 @@
 import { isIndex, isObject } from '../../../shared';
 import { getCurrentInstance, inject, InjectionKey, warn as vueWarning } from 'vue';
 import { isContainerValue, isEmptyContainer, isNotNestedPath } from './assertions';
-import { PrivateFieldComposite, VirtualFieldComposite } from '../types';
+import { PrivateFieldComposite } from '../types';
 
 function cleanupNonNestedPath(path: string) {
   if (isNotNestedPath(path)) {
@@ -145,8 +145,8 @@ export function warn(message: string) {
  * Ensures we deal with a singular field value
  */
 export function normalizeField<TValue = unknown>(
-  field: PrivateFieldComposite<TValue> | PrivateFieldComposite<TValue>[] | VirtualFieldComposite<TValue> | undefined
-): PrivateFieldComposite<TValue> | VirtualFieldComposite<TValue> | undefined {
+  field: PrivateFieldComposite<TValue> | PrivateFieldComposite<TValue>[] | undefined
+): PrivateFieldComposite<TValue> | undefined {
   if (Array.isArray(field)) {
     return field[0];
   }
@@ -158,8 +158,8 @@ export function normalizeField<TValue = unknown>(
  * Applies a mutation function on a field or field group
  */
 export function applyFieldMutation(
-  field: PrivateFieldComposite<unknown> | PrivateFieldComposite<unknown>[] | VirtualFieldComposite<unknown>,
-  mutation: (field: PrivateFieldComposite<unknown> | VirtualFieldComposite<unknown>) => unknown,
+  field: PrivateFieldComposite<unknown> | PrivateFieldComposite<unknown>[],
+  mutation: (field: PrivateFieldComposite<unknown>) => unknown,
   onlyFirst = false
 ) {
   if (!Array.isArray(field)) {

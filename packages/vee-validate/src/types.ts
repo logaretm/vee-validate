@@ -41,7 +41,6 @@ export type WritableRef<TValue> = Ref<TValue> | WritableComputedRef<TValue>;
 export interface PrivateFieldComposite<TValue = unknown> {
   fid: number;
   idx: number;
-  kind: 'actual';
   name: MaybeRef<string>;
   value: WritableRef<TValue>;
   meta: FieldMeta<TValue>;
@@ -58,20 +57,6 @@ export interface PrivateFieldComposite<TValue = unknown> {
   handleChange(e: Event | unknown): void;
   handleBlur(e?: Event): void;
   handleInput(e?: Event | unknown): void;
-  setValidationState(state: ValidationResult): void;
-  setTouched(isTouched: boolean): void;
-  setErrors(message: string | string[]): void;
-}
-
-export interface VirtualFieldComposite<TValue = unknown> {
-  name: string;
-  kind: 'virtual';
-  value: WritableRef<TValue>;
-  meta: FieldMeta<TValue>;
-  errors: Ref<string[]>;
-  errorMessage: ComputedRef<string | undefined>;
-  resetField(state?: FieldState<TValue>): void;
-  validate(): Promise<ValidationResult>;
   setValidationState(state: ValidationResult): void;
   setTouched(isTouched: boolean): void;
   setErrors(message: string | string[]): void;
@@ -131,12 +116,10 @@ export type RawFormSchema<TValues> = Record<keyof TValues, string | GenericValid
  */
 export type SchemaValidationMode = 'validated-only' | 'silent' | 'force';
 export interface FormContext<TValues extends Record<string, any> = Record<string, any>> extends FormActions<TValues> {
-  register(field: PrivateFieldComposite | VirtualFieldComposite): void;
+  register(field: PrivateFieldComposite): void;
   unregister(field: PrivateFieldComposite): void;
   values: TValues;
-  fieldsById: ComputedRef<
-    Record<keyof TValues, PrivateFieldComposite | PrivateFieldComposite[] | VirtualFieldComposite>
-  >;
+  fieldsById: ComputedRef<Record<keyof TValues, PrivateFieldComposite | PrivateFieldComposite[]>>;
   submitCount: Ref<number>;
   schema?: MaybeRef<RawFormSchema<TValues> | SchemaOf<TValues>>;
   validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues>>;
