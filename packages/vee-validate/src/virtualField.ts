@@ -8,7 +8,11 @@ export function createVirtualField<TValue = unknown>(name: string, form: FormCon
   const value = useFieldValue(initialValue, name, form);
   const { errors, setErrors, errorMessage } = useFieldErrors(name, form);
   const meta = useFieldMeta(initialValue, value, errors);
-  watch(value, validate);
+
+  let unwatchValue = watch(value, validate);
+  function watchValue() {
+    unwatchValue = watch(value, validate);
+  }
 
   function setValidationState(result: ValidationResult) {
     meta.valid = result.valid;
@@ -16,6 +20,7 @@ export function createVirtualField<TValue = unknown>(name: string, form: FormCon
   }
 
   function resetField(state?: Partial<FieldState<unknown>>) {
+    unwatchValue();
     if (state && 'value' in state) {
       form.setFieldInitialValue(name, state.value);
     }
@@ -27,6 +32,7 @@ export function createVirtualField<TValue = unknown>(name: string, form: FormCon
       valid: !state?.errors || !state.errors?.length,
       errors: state?.errors || [],
     });
+    watchValue();
   }
 
   async function validate() {
