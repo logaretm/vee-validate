@@ -234,6 +234,14 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   };
 
   function registerField(field: PrivateFieldComposite | VirtualFieldComposite) {
+    const alreadyExistsAsVirtualIdx = fields.value.findIndex(
+      f => f.kind === 'virtual' && unref(f.name) === unref(field.name)
+    );
+    // if the field already exists as virtual, remove it so it "upgrades" to actual field
+    if (alreadyExistsAsVirtualIdx > -1 && field.kind === 'actual') {
+      fields.value.splice(alreadyExistsAsVirtualIdx, 1);
+    }
+
     fields.value.push(field);
     if (field.kind === 'actual' && isRef(field.name)) {
       valuesByFid[field.fid] = field.value.value;
