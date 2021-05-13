@@ -1832,4 +1832,66 @@ describe('<Form />', () => {
     expect(formMeta.textContent).toBe('touched');
     expect(fieldMeta.textContent).toBe('touched');
   });
+
+  test('non-rendered fields defined in yup schema are not ignored', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = yup.object({
+          email: yup.string().required(),
+          password: yup.string().required(),
+        });
+
+        return {
+          onSubmit: jest.fn(),
+          schema,
+        };
+      },
+      template: `
+      <VForm @submit="onSubmit" :validation-schema="schema" v-slot="{ errors }">
+        <Field name="email" />
+        <span id="passwordError">{{ errors.password }}</span>
+
+        <button type="submit">Submit</button> 
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const passwordError = wrapper.$el.querySelector('#passwordError');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(passwordError.textContent).toBeTruthy();
+  });
+
+  test('non-rendered fields defined in schema are not ignored', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = {
+          email: 'required',
+          password: 'required',
+        };
+
+        return {
+          onSubmit: jest.fn(),
+          schema,
+        };
+      },
+      template: `
+      <VForm @submit="onSubmit" :validation-schema="schema" v-slot="{ errors }">
+        <Field name="email" />
+        <span id="passwordError">{{ errors.password }}</span>
+
+        <button type="submit">Submit</button> 
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const passwordError = wrapper.$el.querySelector('#passwordError');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(passwordError.textContent).toBeTruthy();
+  });
 });

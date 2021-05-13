@@ -1,7 +1,6 @@
 import { computed, unref, watch } from 'vue';
-import { validate as validateValue } from './validate';
 import { VirtualFieldComposite, FieldState, FormContext, ValidationResult } from './types';
-import { useFieldValue, useFieldMeta, useFieldErrors, extractRuleFromSchema } from './useField';
+import { useFieldValue, useFieldMeta, useFieldErrors } from './useField';
 import { getFromPath } from './utils';
 
 export function createVirtualField<TValue = unknown>(name: string, form: FormContext): VirtualFieldComposite<TValue> {
@@ -35,12 +34,7 @@ export function createVirtualField<TValue = unknown>(name: string, form: FormCon
     meta.validated = true;
     let result: ValidationResult;
     if (form.validateSchema) {
-      result = (await form.validateSchema('validated-only'))[name] ?? { valid: true, errors: [] };
-    } else if (form.schema) {
-      result = await validateValue(value.value, extractRuleFromSchema(unref(form.schema) as any, name) || '', {
-        name: name,
-        values: form?.values ?? {},
-      });
+      result = (await form.validateSchema('validated-only')).results[name] ?? { valid: true, errors: [] };
     } else {
       result = { valid: true, errors: [] };
     }

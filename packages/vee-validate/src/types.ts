@@ -47,6 +47,7 @@ export interface PrivateFieldComposite<TValue = unknown> {
   meta: FieldMeta<TValue>;
   errors: Ref<string[]>;
   errorMessage: ComputedRef<string | undefined>;
+  label?: MaybeRef<string | undefined>;
   type?: string;
   checkedValue?: MaybeRef<TValue>;
   uncheckedValue?: MaybeRef<TValue>;
@@ -107,8 +108,8 @@ export interface FormActions<TValues extends Record<string, unknown>> {
 }
 
 export interface FormValidationResult<TValues> {
-  errors: Partial<Record<keyof TValues, string>>;
   valid: boolean;
+  results: Partial<Record<keyof TValues, ValidationResult>>;
 }
 
 export interface SubmissionContext<TValues extends Record<string, unknown> = Record<string, unknown>>
@@ -120,6 +121,8 @@ export type SubmissionHandler<TValues extends Record<string, unknown> = Record<s
   values: TValues,
   ctx: SubmissionContext<TValues>
 ) => unknown;
+
+export type RawFormSchema<TValues> = Record<keyof TValues, string | GenericValidateFunction | Record<string, any>>;
 
 /**
  * validated-only: only mutate the previously validated fields
@@ -135,8 +138,8 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
     Record<keyof TValues, PrivateFieldComposite | PrivateFieldComposite[] | VirtualFieldComposite>
   >;
   submitCount: Ref<number>;
-  schema?: MaybeRef<Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | SchemaOf<TValues>>;
-  validateSchema?: (mode: SchemaValidationMode) => Promise<Record<keyof TValues, ValidationResult>>;
+  schema?: MaybeRef<RawFormSchema<TValues> | SchemaOf<TValues>>;
+  validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues>>;
   validate(): Promise<FormValidationResult<TValues>>;
   validateField(field: keyof TValues): Promise<ValidationResult>;
   errorBag: Ref<FormErrorBag<TValues>>;

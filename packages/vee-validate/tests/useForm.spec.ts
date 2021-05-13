@@ -144,9 +144,15 @@ describe('useForm()', () => {
     const result = await validate();
     expect(result).toEqual({
       valid: false,
-      errors: {
-        field1: REQUIRED_MESSAGE,
-        field2: REQUIRED_MESSAGE,
+      results: {
+        field1: {
+          valid: false,
+          errors: [REQUIRED_MESSAGE],
+        },
+        field2: {
+          valid: false,
+          errors: [REQUIRED_MESSAGE],
+        },
       },
     });
   });
@@ -175,9 +181,15 @@ describe('useForm()', () => {
     const result = await validate();
     expect(result).toEqual({
       valid: false,
-      errors: {
-        field1: REQUIRED_MESSAGE,
-        field2: REQUIRED_MESSAGE,
+      results: {
+        field1: {
+          valid: false,
+          errors: [REQUIRED_MESSAGE],
+        },
+        field2: {
+          valid: false,
+          errors: [REQUIRED_MESSAGE],
+        },
       },
     });
   });

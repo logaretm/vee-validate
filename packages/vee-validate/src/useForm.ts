@@ -1,6 +1,6 @@
 import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch, unref, nextTick, warn } from 'vue';
 import isEqual from 'fast-deep-equal/es6';
-import type { SchemaOf, ValidationError } from 'yup';
+import type { SchemaOf } from 'yup';
 import {
   FieldMeta,
   FormContext,
@@ -11,12 +11,12 @@ import {
   FormState,
   FormValidationResult,
   PrivateFieldComposite,
-  YupValidator,
   PublicFormContext,
   FormErrors,
   FormErrorBag,
   SchemaValidationMode,
   VirtualFieldComposite,
+  RawFormSchema,
 } from './types';
 import {
   applyFieldMutation,
@@ -27,9 +27,11 @@ import {
   setInPath,
   unsetPath,
   isFormSubmitEvent,
+  normalizeField,
 } from './utils';
 import { FormErrorsSymbol, FormContextSymbol, FormInitialValuesSymbol } from './symbols';
 import { createVirtualField } from './virtualField';
+import { validateYupSchema, validateObjectSchema } from './validate';
 
 interface FormOptions<TValues extends Record<string, any>> {
   validationSchema?: MaybeRef<
@@ -312,37 +314,34 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   }
 
   async function validate(): Promise<FormValidationResult<TValues>> {
-    function resultReducer(acc: FormValidationResult<TValues>, result: { key: keyof TValues; errors: string[] }) {
-      if (!result.errors.length) {
-        return acc;
-      }
-
-      acc.valid = false;
-      acc.errors[result.key] = result.errors[0];
-
-      return acc;
-    }
-
     if (formCtx.validateSchema) {
-      return formCtx.validateSchema('force').then(results => {
-        return keysOf(results)
-          .map(r => ({ key: r, errors: results[r].errors }))
-          .reduce(resultReducer, { errors: {}, valid: true });
-      });
+      return formCtx.validateSchema('force');
     }
 
+    // No schema, each field is responsible to validate itself
     const results = await Promise.all(
       fields.value.map(f => {
         return f.validate().then((result: ValidationResult) => {
           return {
             key: unref(f.name),
+            valid: result.valid,
             errors: result.errors,
           };
         });
       })
     );
 
-    return results.reduce(resultReducer, { errors: {}, valid: true });
+    return {
+      valid: results.every(r => r.valid),
+      results: results.reduce((acc, r) => {
+        acc[r.key as keyof TValues] = {
+          valid: r.valid,
+          errors: r.errors,
+        };
+
+        return acc;
+      }, {} as Partial<Record<keyof TValues, ValidationResult>>),
+    };
   }
 
   async function validateField(field: keyof TValues): Promise<ValidationResult> {
@@ -419,6 +418,73 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     setFieldInitialValue(path, value);
   }
 
+  /**
+   * Holds a computed reference to all fields names and labels
+   */
+  const fieldNames = computed(() => {
+    return keysOf(fieldsById.value).reduce((names, path) => {
+      const field = normalizeField(fieldsById.value[path]);
+      if (!field) {
+        return names;
+      }
+
+      names[path as string] = unref(field.kind === 'virtual' ? field.name : field.label || field.name) || '';
+
+      return names;
+    }, {} as Record<string, string>);
+  });
+
+  async function validateSchema(mode: SchemaValidationMode): Promise<FormValidationResult<TValues>> {
+    const schemaValue = unref(schema);
+    if (!schemaValue) {
+      return { valid: true, results: {} };
+    }
+
+    const formResult = await (isYupValidator(schemaValue)
+      ? validateYupSchema(schemaValue, formValues)
+      : validateObjectSchema(schemaValue as RawFormSchema<TValues>, formValues, { names: fieldNames.value }));
+
+    const fieldsById = formCtx.fieldsById.value || {};
+    // collect all the keys from the schema and all fields
+    // this ensures we have a complete keymap of all the fields
+    const paths = [...new Set([...keysOf(formResult.results), ...keysOf(fieldsById)])] as string[];
+
+    // aggregates the paths into a single result object while applying the results on the fields
+    return paths.reduce(
+      (validation, path) => {
+        let field: RegisteredField | undefined = fieldsById[path];
+        if (!field) {
+          field = createVirtualField(path, formCtx as FormContext);
+          // registers non-existing field as virtual field
+          formCtx.register(field);
+        }
+
+        const messages = (formResult.results[path] || { errors: [] as string[] }).errors;
+        const fieldResult = {
+          errors: messages,
+          valid: !messages.length,
+        };
+
+        validation.results[path as keyof TValues] = fieldResult;
+        // always update the valid flag regardless of the mode
+        applyFieldMutation(field, f => (f.meta.valid = fieldResult.valid));
+        if (mode === 'silent') {
+          return validation;
+        }
+
+        const wasValidated = Array.isArray(field) ? field.some(f => f.meta.validated) : field.meta.validated;
+        if (mode === 'validated-only' && !wasValidated) {
+          return validation;
+        }
+
+        applyFieldMutation(field, f => f.setValidationState(fieldResult), true);
+
+        return validation;
+      },
+      { valid: formResult.valid, results: {} } as FormValidationResult<TValues>
+    );
+  }
+
   const schema = opts?.validationSchema;
   const formCtx: FormContext<TValues> = {
     fieldsById,
@@ -428,11 +494,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     submitCount,
     meta,
     isSubmitting,
-    validateSchema: isYupValidator(unref(schema))
-      ? mode => {
-          return validateYupSchema(formCtx, mode);
-        }
-      : undefined,
+    validateSchema: unref(schema) ? validateSchema : undefined,
     validate,
     register: registerField,
     unregister: unregisterField,
@@ -550,69 +612,6 @@ function useFormMeta<TValues extends Record<string, unknown>>(
       dirty: isDirty.value,
     };
   });
-}
-
-async function validateYupSchema<TValues>(
-  form: FormContext<TValues>,
-  mode: SchemaValidationMode
-): Promise<Record<keyof TValues, ValidationResult>> {
-  const errors: ValidationError[] = await (unref(form.schema) as YupValidator)
-    .validate(form.values, { abortEarly: false })
-    .then(() => [])
-    .catch((err: ValidationError) => {
-      // Yup errors have a name prop one them.
-      // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
-      if (err.name !== 'ValidationError') {
-        throw err;
-      }
-
-      // list of aggregated errors
-      return err.inner || [];
-    });
-
-  const fieldsById = form.fieldsById.value || {};
-  const errorsByPath = errors.reduce((acc, err) => {
-    acc[err.path as keyof TValues] = err;
-
-    return acc;
-  }, {} as Record<keyof TValues, ValidationError>);
-
-  const paths = [...new Set([...keysOf(errorsByPath), ...keysOf(fieldsById)])];
-
-  // Aggregates the validation result
-  const aggregatedResult = paths.reduce((result: Record<keyof TValues, ValidationResult>, fieldId) => {
-    let field: RegisteredField | undefined = fieldsById[fieldId];
-    if (!field) {
-      const path = fieldId as string;
-      field = createVirtualField(path, form as any);
-      // registers non-existing field as virtual field
-      form.register(field);
-    }
-
-    const messages = (errorsByPath[fieldId] || { errors: [] }).errors;
-    const fieldResult = {
-      errors: messages,
-      valid: !messages.length,
-    };
-
-    result[fieldId] = fieldResult;
-    // always update the valid flag regardless of the mode
-    applyFieldMutation(field, f => (f.meta.valid = fieldResult.valid));
-    if (mode === 'silent') {
-      return result;
-    }
-
-    const wasValidated = Array.isArray(field) ? field.some(f => f.meta.validated) : field.meta.validated;
-    if (mode === 'validated-only' && !wasValidated) {
-      return result;
-    }
-
-    applyFieldMutation(field, f => f.setValidationState(fieldResult), true);
-
-    return result;
-  }, {} as Record<keyof TValues, ValidationResult>);
-
-  return aggregatedResult;
 }
 
 /**

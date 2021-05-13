@@ -25,6 +25,7 @@ import {
   FieldState,
   PrivateFieldComposite,
   WritableRef,
+  SchemaValidationMode,
 } from './types';
 import {
   normalizeRules,
@@ -115,37 +116,29 @@ export function useField<TValue = unknown>(
     return normalizeRules(rulesValue);
   });
 
-  async function validateWithStateMutation(): Promise<ValidationResult> {
-    meta.pending = true;
-    let result: ValidationResult;
-    meta.validated = true;
-    if (!form || !form.validateSchema) {
-      result = await validateValue(value.value, normalizedRules.value, {
-        name: unref(label) || unref(name),
-        values: form?.values ?? {},
-        bails,
-      });
-    } else {
-      result = (await form.validateSchema('validated-only'))[unref(name)] ?? { valid: true, errors: [] };
+  async function validateCurrentValue(mode: SchemaValidationMode) {
+    if (form?.validateSchema) {
+      return (await form.validateSchema(mode)).results[unref(name)] ?? { valid: true, errors: [] };
     }
 
+    return validateValue(value.value, normalizedRules.value, {
+      name: unref(label) || unref(name),
+      values: form?.values ?? {},
+      bails,
+    });
+  }
+
+  async function validateWithStateMutation(): Promise<ValidationResult> {
+    meta.pending = true;
+    meta.validated = true;
+    const result = await validateCurrentValue('validated-only');
     meta.pending = false;
 
     return setValidationState(result);
   }
 
   async function validateValidStateOnly(): Promise<void> {
-    let result: ValidationResult;
-    if (!form || !form.validateSchema) {
-      result = await validateValue(value.value, normalizedRules.value, {
-        name: unref(label) || unref(name),
-        values: form?.values ?? {},
-        bails,
-      });
-    } else {
-      result = (await form.validateSchema('silent'))?.[unref(name)] ?? { valid: true, errors: [] };
-    }
-
+    const result = await validateCurrentValue('silent');
     meta.valid = result.valid;
   }
 
@@ -203,6 +196,7 @@ export function useField<TValue = unknown>(
     idx: -1,
     fid,
     name,
+    label,
     kind: 'actual',
     value,
     meta,
