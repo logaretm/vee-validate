@@ -463,9 +463,10 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     const fieldsById = formCtx.fieldsById.value || {};
     // collect all the keys from the schema and all fields
     // this ensures we have a complete keymap of all the fields
-    const paths = [
-      ...new Set([...keysOf(formResult.results), ...keysOf(fieldsById), ...keysOf(formValues)]),
-    ] as string[];
+    const paths = [...new Set([...keysOf(formResult.results), ...keysOf(fieldsById)])] as string[];
+
+    // clear all errors before assigning new ones
+    setErrors({});
 
     // aggregates the paths into a single result object while applying the results on the fields
     return paths.reduce(

@@ -13,7 +13,7 @@ export function useValidateForm<TValues extends Record<string, unknown> = Record
 
   return function validateField(): Promise<FormValidationResult<TValues>> {
     if (!form) {
-      return Promise.resolve({ errors: {}, valid: true });
+      return Promise.resolve({ results: {}, valid: true });
     }
 
     return form.validate();
