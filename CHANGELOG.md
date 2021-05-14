@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0-alpha.1](https://github.com/logaretm/vee-validate/compare/v4.4.0-alpha.0...v4.4.0-alpha.1) (2021-05-14)
+
+
+### Bug Fixes
+
+* minifier issue when handling await ([f206cac](https://github.com/logaretm/vee-validate/commit/f206cacd7e0d03a36fce5b236c23906997e0287b))
+
+
+
+
+
 # [4.4.0-alpha.0](https://github.com/logaretm/vee-validate/compare/v4.3.6...v4.4.0-alpha.0) (2021-05-14)
 
 
