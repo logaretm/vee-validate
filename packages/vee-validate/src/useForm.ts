@@ -111,7 +111,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   );
 
   // form meta aggregations
-  const meta = useFormMeta(fields, formValues, readonlyInitialValues);
+  const meta = useFormMeta(fields, formValues, readonlyInitialValues, errors);
 
   const schema = opts?.validationSchema;
   const formCtx: FormContext<TValues> = {
@@ -571,7 +571,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 function useFormMeta<TValues extends Record<string, unknown>>(
   fields: Ref<PrivateFieldComposite[]>,
   currentValues: TValues,
-  initialValues: MaybeRef<TValues>
+  initialValues: MaybeRef<TValues>,
+  errors: Ref<FormErrors<TValues>>
 ) {
   const MERGE_STRATEGIES: Record<keyof Pick<FieldMeta<unknown>, 'touched' | 'pending' | 'valid'>, 'every' | 'some'> = {
     touched: 'some',
@@ -594,6 +595,7 @@ function useFormMeta<TValues extends Record<string, unknown>>(
     return {
       initialValues: unref(initialValues) as TValues,
       ...flags,
+      valid: flags.valid && !keysOf(errors.value as any).length,
       dirty: isDirty.value,
     };
   });
