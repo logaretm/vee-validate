@@ -460,13 +460,15 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       ? await validateYupSchema(schemaValue, formValues)
       : await validateObjectSchema(schemaValue as RawFormSchema<TValues>, formValues, { names: fieldNames.value });
 
+    // fields by id lookup
     const fieldsById = formCtx.fieldsById.value || {};
+    // errors fields names, we need it to also check if custom errors are updated
+    const currentErrorsPaths = keysOf(formCtx.errorBag.value);
     // collect all the keys from the schema and all fields
     // this ensures we have a complete keymap of all the fields
-    const paths = [...new Set([...keysOf(formResult.results), ...keysOf(fieldsById)])] as string[];
-
-    // clear all errors before assigning new ones
-    setErrors({});
+    const paths = [
+      ...new Set([...keysOf(formResult.results), ...keysOf(fieldsById), ...currentErrorsPaths]),
+    ] as string[];
 
     // aggregates the paths into a single result object while applying the results on the fields
     return paths.reduce(
