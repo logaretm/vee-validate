@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0-alpha.2](https://github.com/logaretm/vee-validate/compare/v4.4.0-alpha.1...v4.4.0-alpha.2) (2021-05-14)
+
+
+### Bug Fixes
+
+* avoid clearing all errors before validating schema ([51c2e78](https://github.com/logaretm/vee-validate/commit/51c2e7890b87d971850dfc609c09d19b79a96fb6))
+
+
+
+
+
 # [4.4.0-alpha.1](https://github.com/logaretm/vee-validate/compare/v4.4.0-alpha.0...v4.4.0-alpha.1) (2021-05-14)
 
 
