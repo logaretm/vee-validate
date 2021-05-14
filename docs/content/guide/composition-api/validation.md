@@ -288,12 +288,11 @@ value.value = 'something';
 
 The `useField` function exposes some handler functions, each handles a specific aspect of the validation experience:
 
-- `handleChange`: Updates the field value, triggers validation in all cases.
-- `handleInput`: Updates the field value, triggers validation if `validateOnValueUpdate` option is enabled.
+- `handleChange`: Updates the field value, can be configured to trigger validation or silently update the value
 - `handleBlur`: Updates the `meta.touched` flag, doesn't trigger validation.
 
 ```js
-const { handleChange, handleBlur, handleInput } = useField('someField');
+const { handleChange, handleBlur } = useField('someField');
 ```
 
 In this example we are validating on `input` event (when the user types), which would make the validation aggressive:
@@ -373,7 +372,7 @@ export default {
       // ...
     }
 
-    const { errorMessage, value, handleChange, handleInput } = useField('fieldName', isRequired, {
+    const { errorMessage, value, handleChange } = useField('fieldName', isRequired, {
       validateOnValueUpdate: false,
     });
 
@@ -384,7 +383,8 @@ export default {
         return {
           blur: handleChange,
           change: handleChange,
-          input: handleInput,
+          // disable `shouldValidate` to avoid validating on input
+          input: e => handleChange(e, false),
         };
       }
 

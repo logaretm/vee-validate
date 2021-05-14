@@ -295,8 +295,8 @@ Note that `input` event is not considered to be a trigger because it would make 
 
 By default vee-validate adds multiple event listeners to your fields:
 
-- **input:** Adds a `handleInput` handler that updates the field value (may update `meta.dirty` flag if the value changed).
-- **change:** Adds a `handleInput` handler that updates the field value and validates the field (may update `meta.dirty` flag if the value changed).
+- **input:** Adds a `handleChange` handler that updates the field value, and it may validate if configured to do so (may update `meta.dirty` flag if the value changed).
+- **change:** Adds a `handleChange` handler that updates the field value and validates the field (may update `meta.dirty` flag if the value changed).
 - **blur:** Adds a `handleBlur` handler that updates the `meta.touched` flag.
 - **update:modelValue** Adds a `handleChange` handler to components emitting the `update:modelValue` event
 
@@ -348,6 +348,15 @@ In addition to those events, you can also validate when the `<Field />` or `<For
   <Field name="email" />
   <Field name="password" />
 </Form>
+```
+
+You can also specify if a `handleChange` call should trigger validation or not by providing the second argument:
+
+```vue
+<!-- Only update field value without validating it -->
+<Field v-slot="{ field, handleChange }">
+  <input @change="$event => handleChange($event, false)" :value="field.value" />
+</Field>
 ```
 
 ## Displaying Error Messages

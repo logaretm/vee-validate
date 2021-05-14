@@ -156,7 +156,7 @@ Contains useful information/flags about the field status.
 ```typescript
 interface FieldMeta {
   touched: boolean; // if the field has been blurred (via handleBlur)
-  dirty: boolean; // if the field has been manipulated (via handleInput or handleChange)
+  dirty: boolean; // if the field has been manipulated (via handleChange)
   valid: boolean; // if the field doesn't have any errors
   pending: boolean; // if validation is in progress
   initialValue?: any; // the field's initial value
@@ -244,19 +244,13 @@ await validate();
 
 <code-title level="4">
 
-`handleChange: (evt: Event | any) => void`
+`handleChange: (evt: Event | any, shouldValidate?: boolean) => void`
 
 </code-title>
 
-Updates the field value, and validates the field. Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
+Updates the field value, and validates the field vt default. Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
 
-<code-title level="4">
-
-`handleInput: (evt: Event | any) => void`
-
-</code-title>
-
-Updates the field value, **but does not validate the field**. Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
+You can update the field value without validation by passing `false` as a second argument.
 
 <code-title level="4">
 

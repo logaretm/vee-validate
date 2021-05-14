@@ -150,7 +150,7 @@ export function useField<TValue = unknown>(
   }
 
   // Common input/change event handler
-  const handleChange = (e: unknown) => {
+  const handleChange = (e: unknown, shouldValidate = true) => {
     if (checked && checked.value === ((e as Event)?.target as HTMLInputElement)?.checked) {
       return;
     }
@@ -162,7 +162,7 @@ export function useField<TValue = unknown>(
     }
 
     value.value = newValue;
-    if (!validateOnValueUpdate) {
+    if (!validateOnValueUpdate && shouldValidate) {
       return validateWithStateMutation();
     }
   };
@@ -369,6 +369,7 @@ function useValidationState<TValue>({
 
   /**
    * Handles common on blur events
+   * @deprecated You should use `handleChange` instead
    */
   const handleInput = (e: unknown) => {
     // Checkboxes/Radio will emit a `change` event anyway, custom components will use `update:modelValue`
