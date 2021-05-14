@@ -25,6 +25,7 @@ import {
   FieldState,
   PrivateFieldComposite,
   WritableRef,
+  SchemaValidationMode,
 } from './types';
 import {
   normalizeRules,
@@ -115,37 +116,29 @@ export function useField<TValue = unknown>(
     return normalizeRules(rulesValue);
   });
 
-  async function validateWithStateMutation(): Promise<ValidationResult> {
-    meta.pending = true;
-    let result: ValidationResult;
-    meta.validated = true;
-    if (!form || !form.validateSchema) {
-      result = await validateValue(value.value, normalizedRules.value, {
-        name: unref(label) || unref(name),
-        values: form?.values ?? {},
-        bails,
-      });
-    } else {
-      result = (await form.validateSchema('validated-only'))[unref(name)] ?? { valid: true, errors: [] };
+  async function validateCurrentValue(mode: SchemaValidationMode) {
+    if (form?.validateSchema) {
+      return (await form.validateSchema(mode)).results[unref(name)] ?? { valid: true, errors: [] };
     }
 
+    return validateValue(value.value, normalizedRules.value, {
+      name: unref(label) || unref(name),
+      values: form?.values ?? {},
+      bails,
+    });
+  }
+
+  async function validateWithStateMutation(): Promise<ValidationResult> {
+    meta.pending = true;
+    meta.validated = true;
+    const result = await validateCurrentValue('validated-only');
     meta.pending = false;
 
     return setValidationState(result);
   }
 
   async function validateValidStateOnly(): Promise<void> {
-    let result: ValidationResult;
-    if (!form || !form.validateSchema) {
-      result = await validateValue(value.value, normalizedRules.value, {
-        name: unref(label) || unref(name),
-        values: form?.values ?? {},
-        bails,
-      });
-    } else {
-      result = (await form.validateSchema('silent'))?.[unref(name)] ?? { valid: true, errors: [] };
-    }
-
+    const result = await validateCurrentValue('silent');
     meta.valid = result.valid;
   }
 
@@ -203,6 +196,7 @@ export function useField<TValue = unknown>(
     idx: -1,
     fid,
     name,
+    label,
     value,
     meta,
     errors,
@@ -338,7 +332,7 @@ function useValidationState<TValue>({
   form?: FormContext;
   type?: string;
 }) {
-  const { errors, errorMessage, setErrors } = useErrorsSource(name, form);
+  const { errors, errorMessage, setErrors } = useFieldErrors(name, form);
   const formInitialValues = injectWithSelf(FormInitialValuesSymbol, undefined);
   // clones the ref value to a mutable version
   const initialValueRef = ref(unref(initValue)) as Ref<TValue>;
@@ -348,7 +342,7 @@ function useValidationState<TValue>({
   });
 
   const value = useFieldValue(initialValue, name, form);
-  const meta = useMeta(initialValue, value, errors);
+  const meta = useFieldMeta(initialValue, value, errors);
 
   const checked = hasCheckedAttr(type)
     ? computed(() => {
@@ -425,7 +419,7 @@ function useValidationState<TValue>({
 /**
  * Exposes meta flags state and some associated actions with them.
  */
-function useMeta<TValue>(initialValue: MaybeRef<TValue>, currentValue: Ref<TValue>, errors: Ref<string[]>) {
+export function useFieldMeta<TValue>(initialValue: MaybeRef<TValue>, currentValue: Ref<TValue>, errors: Ref<string[]>) {
   const meta = reactive({
     touched: false,
     pending: false,
@@ -454,7 +448,10 @@ function useMeta<TValue>(initialValue: MaybeRef<TValue>, currentValue: Ref<TValu
 /**
  * Extracts the validation rules from a schema
  */
-function extractRuleFromSchema<TValue>(schema: Record<string, RuleExpression<TValue>> | undefined, fieldName: string) {
+export function extractRuleFromSchema<TValue>(
+  schema: Record<string, RuleExpression<TValue>> | undefined,
+  fieldName: string
+) {
   // no schema at all
   if (!schema) {
     return undefined;
@@ -467,7 +464,7 @@ function extractRuleFromSchema<TValue>(schema: Record<string, RuleExpression<TVa
 /**
  * Manages the field value
  */
-function useFieldValue<TValue>(
+export function useFieldValue<TValue>(
   initialValue: MaybeRef<TValue | undefined>,
   path: MaybeRef<string>,
   form?: FormContext
@@ -492,7 +489,7 @@ function useFieldValue<TValue>(
   return value as WritableRef<TValue>;
 }
 
-function useErrorsSource(path: MaybeRef<string>, form?: FormContext) {
+export function useFieldErrors(path: MaybeRef<string>, form?: FormContext) {
   if (!form) {
     const errors = ref<string[]>([]);
     return {

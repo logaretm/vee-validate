@@ -1,8 +1,8 @@
-import type { ValidationError } from 'yup';
+import type { SchemaOf, ValidationError } from 'yup';
 import { resolveRule } from './defineRule';
-import { isLocator, normalizeRules, isYupValidator } from './utils';
+import { isLocator, normalizeRules, isYupValidator, keysOf, getFromPath } from './utils';
 import { getConfig } from './config';
-import { ValidationResult, GenericValidateFunction, YupValidator } from './types';
+import { ValidationResult, GenericValidateFunction, YupValidator, FormValidationResult, RawFormSchema } from './types';
 import { isCallable, FieldContext } from '../../shared';
 
 /**
@@ -19,8 +19,6 @@ interface ValidationOptions {
   name?: string;
   values?: Record<string, unknown>;
   bails?: boolean;
-  skipIfEmpty?: boolean;
-  isInitial?: boolean;
 }
 
 /**
@@ -198,4 +196,74 @@ function fillTargetValues(params: unknown[] | Record<string, unknown>, crossTabl
 
     return acc;
   }, {} as Record<string, unknown>);
+}
+
+export async function validateYupSchema<TValues>(
+  schema: SchemaOf<TValues>,
+  values: TValues
+): Promise<FormValidationResult<TValues>> {
+  const errors: ValidationError[] = await (schema as YupValidator)
+    .validate(values, { abortEarly: false })
+    .then(() => [])
+    .catch((err: ValidationError) => {
+      // Yup errors have a name prop one them.
+      // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
+      if (err.name !== 'ValidationError') {
+        throw err;
+      }
+
+      // list of aggregated errors
+      return err.inner || [];
+    });
+
+  const results = errors.reduce((acc, err) => {
+    const messages = err.errors;
+    acc[err.path as keyof TValues] = { valid: !messages.length, errors: messages };
+
+    return acc;
+  }, {} as Partial<Record<keyof TValues, ValidationResult>>);
+
+  return {
+    valid: !errors.length,
+    results,
+  };
+}
+
+export async function validateObjectSchema<TValues>(
+  schema: RawFormSchema<TValues>,
+  values: TValues,
+  opts?: Partial<{ names: Record<string, string>; bails: boolean }>
+): Promise<FormValidationResult<TValues>> {
+  const paths = keysOf(schema) as string[];
+  const validations = paths.map(async path => {
+    const fieldResult = await validate(getFromPath(values as any, path), schema[path as keyof TValues], {
+      name: opts?.names?.[path] || path,
+      values: values as any,
+      bails: opts?.bails ?? true,
+    });
+
+    return {
+      ...fieldResult,
+      path,
+    };
+  });
+
+  let isAllValid = true;
+  const results = (await Promise.all(validations)).reduce((acc, result) => {
+    acc[result.path as keyof TValues] = {
+      valid: result.valid,
+      errors: result.errors,
+    } as ValidationResult;
+
+    if (!result.valid) {
+      isAllValid = false;
+    }
+
+    return acc;
+  }, {} as Partial<Record<keyof TValues, ValidationResult>>);
+
+  return {
+    valid: isAllValid,
+    results,
+  };
 }

@@ -562,7 +562,7 @@ describe('<Form />', () => {
   });
 
   test('supports radio inputs with check after submit (nested)', async () => {
-    const initialValues = { test: { fieldOne: 'one' } };
+    const initialValues = { test: { fieldOne: { option: 'one' } } };
 
     const showFields = ref(true);
     const result = ref();
@@ -586,7 +586,7 @@ describe('<Form />', () => {
       <VForm  @submit="onSubmit" :initialValues="initialValues" >
         <label v-for="(value, index) in values" v-bind:key="index">
           <div v-if="showFields">
-            <Field name="test.fieldOne" as="input" type="radio" :value="value" /> {{value}}
+            <Field name="test.fieldOne.option" as="input" type="radio" :value="value" /> {{value}}
           </div>
         </label>
 
@@ -606,7 +606,7 @@ describe('<Form />', () => {
     await flushPromises();
     showFields.value = false;
     await flushPromises();
-    expect(result.value.fieldOne).toBe('two');
+    expect(result.value.fieldOne.option).toBe('two');
   });
 
   test('supports checkboxes inputs', async () => {
@@ -1831,5 +1831,161 @@ describe('<Form />', () => {
     await flushPromises();
     expect(formMeta.textContent).toBe('touched');
     expect(fieldMeta.textContent).toBe('touched');
+  });
+
+  test('non-rendered fields defined in yup schema are not ignored', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = yup.object({
+          email: yup.string().required(),
+          password: yup.string().required(),
+        });
+
+        return {
+          onSubmit: jest.fn(),
+          schema,
+        };
+      },
+      template: `
+      <VForm @submit="onSubmit" :validation-schema="schema" v-slot="{ errors }">
+        <Field name="email" />
+        <span id="passwordError">{{ errors.password }}</span>
+
+        <button type="submit">Submit</button> 
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const passwordError = wrapper.$el.querySelector('#passwordError');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(passwordError.textContent).toBeTruthy();
+  });
+
+  test('non-rendered fields defined in schema are not ignored', async () => {
+    const submit = jest.fn();
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = {
+          email: 'required',
+          password: 'required',
+        };
+
+        return {
+          onSubmit: submit,
+          schema,
+        };
+      },
+      template: `
+      <VForm @submit="onSubmit" :validation-schema="schema" v-slot="{ errors }">
+        <Field name="email" />
+        <span id="passwordError">{{ errors.password }}</span>
+
+        <button type="submit">Submit</button> 
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const passwordError = wrapper.$el.querySelector('#passwordError');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(passwordError.textContent).toBeTruthy();
+    expect(submit).not.toHaveBeenCalled();
+  });
+
+  test('setting errors for non-existing fields creates them as virtual', async () => {
+    const errorMessage = 'bad pw';
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm v-slot="{ errors, setFieldError }">
+        <span id="passwordError">{{ errors.password }}</span>
+        <button type="button" @click="setFieldError('password', '${errorMessage}')">Set error</button>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const passwordError = wrapper.$el.querySelector('#passwordError');
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(passwordError.textContent).toBe(errorMessage);
+  });
+
+  test('setting values for non-existing fields creates them as virtual', async () => {
+    const value = '123';
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm v-slot="{ values, setFieldValue }">
+        <span id="passwordValue">{{ values.password }}</span>
+        <button type="button" @click="setFieldValue('password', '${value}')">Set value</button>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const passwordValue = wrapper.$el.querySelector('#passwordValue');
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(passwordValue.textContent).toBe(value);
+  });
+
+  test('reset virtual fields errors and values', async () => {
+    const errorMessage = 'bad pw';
+    const value = '123';
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm v-slot="{ errors, values, setFieldError, setFieldValue, resetForm }">
+        <span id="passwordError">{{ errors.password }}</span>
+        <span id="passwordValue">{{ values.password }}</span>
+
+        <button id="setError" type="button" @click="setFieldError('password', '${errorMessage}')">Set error</button>
+        <button id="setValue" type="button" @click="setFieldValue('password', '${value}')">Set value</button>
+
+        <button id="reset" type="button" @click="resetForm()">Reset</button>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const passwordError = wrapper.$el.querySelector('#passwordError');
+    const passwordValue = wrapper.$el.querySelector('#passwordValue');
+    wrapper.$el.querySelector('#setValue').click();
+    await flushPromises();
+    wrapper.$el.querySelector('#setError').click();
+    await flushPromises();
+    expect(passwordError.textContent).toBe(errorMessage);
+    expect(passwordValue.textContent).toBe(value);
+    wrapper.$el.querySelector('#reset').click();
+    await flushPromises();
+    expect(passwordError.textContent).toBe('');
+    expect(passwordValue.textContent).toBe('');
+  });
+
+  test('reset virtual field state to specific value and error', async () => {
+    const errorMessage = 'bad pw';
+    const value = '123';
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm v-slot="{ errors, values, resetForm }">
+        <span id="passwordError">{{ errors.password }}</span>
+        <span id="passwordValue">{{ values.password }}</span>
+        <button id="reset" type="button" @click="resetForm({ values: { password: '${value}' }, errors: { password: '${errorMessage}' } })">Reset</button>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const passwordError = wrapper.$el.querySelector('#passwordError');
+    const passwordValue = wrapper.$el.querySelector('#passwordValue');
+    expect(passwordError.textContent).toBe('');
+    expect(passwordValue.textContent).toBe('');
+    wrapper.$el.querySelector('#reset').click();
+    await flushPromises();
+    expect(passwordError.textContent).toBe(errorMessage);
+    expect(passwordValue.textContent).toBe(value);
   });
 });

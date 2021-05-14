@@ -1,6 +1,7 @@
 import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch, unref, nextTick, warn } from 'vue';
 import isEqual from 'fast-deep-equal/es6';
-import type { SchemaOf, ValidationError } from 'yup';
+import type { SchemaOf } from 'yup';
+import { klona as deepCopy } from 'klona/lite';
 import {
   FieldMeta,
   FormContext,
@@ -11,11 +12,11 @@ import {
   FormState,
   FormValidationResult,
   PrivateFieldComposite,
-  YupValidator,
   PublicFormContext,
   FormErrors,
   FormErrorBag,
   SchemaValidationMode,
+  RawFormSchema,
 } from './types';
 import {
   applyFieldMutation,
@@ -26,8 +27,10 @@ import {
   setInPath,
   unsetPath,
   isFormSubmitEvent,
+  normalizeField,
 } from './utils';
 import { FormErrorsSymbol, FormContextSymbol, FormInitialValuesSymbol } from './symbols';
+import { validateYupSchema, validateObjectSchema } from './validate';
 
 interface FormOptions<TValues extends Record<string, any>> {
   validationSchema?: MaybeRef<
@@ -39,6 +42,8 @@ interface FormOptions<TValues extends Record<string, any>> {
   validateOnMount?: boolean;
 }
 
+type RegisteredField = PrivateFieldComposite | PrivateFieldComposite[];
+
 export function useForm<TValues extends Record<string, any> = Record<string, any>>(
   opts?: FormOptions<TValues>
 ): PublicFormContext<TValues> {
@@ -49,7 +54,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   const isSubmitting = ref(false);
 
   // a field map object useful for faster access of fields
-  const fieldsById = computed<Record<keyof TValues, PrivateFieldComposite | PrivateFieldComposite[]>>(() => {
+  const fieldsById = computed<Record<keyof TValues, RegisteredField>>(() => {
     return fields.value.reduce((acc, field) => {
       const fieldPath: keyof TValues = unref(field.name);
       // if the field was not added before
@@ -59,9 +64,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
         return acc;
       }
-
       // if the same name is detected
-      const existingField: PrivateFieldComposite | PrivateFieldComposite[] = acc[fieldPath];
+      const existingField: RegisteredField = acc[fieldPath];
       if (!Array.isArray(existingField)) {
         existingField.idx = 0;
         acc[fieldPath] = [existingField];
@@ -72,14 +76,14 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       fieldGroup.push(field);
 
       return acc;
-    }, {} as Record<keyof TValues, PrivateFieldComposite | PrivateFieldComposite[]>);
+    }, {} as Record<keyof TValues, RegisteredField>);
   });
 
   // The number of times the user tried to submit the form
   const submitCount = ref(0);
 
   // a private ref for all form values
-  const formValues = reactive({}) as TValues;
+  const formValues = reactive(deepCopy(unref(opts?.initialValues) || {})) as TValues;
   // a lookup to keep track of values by their field ids
   // this is important because later we need it if fields swap names
   const valuesByFid: Record<string, any> = {};
@@ -107,7 +111,34 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   );
 
   // form meta aggregations
-  const meta = useFormMeta(fields, formValues, readonlyInitialValues);
+  const meta = useFormMeta(fields, formValues, readonlyInitialValues, errors);
+
+  const schema = opts?.validationSchema;
+  const formCtx: FormContext<TValues> = {
+    fieldsById,
+    values: formValues,
+    errorBag,
+    schema,
+    submitCount,
+    meta,
+    isSubmitting,
+    validateSchema: unref(schema) ? validateSchema : undefined,
+    validate,
+    register: registerField,
+    unregister: unregisterField,
+    setFieldErrorBag,
+    validateField,
+    setFieldValue,
+    setValues,
+    setErrors,
+    setFieldError,
+    setFieldTouched,
+    setTouched,
+    resetForm,
+    handleSubmit,
+    stageInitialValue,
+    setFieldInitialValue,
+  };
 
   /**
    * Manually sets an error message on a specific field
@@ -131,7 +162,12 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     value: TValues[T] | undefined,
     { force } = { force: false }
   ) {
-    const fieldInstance: PrivateFieldComposite | PrivateFieldComposite[] | undefined = fieldsById.value[field];
+    const fieldInstance: RegisteredField | undefined = fieldsById.value[field];
+    // field wasn't found, create a virtual field as a placeholder
+    if (!fieldInstance) {
+      setInPath(formValues, field as string, value);
+      return;
+    }
 
     // Multiple checkboxes, and only one of them got updated
     if (Array.isArray(fieldInstance) && fieldInstance[0]?.type === 'checkbox' && !Array.isArray(value)) {
@@ -162,17 +198,21 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       return;
     }
 
-    if (fieldInstance) {
-      valuesByFid[fieldInstance.fid] = newValue;
-    }
+    valuesByFid[fieldInstance.fid] = newValue;
   }
 
   /**
    * Sets multiple fields values
    */
   function setValues(fields: Partial<TValues>) {
-    keysOf(fields).forEach(field => {
-      setFieldValue(field, fields[field]);
+    // clean up old values
+    keysOf(formValues).forEach(key => {
+      delete formValues[key];
+    });
+
+    // set up new values
+    keysOf(fields).forEach(path => {
+      setFieldValue(path, fields[path]);
     });
   }
 
@@ -180,7 +220,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
    * Sets the touched meta state on a field
    */
   function setFieldTouched(field: keyof TValues, isTouched: boolean) {
-    const fieldInstance: PrivateFieldComposite | PrivateFieldComposite[] | undefined = fieldsById.value[field];
+    const fieldInstance: RegisteredField | undefined = fieldsById.value[field];
     if (!fieldInstance) {
       return;
     }
@@ -200,10 +240,14 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   /**
    * Resets all fields
    */
-  const resetForm = (state?: Partial<FormState<TValues>>) => {
+  function resetForm(state?: Partial<FormState<TValues>>) {
     // set initial values if provided
     if (state?.values) {
       setInitialValues(state.values);
+      setValues(state?.values);
+    } else {
+      // otherwise clean the current values
+      setValues(initialValues.value);
     }
 
     // Reset all fields state
@@ -212,14 +256,12 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     if (state?.touched) {
       setTouched(state.touched);
     }
-    if (state?.errors) {
-      setErrors(state.errors);
-    }
 
+    setErrors(state?.errors || {});
     submitCount.value = state?.submitCount || 0;
-  };
+  }
 
-  function registerField(field: PrivateFieldComposite<unknown>) {
+  function registerField(field: PrivateFieldComposite) {
     fields.value.push(field);
     if (isRef(field.name)) {
       valuesByFid[field.fid] = field.value.value;
@@ -290,41 +332,38 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   }
 
   async function validate(): Promise<FormValidationResult<TValues>> {
-    function resultReducer(acc: FormValidationResult<TValues>, result: { key: keyof TValues; errors: string[] }) {
-      if (!result.errors.length) {
-        return acc;
-      }
-
-      acc.valid = false;
-      acc.errors[result.key] = result.errors[0];
-
-      return acc;
-    }
-
     if (formCtx.validateSchema) {
-      return formCtx.validateSchema('force').then(results => {
-        return keysOf(results)
-          .map(r => ({ key: r, errors: results[r].errors }))
-          .reduce(resultReducer, { errors: {}, valid: true });
-      });
+      return formCtx.validateSchema('force');
     }
 
+    // No schema, each field is responsible to validate itself
     const results = await Promise.all(
       fields.value.map(f => {
         return f.validate().then((result: ValidationResult) => {
           return {
             key: unref(f.name),
+            valid: result.valid,
             errors: result.errors,
           };
         });
       })
     );
 
-    return results.reduce(resultReducer, { errors: {}, valid: true });
+    return {
+      valid: results.every(r => r.valid),
+      results: results.reduce((acc, r) => {
+        acc[r.key as keyof TValues] = {
+          valid: r.valid,
+          errors: r.errors,
+        };
+
+        return acc;
+      }, {} as Partial<Record<keyof TValues, ValidationResult>>),
+    };
   }
 
   async function validateField(field: keyof TValues): Promise<ValidationResult> {
-    const fieldInstance: PrivateFieldComposite | PrivateFieldComposite[] | undefined = fieldsById.value[field];
+    const fieldInstance: RegisteredField | undefined = fieldsById.value[field];
     if (!fieldInstance) {
       warn(`field with name ${field} was not found`);
 
@@ -338,7 +377,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     return fieldInstance.validate();
   }
 
-  const handleSubmit = (fn?: SubmissionHandler<TValues>) => {
+  function handleSubmit(fn?: SubmissionHandler<TValues>) {
     return function submissionHandler(e: unknown) {
       if (e instanceof Event) {
         e.preventDefault();
@@ -359,7 +398,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       return validate()
         .then(result => {
           if (result.valid && typeof fn === 'function') {
-            return fn(immutableFormValues.value, {
+            return fn(deepCopy(formValues), {
               evt: e as Event,
               setErrors,
               setFieldError,
@@ -383,7 +422,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
           }
         );
     };
-  };
+  }
 
   function setFieldInitialValue(path: string, value: unknown) {
     setInPath(initialValues.value, path, value);
@@ -397,44 +436,74 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     setFieldInitialValue(path, value);
   }
 
-  const schema = opts?.validationSchema;
-  const formCtx: FormContext<TValues> = {
-    register: registerField,
-    unregister: unregisterField,
-    fieldsById,
-    values: formValues,
-    setFieldErrorBag,
-    errorBag,
-    schema,
-    submitCount,
-    validateSchema: isYupValidator(unref(schema))
-      ? mode => {
-          return validateYupSchema(formCtx, mode);
-        }
-      : undefined,
-    validate,
-    validateField,
-    setFieldValue,
-    setValues,
-    setErrors,
-    setFieldError,
-    setFieldTouched,
-    setTouched,
-    resetForm,
-    meta,
-    isSubmitting,
-    handleSubmit,
-    stageInitialValue,
-    setFieldInitialValue,
-  };
+  /**
+   * Holds a computed reference to all fields names and labels
+   */
+  const fieldNames = computed(() => {
+    return keysOf(fieldsById.value).reduce((names, path) => {
+      const field = normalizeField(fieldsById.value[path]);
+      if (field) {
+        names[path as string] = unref(field.label || field.name) || '';
+      }
 
-  const immutableFormValues = computed<TValues>(() => {
-    return fields.value.reduce((formData: Record<keyof TValues, any>, field) => {
-      setInPath(formData, unref(field.name), unref(field.value));
-
-      return formData;
-    }, {} as TValues);
+      return names;
+    }, {} as Record<string, string>);
   });
+
+  async function validateSchema(mode: SchemaValidationMode): Promise<FormValidationResult<TValues>> {
+    const schemaValue = unref(schema);
+    if (!schemaValue) {
+      return { valid: true, results: {} };
+    }
+
+    const formResult = await (isYupValidator(schemaValue)
+      ? validateYupSchema(schemaValue, formValues)
+      : validateObjectSchema(schemaValue as RawFormSchema<TValues>, formValues, { names: fieldNames.value }));
+
+    const fieldsById = formCtx.fieldsById.value || {};
+    // collect all the keys from the schema and all fields
+    // this ensures we have a complete keymap of all the fields
+    const paths = [...new Set([...keysOf(formResult.results), ...keysOf(fieldsById)])] as string[];
+
+    // clear all errors before assigning new ones
+    setErrors({});
+
+    // aggregates the paths into a single result object while applying the results on the fields
+    return paths.reduce(
+      (validation, path) => {
+        const field: RegisteredField | undefined = fieldsById[path];
+        const messages = (formResult.results[path] || { errors: [] as string[] }).errors;
+        const fieldResult = {
+          errors: messages,
+          valid: !messages.length,
+        };
+        validation.results[path as keyof TValues] = fieldResult;
+
+        // field not rendered
+        if (!field) {
+          setFieldError(path, messages);
+
+          return validation;
+        }
+
+        // always update the valid flag regardless of the mode
+        applyFieldMutation(field, f => (f.meta.valid = fieldResult.valid));
+        if (mode === 'silent') {
+          return validation;
+        }
+
+        const wasValidated = Array.isArray(field) ? field.some(f => f.meta.validated) : field.meta.validated;
+        if (mode === 'validated-only' && !wasValidated) {
+          return validation;
+        }
+
+        applyFieldMutation(field, f => f.setValidationState(fieldResult), true);
+
+        return validation;
+      },
+      { valid: formResult.valid, results: {} } as FormValidationResult<TValues>
+    );
+  }
 
   const submitForm = handleSubmit((_, { evt }) => {
     if (isFormSubmitEvent(evt)) {
@@ -502,7 +571,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 function useFormMeta<TValues extends Record<string, unknown>>(
   fields: Ref<PrivateFieldComposite[]>,
   currentValues: TValues,
-  initialValues: MaybeRef<TValues>
+  initialValues: MaybeRef<TValues>,
+  errors: Ref<FormErrors<TValues>>
 ) {
   const MERGE_STRATEGIES: Record<keyof Pick<FieldMeta<unknown>, 'touched' | 'pending' | 'valid'>, 'every' | 'some'> = {
     touched: 'some',
@@ -525,70 +595,17 @@ function useFormMeta<TValues extends Record<string, unknown>>(
     return {
       initialValues: unref(initialValues) as TValues,
       ...flags,
+      valid: flags.valid && !keysOf(errors.value as any).length,
       dirty: isDirty.value,
     };
   });
-}
-
-async function validateYupSchema<TValues>(
-  form: FormContext<TValues>,
-  mode: SchemaValidationMode
-): Promise<Record<keyof TValues, ValidationResult>> {
-  const errors: ValidationError[] = await (unref(form.schema) as YupValidator)
-    .validate(form.values, { abortEarly: false })
-    .then(() => [])
-    .catch((err: ValidationError) => {
-      // Yup errors have a name prop one them.
-      // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
-      if (err.name !== 'ValidationError') {
-        throw err;
-      }
-
-      // list of aggregated errors
-      return err.inner || [];
-    });
-
-  const fieldsById = form.fieldsById.value || {};
-  const errorsByPath = errors.reduce((acc, err) => {
-    acc[err.path as keyof TValues] = err;
-
-    return acc;
-  }, {} as Record<keyof TValues, ValidationError>);
-
-  // Aggregates the validation result
-  const aggregatedResult = keysOf(fieldsById).reduce((result: Record<keyof TValues, ValidationResult>, fieldId) => {
-    const field: PrivateFieldComposite | PrivateFieldComposite[] = fieldsById[fieldId];
-    const messages = (errorsByPath[fieldId] || { errors: [] }).errors;
-    const fieldResult = {
-      errors: messages,
-      valid: !messages.length,
-    };
-
-    result[fieldId] = fieldResult;
-    // always update the valid flag regardless of the mode
-    applyFieldMutation(field, f => (f.meta.valid = fieldResult.valid));
-    if (mode === 'silent') {
-      return result;
-    }
-
-    const wasValidated = Array.isArray(field) ? field.some(f => f.meta.validated) : field.meta.validated;
-    if (mode === 'validated-only' && !wasValidated) {
-      return result;
-    }
-
-    applyFieldMutation(field, f => f.setValidationState(fieldResult), true);
-
-    return result;
-  }, {} as Record<keyof TValues, ValidationResult>);
-
-  return aggregatedResult;
 }
 
 /**
  * Manages the initial values prop
  */
 function useFormInitialValues<TValues extends Record<string, any>>(
-  fields: Ref<Record<keyof TValues, PrivateFieldComposite | PrivateFieldComposite[]>>,
+  fields: Ref<Record<keyof TValues, RegisteredField>>,
   formValues: TValues,
   providedValues?: MaybeRef<TValues>
 ) {
@@ -600,7 +617,6 @@ function useFormInitialValues<TValues extends Record<string, any>>(
 
   function setInitialValues(values: Partial<TValues>, updateFields = false) {
     initialValues.value = {
-      ...initialValues.value,
       ...values,
     };
 
@@ -614,7 +630,7 @@ function useFormInitialValues<TValues extends Record<string, any>>(
     // if the user API is taking too much time before user interaction they should consider disabling or hiding their inputs until the values are ready
     const hadInteraction = (f: PrivateFieldComposite) => f.meta.touched;
     keysOf(fields.value).forEach(fieldPath => {
-      const field: PrivateFieldComposite | PrivateFieldComposite[] = fields.value[fieldPath];
+      const field: RegisteredField = fields.value[fieldPath];
       const touchedByUser = Array.isArray(field) ? field.some(hadInteraction) : hadInteraction(field);
       if (touchedByUser) {
         return;
@@ -649,20 +665,34 @@ function useFormInitialValues<TValues extends Record<string, any>>(
 function useErrorBag<TValues extends Record<string, any>>(initialErrors?: FormErrors<TValues>) {
   const errorBag: Ref<FormErrorBag<TValues>> = ref({});
 
+  function normalizeErrorItem(message: string | string[]) {
+    return Array.isArray(message) ? message : message ? [message] : [];
+  }
+
   /**
    * Manually sets an error message on a specific field
    */
   function setFieldErrorBag(field: keyof TValues, message: string | undefined | string[]) {
-    errorBag.value[field] = Array.isArray(message) ? message : message ? [message] : [];
+    if (!message) {
+      delete errorBag.value[field];
+      return;
+    }
+
+    errorBag.value[field] = normalizeErrorItem(message);
   }
 
   /**
    * Sets errors for the fields specified in the object
    */
   function setErrorBag(fields: Partial<Record<keyof TValues, string | string[] | undefined>>) {
-    keysOf(fields).forEach(field => {
-      setFieldErrorBag(field, fields[field]);
-    });
+    errorBag.value = keysOf(fields).reduce((acc, key) => {
+      const message = fields[key] as string | string[] | undefined;
+      if (message) {
+        acc[key] = normalizeErrorItem(message);
+      }
+
+      return acc;
+    }, {} as FormErrorBag<TValues>);
   }
 
   if (initialErrors) {

@@ -1,5 +1,5 @@
 import flushPromises from 'flush-promises';
-import { useField, useForm } from '@/vee-validate';
+import { PublicFormContext, useField, useForm } from '@/vee-validate';
 import { mountWithHoc, setValue } from './helpers';
 import * as yup from 'yup';
 
@@ -29,6 +29,34 @@ describe('useForm()', () => {
     document.querySelector('button')?.click();
     await flushPromises();
     expect(error?.textContent).toBe('WRONG');
+  });
+
+  test('can clear individual field error messages', async () => {
+    let setFieldError!: PublicFormContext['setFieldError'];
+    mountWithHoc({
+      setup() {
+        const form = useForm();
+        setFieldError = form.setFieldError;
+        const { errorMessage } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
+
+        return {
+          errorMessage,
+          setFieldError,
+        };
+      },
+      template: `
+      <span>{{ errorMessage }}</span>
+    `,
+    });
+
+    await flushPromises();
+    const error = document.querySelector('span');
+    setFieldError('field', 'WRONG');
+    await flushPromises();
+    expect(error?.textContent).toBe('WRONG');
+    setFieldError('field', undefined);
+    await flushPromises();
+    expect(error?.textContent).toBe('');
   });
 
   test('sets multiple field error messages', async () => {
@@ -144,9 +172,15 @@ describe('useForm()', () => {
     const result = await validate();
     expect(result).toEqual({
       valid: false,
-      errors: {
-        field1: REQUIRED_MESSAGE,
-        field2: REQUIRED_MESSAGE,
+      results: {
+        field1: {
+          valid: false,
+          errors: [REQUIRED_MESSAGE],
+        },
+        field2: {
+          valid: false,
+          errors: [REQUIRED_MESSAGE],
+        },
       },
     });
   });
@@ -175,9 +209,15 @@ describe('useForm()', () => {
     const result = await validate();
     expect(result).toEqual({
       valid: false,
-      errors: {
-        field1: REQUIRED_MESSAGE,
-        field2: REQUIRED_MESSAGE,
+      results: {
+        field1: {
+          valid: false,
+          errors: [REQUIRED_MESSAGE],
+        },
+        field2: {
+          valid: false,
+          errors: [REQUIRED_MESSAGE],
+        },
       },
     });
   });

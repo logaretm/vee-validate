@@ -311,7 +311,7 @@ setFieldError('email', 'this email is already taken');
 setFieldError('email', undefined);
 ```
 
-If you try to set an error for field doesn't exist, it will not affect the form's overall validity and will be ignored.
+If you try to set an error for a field that doesn't exist, it will be added to the form's errors object and it will change the form's `valid` state
 
 <code-title level="4">
 
@@ -351,13 +351,15 @@ const { setFieldValue } = useForm();
 setFieldValue('email', 'example@gmail.com');
 ```
 
+If ou try to set a value for a field that doesn't exist, it will be added to the form's values object and will stay there until the next `resetForm` is called.
+
 <code-title level="4">
 
 `setValues: (fields: Record<string, any>) => void`
 
 </code-title>
 
-Sets multiple fields values, will trigger validation for all the changed fields.
+Sets all fields values, will trigger validation for the changed fields.
 
 ```js
 const { setValues } = useForm();
@@ -374,7 +376,7 @@ setValues({
 
 </code-title>
 
-Sets a field's `touched` meta flag
+Sets a field's `touched` meta flag, if you set it for a non-existing field it will have no effect.
 
 ```js
 const { setFieldTouched } = useForm();
