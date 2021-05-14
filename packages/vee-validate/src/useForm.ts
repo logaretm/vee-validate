@@ -456,9 +456,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       return { valid: true, results: {} };
     }
 
-    const formResult = await (isYupValidator(schemaValue)
-      ? validateYupSchema(schemaValue, formValues)
-      : validateObjectSchema(schemaValue as RawFormSchema<TValues>, formValues, { names: fieldNames.value }));
+    const formResult = isYupValidator(schemaValue)
+      ? await validateYupSchema(schemaValue, formValues)
+      : await validateObjectSchema(schemaValue as RawFormSchema<TValues>, formValues, { names: fieldNames.value });
 
     const fieldsById = formCtx.fieldsById.value || {};
     // collect all the keys from the schema and all fields
