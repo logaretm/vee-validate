@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0-alpha.0](https://github.com/logaretm/vee-validate/compare/v4.3.6...v4.4.0-alpha.0) (2021-05-14)
+
+
+### Bug Fixes
+
+* deprecate handleInput and use handleChange for both events ([#3303](https://github.com/logaretm/vee-validate/issues/3303)) ([4cb10de](https://github.com/logaretm/vee-validate/commit/4cb10de0a5f589f72c82cdd4a8859b7f044ae84c))
+
+
+### Features
+
+* custom values and errors ([#3305](https://github.com/logaretm/vee-validate/issues/3305)) ([427802b](https://github.com/logaretm/vee-validate/commit/427802b94ea309d12df26ba51ac1b3a24e4e8d46))
+
+
+
+
+
 ## [4.3.6](https://github.com/logaretm/vee-validate/compare/v4.3.5...v4.3.6) (2021-05-08)
 
 
