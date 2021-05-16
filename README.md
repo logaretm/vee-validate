@@ -25,10 +25,9 @@ vee-validate is a form validation library for [Vue.js](https://vuejs.org/) that 
 - **🍞 Easy:** Declarative validation that is familiar and easy to setup
 - **🧘‍♀️ Flexible:** Synchronous, Asynchronous, field-level or form-level validation
 - **⚡️ Fast:** Build faster forms faster with intuitive API and small footprint
-- **🏏 Minimal:** Only handles the complicated and painful form concerns, gives you full control over everything else
-- **🍤 Tiny:** Small footprint < 5kb which makes your apps faster to load
+- **🏏 Minimal:** Only handles the complicated form concerns, gives you full control over everything else
 - **😎 UI Agnostic:** Works with native HTML elements or your favorite UI library components
-- **🦾 Progressive:** Works with any setup whether you use Vue.js as a progressive enhancement or in a complex setup
+- **🦾 Progressive:** Works whether you use Vue.js as a progressive enhancement or in a complex setup
 - **✅ Built-in Rules:** Companion lib with 25+ Rules that covers most needs in most web applications
 - **🌐 i18n:** 45+ locales for built-in rules contributed by developers from all over the world
 
@@ -55,7 +54,9 @@ The main v4 version supports Vue 3.x only, for previous versions of Vue, check t
 
 ### Usage
 
-#### Declarative Components (Recommended)
+vee-validate offers two styles to integrate form validation into your Vue.js apps
+
+#### Declarative Components
 
 Higher-order components are better suited for most of your cases. Register the `Field` and `Form` components and create a simple `required` validator:
 
