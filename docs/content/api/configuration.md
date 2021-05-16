@@ -12,7 +12,7 @@ vee-validate exposes global configs to help with a few repeated or certain behav
 
 | Option                | Type                            | Description                                                                                                                                                                                                                                           |
 | --------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| bails                 | `boolean`                       | Whether to run validations to completion or quit on the first, default is `true` error                                                                                                                                                                |
+| bails                 | `boolean`                       | Whether to run validations to completion or quit on the first, default is `true`. Doesn't affect `yup` schemas                                                                                                                                        |
 | generateMessage       | `(ctx: FieldContext) => string` | A message generator function for i18n libraries and a fallback for rules with no messages. For more information about the `FieldContext` type and the purpose of this, see the [Global Message Generator Guide](/guide/i18n#global-message-generator) |
 | validateOnBlur        | `boolean`                       | If validation should be triggered on `blur` event, default is `true`                                                                                                                                                                                  |
 | validateOnChange      | `boolean`                       | If validation should be triggered on `change` event, default is `true`                                                                                                                                                                                |
@@ -34,3 +34,14 @@ configure({
   bails: false,
 });
 ```
+
+<doc-tip>
+
+Note that the following config do not affect `useField`, they only apply to the `<Field />` component:
+
+- `validateOnBlur`
+- `validateOnChange`
+- `validateOnInput`
+- `validateOnModelUpdate`
+
+</doc-tip>
