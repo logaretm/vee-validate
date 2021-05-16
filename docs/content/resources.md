@@ -8,7 +8,12 @@ order: 1
 
 ## Talks
 
-- [What's new in vee-validate v4](https://youtu.be/_r6PjzFLbqw) by [Abdelrahman Awad](https://twitter.com/logaretm) @ Vue Global Summit - Jul 18, 2020
+- [What's new in vee-validate v4](https://youtu.be/_r6PjzFLbqw) by [Abdelrahman Awad](https://twitter.com/logaretm) - Jul 18, 2020
+- [Vue Form Validation w/ VeeValidate](https://www.youtube.com/watch?v=KN1ij6hWVDs) by [Aaron Saunders](https://twitter.com/aaronksaunders) - Apr 30, 2021
+
+## Community Videos
+
+- [Managing Form Validation with Custom Form Components And Vee-Validate Composition API](https://www.youtube.com/watch?v=2ET7IH57XwQ) by [Aaron Saunders](https://twitter.com/aaronksaunders)
 
 ## Products
 
