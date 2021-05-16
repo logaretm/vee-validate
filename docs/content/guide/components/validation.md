@@ -359,6 +359,22 @@ You can also specify if a `handleChange` call should trigger validation or not b
 </Field>
 ```
 
+<doc-tip title="Vue components validation triggers">
+
+When applying `v-bind="field"` to a Vue component, be careful that the listeners will both be applied for Vue and native DOM events, meaning you might trigger validation unintentionally.
+
+It is recommended that you listen to the proper events when using `v-bind` with custom components, the following sample uses `modelValue` events.
+
+```vue
+<Field v-slot="{ handleChange, field }">
+  <CustomInput :modelValue="field.value" @update:modelValue="handleChange" />
+</Field>
+```
+
+For 3rd party components you may consult their documentation to figure which events to trigger validation for. Here are a few examples for the common UI frameworks [here](/examples/ui-libraries).
+
+</doc-tip>
+
 ## Displaying Error Messages
 
 ### Using the Field slot-props
