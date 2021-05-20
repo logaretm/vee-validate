@@ -106,7 +106,7 @@ A simple validation schema can be an object containing field names as keys and v
 ```vue
 <template>
   <Form @submit="submit" :validation-schema="simpleSchema">
-    <Field name="email" >
+    <Field name="email" />
     <ErrorMessage name="email" />
 
     <Field name="password" type="password" />
