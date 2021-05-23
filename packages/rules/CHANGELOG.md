@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/logaretm/vee-validate/compare/v4.4.0-alpha.2...v4.4.0) (2021-05-23)
+
+
+### Bug Fixes
+
+* export the URL rule closes [#3310](https://github.com/logaretm/vee-validate/issues/3310) ([50b6b64](https://github.com/logaretm/vee-validate/commit/50b6b64bf0b2b9a905946ed0ef7b8252501b0ccb))
+
+
+
+
+
 # [4.4.0-alpha.2](https://github.com/logaretm/vee-validate/compare/v4.4.0-alpha.1...v4.4.0-alpha.2) (2021-05-14)
 
 **Note:** Version bump only for package @vee-validate/rules

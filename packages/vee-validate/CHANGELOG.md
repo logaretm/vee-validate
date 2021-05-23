@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/logaretm/vee-validate/compare/v4.4.0-alpha.2...v4.4.0) (2021-05-23)
+
+
+### Bug Fixes
+
+* seperate model detection from event emitting closes [#3312](https://github.com/logaretm/vee-validate/issues/3312) ([5e72852](https://github.com/logaretm/vee-validate/commit/5e72852e80b971121d10422cf84085b07bb2d8fb))
+
+
+
+
+
 # [4.4.0-alpha.2](https://github.com/logaretm/vee-validate/compare/v4.4.0-alpha.1...v4.4.0-alpha.2) (2021-05-14)
 
 
