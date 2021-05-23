@@ -75,6 +75,49 @@ test('listens for input, blur events to set flags', async () => {
   expect(wrapper).toHaveElement('#dirty');
 });
 
+test.each([
+  [5, 10, true],
+  [5, 5, false],
+  ['my value', 'new value', true],
+  ['my value', 'my value', false],
+  [['apple', 'orange', 'banana'], ['lemon', 'orange', 'strawberry'], true],
+  [['apple', 'orange', 'banana'], ['apple', 'orange', 'banana'], false],
+  [{ fruit: 'apple', vegetable: 'peas' }, { fruit: 'lemon', vegetable: 'carrot' }, true],
+  [{ fruit: 'apple', vegetable: 'peas' }, { fruit: 'apple', vegetable: 'peas' }, false]
+])('listens for input, blur events to set "changed" flag', async (initialValue, newValue, expectedFlag) => {
+  const wrapper = mount(
+    {
+      data: () => ({
+        value: initialValue
+      }),
+      components: {
+        CustomInput: {
+          name: 'CustomInput',
+          props: ['value'],
+          template: `
+        <p id="input">{{ value }}</p>
+      `
+        }
+      },
+      template: `
+      <ValidationProvider rules="required" v-slot="{ changed }">
+      <CustomInput v-model="value"/>
+      <span id="changed">{{ changed }}</span>
+      </ValidationProvider>
+    `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  const input = wrapper.findComponent({ name: 'CustomInput' });
+  const changedSpan = wrapper.find('#changed');
+  input.vm.$emit('blur');
+  await flushPromises();
+  input.vm.$emit('input', newValue);
+  await flushPromises();
+  expect(changedSpan.text()).toContain(expectedFlag);
+});
+
 test('validates lazy models', async () => {
   const wrapper = mount(
     {

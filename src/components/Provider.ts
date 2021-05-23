@@ -256,7 +256,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     syncValue(v: any) {
       const value = normalizeEventValue(v);
       this.value = value;
-      this.flags.changed = this.initialValue !== value;
+      this.flags.changed = !isEqual(this.initialValue, value);
     },
     reset() {
       this.errors = [];
@@ -319,7 +319,7 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
         invalid: !!errors.length,
         failed: !!errors.length,
         validated: true,
-        changed: this.value !== this.initialValue
+        changed: !isEqual(this.value, this.initialValue)
       });
     },
     registerField() {
