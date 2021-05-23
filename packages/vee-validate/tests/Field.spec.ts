@@ -2,7 +2,7 @@ import flushPromises from 'flush-promises';
 import { defineRule, configure } from '@/vee-validate';
 import { mountWithHoc, setValue, dispatchEvent, setChecked } from './helpers';
 import * as yup from 'yup';
-import { ref, Ref } from 'vue';
+import { reactive, ref, Ref } from 'vue';
 
 jest.useFakeTimers();
 
@@ -984,5 +984,27 @@ describe('<Field />', () => {
     dispatchEvent(input, 'blur');
     await flushPromises();
     expect(error.textContent).toBe(errorMessage);
+  });
+
+  //  #3312
+  test('v-model on a non-existent nested prop should still emit model events', async () => {
+    const form = reactive({});
+    const wrapper = mountWithHoc({
+      setup() {
+        return { form };
+      },
+      template: `
+      <div>
+        <Field v-model="form.field" name="field" />
+      </div>
+    `,
+    });
+
+    await flushPromises();
+    const input = wrapper.$el.querySelector('input');
+    input.value = 'hello';
+    dispatchEvent(input, 'input');
+    await flushPromises();
+    expect((form as any).field).toBe('hello');
   });
 });

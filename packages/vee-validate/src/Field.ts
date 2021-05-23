@@ -1,4 +1,4 @@
-import { h, defineComponent, toRef, SetupContext, resolveDynamicComponent, computed, watch } from 'vue';
+import { h, defineComponent, toRef, SetupContext, resolveDynamicComponent, computed, watch, PropType } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
 import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent } from './utils';
@@ -69,13 +69,17 @@ export const Field = defineComponent({
       type: null,
       default: () => ({}),
     },
+    'onUpdate:modelValue': {
+      type: (null as unknown) as PropType<((e: any) => unknown) | undefined>,
+      default: undefined,
+    },
   },
-  emits: ['update:modelValue'],
   setup(props, ctx) {
     const rules = toRef(props, 'rules');
     const name = toRef(props, 'name');
     const label = toRef(props, 'label');
     const uncheckedValue = toRef(props, 'uncheckedValue');
+    const hasModelEvents = isPropPresent(props, 'onUpdate:modelValue');
 
     const {
       errors,
@@ -104,14 +108,14 @@ export const Field = defineComponent({
     });
 
     // If there is a v-model applied on the component we need to emit the `update:modelValue` whenever the value binding changes
-    const onChangeHandler = isPropPresent(props, 'modelValue')
+    const onChangeHandler = hasModelEvents
       ? function handleChangeWithModel(e: unknown, shouldValidate = true) {
           handleChange(e, shouldValidate);
           ctx.emit('update:modelValue', value.value);
         }
       : handleChange;
 
-    const onInputHandler = isPropPresent(props, 'modelValue')
+    const onInputHandler = hasModelEvents
       ? function handleChangeWithModel(e: any) {
           handleInput(e);
           ctx.emit('update:modelValue', value.value);
@@ -151,15 +155,13 @@ export const Field = defineComponent({
       return attrs;
     });
 
-    if (isPropPresent(props, 'modelValue')) {
-      const modelValue = toRef(props, 'modelValue');
-      watch(modelValue, newModelValue => {
-        if (newModelValue !== applyModifiers(value.value, props.modelModifiers)) {
-          value.value = newModelValue;
-          validateField();
-        }
-      });
-    }
+    const modelValue = toRef(props, 'modelValue');
+    watch(modelValue, newModelValue => {
+      if (newModelValue !== applyModifiers(value.value, props.modelModifiers)) {
+        value.value = newModelValue;
+        validateField();
+      }
+    });
 
     function slotProps() {
       return {
