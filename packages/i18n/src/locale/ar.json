@@ -25,6 +25,7 @@
     "regex": "الحقل {field} غير صحيح",
     "required": "{field} مطلوب",
     "required_if": "حقل {field} مطلوب",
-    "size": "{field} يجب ان يكون اقل من 0:{size} كيلوبايت"
+    "size": "{field} يجب ان يكون اقل من 0:{size} كيلوبايت",
+    "url": "حقل {field} ليس رابطاً صحيحاً"
   }
 }

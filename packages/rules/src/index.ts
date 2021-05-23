@@ -27,6 +27,7 @@ import one_of from './one_of';
 import regex from './regex';
 import required from './required';
 import size from './size';
+import url from './url';
 
 export {
   alpha_dash,
@@ -55,6 +56,7 @@ export {
   regex,
   required,
   size,
+  url,
 };
 
 const all: Record<string, ValidationRuleFunction<unknown, any>> = {
@@ -84,6 +86,7 @@ const all: Record<string, ValidationRuleFunction<unknown, any>> = {
   regex,
   required,
   size,
+  url,
 };
 
 export default all;
