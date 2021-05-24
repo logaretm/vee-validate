@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.4.1](https://github.com/logaretm/vee-validate/compare/v4.4.0...v4.4.1) (2021-05-24)
+
+
+### Bug Fixes
+
+* forgot adding errors in useValidationForm ([d032d3b](https://github.com/logaretm/vee-validate/commit/d032d3b55438169fa87c18d89e073fffe3988d56))
+* re-introduce the errors prop back on the form validation result closes [#3317](https://github.com/logaretm/vee-validate/issues/3317) ([b439a73](https://github.com/logaretm/vee-validate/commit/b439a73bf3c37298c251b74223984d54b8949a95))
+
+
+
+
+
 # [4.4.0](https://github.com/logaretm/vee-validate/compare/v4.4.0-alpha.2...v4.4.0) (2021-05-23)
 
 
