@@ -202,7 +202,7 @@ export async function validateYupSchema<TValues>(
   schema: SchemaOf<TValues>,
   values: TValues
 ): Promise<FormValidationResult<TValues>> {
-  const errors: ValidationError[] = await (schema as YupValidator)
+  const errorObjects: ValidationError[] = await (schema as YupValidator)
     .validate(values, { abortEarly: false })
     .then(() => [])
     .catch((err: ValidationError) => {
@@ -216,16 +216,20 @@ export async function validateYupSchema<TValues>(
       return err.inner || [];
     });
 
-  const results = errors.reduce((acc, err) => {
-    const messages = err.errors;
-    acc[err.path as keyof TValues] = { valid: !messages.length, errors: messages };
-
-    return acc;
-  }, {} as Partial<Record<keyof TValues, ValidationResult>>);
+  const results: Partial<Record<keyof TValues, ValidationResult>> = {};
+  const errors: Partial<Record<keyof TValues, string>> = {};
+  for (const error of errorObjects) {
+    const messages = error.errors;
+    results[error.path as keyof TValues] = { valid: !messages.length, errors: messages };
+    if (messages.length) {
+      errors[error.path as keyof TValues] = messages[0];
+    }
+  }
 
   return {
-    valid: !errors.length,
+    valid: !errorObjects.length,
     results,
+    errors,
   };
 }
 
@@ -249,21 +253,25 @@ export async function validateObjectSchema<TValues>(
   });
 
   let isAllValid = true;
-  const results = (await Promise.all(validations)).reduce((acc, result) => {
-    acc[result.path as keyof TValues] = {
+  const validationResults = await Promise.all(validations);
+
+  const results: Partial<Record<keyof TValues, ValidationResult>> = {};
+  const errors: Partial<Record<keyof TValues, string>> = {};
+  for (const result of validationResults) {
+    results[result.path as keyof TValues] = {
       valid: result.valid,
       errors: result.errors,
-    } as ValidationResult;
+    };
 
     if (!result.valid) {
       isAllValid = false;
+      errors[result.path as keyof TValues] = result.errors[0];
     }
-
-    return acc;
-  }, {} as Partial<Record<keyof TValues, ValidationResult>>);
+  }
 
   return {
     valid: isAllValid,
     results,
+    errors,
   };
 }

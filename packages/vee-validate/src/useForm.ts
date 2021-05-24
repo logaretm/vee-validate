@@ -337,7 +337,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
 
     // No schema, each field is responsible to validate itself
-    const results = await Promise.all(
+    const validations = await Promise.all(
       fields.value.map(f => {
         return f.validate().then((result: ValidationResult) => {
           return {
@@ -349,16 +349,23 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       })
     );
 
-    return {
-      valid: results.every(r => r.valid),
-      results: results.reduce((acc, r) => {
-        acc[r.key as keyof TValues] = {
-          valid: r.valid,
-          errors: r.errors,
-        };
+    const results: Partial<Record<keyof TValues, ValidationResult>> = {};
+    const errors: Partial<Record<keyof TValues, string>> = {};
+    for (const validation of validations) {
+      results[validation.key as keyof TValues] = {
+        valid: validation.valid,
+        errors: validation.errors,
+      };
 
-        return acc;
-      }, {} as Partial<Record<keyof TValues, ValidationResult>>),
+      if (validation.errors.length) {
+        errors[validation.key as keyof TValues] = validation.errors[0];
+      }
+    }
+
+    return {
+      valid: validations.every(r => r.valid),
+      results,
+      errors,
     };
   }
 
@@ -453,7 +460,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   async function validateSchema(mode: SchemaValidationMode): Promise<FormValidationResult<TValues>> {
     const schemaValue = unref(schema);
     if (!schemaValue) {
-      return { valid: true, results: {} };
+      return { valid: true, results: {}, errors: {} };
     }
 
     const formResult = isYupValidator(schemaValue)
@@ -480,6 +487,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
           valid: !messages.length,
         };
         validation.results[path as keyof TValues] = fieldResult;
+        if (!fieldResult.valid) {
+          validation.errors[path as keyof TValues] = fieldResult.errors[0];
+        }
 
         // field not rendered
         if (!field) {
@@ -503,7 +513,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
         return validation;
       },
-      { valid: formResult.valid, results: {} } as FormValidationResult<TValues>
+      { valid: formResult.valid, results: {}, errors: {} } as FormValidationResult<TValues>
     );
   }
 

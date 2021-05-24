@@ -95,6 +95,7 @@ export interface FormActions<TValues extends Record<string, unknown>> {
 export interface FormValidationResult<TValues> {
   valid: boolean;
   results: Partial<Record<keyof TValues, ValidationResult>>;
+  errors: Partial<Record<keyof TValues, string>>;
 }
 
 export interface SubmissionContext<TValues extends Record<string, unknown> = Record<string, unknown>>
