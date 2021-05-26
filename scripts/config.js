@@ -2,12 +2,15 @@ const path = require('path');
 const fs = require('fs');
 const { rollup } = require('rollup');
 const filesize = require('filesize');
-const uglify = require('uglify-js');
+const Terser = require('terser');
 const chalk = require('chalk');
 const gzipSize = require('gzip-size');
 const typescript = require('rollup-plugin-typescript2');
 const json = require('rollup-plugin-json');
 const replace = require('rollup-plugin-replace');
+const resolve = require('rollup-plugin-node-resolve');
+const commonjs = require('rollup-plugin-commonjs');
+
 const version = process.env.VERSION || require('../package.json').version;
 
 const commons = {
@@ -35,24 +38,32 @@ const utils = {
     return `| Size: ${filesize(size)} | Gzip: ${filesize(gzipped)}`;
   },
   async writeBundle({ input, output }, fileName, minify = false) {
-    const bundle = await rollup(input);
-    const {
-      output: [{ code }]
-    } = await bundle.generate(output);
+    try {
+      const bundle = await rollup(input);
+      const {
+        output: [{ code }]
+      } = await bundle.generate(output);
 
-    let outputPath = path.join(paths.dist, fileName);
-    fs.writeFileSync(outputPath, code);
-    let stats = this.stats({ code, path: outputPath });
-    // eslint-disable-next-line
-    console.log(`${chalk.green('Output File:')} ${fileName} ${stats}`);
-
-    if (minify) {
-      const minifiedFileName = fileName.replace('.js', '') + '.min.js';
-      outputPath = path.join(paths.dist, minifiedFileName);
-      fs.writeFileSync(outputPath, uglify.minify(code, commons.uglifyOptions).code);
-      stats = this.stats({ code, path: outputPath });
+      let outputPath = path.join(paths.dist, fileName);
+      fs.writeFileSync(outputPath, code);
+      let stats = this.stats({ code, path: outputPath });
       // eslint-disable-next-line
-      console.log(`${chalk.green('Output File:')} ${minifiedFileName} ${stats}`);
+      console.log(`${chalk.green('Output File:')} ${fileName} ${stats}`);
+
+      if (minify) {
+        const minifiedFileName = fileName.replace('.js', '') + '.min.js';
+        outputPath = path.join(paths.dist, minifiedFileName);
+        const { code: minifiedCode } = await Terser.minify(code, {
+          compress: true,
+          mangle: true
+        });
+        fs.writeFileSync(outputPath, minifiedCode);
+        stats = this.stats({ code, path: outputPath });
+        // eslint-disable-next-line
+        console.log(`${chalk.green('Output File:')} ${minifiedFileName} ${stats}`);
+      }
+    } catch (err) {
+      console.log(err);
     }
 
     return true;
@@ -99,6 +110,10 @@ function genConfig(options) {
       plugins: [
         json(),
         typescript({ typescript: require('typescript'), useTsconfigDeclarationDir: true }),
+        commonjs(),
+        resolve({
+          dedupe: ['fast-deep-equal/es6', 'fast-deep-equal']
+        }),
         replace({ __VERSION__: version })
       ]
     },
