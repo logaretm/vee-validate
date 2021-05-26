@@ -28,41 +28,6 @@ export function isRefEqual(lhs: any, rhs: any) {
   return lhs === rhs;
 }
 
-/**
- * Shallow object comparison.
- */
-export function isEqual(lhs: any, rhs: any): boolean {
-  if (lhs instanceof RegExp && rhs instanceof RegExp) {
-    return isEqual(lhs.source, rhs.source) && isEqual(lhs.flags, rhs.flags);
-  }
-
-  if (Array.isArray(lhs) && Array.isArray(rhs)) {
-    if (lhs.length !== rhs.length) return false;
-
-    for (let i = 0; i < lhs.length; i++) {
-      if (!isEqual(lhs[i], rhs[i])) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  // if both are objects, compare each key recursively.
-  if (isObject(lhs) && isObject(rhs)) {
-    return (
-      Object.keys(lhs).every(key => {
-        return isEqual(lhs[key], rhs[key]);
-      }) &&
-      Object.keys(rhs).every(key => {
-        return isEqual(lhs[key], rhs[key]);
-      })
-    );
-  }
-
-  return isRefEqual(lhs, rhs);
-}
-
 // Checks if a given value is not an empty string or null or undefined.
 export function isSpecified(val: string | null | undefined): boolean {
   if (val === '') {
@@ -72,6 +37,7 @@ export function isSpecified(val: string | null | undefined): boolean {
   return !isNullOrUndefined(val);
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export function isCallable(fn: unknown): fn is Function {
   return typeof fn === 'function';
 }

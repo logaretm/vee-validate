@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
+import isEqual from 'fast-deep-equal/es6';
 import { normalizeRules, extractLocators } from '../utils/rules';
 import { normalizeEventValue } from '../utils/events';
 import { findInputNodes, normalizeChildren, resolveRules, isHTMLNode } from '../utils/vnode';
-import { isCallable, isEqual, isNullOrUndefined, createFlags, includes, isLocator } from '../utils';
+import { isCallable, isNullOrUndefined, createFlags, includes, isLocator } from '../utils';
 import { getConfig, ValidationClassMap } from '../config';
 import { validate } from '../validate';
 import { RuleContainer } from '../extend';
