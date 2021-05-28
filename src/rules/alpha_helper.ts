@@ -27,7 +27,8 @@ export const alpha: { [k: string]: RegExp } = {
   uk: /^[А-ЩЬЮЯЄІЇҐ]*$/i,
   ar: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]*$/,
   az: /^[A-ZÇƏĞİıÖŞÜ]*$/i,
-  el: /^[Α-ώ]*$/i
+  el: /^[Α-ώ]*$/i,
+  ja:  /[\u3000-\u303F]|[\u3040-\u309F]|[\u30A0-\u30FF]|[\uFF00-\uFFEF]|[\u4E00-\u9FAF]/g
 };
 
 export const alphaSpaces: { [k: string]: RegExp } = {
@@ -53,7 +54,8 @@ export const alphaSpaces: { [k: string]: RegExp } = {
   uk: /^[А-ЩЬЮЯЄІЇҐ\s]*$/i,
   ar: /^[ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ\s]*$/,
   az: /^[A-ZÇƏĞİıÖŞÜ\s]*$/i,
-  el: /^[Α-ώ\s]*$/i
+  el: /^[Α-ώ\s]*$/i,
+  ja:  /[\u3000-\u303F]|[\u3040-\u309F]|[\u30A0-\u30FF]|[\uFF00-\uFFEF]|[\u4E00-\u9FAF]/g
 };
 
 export const alphanumeric: { [k: string]: RegExp } = {
@@ -79,7 +81,8 @@ export const alphanumeric: { [k: string]: RegExp } = {
   uk: /^[0-9А-ЩЬЮЯЄІЇҐ]*$/i,
   ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ]*$/,
   az: /^[0-9A-ZÇƏĞİıÖŞÜ]*$/i,
-  el: /^[0-9Α-ώ]*$/i
+  el: /^[0-9Α-ώ]*$/i,
+  ja:  /[\u3000-\u303F]|[\u3040-\u309F]|[\u30A0-\u30FF]|[\uFF00-\uFFEF]|[\u4E00-\u9FAF]/g
 };
 
 export const alphaDash: { [k: string]: RegExp } = {
@@ -105,5 +108,6 @@ export const alphaDash: { [k: string]: RegExp } = {
   uk: /^[0-9А-ЩЬЮЯЄІЇҐ_-]*$/i,
   ar: /^[٠١٢٣٤٥٦٧٨٩0-9ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىيًٌٍَُِّْٰ_-]*$/,
   az: /^[0-9A-ZÇƏĞİıÖŞÜ_-]*$/i,
-  el: /^[0-9Α-ώ_-]*$/i
+  el: /^[0-9Α-ώ_-]*$/i,
+  ja:  /[\u3000-\u303F]|[\u3040-\u309F]|[\u30A0-\u30FF]|[\uFF00-\uFFEF]|[\u4E00-\u9FAF]/g
 };
