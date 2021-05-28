@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.4.2](https://github.com/logaretm/vee-validate/compare/v4.4.1...v4.4.2) (2021-05-28)
+
+
+### Bug Fixes
+
+* clean up the old values path when fields exchange names fixes [#3325](https://github.com/logaretm/vee-validate/issues/3325) ([fe51c12](https://github.com/logaretm/vee-validate/commit/fe51c126ae6258ac0888ee47d9d01a27b889a5c1))
+
+
+
+
+
 ## [4.4.1](https://github.com/logaretm/vee-validate/compare/v4.4.0...v4.4.1) (2021-05-24)
 
 
