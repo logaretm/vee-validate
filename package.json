@@ -21,6 +21,7 @@
     "ts:defs": "node scripts/definitions.js",
     "build": "npm run build:main && npm run ts:defs && npm run build:locale",
     "cover": "jest --coverage",
+    "cover:ci": "jest --coverage --ci --runInBand --detectOpenHandles",
     "prepublishOnly": "npm run build && npm run ts:defs"
   },
   "keywords": [
