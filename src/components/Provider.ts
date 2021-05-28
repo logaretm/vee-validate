@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import Vue, { CreateElement, VNode, VueConstructor } from 'vue';
-import isEqual from 'fast-deep-equal/es6';
+import isEqual from 'fast-deep-equal';
 import { normalizeRules, extractLocators } from '../utils/rules';
 import { normalizeEventValue } from '../utils/events';
 import { findInputNodes, normalizeChildren, resolveRules, isHTMLNode } from '../utils/vnode';
