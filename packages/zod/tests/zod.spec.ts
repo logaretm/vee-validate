@@ -100,17 +100,17 @@ test('cross field validation with zod', async () => {
   const CONFIRM_MSG = "Passwords don't match";
   const wrapper = mountWithHoc({
     setup() {
-      const schema = toFormValidator(
-        zod
-          .object({
-            password: zod.string(),
-            confirmation: zod.string(),
-          })
-          .refine(data => data.confirmation === data.password, {
-            message: CONFIRM_MSG,
-            path: ['confirmation'],
-          })
-      );
+      const original = zod
+        .object({
+          password: zod.string(),
+          confirmation: zod.string(),
+        })
+        .refine(data => data.confirmation === data.password, {
+          message: CONFIRM_MSG,
+          path: ['confirmation'],
+        });
+
+      const schema = toFormValidator(original);
 
       const initialValues = {
         email: '',

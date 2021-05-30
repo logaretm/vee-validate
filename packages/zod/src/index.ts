@@ -1,4 +1,4 @@
-import type { ZodObject, ZodType, ZodTypeDef, TypeOf as ZodTypeOf, ZodRawShape } from 'zod';
+import type { ZodObject, ZodType, ZodTypeDef, TypeOf as ZodTypeOf, ZodRawShape, ZodEffects } from 'zod';
 import type { BaseSchema, SchemaOf } from 'yup';
 import { isIndex } from '../../shared';
 
@@ -6,7 +6,7 @@ import { isIndex } from '../../shared';
  * Transforms a Zod's base type schema to yup's base type schema
  */
 export function toFieldValidator<TValue = unknown, TDef extends ZodTypeDef = ZodTypeDef, TInput = TValue>(
-  zodSchema: ZodType<TValue, TDef, TInput>
+  zodSchema: ZodType<TValue, TDef, TInput> | ZodEffects<ZodType<TValue, TDef, TInput>>
 ): BaseSchema<TValue> {
   return {
     async validate(value: TValue) {
@@ -39,7 +39,7 @@ type ToBaseTypes<TShape extends ZodRawShape> = {
 export function toFormValidator<
   TShape extends ZodRawShape,
   TValues extends Record<string, unknown> = ToBaseTypes<TShape>
->(zodSchema: ZodObject<TShape>): SchemaOf<TValues> {
+>(zodSchema: ZodObject<TShape> | ZodEffects<ZodObject<TShape>>): SchemaOf<TValues> {
   return {
     async validate(value: TValues) {
       const result = await zodSchema.safeParseAsync(value);

@@ -24,10 +24,10 @@
     "dist/*.d.ts"
   ],
   "peerDependencies": {
-    "vee-validate": "^4.1.18",
-    "zod": "^2.0.0-beta.29"
+    "vee-validate": "^4.4.0",
+    "zod": "^3.1.0"
   },
   "devDependencies": {
-    "zod": "^2.0.0-beta.29"
+    "zod": "^3.1.0"
   }
 }
