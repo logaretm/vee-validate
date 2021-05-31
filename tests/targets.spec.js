@@ -182,7 +182,6 @@ describe('cross-field syntax', () => {
         field: ''
       }
     });
-    console.log(result);
 
     expect(result.required).toBe(false);
 
@@ -191,7 +190,6 @@ describe('cross-field syntax', () => {
         field: 'text'
       }
     });
-    console.log(result);
 
     expect(result.required).toBe(true);
   });
