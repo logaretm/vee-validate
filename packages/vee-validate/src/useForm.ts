@@ -465,6 +465,17 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }, {} as Record<string, string>);
   });
 
+  const fieldBailsMap = computed(() => {
+    return keysOf(fieldsById.value).reduce((map, path) => {
+      const field = normalizeField(fieldsById.value[path]);
+      if (field) {
+        map[path as string] = field.bails ?? true;
+      }
+
+      return map;
+    }, {} as Record<string, boolean>);
+  });
+
   async function validateSchema(mode: SchemaValidationMode): Promise<FormValidationResult<TValues>> {
     const schemaValue = unref(schema);
     if (!schemaValue) {
@@ -473,7 +484,10 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
     const formResult = isYupValidator(schemaValue)
       ? await validateYupSchema(schemaValue, formValues)
-      : await validateObjectSchema(schemaValue as RawFormSchema<TValues>, formValues, { names: fieldNames.value });
+      : await validateObjectSchema(schemaValue as RawFormSchema<TValues>, formValues, {
+          names: fieldNames.value,
+          bailsMap: fieldBailsMap.value,
+        });
 
     // fields by id lookup
     const fieldsById = formCtx.fieldsById.value || {};

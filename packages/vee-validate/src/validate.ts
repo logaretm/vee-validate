@@ -236,14 +236,14 @@ export async function validateYupSchema<TValues>(
 export async function validateObjectSchema<TValues>(
   schema: RawFormSchema<TValues>,
   values: TValues,
-  opts?: Partial<{ names: Record<string, string>; bails: boolean }>
+  opts?: Partial<{ names: Record<string, string>; bailsMap: Record<string, boolean> }>
 ): Promise<FormValidationResult<TValues>> {
   const paths = keysOf(schema) as string[];
   const validations = paths.map(async path => {
     const fieldResult = await validate(getFromPath(values as any, path), schema[path as keyof TValues], {
       name: opts?.names?.[path] || path,
       values: values as any,
-      bails: opts?.bails ?? true,
+      bails: opts?.bailsMap?.[path] ?? true,
     });
 
     return {

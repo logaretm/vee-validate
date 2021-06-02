@@ -71,16 +71,8 @@ export function useField<TValue = unknown>(
   opts?: Partial<FieldOptions<TValue>>
 ): FieldComposable<TValue> {
   const fid = ID_COUNTER >= Number.MAX_SAFE_INTEGER ? 0 : ++ID_COUNTER;
-  const {
-    initialValue,
-    validateOnMount,
-    bails,
-    type,
-    checkedValue,
-    label,
-    validateOnValueUpdate,
-    uncheckedValue,
-  } = normalizeOptions(unref(name), opts);
+  const { initialValue, validateOnMount, bails, type, checkedValue, label, validateOnValueUpdate, uncheckedValue } =
+    normalizeOptions(unref(name), opts);
 
   const form = injectWithSelf(FormContextSymbol);
   const {
@@ -205,6 +197,7 @@ export function useField<TValue = unknown>(
     checkedValue,
     uncheckedValue,
     checked,
+    bails,
     resetField,
     handleReset: () => resetField(),
     validate: validateWithStateMutation,

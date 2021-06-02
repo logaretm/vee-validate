@@ -6,9 +6,17 @@ import { computed, onErrorCaptured, reactive, ref, Ref } from 'vue';
 
 describe('<Form />', () => {
   const REQUIRED_MESSAGE = `This field is required`;
+  const MIN_MESSAGE = `This field is short`;
   defineRule('required', (value: unknown) => {
     if (!value) {
       return REQUIRED_MESSAGE;
+    }
+
+    return true;
+  });
+  defineRule('min', (value: unknown, args: any[]) => {
+    if (!value || String(value).length <= args[0]) {
+      return MIN_MESSAGE;
     }
 
     return true;
@@ -2044,5 +2052,34 @@ describe('<Form />', () => {
       }),
       expect.anything()
     );
+  });
+
+  // #3332
+  test('field bails prop should work with validation schema', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          schema: {
+            fname: 'required|min:3',
+          },
+        };
+      },
+      template: `
+      <VForm :validation-schema="schema">
+        <Field name="fname" :bails="false" v-slot="{ field, errors }">
+          <input type="text" v-bind="field" />
+          <div v-for="error in errors" :key="error" class="error">
+            {{ error }}
+          </div>
+        </Field>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const input = wrapper.$el.querySelector('input');
+    setValue(input, '');
+    await flushPromises();
+    expect(document.querySelectorAll('.error')).toHaveLength(2);
   });
 });
