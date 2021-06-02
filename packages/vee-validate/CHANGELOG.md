@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.4.3](https://github.com/logaretm/vee-validate/compare/v4.4.2...v4.4.3) (2021-06-02)
+
+
+### Bug Fixes
+
+* respect the Field bails option closes [#3332](https://github.com/logaretm/vee-validate/issues/3332) ([6679387](https://github.com/logaretm/vee-validate/commit/66793878e317f32f4759b3d01e27e3b9072eff67))
+
+
+
+
+
 ## [4.4.2](https://github.com/logaretm/vee-validate/compare/v4.4.1...v4.4.2) (2021-05-28)
 
 
