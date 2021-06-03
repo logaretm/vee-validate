@@ -1,4 +1,4 @@
-import { isIndex, isObject } from '../../../shared';
+import { isIndex, isNullOrUndefined, isObject } from '../../../shared';
 import { getCurrentInstance, inject, InjectionKey, warn as vueWarning } from 'vue';
 import { isContainerValue, isEmptyContainer, isNotNestedPath } from './assertions';
 import { PrivateFieldComposite } from '../types';
@@ -58,7 +58,7 @@ export function setInPath(object: NestedRecord, path: string, value: unknown): v
     }
 
     // Key does not exist, create a container for it
-    if (!(keys[i] in acc)) {
+    if (!(keys[i] in acc) || isNullOrUndefined(acc[keys[i]])) {
       // container can be either an object or an array depending on the next key if it exists
       acc[keys[i]] = isIndex(keys[i + 1]) ? [] : {};
     }
