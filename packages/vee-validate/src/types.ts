@@ -61,6 +61,7 @@ export interface PrivateFieldContext<TValue = unknown> {
   setValidationState(state: ValidationResult): void;
   setTouched(isTouched: boolean): void;
   setErrors(message: string | string[]): void;
+  setValue(value: TValue): void;
 }
 
 export type FieldContext<TValue = unknown> = Omit<PrivateFieldContext<TValue>, 'idx' | 'fid'>;

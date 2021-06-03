@@ -200,6 +200,10 @@ export function useField<TValue = unknown>(
     });
   }
 
+  function setValue(newValue: TValue) {
+    value.value = newValue;
+  }
+
   const field: PrivateFieldContext<TValue> = {
     idx: -1,
     fid,
@@ -223,6 +227,7 @@ export function useField<TValue = unknown>(
     setValidationState,
     setTouched,
     setErrors,
+    setValue,
   };
 
   provide(FieldContextKey, field);
