@@ -61,6 +61,7 @@ export interface PrivateFieldComposite<TValue = unknown> {
   setValidationState(state: ValidationResult): void;
   setTouched(isTouched: boolean): void;
   setErrors(message: string | string[]): void;
+  setValue(value: TValue): void;
 }
 
 export type FieldComposable<TValue = unknown> = Omit<PrivateFieldComposite<TValue>, 'idx' | 'fid'>;
