@@ -10,7 +10,7 @@ meta:
 
 # Overview
 
-Form validation is one of the most difficult subjects in frontend, not only you have to deal with ensuring correct values are submitted, you must also make sure to provide a suitable UX for your users. And we also have to deal with accessability and making sure our forms are inclusive and usable for all types of our users, doing form validation by hand is painful and is a lot of work and you won't probably cover localization and cross-field validation! **The time you spend working on a custom form validation solution is better spent building your application logic**.
+Form validation is one of the most difficult subjects in frontend, not only do you have to deal with ensuring correct values are submitted, you must also make sure to provide a suitable UX for your users. We also have to deal with accessibility and making sure our forms are inclusive and usable for all types of our users. Doing form validation by hand is painful, a lot of work, and fairly time consuming! **The time you spend working on a custom form validation solution is better spent building your application logic**.
 
 Most validation libraries will save you a lot of time, but `vee-validate` tackles the major pain points of form validation and addresses them in the most flexible way possible:
 
