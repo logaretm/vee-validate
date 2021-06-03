@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0-alpha.0](https://github.com/logaretm/vee-validate/compare/v4.4.3...v4.5.0-alpha.0) (2021-06-03)
+
+
+### Bug Fixes
+
+* make sure to create the container path if it exists while null or undefined ([79d3779](https://github.com/logaretm/vee-validate/commit/79d37798ccf2fef56714bdad4db553086df0ad48))
+
+
+### Features
+
+* expose setters in composition API ([61f942f](https://github.com/logaretm/vee-validate/commit/61f942f511e6fcceb10a74272ac845017ce88997))
+
+
+
+
+
 ## [4.4.3](https://github.com/logaretm/vee-validate/compare/v4.4.2...v4.4.3) (2021-06-02)
 
 
