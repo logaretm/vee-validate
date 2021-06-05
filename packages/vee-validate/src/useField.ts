@@ -417,7 +417,7 @@ export function useFieldMeta<TValue>(initialValue: MaybeRef<TValue>, currentValu
     touched: false,
     pending: false,
     valid: true,
-    validated: false,
+    validated: !!unref(errors).length,
     initialValue: computed(() => unref(initialValue) as TValue | undefined),
     dirty: computed(() => {
       return !isEqual(unref(currentValue), unref(initialValue));

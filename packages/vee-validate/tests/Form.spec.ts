@@ -2082,4 +2082,37 @@ describe('<Form />', () => {
     await flushPromises();
     expect(document.querySelectorAll('.error')).toHaveLength(2);
   });
+
+  // #3342
+  test('field with pre-register errors should be checked on register', async () => {
+    const isShown = ref(false);
+    const modelValue = ref('');
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          isShown,
+          modelValue,
+          schema: {
+            fname: 'required',
+          },
+        };
+      },
+      template: `
+      <VForm :validation-schema="schema" v-slot="{ errors }">
+        <Field v-if="isShown" name="fname" v-model="modelValue" />
+        <span>{{ errors.fname }}</span>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const span = wrapper.$el.querySelector('span');
+    expect(span.textContent).toBe(REQUIRED_MESSAGE);
+    modelValue.value = 'hello';
+    isShown.value = true;
+
+    await flushPromises();
+    // field was re-checked
+    expect(span.textContent).toBe('');
+  });
 });

@@ -103,6 +103,35 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }, {} as FormErrors<TValues>);
   });
 
+  /**
+   * Holds a computed reference to all fields names and labels
+   */
+  const fieldNames = computed(() => {
+    return keysOf(fieldsById.value).reduce((names, path) => {
+      const field = normalizeField(fieldsById.value[path]);
+      if (field) {
+        names[path as string] = unref(field.label || field.name) || '';
+      }
+
+      return names;
+    }, {} as Record<string, string>);
+  });
+
+  const fieldBailsMap = computed(() => {
+    return keysOf(fieldsById.value).reduce((map, path) => {
+      const field = normalizeField(fieldsById.value[path]);
+      if (field) {
+        map[path as string] = field.bails ?? true;
+      }
+
+      return map;
+    }, {} as Record<string, boolean>);
+  });
+
+  // mutable non-reactive reference to initial errors
+  // we need this to process initial errors then unset them
+  const initialErrors = { ...(opts?.initialErrors || {}) };
+
   // initial form values
   const { readonlyInitialValues, initialValues, setInitialValues } = useFormInitialValues<TValues>(
     fieldsById,
@@ -284,6 +313,18 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
         }
       );
     }
+
+    // if field already had errors (initial errors) that's not user-set, validate it again to ensure state is correct
+    // the difference being that `initialErrors` will contain the error message while other errors (pre-validated schema) won't have them as initial errors
+    // #3342
+    const path = unref(field.name);
+    const initialErrorMessage = unref(field.errorMessage);
+    if (initialErrorMessage && initialErrors?.[path] !== initialErrorMessage) {
+      validateField(path);
+    }
+
+    // marks the initial error as "consumed" so it won't be matched later with same non-initial error
+    delete initialErrors[path];
   }
 
   function unregisterField(field: PrivateFieldComposite<unknown>) {
@@ -450,31 +491,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     setInPath(formValues, path, value);
     setFieldInitialValue(path, value);
   }
-
-  /**
-   * Holds a computed reference to all fields names and labels
-   */
-  const fieldNames = computed(() => {
-    return keysOf(fieldsById.value).reduce((names, path) => {
-      const field = normalizeField(fieldsById.value[path]);
-      if (field) {
-        names[path as string] = unref(field.label || field.name) || '';
-      }
-
-      return names;
-    }, {} as Record<string, string>);
-  });
-
-  const fieldBailsMap = computed(() => {
-    return keysOf(fieldsById.value).reduce((map, path) => {
-      const field = normalizeField(fieldsById.value[path]);
-      if (field) {
-        map[path as string] = field.bails ?? true;
-      }
-
-      return map;
-    }, {} as Record<string, boolean>);
-  });
 
   async function validateSchema(mode: SchemaValidationMode): Promise<FormValidationResult<TValues>> {
     const schemaValue = unref(schema);
