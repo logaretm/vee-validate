@@ -16,6 +16,7 @@ export interface ValidationResult {
   errors: string[];
   failedRules: Record<string, string>;
   regenerateMap?: Record<string, () => string>;
+  required?: boolean;
 }
 
 export type VueValidationContext = Vue & {

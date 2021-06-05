@@ -67,6 +67,7 @@ export async function validate(
 
   return {
     valid: result.valid,
+    required: result.required,
     errors,
     failedRules,
     regenerateMap
@@ -77,10 +78,11 @@ export async function validate(
  * Starts the validation process.
  */
 async function _validate(field: FieldContext, value: any, { isInitial = false } = {}) {
-  const { shouldSkip, errors } = await _shouldSkip(field, value);
+  const { shouldSkip, required, errors } = await _shouldSkip(field, value);
   if (shouldSkip) {
     return {
       valid: !errors.length,
+      required,
       errors
     };
   }
@@ -104,6 +106,7 @@ async function _validate(field: FieldContext, value: any, { isInitial = false } 
       if (field.bails) {
         return {
           valid: false,
+          required,
           errors
         };
       }
@@ -112,6 +115,7 @@ async function _validate(field: FieldContext, value: any, { isInitial = false } 
 
   return {
     valid: !errors.length,
+    required,
     errors
   };
 }
@@ -122,7 +126,7 @@ async function _shouldSkip(field: FieldContext, value: any) {
   const errors: ReturnType<typeof _generateFieldError>[] = [];
   const isEmpty = isNullOrUndefined(value) || value === '' || isEmptyArray(value);
   const isEmptyAndOptional = isEmpty && field.skipIfEmpty;
-  let isRequired = false;
+  let isRequired;
 
   for (let i = 0; i < length; i++) {
     const rule = requireRules[i];
@@ -130,13 +134,12 @@ async function _shouldSkip(field: FieldContext, value: any) {
       name: rule,
       params: field.rules[rule]
     });
-
     if (!isObject(result)) {
       throw new Error('Require rules has to return an object (see docs)');
     }
 
-    if (result.required) {
-      isRequired = true;
+    if (result.required !== undefined) {
+      isRequired = result.required;
     }
 
     if (!result.valid && result.error) {
@@ -145,6 +148,7 @@ async function _shouldSkip(field: FieldContext, value: any) {
       if (field.bails) {
         return {
           shouldSkip: true,
+          required: result.required,
           errors
         };
       }
@@ -154,6 +158,7 @@ async function _shouldSkip(field: FieldContext, value: any) {
   if (isEmpty && !isRequired && !field.skipIfEmpty) {
     return {
       shouldSkip: false,
+      required: isRequired,
       errors
     };
   }
@@ -162,6 +167,7 @@ async function _shouldSkip(field: FieldContext, value: any) {
   if (!field.bails && !isEmptyAndOptional) {
     return {
       shouldSkip: false,
+      required: isRequired,
       errors
     };
   }
@@ -169,6 +175,7 @@ async function _shouldSkip(field: FieldContext, value: any) {
   // skip if the field is not required and has an empty value.
   return {
     shouldSkip: !isRequired && isEmpty,
+    required: isRequired,
     errors
   };
 }

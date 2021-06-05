@@ -305,6 +305,12 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
         invalid: !result.valid
       });
 
+      if (result.required !== undefined) {
+        this.setFlags({
+          required: result.required
+        });
+      }
+
       return result;
     },
     setErrors(errors: string[]) {
@@ -325,6 +331,12 @@ export const ValidationProvider = (Vue as withProviderPrivates).extend({
     },
     registerField() {
       updateRenderingContextRefs(this);
+    },
+    checkComputesRequiredState(): boolean {
+      const rules = { ...this._resolvedRules, ...this.normalizedRules };
+
+      const isRequired = Object.keys(rules).some(RuleContainer.isRequireRule);
+      return isRequired;
     }
   }
 });
@@ -442,9 +454,14 @@ function watchCrossFieldDep(ctx: ProviderInstance, depName: string, withHooks = 
 
   if (!isCallable(ctx._veeWatchers[depName]) && providers[depName]) {
     ctx._veeWatchers[depName] = providers[depName].$watch('value', () => {
+      const isComputesRequired = ctx.checkComputesRequiredState();
       if (ctx.flags.validated) {
         ctx._needsValidation = true;
         ctx.validate();
+      }
+      // Validate dependent field silently if it has rules with computesRequired
+      if (isComputesRequired && !ctx.flags.validated) {
+        ctx.validateSilent();
       }
     });
   }

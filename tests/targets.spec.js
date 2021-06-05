@@ -163,4 +163,34 @@ describe('cross-field syntax', () => {
     });
     expect(result.valid).toBe(true);
   });
+
+  test('should change required flag state', async () => {
+    extend('requiredIf', {
+      params: ['target'],
+      validate(val, { target }) {
+        console.log(target, val, 'target, val');
+        return {
+          valid: target === val,
+          required: !!target
+        };
+      },
+      computesRequired: true
+    });
+
+    let result = await validate('text', 'requiredIf:@field', {
+      values: {
+        field: ''
+      }
+    });
+
+    expect(result.required).toBe(false);
+
+    result = await validate('text', 'requiredIf:@field', {
+      values: {
+        field: 'text'
+      }
+    });
+
+    expect(result.required).toBe(true);
+  });
 });
