@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.4.4](https://github.com/logaretm/vee-validate/compare/v4.4.3...v4.4.4) (2021-06-05)
+
+
+### Bug Fixes
+
+* field with pre-register schema errors should be validated on register closes [#3342](https://github.com/logaretm/vee-validate/issues/3342) ([61c7359](https://github.com/logaretm/vee-validate/commit/61c73597b2e69c094e75c02476d825c5236710b5))
+* make sure to create the container path if it exists while null or undefined ([79d3779](https://github.com/logaretm/vee-validate/commit/79d37798ccf2fef56714bdad4db553086df0ad48))
+
+
+
+
+
 ## [4.4.3](https://github.com/logaretm/vee-validate/compare/v4.4.2...v4.4.3) (2021-06-02)
 
 
