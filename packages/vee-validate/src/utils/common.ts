@@ -16,9 +16,13 @@ type NestedRecord = Record<string, unknown> | { [k: string]: NestedRecord };
 /**
  * Gets a nested property value from an object
  */
-export function getFromPath<TValue = unknown>(object: NestedRecord | undefined, path: string): TValue | undefined {
+export function getFromPath<TValue = unknown>(
+  object: NestedRecord | undefined,
+  path: string,
+  fallback: TValue | undefined = undefined
+): TValue | undefined {
   if (!object) {
-    return undefined;
+    return fallback;
   }
 
   if (isNotNestedPath(path)) {
@@ -33,7 +37,7 @@ export function getFromPath<TValue = unknown>(object: NestedRecord | undefined, 
         return acc[propKey];
       }
 
-      return undefined;
+      return fallback;
     }, object as unknown);
 
   return resolvedValue as TValue | undefined;

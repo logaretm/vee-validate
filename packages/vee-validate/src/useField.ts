@@ -331,7 +331,7 @@ function useValidationState<TValue>({
   const initialValueRef = ref(unref(initValue)) as Ref<TValue>;
 
   const initialValue = computed(() => {
-    return (getFromPath<TValue>(unref(formInitialValues), unref(name)) ?? unref(initialValueRef)) as TValue;
+    return getFromPath<TValue>(unref(formInitialValues), unref(name), unref(initialValueRef)) as TValue;
   });
 
   const value = useFieldValue(initialValue, name, form);
@@ -379,7 +379,7 @@ function useValidationState<TValue>({
     const newValue =
       state && 'value' in state
         ? (state.value as TValue)
-        : ((getFromPath<TValue>(unref(formInitialValues), fieldPath) ?? unref(initValue)) as TValue);
+        : (getFromPath<TValue>(unref(formInitialValues), fieldPath, unref(initValue) as TValue) as TValue);
 
     if (form) {
       form.setFieldValue(fieldPath, newValue, { force: true });
