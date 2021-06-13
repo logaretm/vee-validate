@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.4.5](https://github.com/logaretm/vee-validate/compare/v4.4.4...v4.4.5) (2021-06-13)
+
+
+### Bug Fixes
+
+* correctly assign the initial value if it was null closes [#3352](https://github.com/logaretm/vee-validate/issues/3352) ([1e9cfd1](https://github.com/logaretm/vee-validate/commit/1e9cfd16591fab9cedf39dc9210151ab5b4be4c6))
+
+
+
+
+
 ## [4.4.4](https://github.com/logaretm/vee-validate/compare/v4.4.3...v4.4.4) (2021-06-05)
 
 
