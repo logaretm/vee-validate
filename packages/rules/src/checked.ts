@@ -1,14 +1,14 @@
 import { isNullOrUndefined } from '../../shared';
 
-const booleanValidator = (value: unknown) => {
-  if (isNullOrUndefined(value) || !getBoolean(value)) {
+const checkedValidator = (value: unknown) => {
+  if (isNullOrUndefined(value) || !getCheckedValue(value)) {
     return false;
   }
 
   return !!String(value).trim().length;
 };
 
-function getBoolean(value: unknown) {
+function getCheckedValue(value: unknown) {
   switch (value) {
     case true:
     case 'true':
@@ -29,4 +29,4 @@ function getBoolean(value: unknown) {
       return false;
   }
 }
-export default booleanValidator;
+export default checkedValidator;

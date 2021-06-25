@@ -1,4 +1,4 @@
-import validate from '../src/boolean';
+import validate from '../src/checked';
 
 test('validates required', () => {
   // valid
