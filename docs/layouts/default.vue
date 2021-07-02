@@ -5,7 +5,12 @@
       <main class="main">
         <Ad />
         <Nuxt />
-        <EditPage class="mt-20" />
+
+        <div class="mt-20 pt-2 border-t dark:border-gray-600 border-gray-200 flex items-center">
+          <EditPage class="" />
+
+          <Sponsorship />
+        </div>
       </main>
 
       <div class="lside hidden lg:block">
