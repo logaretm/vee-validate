@@ -120,6 +120,12 @@ Then in your template use `v-model` to bind the `value` to your input and displa
 
 Read the [documentation and demos](https://vee-validate.logaretm.com/v4).
 
+## Sponsorship
+
+You can help this this project by donating one time or by sponsoring via the following link
+
+<a href="https://www.buymeacoffee.com/logaretm" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-red.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
 ## Contributing
 
 You are welcome to contribute to this project, but before you do, please make sure you read the [contribution guide](CONTRIBUTING.md)
