@@ -70,7 +70,7 @@ export const Field = defineComponent({
       default: () => ({}),
     },
     'onUpdate:modelValue': {
-      type: (null as unknown) as PropType<((e: any) => unknown) | undefined>,
+      type: null as unknown as PropType<((e: any) => unknown) | undefined>,
       default: undefined,
     },
   },
@@ -123,9 +123,8 @@ export const Field = defineComponent({
       : handleInput;
 
     const fieldProps = computed(() => {
-      const { validateOnInput, validateOnChange, validateOnBlur, validateOnModelUpdate } = resolveValidationTriggers(
-        props
-      );
+      const { validateOnInput, validateOnChange, validateOnBlur, validateOnModelUpdate } =
+        resolveValidationTriggers(props);
       const baseOnBlur = [handleBlur, ctx.attrs.onBlur, validateOnBlur ? validateField : undefined].filter(Boolean);
       const baseOnInput = [(e: unknown) => onChangeHandler(e, validateOnInput), ctx.attrs.onInput].filter(Boolean);
       const baseOnChange = [(e: unknown) => onChangeHandler(e, validateOnChange), ctx.attrs.onChange].filter(Boolean);
@@ -211,7 +210,7 @@ function resolveTag(props: Record<string, any>, ctx: SetupContext<any>) {
   return tag;
 }
 
-function resolveValidationTriggers(props: ValidationTriggersProps) {
+function resolveValidationTriggers(props: Partial<ValidationTriggersProps>) {
   const { validateOnInput, validateOnChange, validateOnBlur, validateOnModelUpdate } = getConfig();
 
   return {

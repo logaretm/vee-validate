@@ -34,7 +34,7 @@ import { validateYupSchema, validateObjectSchema } from './validate';
 
 interface FormOptions<TValues extends Record<string, any>> {
   validationSchema?: MaybeRef<
-    Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | SchemaOf<TValues>
+    Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | SchemaOf<TValues> | undefined
   >;
   initialValues?: MaybeRef<TValues>;
   initialErrors?: Record<keyof TValues, string | undefined>;

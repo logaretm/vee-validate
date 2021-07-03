@@ -49,7 +49,7 @@ interface FieldOptions<TValue = unknown> {
   valueProp?: MaybeRef<TValue>;
   checkedValue?: MaybeRef<TValue>;
   uncheckedValue?: MaybeRef<TValue>;
-  label?: MaybeRef<string>;
+  label?: MaybeRef<string | undefined>;
 }
 
 type RuleExpression<TValue> =

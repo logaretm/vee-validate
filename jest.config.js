@@ -1,5 +1,6 @@
 module.exports = {
   preset: 'ts-jest',
+  testEnvironment: 'jsdom',
   rootDir: __dirname,
   testMatch: ['<rootDir>/packages/**/tests/**/*spec.[jt]s?(x)'],
   testPathIgnorePatterns: ['/helpers/', '/setup.ts'],

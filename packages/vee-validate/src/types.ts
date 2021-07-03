@@ -19,7 +19,7 @@ export type KnownKeys<T> = {
   ? U
   : never;
 
-export type MaybeRef<T> = Ref<T> | ComputedRef<T> | T;
+export type MaybeRef<T> = Ref<T> | T;
 
 export interface FieldMeta<TValue> {
   touched: boolean;
@@ -123,7 +123,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
   values: TValues;
   fieldsById: ComputedRef<Record<keyof TValues, PrivateFieldComposite | PrivateFieldComposite[]>>;
   submitCount: Ref<number>;
-  schema?: MaybeRef<RawFormSchema<TValues> | SchemaOf<TValues>>;
+  schema?: MaybeRef<RawFormSchema<TValues> | SchemaOf<TValues> | undefined>;
   validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues>>;
   validate(): Promise<FormValidationResult<TValues>>;
   validateField(field: keyof TValues): Promise<ValidationResult>;
