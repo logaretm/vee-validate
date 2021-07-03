@@ -133,5 +133,5 @@ export function extractLocators(params: Record<string, unknown> | unknown[]): Lo
 
   return keysOf(params)
     .filter(key => isLocator(params[key]))
-    .map(key => (params[key] as unknown) as Locator);
+    .map(key => params[key] as unknown as Locator);
 }

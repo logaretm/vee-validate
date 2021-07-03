@@ -2,7 +2,7 @@ import { defineRule, validate } from '@/vee-validate';
 
 test('passing a non-function as the validate method will throw', () => {
   expect(() => {
-    defineRule('noFn', ('' as unknown) as (value: any) => boolean);
+    defineRule('noFn', '' as unknown as (value: any) => boolean);
   }).toThrow();
 });
 

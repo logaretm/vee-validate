@@ -425,16 +425,13 @@ describe('<Field />', () => {
 
   test('avoids race conditions between successive validations', async () => {
     // A decreasing timeout (the most recent validation will finish before new ones).
-    defineRule(
-      'longRunning',
-      (value: unknown): Promise<boolean | string> => {
-        return new Promise(resolve => {
-          setTimeout(() => {
-            resolve(value === 42 ? true : 'No Life');
-          }, 20);
-        });
-      }
-    );
+    defineRule('longRunning', (value: unknown): Promise<boolean | string> => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          resolve(value === 42 ? true : 'No Life');
+        }, 20);
+      });
+    });
 
     const wrapper = mountWithHoc({
       template: `
