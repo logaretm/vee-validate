@@ -35,7 +35,7 @@ Depending on your setup, you might run into issues importing rules from `vee-val
 
 ## Installing All Rules
 
-This is not recommended, but you need to have all of the vee-validate rules pre-configured, you can do that in two ways:
+This is not recommended, but if you need to have all of the vee-validate rules pre-configured, you can do that in two ways:
 
 You can install all of vee-validate rules by looping over the entire set of rules using `Object.keys` like this:
 
