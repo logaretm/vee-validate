@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0-alpha.1](https://github.com/logaretm/vee-validate/compare/v4.4.5...v4.5.0-alpha.1) (2021-07-06)
+
+
+### Bug Fixes
+
+* quit unsetting path if its already unset ([64ba5f9](https://github.com/logaretm/vee-validate/commit/64ba5f9ad23603fbcbfdf4ce17866dc657c6846d))
+
+
+### Features
+
+* expose setters in composition API ([d79747d](https://github.com/logaretm/vee-validate/commit/d79747de4a25d1ced151d9bd5b767e815d7e32bf))
+
+
+
+
+
 ## [4.4.5](https://github.com/logaretm/vee-validate/compare/v4.4.4...v4.4.5) (2021-06-13)
 
 # [4.5.0-alpha.0](https://github.com/logaretm/vee-validate/compare/v4.4.3...v4.5.0-alpha.0) (2021-06-03)
