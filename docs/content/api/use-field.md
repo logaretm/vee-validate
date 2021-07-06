@@ -90,7 +90,7 @@ interface FieldOptions {
   type?: string; // The input type, can be any string. Toggles specific toggle mode for `checkbox`
   checkedValue?: string; // Used the input type is `checkbox` or `radio` otherwise ignored
   uncheckedValue?: string; // Used the input type is `checkbox` otherwise ignored
-  standalone?: boolean; // Excludes the field from participating in any `Form` or `useForm` contexts, useful for creating inputs that do contribute to the `values`
+  standalone?: boolean; // Excludes the field from participating in any `Form` or `useForm` contexts, useful for creating inputs that do contribute to the `values`, In other words, the form won't pick up or validate fields marked as standalone
 }
 
 interface ValidationResult {
