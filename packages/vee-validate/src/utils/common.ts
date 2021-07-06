@@ -101,7 +101,7 @@ export function unsetPath(object: NestedRecord, path: string): void {
     }
 
     // Key does not exist, exit
-    if (!(keys[i] in acc)) {
+    if (!(keys[i] in acc) || isNullOrUndefined(acc[keys[i]])) {
       break;
     }
 
