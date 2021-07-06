@@ -2143,4 +2143,38 @@ describe('<Form />', () => {
     // field was re-checked
     expect(span.textContent).toBe('');
   });
+
+  test('standalone fields are excluded from form state', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        return {};
+      },
+      template: `
+      <VForm  v-slot="{ errors, meta }">
+        <Field name="fname" standalone v-slot="{ errorMessage, field }" rules="required">
+          <input v-bind="field" />
+          <span id="fieldError">{{ errorMessage }}</span>
+        </Field>
+        <span id="formError">{{ errors.fname }}</span>
+        <span id="meta">{{ meta.valid }}</span>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const formError = wrapper.$el.querySelector('#formError');
+    const fieldError = wrapper.$el.querySelector('#fieldError');
+    const meta = wrapper.$el.querySelector('#meta');
+
+    expect(formError.textContent).toBe('');
+    expect(fieldError.textContent).toBe('');
+    expect(meta.textContent).toBe('true');
+
+    setValue(wrapper.$el.querySelector('input'), '');
+    await flushPromises();
+
+    expect(formError.textContent).toBe('');
+    expect(fieldError.textContent).toBe(REQUIRED_MESSAGE);
+    expect(meta.textContent).toBe('true');
+  });
 });

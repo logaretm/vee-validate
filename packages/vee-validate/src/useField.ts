@@ -50,6 +50,7 @@ interface FieldOptions<TValue = unknown> {
   checkedValue?: MaybeRef<TValue>;
   uncheckedValue?: MaybeRef<TValue>;
   label?: MaybeRef<string | undefined>;
+  standalone?: boolean;
 }
 
 type RuleExpression<TValue> =
@@ -71,10 +72,20 @@ export function useField<TValue = unknown>(
   opts?: Partial<FieldOptions<TValue>>
 ): FieldComposable<TValue> {
   const fid = ID_COUNTER >= Number.MAX_SAFE_INTEGER ? 0 : ++ID_COUNTER;
-  const { initialValue, validateOnMount, bails, type, checkedValue, label, validateOnValueUpdate, uncheckedValue } =
-    normalizeOptions(unref(name), opts);
+  const {
+    initialValue,
+    validateOnMount,
+    bails,
+    type,
+    checkedValue,
+    label,
+    validateOnValueUpdate,
+    uncheckedValue,
+    standalone,
+  } = normalizeOptions(unref(name), opts);
 
-  const form = injectWithSelf(FormContextSymbol);
+  const form = !standalone ? injectWithSelf(FormContextSymbol) : undefined;
+
   const {
     meta,
     errors,
@@ -92,6 +103,7 @@ export function useField<TValue = unknown>(
     form,
     type,
     checkedValue,
+    standalone,
   });
 
   const normalizedRules = computed(() => {
@@ -293,6 +305,7 @@ function normalizeOptions<TValue>(name: string, opts: Partial<FieldOptions<TValu
     rules: '',
     label: name,
     validateOnValueUpdate: true,
+    standalone: false,
   });
 
   if (!opts) {
@@ -318,15 +331,17 @@ function useValidationState<TValue>({
   form,
   type,
   checkedValue,
+  standalone,
 }: {
   name: MaybeRef<string>;
   checkedValue?: MaybeRef<TValue>;
   initValue?: MaybeRef<TValue>;
   form?: FormContext;
   type?: string;
+  standalone?: boolean;
 }) {
   const { errors, errorMessage, setErrors } = useFieldErrors(name, form);
-  const formInitialValues = injectWithSelf(FormInitialValuesSymbol, undefined);
+  const formInitialValues = standalone ? undefined : injectWithSelf(FormInitialValuesSymbol, undefined);
   // clones the ref value to a mutable version
   const initialValueRef = ref(unref(initValue)) as Ref<TValue>;
 
