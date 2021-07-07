@@ -184,6 +184,10 @@ export function useField<TValue = unknown>(
     watchValue();
   }
 
+  function setValue(newValue: TValue) {
+    value.value = newValue;
+  }
+
   const field: PrivateFieldComposite<TValue> = {
     idx: -1,
     fid,
@@ -207,6 +211,7 @@ export function useField<TValue = unknown>(
     setValidationState,
     setTouched,
     setErrors,
+    setValue,
   };
 
   provide(FieldContextSymbol, field);
