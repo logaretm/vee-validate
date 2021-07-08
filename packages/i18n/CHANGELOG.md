@@ -7,43 +7,23 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 **Note:** Version bump only for package @vee-validate/i18n
 
-
-
-
-
 ## [4.4.10](https://github.com/logaretm/vee-validate/compare/v4.4.9...v4.4.10) (2021-08-31)
 
 **Note:** Version bump only for package @vee-validate/i18n
-
-
-
-
 
 ## [4.4.9](https://github.com/logaretm/vee-validate/compare/v4.4.8...v4.4.9) (2021-08-05)
 
 **Note:** Version bump only for package @vee-validate/i18n
 
-
-
-
-
 ## [4.4.8](https://github.com/logaretm/vee-validate/compare/v4.4.7...v4.4.8) (2021-07-31)
 
 **Note:** Version bump only for package @vee-validate/i18n
 
-
-
-
-
 ## [4.4.7](https://github.com/logaretm/vee-validate/compare/v4.4.6...v4.4.7) (2021-07-20)
-
 
 ### Features
 
-* expose FieldContext type closes [#3398](https://github.com/logaretm/vee-validate/issues/3398) ([a6e4c0a](https://github.com/logaretm/vee-validate/commit/a6e4c0ac580d4145c72118ac535bfa082c771068))
-
-
-
+- expose FieldContext type closes [#3398](https://github.com/logaretm/vee-validate/issues/3398) ([a6e4c0a](https://github.com/logaretm/vee-validate/commit/a6e4c0ac580d4145c72118ac535bfa082c771068))
 
 ## [4.4.7](https://github.com/logaretm/vee-validate/compare/v4.4.6...v4.4.7) (2021-07-20)
 
