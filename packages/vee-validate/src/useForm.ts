@@ -353,6 +353,11 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
       unsetPath(formValues, fieldName);
       unsetPath(initialValues.value, fieldName);
+      // clears a field error on unmounted
+      // #3384
+      nextTick(() => {
+        setFieldError(fieldName, undefined);
+      });
       return;
     }
 
