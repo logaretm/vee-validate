@@ -292,6 +292,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
   function registerField(field: PrivateFieldComposite) {
     fields.value.push(field);
+    // TODO: Do this automatically on registration
+    // eslint-disable-next-line no-unused-expressions
+    fieldsById.value; // force computation of the fields ids to properly set their idx
     if (isRef(field.name)) {
       valuesByFid[field.fid] = field.value.value;
       // ensures when a field's name was already taken that it preserves its same value
@@ -338,10 +341,17 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     // cleans up the field value from fid lookup
     nextTick(() => {
       delete valuesByFid[fid];
+      // clears a field error on unmounted
+      // we wait till next tick to make sure if the field is completely removed and doesn't have any siblings like checkboxes
+      // #3384
+      if (!fieldsById.value[fieldName]) {
+        setFieldError(fieldName, undefined);
+      }
     });
     const fieldName = unref(field.name);
     // in this case, this is a single field not a group (checkbox or radio)
     // so remove the field value key immediately
+
     if (field.idx === -1) {
       // avoid un-setting the value if the field was switched with another that shares the same name
       // they will be unset once the new field takes over the new name, look at `#registerField()`
@@ -353,11 +363,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
       unsetPath(formValues, fieldName);
       unsetPath(initialValues.value, fieldName);
-      // clears a field error on unmounted
-      // #3384
-      nextTick(() => {
-        setFieldError(fieldName, undefined);
-      });
+
       return;
     }
 
