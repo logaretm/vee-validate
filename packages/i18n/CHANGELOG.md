@@ -25,12 +25,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 - expose FieldContext type closes [#3398](https://github.com/logaretm/vee-validate/issues/3398) ([a6e4c0a](https://github.com/logaretm/vee-validate/commit/a6e4c0ac580d4145c72118ac535bfa082c771068))
 
-## [4.4.7](https://github.com/logaretm/vee-validate/compare/v4.4.6...v4.4.7) (2021-07-20)
-
-### Features
-
-- expose FieldContext type closes [#3398](https://github.com/logaretm/vee-validate/issues/3398) ([a6e4c0a](https://github.com/logaretm/vee-validate/commit/a6e4c0ac580d4145c72118ac535bfa082c771068))
-
 ## [4.4.6](https://github.com/logaretm/vee-validate/compare/v4.4.5...v4.4.6) (2021-07-08)
 
 ## [4.4.5](https://github.com/logaretm/vee-validate/compare/v4.4.4...v4.4.5) (2021-06-13)

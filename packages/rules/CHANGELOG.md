@@ -23,10 +23,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 **Note:** Version bump only for package @vee-validate/rules
 
-## [4.4.7](https://github.com/logaretm/vee-validate/compare/v4.4.6...v4.4.7) (2021-07-20)
-
-**Note:** Version bump only for package @vee-validate/rules
-
 ## [4.4.6](https://github.com/logaretm/vee-validate/compare/v4.4.5...v4.4.6) (2021-07-08)
 
 ## [4.4.5](https://github.com/logaretm/vee-validate/compare/v4.4.4...v4.4.5) (2021-06-13)
