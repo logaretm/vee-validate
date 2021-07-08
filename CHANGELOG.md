@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0-alpha.2](https://github.com/logaretm/vee-validate/compare/v4.5.0-alpha.1...v4.5.0-alpha.2) (2021-07-08)
+
+
+### Bug Fixes
+
+* clean error message for singular fields after unmount ([#3385](https://github.com/logaretm/vee-validate/issues/3385)) ([79c82eb](https://github.com/logaretm/vee-validate/commit/79c82eb9009662576f8f23b8491626c20176d92f))
+
+
+
+
+
 # [4.5.0-alpha.1](https://github.com/logaretm/vee-validate/compare/v4.4.5...v4.5.0-alpha.1) (2021-07-06)
 
 - quit unsetting path if its already unset ([64ba5f9](https://github.com/logaretm/vee-validate/commit/64ba5f9ad23603fbcbfdf4ce17866dc657c6846d))
