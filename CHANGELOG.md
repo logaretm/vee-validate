@@ -5,14 +5,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [4.5.0-alpha.2](https://github.com/logaretm/vee-validate/compare/v4.5.0-alpha.1...v4.5.0-alpha.2) (2021-07-08)
 
-
 ### Bug Fixes
 
-* clean error message for singular fields after unmount ([#3385](https://github.com/logaretm/vee-validate/issues/3385)) ([79c82eb](https://github.com/logaretm/vee-validate/commit/79c82eb9009662576f8f23b8491626c20176d92f))
-
-
-
-
+- clean error message for singular fields after unmount ([#3385](https://github.com/logaretm/vee-validate/issues/3385)) ([79c82eb](https://github.com/logaretm/vee-validate/commit/79c82eb9009662576f8f23b8491626c20176d92f))
 
 # [4.5.0-alpha.1](https://github.com/logaretm/vee-validate/compare/v4.4.5...v4.5.0-alpha.1) (2021-07-06)
 
