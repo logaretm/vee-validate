@@ -2115,4 +2115,32 @@ describe('<Form />', () => {
     // field was re-checked
     expect(span.textContent).toBe('');
   });
+
+  test('field errors should be removed when its unmounted', async () => {
+    const isShown = ref(true);
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          isShown,
+        };
+      },
+      template: `
+      <VForm v-slot="{ errors }">
+        <Field v-if="isShown" name="fname"  rules="required"/>
+        <span>{{ errors.fname }}</span>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const span = wrapper.$el.querySelector('span');
+    setValue(wrapper.$el.querySelector('input'), '');
+    await flushPromises();
+    expect(span.textContent).toBe(REQUIRED_MESSAGE);
+    isShown.value = false;
+
+    await flushPromises();
+    // field was re-checked
+    expect(span.textContent).toBe('');
+  });
 });
