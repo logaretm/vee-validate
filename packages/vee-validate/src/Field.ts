@@ -53,6 +53,7 @@ export const Field = defineComponent({
       type: Boolean,
       default: () => getConfig().bails,
     },
+
     label: {
       type: String,
       default: undefined,
@@ -72,6 +73,10 @@ export const Field = defineComponent({
     'onUpdate:modelValue': {
       type: null as unknown as PropType<((e: any) => unknown) | undefined>,
       default: undefined,
+    },
+    standalone: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props, ctx) {
@@ -98,6 +103,7 @@ export const Field = defineComponent({
     } = useField(name, rules, {
       validateOnMount: props.validateOnMount,
       bails: props.bails,
+      standalone: props.standalone,
       type: ctx.attrs.type as string,
       initialValue: resolveInitialValue(props, ctx),
       // Only for checkboxes and radio buttons
