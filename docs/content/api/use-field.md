@@ -14,7 +14,7 @@ The most basic usage looks like this:
 ```vue
 <template>
   <div>
-    <input v-model="value" />
+    <input v-model="value" name="name" />
     <span>{{ errorMessage }}</span>
   </div>
 </template>
