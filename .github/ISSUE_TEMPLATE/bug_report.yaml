@@ -1,6 +1,6 @@
 name: Bug Report
 description: File a bug report
-title: "<title>"
+title: '<title>'
 body:
   - type: markdown
     attributes:
@@ -18,7 +18,7 @@ body:
     id: repro
     attributes:
       label: Reproduction steps
-      description: "How do you trigger this bug? Please walk us through it step by step."
+      description: 'How do you trigger this bug? Please walk us through it step by step.'
       value: |
         1.
         2.
@@ -55,8 +55,8 @@ body:
     attributes:
       label: Demo link
       description: If you can reproduce this issue on codesandbox/codepen, please paste the link here
-- type: checkboxes
-  attributes:
+  - type: checkboxes
+    attributes:
     label: Code of Conduct
     description: The Code of Conduct helps create a friendly environment
     options:
