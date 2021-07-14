@@ -40,10 +40,10 @@ body:
     attributes:
       label: What browsers are you seeing the problem on?
       options:
-        - Firefox
-        - Chrome
-        - Safari
-        - Microsoft Edge
+        - label: Firefox
+        - label: Chrome
+        - label: Safari
+        - label: Microsoft Edge
   - type: textarea
     id: logs
     attributes:
@@ -57,8 +57,8 @@ body:
       description: If you can reproduce this issue on codesandbox/codepen, please paste the link here
   - type: checkboxes
     attributes:
-    label: Code of Conduct
-    description: The Code of Conduct helps create a friendly environment
-    options:
-      - label: I agree to follow this project's [Code of Conduct](CONDUCT.md)
-        required: true
+      label: Code of Conduct
+      description: The Code of Conduct helps create a friendly environment
+      options:
+        - label: I agree to follow this project's [Code of Conduct](CONDUCT.md)
+          required: true
