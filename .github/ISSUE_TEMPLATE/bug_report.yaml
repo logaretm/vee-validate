@@ -1,0 +1,64 @@
+name: Bug Report
+description: File a bug report
+title: "<title>"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the bug
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+- type: textarea
+  id: repro
+  attributes:
+    label: Reproduction steps
+    description: "How do you trigger this bug? Please walk us through it step by step."
+    value: |
+      1.
+      2.
+      3.
+      ...
+  - type: dropdown
+    id: version
+    attributes:
+      label: Version
+      description: What version of Vue.js and vee-validate are you running?
+      options:
+        - Vue.js 3.x and vee-validate 4.x
+        - Vue.js 2.x and vee-validate 3.x
+        - Vue.js 2.x and vee-validate 2.x
+    validations:
+      required: true
+  - type: checkboxes
+    id: browsers
+    attributes:
+      label: What browsers are you seeing the problem on?
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: If you have an error log or stacktrack, copy it and paste it here
+      render: shell
+  - type: input
+    id: demo
+    attributes:
+      label: Demo link
+      description: If you can reproduce this issue on codesandbox/codepen, please paste the link here
+- type: checkboxes
+  attributes:
+    label: Code of Conduct
+    description: The Code of Conduct helps create a friendly environment
+    options:
+      - label: I agree to follow this project's [Code of Conduct](CONDUCT.md)
+        required: true
