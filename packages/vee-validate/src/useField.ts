@@ -205,7 +205,6 @@ export function useField<TValue = unknown>(
   }
 
   const field: PrivateFieldContext<TValue> = {
-    idx: -1,
     fid,
     name,
     label,
