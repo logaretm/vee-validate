@@ -40,7 +40,6 @@ export type WritableRef<TValue> = Ref<TValue> | WritableComputedRef<TValue>;
 
 export interface PrivateFieldContext<TValue = unknown> {
   fid: number;
-  idx: number;
   name: MaybeRef<string>;
   value: WritableRef<TValue>;
   meta: FieldMeta<TValue>;
@@ -123,7 +122,7 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
   register(field: PrivateFieldContext): void;
   unregister(field: PrivateFieldContext): void;
   values: TValues;
-  fieldsById: ComputedRef<Record<keyof TValues, PrivateFieldContext | PrivateFieldContext[]>>;
+  fieldsByPath: Ref<Record<keyof TValues, PrivateFieldContext | PrivateFieldContext[]>>;
   submitCount: Ref<number>;
   schema?: MaybeRef<RawFormSchema<TValues> | SchemaOf<TValues> | undefined>;
   validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues>>;
@@ -149,7 +148,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
     PrivateFormContext<TValues>,
     | 'register'
     | 'unregister'
-    | 'fieldsById'
+    | 'fieldsByPath'
     | 'schema'
     | 'validateSchema'
     | 'errorBag'
