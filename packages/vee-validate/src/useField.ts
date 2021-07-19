@@ -353,13 +353,18 @@ function useValidationState<TValue>({
   const { errors, errorMessage, setErrors } = useFieldErrors(name, form);
   const formInitialValues = standalone ? undefined : injectWithSelf(FormInitialValuesKey, undefined);
   // clones the ref value to a mutable version
-  const initialValueRef = ref(unref(initValue)) as Ref<TValue>;
+  const initialValueSourceRef = ref(unref(initValue)) as Ref<TValue>;
 
   const initialValue = computed(() => {
-    return getFromPath<TValue>(unref(formInitialValues), unref(name), unref(initialValueRef)) as TValue;
+    return getFromPath<TValue>(unref(formInitialValues), unref(name), unref(initialValueSourceRef)) as TValue;
   });
 
-  const value = useFieldValue(initialValue, name, form);
+  const value = useFieldValue(
+    initialValueSourceRef.value === undefined ? initialValue : initialValueSourceRef,
+    name,
+    form
+  );
+
   const meta = useFieldMeta(initialValue, value, errors);
 
   const checked = hasCheckedAttr(type)
@@ -411,7 +416,7 @@ function useValidationState<TValue>({
       form.setFieldInitialValue(fieldPath, newValue);
     } else {
       value.value = deepCopy(newValue);
-      initialValueRef.value = deepCopy(newValue);
+      initialValueSourceRef.value = deepCopy(newValue);
     }
 
     setErrors(state?.errors || []);

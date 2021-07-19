@@ -314,6 +314,16 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
   }
 
+  function fieldGroupExists(path: string) {
+    const oldGroup = fieldsByPath.value[path];
+
+    if (Array.isArray(oldGroup)) {
+      return oldGroup.length > 0;
+    }
+
+    return !!oldGroup;
+  }
+
   function registerField(field: PrivateFieldContext) {
     const fieldPath = unref(field.name);
     insertFieldAtPath(field, fieldPath);
@@ -332,10 +342,10 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
           // const isSharingName = fields.value.find(f => unref(f.name) === oldPath);
           // clean up the old path if no other field is sharing that name
           // #3325
-          // if (!isSharingName) {
-          //   unsetPath(formValues, oldPath);
-          //   unsetPath(initialValues.value, oldPath);
-          // }
+          if (!fieldGroupExists(oldPath)) {
+            unsetPath(formValues, oldPath);
+            unsetPath(initialValues.value, oldPath);
+          }
         },
         {
           flush: 'post',
@@ -377,13 +387,10 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       // avoid un-setting the value if the field was switched with another that shares the same name
       // they will be unset once the new field takes over the new name, look at `#registerField()`
       // #3166
-      // const isSharingName = fields.value.find(f => unref(f.name) === fieldName);
-      // if (isSharingName) {
-      //   return;
-      // }
-
-      unsetPath(formValues, fieldName);
-      unsetPath(initialValues.value, fieldName);
+      if (!fieldGroupExists(fieldName)) {
+        unsetPath(formValues, fieldName);
+        unsetPath(initialValues.value, fieldName);
+      }
 
       return;
     }
