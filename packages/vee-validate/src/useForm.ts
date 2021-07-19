@@ -532,6 +532,10 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
    * Sneaky function to set initial field values
    */
   function stageInitialValue(path: string, value: unknown) {
+    if (formValues[path] && value === undefined) {
+      return;
+    }
+
     setInPath(formValues, path, value);
     setFieldInitialValue(path, value);
   }
