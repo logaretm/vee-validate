@@ -1578,11 +1578,11 @@ describe('<Form />', () => {
     const input = () => document.querySelector('input');
     setModified(data[3]);
     await flushPromises();
-    expect(input()?.value).not.toBe('');
+    expect(input()?.value).toBe(data[3].title);
 
     setModified(data[2]);
     await flushPromises();
-    expect(input()?.value).not.toBe('');
+    expect(input()?.value).toBe(data[2].title);
   });
 
   test('resetForm should reset the meta flag', async () => {
