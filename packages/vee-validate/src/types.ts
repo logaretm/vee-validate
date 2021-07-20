@@ -1,6 +1,6 @@
 import { ComputedRef, Ref, WritableComputedRef } from 'vue';
 import { SchemaOf, AnySchema, AnyObjectSchema } from 'yup';
-import { FieldContext } from '../../shared';
+import { FieldValidationMetaInfo } from '../../shared';
 
 export interface ValidationResult {
   errors: string[];
@@ -63,11 +63,11 @@ export interface PrivateFieldComposite<TValue = unknown> {
   setErrors(message: string | string[]): void;
 }
 
-export type FieldComposable<TValue = unknown> = Omit<PrivateFieldComposite<TValue>, 'idx' | 'fid'>;
+export type FieldContext<TValue = unknown> = Omit<PrivateFieldComposite<TValue>, 'idx' | 'fid'>;
 
 export type GenericValidateFunction = (
   value: unknown,
-  ctx: FieldContext
+  ctx: FieldValidationMetaInfo
 ) => boolean | string | Promise<boolean | string>;
 
 export interface FormState<TValues> {

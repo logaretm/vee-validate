@@ -1,4 +1,4 @@
-import { isCallable, FieldContext, ValidationMessageGenerator } from '../../shared';
+import { isCallable, FieldValidationMetaInfo, ValidationMessageGenerator } from '../../shared';
 import { interpolate, merge } from './utils';
 
 type ValidationMessageTemplate = ValidationMessageGenerator | string;
@@ -23,11 +23,11 @@ class Dictionary {
     this.merge(dictionary);
   }
 
-  public resolve(ctx: FieldContext) {
+  public resolve(ctx: FieldValidationMetaInfo) {
     return this.format(this.locale, ctx);
   }
 
-  public format(locale: string, ctx: FieldContext) {
+  public format(locale: string, ctx: FieldValidationMetaInfo) {
     let message!: ValidationMessageTemplate | undefined;
     const { field, rule, form } = ctx;
     if (!rule) {

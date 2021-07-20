@@ -22,7 +22,7 @@ import {
   GenericValidateFunction,
   FieldMeta,
   YupValidator,
-  FieldComposable,
+  FieldContext,
   FieldState,
   PrivateFieldComposite,
   WritableRef,
@@ -71,7 +71,7 @@ export function useField<TValue = unknown>(
   name: MaybeRef<string>,
   rules?: MaybeRef<RuleExpression<TValue>>,
   opts?: Partial<FieldOptions<TValue>>
-): FieldComposable<TValue> {
+): FieldContext<TValue> {
   const fid = ID_COUNTER >= Number.MAX_SAFE_INTEGER ? 0 : ++ID_COUNTER;
   const {
     initialValue,

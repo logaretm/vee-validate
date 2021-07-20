@@ -1,5 +1,5 @@
 import flushPromises from 'flush-promises';
-import { PublicFormContext, useField, useForm } from '@/vee-validate';
+import { FormContext, useField, useForm } from '@/vee-validate';
 import { mountWithHoc, setValue } from './helpers';
 import * as yup from 'yup';
 
@@ -32,7 +32,7 @@ describe('useForm()', () => {
   });
 
   test('can clear individual field error messages', async () => {
-    let setFieldError!: PublicFormContext['setFieldError'];
+    let setFieldError!: FormContext['setFieldError'];
     mountWithHoc({
       setup() {
         const form = useForm();

@@ -1,4 +1,4 @@
-export interface FieldContext {
+export interface FieldValidationMetaInfo {
   field: string;
   value: unknown;
   form: Record<string, unknown>;
@@ -11,7 +11,7 @@ export interface FieldContext {
 export type ValidationRuleFunction<TValue = unknown, TParams = unknown[] | Record<string, unknown>> = (
   value: TValue,
   params: TParams,
-  ctx: FieldContext
+  ctx: FieldValidationMetaInfo
 ) => boolean | string | Promise<boolean | string>;
 
 export type SimpleValidationRuleFunction<TValue = unknown, TParams = unknown[] | Record<string, unknown>> = (
@@ -19,4 +19,4 @@ export type SimpleValidationRuleFunction<TValue = unknown, TParams = unknown[] |
   params: TParams
 ) => boolean | string | Promise<boolean | string>;
 
-export type ValidationMessageGenerator = (ctx: FieldContext) => string;
+export type ValidationMessageGenerator = (ctx: FieldValidationMetaInfo) => string;

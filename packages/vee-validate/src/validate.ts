@@ -3,7 +3,7 @@ import { resolveRule } from './defineRule';
 import { isLocator, normalizeRules, isYupValidator, keysOf, getFromPath } from './utils';
 import { getConfig } from './config';
 import { ValidationResult, GenericValidateFunction, YupValidator, FormValidationResult, RawFormSchema } from './types';
-import { isCallable, FieldContext } from '../../shared';
+import { isCallable, FieldValidationMetaInfo } from '../../shared';
 
 /**
  * Used internally
@@ -143,7 +143,7 @@ async function _test(
   }
 
   const params = fillTargetValues(rule.params, field.formData);
-  const ctx: FieldContext = {
+  const ctx: FieldValidationMetaInfo = {
     field: field.name,
     value,
     form: field.formData,
@@ -169,7 +169,7 @@ async function _test(
 /**
  * Generates error messages.
  */
-function _generateFieldError(fieldCtx: FieldContext) {
+function _generateFieldError(fieldCtx: FieldValidationMetaInfo) {
   const message = getConfig().generateMessage;
   if (!message) {
     return 'Field is invalid';
