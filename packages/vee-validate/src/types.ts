@@ -38,7 +38,7 @@ export interface FieldState<TValue = unknown> {
 
 export type WritableRef<TValue> = Ref<TValue> | WritableComputedRef<TValue>;
 
-export interface PrivateFieldComposite<TValue = unknown> {
+export interface PrivateFieldContext<TValue = unknown> {
   fid: number;
   idx: number;
   name: MaybeRef<string>;
@@ -63,7 +63,7 @@ export interface PrivateFieldComposite<TValue = unknown> {
   setErrors(message: string | string[]): void;
 }
 
-export type FieldContext<TValue = unknown> = Omit<PrivateFieldComposite<TValue>, 'idx' | 'fid'>;
+export type FieldContext<TValue = unknown> = Omit<PrivateFieldContext<TValue>, 'idx' | 'fid'>;
 
 export type GenericValidateFunction = (
   value: unknown,
@@ -117,11 +117,12 @@ export type RawFormSchema<TValues> = Record<keyof TValues, string | GenericValid
  * force: validate all fields and mutate their state
  */
 export type SchemaValidationMode = 'validated-only' | 'silent' | 'force';
-export interface FormContext<TValues extends Record<string, any> = Record<string, any>> extends FormActions<TValues> {
-  register(field: PrivateFieldComposite): void;
-  unregister(field: PrivateFieldComposite): void;
+export interface PrivateFormContext<TValues extends Record<string, any> = Record<string, any>>
+  extends FormActions<TValues> {
+  register(field: PrivateFieldContext): void;
+  unregister(field: PrivateFieldContext): void;
   values: TValues;
-  fieldsById: ComputedRef<Record<keyof TValues, PrivateFieldComposite | PrivateFieldComposite[]>>;
+  fieldsById: ComputedRef<Record<keyof TValues, PrivateFieldContext | PrivateFieldContext[]>>;
   submitCount: Ref<number>;
   schema?: MaybeRef<RawFormSchema<TValues> | SchemaOf<TValues> | undefined>;
   validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues>>;
@@ -142,9 +143,9 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
   setFieldInitialValue(path: string, value: unknown): void;
 }
 
-export interface PublicFormContext<TValues extends Record<string, any> = Record<string, any>>
+export interface FormContext<TValues extends Record<string, any> = Record<string, any>>
   extends Omit<
-    FormContext<TValues>,
+    PrivateFormContext<TValues>,
     | 'register'
     | 'unregister'
     | 'fieldsById'

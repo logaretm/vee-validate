@@ -1,6 +1,6 @@
 import { computed, inject, unref } from 'vue';
 import { FieldContextKey, FormContextKey } from './symbols';
-import { MaybeRef, PrivateFieldComposite } from './types';
+import { MaybeRef, PrivateFieldContext } from './types';
 import { injectWithSelf, normalizeField, warn } from './utils';
 
 /**
@@ -8,7 +8,7 @@ import { injectWithSelf, normalizeField, warn } from './utils';
  */
 export function useIsFieldTouched(path?: MaybeRef<string>) {
   const form = injectWithSelf(FormContextKey);
-  let field: PrivateFieldComposite | undefined = path ? undefined : inject(FieldContextKey);
+  let field: PrivateFieldContext | undefined = path ? undefined : inject(FieldContextKey);
 
   return computed(() => {
     if (path) {

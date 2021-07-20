@@ -16,7 +16,7 @@ import { BaseSchema } from 'yup';
 import isEqual from 'fast-deep-equal/es6';
 import { validate as validateValue } from './validate';
 import {
-  FormContext,
+  PrivateFormContext,
   ValidationResult,
   MaybeRef,
   GenericValidateFunction,
@@ -24,7 +24,7 @@ import {
   YupValidator,
   FieldContext,
   FieldState,
-  PrivateFieldComposite,
+  PrivateFieldContext,
   WritableRef,
   SchemaValidationMode,
 } from './types';
@@ -200,7 +200,7 @@ export function useField<TValue = unknown>(
     });
   }
 
-  const field: PrivateFieldComposite<TValue> = {
+  const field: PrivateFieldContext<TValue> = {
     idx: -1,
     fid,
     name,
@@ -340,7 +340,7 @@ function useValidationState<TValue>({
   name: MaybeRef<string>;
   checkedValue?: MaybeRef<TValue>;
   initValue?: MaybeRef<TValue>;
-  form?: FormContext;
+  form?: PrivateFormContext;
   type?: string;
   standalone?: boolean;
 }) {
@@ -479,7 +479,7 @@ export function extractRuleFromSchema<TValue>(
 export function useFieldValue<TValue>(
   initialValue: MaybeRef<TValue | undefined>,
   path: MaybeRef<string>,
-  form?: FormContext
+  form?: PrivateFormContext
 ): WritableRef<TValue> {
   // if no form is associated, use a regular ref.
   if (!form) {
@@ -501,7 +501,7 @@ export function useFieldValue<TValue>(
   return value as WritableRef<TValue>;
 }
 
-export function useFieldErrors(path: MaybeRef<string>, form?: FormContext) {
+export function useFieldErrors(path: MaybeRef<string>, form?: PrivateFormContext) {
   if (!form) {
     const errors = ref<string[]>([]);
     return {

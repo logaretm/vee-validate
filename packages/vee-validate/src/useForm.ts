@@ -4,15 +4,15 @@ import type { SchemaOf } from 'yup';
 import { klona as deepCopy } from 'klona/lite';
 import {
   FieldMeta,
-  FormContext,
   SubmissionHandler,
   GenericValidateFunction,
   ValidationResult,
   MaybeRef,
   FormState,
   FormValidationResult,
-  PrivateFieldComposite,
-  PublicFormContext,
+  PrivateFieldContext,
+  PrivateFormContext,
+  FormContext,
   FormErrors,
   FormErrorBag,
   SchemaValidationMode,
@@ -42,13 +42,13 @@ interface FormOptions<TValues extends Record<string, any>> {
   validateOnMount?: boolean;
 }
 
-type RegisteredField = PrivateFieldComposite | PrivateFieldComposite[];
+type RegisteredField = PrivateFieldContext | PrivateFieldContext[];
 
 export function useForm<TValues extends Record<string, any> = Record<string, any>>(
   opts?: FormOptions<TValues>
-): PublicFormContext<TValues> {
+): FormContext<TValues> {
   // A flat array containing field references
-  const fields: Ref<PrivateFieldComposite[]> = ref([]);
+  const fields: Ref<PrivateFieldContext[]> = ref([]);
 
   // If the form is currently submitting
   const isSubmitting = ref(false);
@@ -71,7 +71,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
         acc[fieldPath] = [existingField];
       }
 
-      const fieldGroup = acc[fieldPath] as PrivateFieldComposite[];
+      const fieldGroup = acc[fieldPath] as PrivateFieldContext[];
       field.idx = fieldGroup.length;
       fieldGroup.push(field);
 
@@ -143,7 +143,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   const meta = useFormMeta(fields, formValues, readonlyInitialValues, errors);
 
   const schema = opts?.validationSchema;
-  const formCtx: FormContext<TValues> = {
+  const formCtx: PrivateFormContext<TValues> = {
     fieldsById,
     values: formValues,
     errorBag,
@@ -290,7 +290,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     submitCount.value = state?.submitCount || 0;
   }
 
-  function registerField(field: PrivateFieldComposite) {
+  function registerField(field: PrivateFieldContext) {
     fields.value.push(field);
     // TODO: Do this automatically on registration
     // eslint-disable-next-line no-unused-expressions
@@ -330,7 +330,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     delete initialErrors[path];
   }
 
-  function unregisterField(field: PrivateFieldComposite<unknown>) {
+  function unregisterField(field: PrivateFieldContext<unknown>) {
     const idx = fields.value.indexOf(field);
     if (idx === -1) {
       return;
@@ -602,7 +602,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   }
 
   // Provide injections
-  provide(FormContextKey, formCtx as FormContext);
+  provide(FormContextKey, formCtx as PrivateFormContext);
   provide(FormErrorsKey, errors);
 
   return {
@@ -630,7 +630,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
  * Manages form meta aggregation
  */
 function useFormMeta<TValues extends Record<string, unknown>>(
-  fields: Ref<PrivateFieldComposite[]>,
+  fields: Ref<PrivateFieldContext[]>,
   currentValues: TValues,
   initialValues: MaybeRef<TValues>,
   errors: Ref<FormErrors<TValues>>
@@ -691,7 +691,7 @@ function useFormInitialValues<TValues extends Record<string, any>>(
     // those are excluded because it's unlikely you want to change the form values using initial values
     // we mostly watch them for API population or newly inserted fields
     // if the user API is taking too much time before user interaction they should consider disabling or hiding their inputs until the values are ready
-    const hadInteraction = (f: PrivateFieldComposite) => f.meta.touched;
+    const hadInteraction = (f: PrivateFieldContext) => f.meta.touched;
     keysOf(fields.value).forEach(fieldPath => {
       const field: RegisteredField = fields.value[fieldPath];
       const touchedByUser = Array.isArray(field) ? field.some(hadInteraction) : hadInteraction(field);

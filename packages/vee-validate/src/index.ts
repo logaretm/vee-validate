@@ -11,7 +11,7 @@ export {
   FormActions,
   FormState,
   FormValidationResult,
-  PublicFormContext as FormContext,
+  FormContext,
   FieldContext,
   SubmissionContext,
   SubmissionHandler,
