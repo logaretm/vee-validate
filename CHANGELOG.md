@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.4.7](https://github.com/logaretm/vee-validate/compare/v4.4.6...v4.4.7) (2021-07-20)
+
+
+### Bug Fixes
+
+* avoid watching values at the end of reset calls closes [#3407](https://github.com/logaretm/vee-validate/issues/3407) ([86f594f](https://github.com/logaretm/vee-validate/commit/86f594f4a7cee5ed5f581419bdbd985fc53f8358))
+
+
+### Features
+
+* add standalone prop for fields ([#3379](https://github.com/logaretm/vee-validate/issues/3379)) ([3689437](https://github.com/logaretm/vee-validate/commit/36894378aa3636eeb4fb54aa747319e21c6eb5cd))
+* expose FieldContext type closes [#3398](https://github.com/logaretm/vee-validate/issues/3398) ([a6e4c0a](https://github.com/logaretm/vee-validate/commit/a6e4c0ac580d4145c72118ac535bfa082c771068))
+* expose form and field injection keys ([6034e66](https://github.com/logaretm/vee-validate/commit/6034e66836e0566e17f36744da19088aca33fbad))
+
+
+
+
+
 ## [4.4.6](https://github.com/logaretm/vee-validate/compare/v4.4.5...v4.4.6) (2021-07-08)
 
 
