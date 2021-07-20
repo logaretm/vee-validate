@@ -125,3 +125,19 @@ import messages from 'strings/validation.js';
 // ✅
 expect(errorElement.textContent).toBe(messages.required);
 ```
+
+## Mocking Form and Field Contexts
+
+While this is extremely rare you may need to mock the `FormContext` object or the `FieldContext` object, one of the reasons is to unit test some component that relies on those objects being provided with the `provide/inject` API.
+
+You can import the injection keys for those objects from vee-validate and manually inject your fields/forms.
+
+```js
+import { provide } from 'vue';
+import { FormContextKey, FieldContextKey } from 'vee-validate';
+
+provide(FormContextKey, MockedForm);
+provide(FieldContextKey, MockedField);
+```
+
+To learn more about the mock details you should check the source code and see the typescript interfaces for [`FormContext`](https://github.com/logaretm/vee-validate/blob/main/packages/vee-validate/src/types.ts#L145) and [`FieldContext`](https://github.com/logaretm/vee-validate/blob/main/packages/vee-validate/src/types.ts#L66) objects and implement them as mocks.
