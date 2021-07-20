@@ -10,6 +10,7 @@ import {
   WatchStopHandle,
   provide,
   Ref,
+  nextTick,
 } from 'vue';
 import { BaseSchema } from 'yup';
 import isEqual from 'fast-deep-equal/es6';
@@ -193,7 +194,10 @@ export function useField<TValue = unknown>(
   function resetField(state?: Partial<FieldState<TValue>>) {
     unwatchValue?.();
     resetValidationState(state);
-    watchValue();
+    // need to watch at next tick to avoid triggering the value watcher
+    nextTick(() => {
+      watchValue();
+    });
   }
 
   const field: PrivateFieldComposite<TValue> = {
