@@ -7,10 +7,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 **Note:** Version bump only for package @vee-validate/rules
 
-
-
-
-
 # [4.5.0-alpha.1](https://github.com/logaretm/vee-validate/compare/v4.4.5...v4.5.0-alpha.1) (2021-07-06)
 
 **Note:** Version bump only for package @vee-validate/rules
