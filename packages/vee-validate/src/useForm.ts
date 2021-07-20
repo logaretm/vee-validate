@@ -645,18 +645,20 @@ function useFormMeta<TValues extends Record<string, unknown>>(
     return !isEqual(currentValues, unref(initialValues));
   });
 
-  return computed(() => {
-    const flags = keysOf(MERGE_STRATEGIES).reduce((acc, flag) => {
+  const flags = computed(() => {
+    return keysOf(MERGE_STRATEGIES).reduce((acc, flag) => {
       const mergeMethod = MERGE_STRATEGIES[flag];
       acc[flag] = fields.value[mergeMethod](field => field.meta[flag]);
 
       return acc;
     }, {} as Record<keyof Omit<FieldMeta<unknown>, 'initialValue'>, boolean>);
+  });
 
+  return computed(() => {
     return {
       initialValues: unref(initialValues) as TValues,
-      ...flags,
-      valid: flags.valid && !keysOf(errors.value as any).length,
+      ...flags.value,
+      valid: flags.value.valid && !keysOf(errors.value as any).length,
       dirty: isDirty.value,
     };
   });
