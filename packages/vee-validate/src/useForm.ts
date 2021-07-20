@@ -29,7 +29,7 @@ import {
   isFormSubmitEvent,
   normalizeField,
 } from './utils';
-import { FormErrorsSymbol, FormContextSymbol, FormInitialValuesSymbol } from './symbols';
+import { FormErrorsKey, FormContextKey, FormInitialValuesKey } from './symbols';
 import { validateYupSchema, validateObjectSchema } from './validate';
 
 interface FormOptions<TValues extends Record<string, any>> {
@@ -602,8 +602,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   }
 
   // Provide injections
-  provide(FormContextSymbol, formCtx as FormContext);
-  provide(FormErrorsSymbol, errors);
+  provide(FormContextKey, formCtx as FormContext);
+  provide(FormErrorsKey, errors);
 
   return {
     errors,
@@ -716,7 +716,7 @@ function useFormInitialValues<TValues extends Record<string, any>>(
     );
   }
 
-  provide(FormInitialValuesSymbol, computedInitials);
+  provide(FormInitialValuesKey, computedInitials);
 
   return {
     readonlyInitialValues: computedInitials,

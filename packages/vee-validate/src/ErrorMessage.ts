@@ -1,5 +1,5 @@
 import { inject, h, defineComponent, computed, resolveDynamicComponent } from 'vue';
-import { FormErrorsSymbol } from './symbols';
+import { FormErrorsKey } from './symbols';
 import { normalizeChildren } from './utils';
 
 export const ErrorMessage = defineComponent({
@@ -15,7 +15,7 @@ export const ErrorMessage = defineComponent({
     },
   },
   setup(props, ctx) {
-    const errors = inject(FormErrorsSymbol, undefined);
+    const errors = inject(FormErrorsKey, undefined);
     const message = computed<string | undefined>(() => {
       return errors?.value[props.name];
     });

@@ -1,5 +1,5 @@
 import { computed, inject, unref } from 'vue';
-import { FieldContextSymbol, FormErrorsSymbol } from './symbols';
+import { FieldContextKey, FormErrorsKey } from './symbols';
 import { MaybeRef } from './types';
 import { injectWithSelf } from './utils';
 
@@ -7,9 +7,9 @@ import { injectWithSelf } from './utils';
  * Gives access to a single field error
  */
 export function useFieldError(path?: MaybeRef<string>) {
-  const errors = injectWithSelf(FormErrorsSymbol);
+  const errors = injectWithSelf(FormErrorsKey);
   // We don't want to use self injected context as it doesn't make sense
-  const field = path ? undefined : inject(FieldContextSymbol);
+  const field = path ? undefined : inject(FieldContextKey);
 
   return computed(() => {
     if (path) {

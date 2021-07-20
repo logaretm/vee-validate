@@ -39,7 +39,7 @@ import {
   isYupValidator,
 } from './utils';
 import { isCallable } from '../../shared';
-import { FieldContextSymbol, FormInitialValuesSymbol, FormContextSymbol } from './symbols';
+import { FieldContextKey, FormInitialValuesKey, FormContextKey } from './symbols';
 
 interface FieldOptions<TValue = unknown> {
   initialValue?: MaybeRef<TValue>;
@@ -85,7 +85,7 @@ export function useField<TValue = unknown>(
     standalone,
   } = normalizeOptions(unref(name), opts);
 
-  const form = !standalone ? injectWithSelf(FormContextSymbol) : undefined;
+  const form = !standalone ? injectWithSelf(FormContextKey) : undefined;
 
   const {
     meta,
@@ -225,7 +225,7 @@ export function useField<TValue = unknown>(
     setErrors,
   };
 
-  provide(FieldContextSymbol, field);
+  provide(FieldContextKey, field);
 
   if (isRef(rules) && typeof unref(rules) !== 'function') {
     watch(
@@ -345,7 +345,7 @@ function useValidationState<TValue>({
   standalone?: boolean;
 }) {
   const { errors, errorMessage, setErrors } = useFieldErrors(name, form);
-  const formInitialValues = standalone ? undefined : injectWithSelf(FormInitialValuesSymbol, undefined);
+  const formInitialValues = standalone ? undefined : injectWithSelf(FormInitialValuesKey, undefined);
   // clones the ref value to a mutable version
   const initialValueRef = ref(unref(initValue)) as Ref<TValue>;
 

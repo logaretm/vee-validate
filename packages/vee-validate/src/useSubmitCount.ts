@@ -1,12 +1,12 @@
 import { computed } from 'vue';
-import { FormContextSymbol } from './symbols';
+import { FormContextKey } from './symbols';
 import { injectWithSelf, warn } from './utils';
 
 /**
  * The number of form's submission count
  */
 export function useSubmitCount() {
-  const form = injectWithSelf(FormContextSymbol);
+  const form = injectWithSelf(FormContextKey);
   if (!form) {
     warn('No vee-validate <Form /> or `useForm` was detected in the component tree');
   }

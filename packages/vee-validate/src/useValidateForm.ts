@@ -1,4 +1,4 @@
-import { FormContextSymbol } from './symbols';
+import { FormContextKey } from './symbols';
 import { FormContext, FormValidationResult } from './types';
 import { injectWithSelf, warn } from './utils';
 
@@ -6,7 +6,7 @@ import { injectWithSelf, warn } from './utils';
  * Validate multiple fields
  */
 export function useValidateForm<TValues extends Record<string, unknown> = Record<string, unknown>>() {
-  const form = injectWithSelf(FormContextSymbol) as FormContext<TValues> | undefined;
+  const form = injectWithSelf(FormContextKey) as FormContext<TValues> | undefined;
   if (!form) {
     warn('No vee-validate <Form /> or `useForm` was detected in the component tree');
   }
