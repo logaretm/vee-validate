@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0-alpha.3](https://github.com/logaretm/vee-validate/compare/v4.4.7...v4.5.0-alpha.3) (2021-07-21)
+
+
+### Bug Fixes
+
+* correctly stage the priority of the initial values ([ab0eaf5](https://github.com/logaretm/vee-validate/commit/ab0eaf540c5c1d2726b07419f0701feff8877350))
+* prevent initial values from overwritting existing values ([314c8f4](https://github.com/logaretm/vee-validate/commit/314c8f4a3e0d456447336453711ec823696bbb4f))
+
+
+### Features
+
+* **perf:** re-write field tracking and batch schema validation closes [#3399](https://github.com/logaretm/vee-validate/issues/3399) ([1c41cec](https://github.com/logaretm/vee-validate/commit/1c41cecbc88f3a154d37a5518620a060062a614a))
+* expose setters in composition API ([a4e6c47](https://github.com/logaretm/vee-validate/commit/a4e6c47bc19241e30f559fcc0fd228647afe72d2))
+
+
+
+
+
 # [4.5.0-alpha.2](https://github.com/logaretm/vee-validate/compare/v4.5.0-alpha.1...v4.5.0-alpha.2) (2021-07-08)
 
 ### Bug Fixes
