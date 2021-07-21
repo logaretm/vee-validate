@@ -31,13 +31,10 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [4.4.7](https://github.com/logaretm/vee-validate/compare/v4.4.6...v4.4.7) (2021-07-20)
 
-- quit unsetting path if its already unset ([64ba5f9](https://github.com/logaretm/vee-validate/commit/64ba5f9ad23603fbcbfdf4ce17866dc657c6846d))
-
-## [4.4.7](https://github.com/logaretm/vee-validate/compare/v4.4.6...v4.4.7) (2021-07-20)
-
 ### Bug Fixes
 
 - avoid watching values at the end of reset calls closes [#3407](https://github.com/logaretm/vee-validate/issues/3407) ([86f594f](https://github.com/logaretm/vee-validate/commit/86f594f4a7cee5ed5f581419bdbd985fc53f8358))
+- quit unsetting path if its already unset ([64ba5f9](https://github.com/logaretm/vee-validate/commit/64ba5f9ad23603fbcbfdf4ce17866dc657c6846d))
 
 ### Features
 
