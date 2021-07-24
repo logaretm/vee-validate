@@ -11,8 +11,22 @@ const validate = (value: StringOrNumber | StringOrNumber[], params: Record<strin
 
   const regexPart = +decimals === 0 ? '+' : `{${decimals}}`;
   const regex = new RegExp(`^-?\\d+\\${separators[separator as Separator] || '.'}\\d${regexPart}$`);
-
-  return Array.isArray(value) ? value.every(val => regex.test(String(val))) : regex.test(String(value));
+  
+  let valueTemp = value;
+  if (params.separator == "comma") {
+    valueTemp = value.toString().replace(",", ".");
+  }
+  if (!isNaN(value) || !isNaN(valueTemp)) {
+    let valueParsed = parseFloat(valueTemp);
+    if (!Number.isNaN(valueParsed)) {
+      if (!Number.isInteger(valueParsed)) {
+        return Array.isArray(value) ? value.every(val => regex.test(String(val))) : regex.test(String(value));
+      } else {
+        return true;
+      }
+    }
+  }
+  return false;
 };
 
 const params: RuleParamSchema[] = [
