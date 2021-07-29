@@ -1,4 +1,15 @@
-import { watch, isRef, computed, onMounted, onBeforeUnmount, unref, WatchStopHandle, provide, nextTick } from 'vue';
+import {
+  watch,
+  isRef,
+  computed,
+  onMounted,
+  onBeforeUnmount,
+  unref,
+  WatchStopHandle,
+  provide,
+  nextTick,
+  getCurrentInstance,
+} from 'vue';
 import { BaseSchema } from 'yup';
 import { klona as deepCopy } from 'klona/lite';
 import isEqual from 'fast-deep-equal/es6';
@@ -309,6 +320,15 @@ function _useField<TValue = unknown>(
       meta.validated ? validateWithStateMutation() : validateValidStateOnly();
     }
   });
+
+  if (process.env.NODE_ENV === 'development') {
+    const vm = getCurrentInstance() as any;
+    if (!('_vvFields' in vm)) {
+      vm._vvFields = [];
+    }
+
+    vm._vvFields.push(field);
+  }
 
   return field;
 }
