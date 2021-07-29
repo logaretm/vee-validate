@@ -30,6 +30,15 @@ export interface FieldMeta<TValue> {
   initialValue?: TValue;
 }
 
+export interface FormMeta<TValues extends Record<string, any>> {
+  touched: boolean;
+  dirty: boolean;
+  valid: boolean;
+  validated: boolean;
+  pending: boolean;
+  initialValues?: TValues;
+}
+
 export interface FieldState<TValue = unknown> {
   value: TValue;
   touched: boolean;
@@ -140,13 +149,7 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
   setFieldErrorBag(field: string, messages: string | string[]): void;
   stageInitialValue(path: string, value: unknown): void;
   unsetInitialValue(path: string): void;
-  meta: ComputedRef<{
-    dirty: boolean;
-    touched: boolean;
-    valid: boolean;
-    pending: boolean;
-    initialValues: TValues;
-  }>;
+  meta: ComputedRef<FormMeta<TValues>>;
   isSubmitting: Ref<boolean>;
   handleSubmit<TReturn = unknown>(cb: SubmissionHandler<TValues, TReturn>): (e?: Event) => Promise<TReturn | undefined>;
   setFieldInitialValue(path: string, value: unknown): void;
