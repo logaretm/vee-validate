@@ -107,22 +107,20 @@ export const Form = defineComponent({
       };
     }
 
-    return function renderForm(this: any) {
-      // FIXME: Hacky but cute way to expose some stuff to the rendered instance
-      // getCurrentInstance doesn't work with render fns, it returns the wrong instance
-      // we want to expose setFieldError and setErrors
-      if (!('setErrors' in this)) {
-        this.setFieldError = setFieldError;
-        this.setErrors = setErrors;
-        this.setFieldValue = setFieldValue;
-        this.setValues = setValues;
-        this.setFieldTouched = setFieldTouched;
-        this.setTouched = setTouched;
-        this.resetForm = resetForm;
-        this.validate = validate;
-        this.validateField = validateField;
-      }
+    // expose these functions and methods as part of public API
+    ctx.expose({
+      setFieldError,
+      setErrors,
+      setFieldValue,
+      setValues,
+      setFieldTouched,
+      setTouched,
+      resetForm,
+      validate,
+      validateField,
+    });
 
+    return function renderForm() {
       // avoid resolving the form component as itself
       const tag = props.as === 'form' ? props.as : (resolveDynamicComponent(props.as) as string);
       const children = normalizeChildren(tag, ctx, slotProps);
