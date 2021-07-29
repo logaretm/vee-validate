@@ -1,4 +1,18 @@
-import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch, unref, nextTick, warn, markRaw } from 'vue';
+import {
+  computed,
+  ref,
+  Ref,
+  provide,
+  reactive,
+  onMounted,
+  isRef,
+  watch,
+  unref,
+  nextTick,
+  warn,
+  markRaw,
+  getCurrentInstance,
+} from 'vue';
 import isEqual from 'fast-deep-equal/es6';
 import type { SchemaOf } from 'yup';
 import { klona as deepCopy } from 'klona/lite';
@@ -574,6 +588,15 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
   // Provide injections
   provide(FormContextKey, formCtx as PrivateFormContext);
+
+  if (process.env.NODE_ENV === 'development') {
+    const vm = getCurrentInstance() as any;
+    if (!('_vvForms' in vm)) {
+      vm._vvForms = [];
+    }
+
+    vm._vvForms.push(formCtx);
+  }
 
   return {
     errors,
