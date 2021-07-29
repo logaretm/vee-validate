@@ -34,18 +34,23 @@ function createConfig(pkg, format) {
   });
 
   const version = require(path.resolve(__dirname, `../packages/${pkg}/package.json`)).version;
+  const isEsm = format === 'es';
 
   const config = {
     input: {
       input: path.resolve(__dirname, `../packages/${pkg}/src/index.ts`),
-      external: ['vue'],
+      external: ['vue', '@vue/devtools-api'],
       plugins: [
         tsPlugin,
         resolve({
           dedupe: ['fast-deep-equal/es6', 'fast-deep-equal', 'klona', 'klona/lite'],
         }),
         commonjs(),
-        replace({ __VERSION__: version }),
+        replace({
+          __VERSION__: version,
+          __VUE_PROD_DEVTOOLS__: isEsm ? '__VUE_PROD_DEVTOOLS__' : 'true',
+          'process.env.NODE_ENV': isEsm ? 'process.env.NODE_ENV' : JSON.stringify('production'),
+        }),
       ],
     },
     output: {
