@@ -59,6 +59,7 @@ function setupApiHooks(api: DevtoolsPluginApi) {
     id: INSPECTOR_ID,
     icon: 'rule',
     label: 'vee-validate',
+    noSelectionText: 'Select a vee-validate node to inspect',
     actions: [
       {
         icon: 'done_outline',
