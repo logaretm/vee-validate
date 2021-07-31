@@ -1,7 +1,7 @@
 import { App, nextTick, onUnmounted, unref, watch } from 'vue';
 import { setupDevtoolsPlugin, DevtoolsPluginApi, CustomInspectorNode, CustomInspectorState } from '@vue/devtools-api';
 import { PrivateFieldContext, PrivateFormContext } from './types';
-import { normalizeField, throttle } from './utils';
+import { keysOf, normalizeField, throttle } from './utils';
 
 const DEVTOOLS_FORMS: Record<string, PrivateFormContext> = {};
 
@@ -35,6 +35,7 @@ export function setupDevtools(app: App) {
         packageName: 'vee-validate',
         homepage: 'https://vee-validate.logaretm.com/v4',
         app,
+        logo: 'https://vee-validate.logaretm.com/v4/logo.png',
       },
       setupApiHooks
     );
@@ -49,13 +50,47 @@ export const refreshInspector = throttle(() => {
   }, 100);
 }, 100);
 
+let SELECTED_NODE: PrivateFormContext | PrivateFieldContext | null = null;
+
 function setupApiHooks(api: DevtoolsPluginApi) {
   API = api;
 
   api.addInspector({
     id: INSPECTOR_ID,
-    icon: 'check',
+    icon: 'rule',
     label: 'vee-validate',
+    actions: [
+      {
+        icon: 'done_outline',
+        tooltip: 'Validate selected item',
+        action: async () => {
+          if (!SELECTED_NODE) {
+            console.error('There is not a valid selected vee-validate node or component');
+            return;
+          }
+
+          const result = await SELECTED_NODE.validate();
+          console.log(result);
+        },
+      },
+      {
+        icon: 'delete_sweep',
+        tooltip: 'Clear validation state of the selected item',
+        action: () => {
+          if (!SELECTED_NODE) {
+            console.error('There is not a valid selected vee-validate node or component');
+            return;
+          }
+
+          if ('fid' in SELECTED_NODE) {
+            SELECTED_NODE.resetField();
+            return;
+          }
+
+          SELECTED_NODE.resetForm();
+        },
+      },
+    ],
   });
 
   api.on.getInspectorTree(payload => {
@@ -76,11 +111,17 @@ function setupApiHooks(api: DevtoolsPluginApi) {
     const { form, field, type } = decodeNodeId(payload.nodeId);
     if (form && type === 'form') {
       payload.state = buildFormState(form);
+      SELECTED_NODE = form;
+      return;
     }
 
     if (field && type === 'field') {
       payload.state = buildFieldState(field);
+      SELECTED_NODE = field;
+      return;
     }
+
+    SELECTED_NODE = null;
   });
 }
 
@@ -188,11 +229,21 @@ function buildFormState(form: PrivateFormContext): CustomInspectorState {
   const { errorBag, meta, values, isSubmitting, submitCount } = form;
 
   return {
-    'Form state': [
+    'Validation state': [
       {
         key: 'errors',
-        value: errorBag.value,
+        value: keysOf(errorBag.value).reduce((acc, key) => {
+          acc[key] = errorBag.value[key]?.[0];
+
+          return acc;
+        }, {} as Record<string, string | undefined>),
       },
+      {
+        key: 'valid',
+        value: meta.value.valid,
+      },
+    ],
+    'Form data': [
       {
         key: 'initialValues',
         value: meta.value.initialValues,
@@ -201,6 +252,8 @@ function buildFormState(form: PrivateFormContext): CustomInspectorState {
         key: 'currentValues',
         value: values,
       },
+    ],
+    'UX state': [
       {
         key: 'touched',
         value: meta.value.touched,
@@ -209,10 +262,8 @@ function buildFormState(form: PrivateFormContext): CustomInspectorState {
         key: 'dirty',
         value: meta.value.dirty,
       },
-      {
-        key: 'valid',
-        value: meta.value.valid,
-      },
+    ],
+    'Submission state': [
       {
         key: 'submitCount',
         value: submitCount.value,
