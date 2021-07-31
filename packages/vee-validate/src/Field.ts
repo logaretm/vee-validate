@@ -3,7 +3,7 @@ import { getConfig } from './config';
 import { useField } from './useField';
 import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent } from './utils';
 import { toNumber } from '../../shared';
-import { EMPTY_VALUE } from './symbols';
+import { IS_ABSENT } from './symbols';
 
 interface ValidationTriggersProps {
   validateOnMount: boolean;
@@ -64,7 +64,7 @@ export const Field = defineComponent({
     },
     modelValue: {
       type: null,
-      default: EMPTY_VALUE,
+      default: IS_ABSENT,
     },
     modelModifiers: {
       type: null,
@@ -162,6 +162,11 @@ export const Field = defineComponent({
 
     const modelValue = toRef(props, 'modelValue');
     watch(modelValue, newModelValue => {
+      // Don't attempt to sync absent values
+      if ((newModelValue as any) === IS_ABSENT && value.value === undefined) {
+        return;
+      }
+
       if (newModelValue !== applyModifiers(value.value, props.modelModifiers)) {
         value.value = newModelValue;
         validateField();

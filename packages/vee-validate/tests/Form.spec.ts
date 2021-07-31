@@ -2177,4 +2177,32 @@ describe('<Form />', () => {
     expect(fieldError.textContent).toBe(REQUIRED_MESSAGE);
     expect(meta.textContent).toBe('true');
   });
+
+  // 3424
+  test('Checkbox with v-model should not propagate the empty value symbol', async () => {
+    const value = ref('');
+    mountWithHoc({
+      setup() {
+        return {
+          value,
+        };
+      },
+      template: `
+      <VForm>
+        <Field name="check" type="checkbox" v-model="value" value="CHECKED" /> 
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const input = document.querySelector('input') as HTMLInputElement;
+    setChecked(input, true);
+    await flushPromises();
+    expect(value.value).toBe('CHECKED');
+
+    setChecked(input, false);
+    await flushPromises();
+
+    expect(value.value).toBe(undefined);
+  });
 });
