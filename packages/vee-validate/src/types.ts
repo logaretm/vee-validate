@@ -127,6 +127,7 @@ export type FieldPathLookup<TValues extends Record<string, any> = Record<string,
 
 export interface PrivateFormContext<TValues extends Record<string, any> = Record<string, any>>
   extends FormActions<TValues> {
+  formId: number;
   register(field: PrivateFieldContext): void;
   unregister(field: PrivateFieldContext): void;
   values: TValues;
@@ -150,6 +151,7 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
 export interface FormContext<TValues extends Record<string, any> = Record<string, any>>
   extends Omit<
     PrivateFormContext<TValues>,
+    | 'formId'
     | 'register'
     | 'unregister'
     | 'fieldsByPath'

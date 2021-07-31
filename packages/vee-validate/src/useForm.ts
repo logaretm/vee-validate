@@ -1,18 +1,4 @@
-import {
-  computed,
-  ref,
-  Ref,
-  provide,
-  reactive,
-  onMounted,
-  isRef,
-  watch,
-  unref,
-  nextTick,
-  warn,
-  markRaw,
-  getCurrentInstance,
-} from 'vue';
+import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch, unref, nextTick, warn, markRaw } from 'vue';
 import isEqual from 'fast-deep-equal/es6';
 import type { SchemaOf } from 'yup';
 import { klona as deepCopy } from 'klona/lite';
@@ -46,6 +32,7 @@ import {
 } from './utils';
 import { FormContextKey } from './symbols';
 import { validateYupSchema, validateObjectSchema } from './validate';
+import { refreshInspector, registerFormWithDevTools } from './devtools';
 
 interface FormOptions<TValues extends Record<string, any>> {
   validationSchema?: MaybeRef<
@@ -57,9 +44,13 @@ interface FormOptions<TValues extends Record<string, any>> {
   validateOnMount?: boolean;
 }
 
+let FORM_COUNTER = 0;
+
 export function useForm<TValues extends Record<string, any> = Record<string, any>>(
   opts?: FormOptions<TValues>
 ): FormContext<TValues> {
+  const formId = FORM_COUNTER++;
+
   // A lookup containing fields or field groups
   const fieldsByPath: Ref<FieldPathLookup<TValues>> = ref({} as any);
 
@@ -128,6 +119,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
   const schema = opts?.validationSchema;
   const formCtx: PrivateFormContext<TValues> = {
+    formId,
     fieldsByPath,
     values: formValues,
     errorBag,
@@ -590,12 +582,20 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   provide(FormContextKey, formCtx as PrivateFormContext);
 
   if (process.env.NODE_ENV === 'development') {
-    const vm = getCurrentInstance() as any;
-    if (!('_vvForms' in vm)) {
-      vm._vvForms = [];
-    }
-
-    vm._vvForms.push(formCtx);
+    registerFormWithDevTools(formCtx as PrivateFormContext);
+    watch(
+      () => ({
+        errors: errorBag.value,
+        ...meta.value,
+        values: formValues,
+        isSubmitting: isSubmitting.value,
+        submitCount: submitCount.value,
+      }),
+      refreshInspector,
+      {
+        deep: true,
+      }
+    );
   }
 
   return {
