@@ -1,14 +1,22 @@
-import { App, Ref } from 'vue';
-import { setupDevtoolsPlugin, DevtoolsPluginApi, InspectedComponentData } from '@vue/devtools-api';
-import { DevtoolsPluginFieldState, DevtoolsPluginFormState, PrivateFieldContext, PrivateFormContext } from './types';
+import { App, nextTick, onUnmounted, unref, watch } from 'vue';
+import { setupDevtoolsPlugin, DevtoolsPluginApi, CustomInspectorNode, CustomInspectorState } from '@vue/devtools-api';
+import { PrivateFieldContext, PrivateFormContext } from './types';
+import { normalizeField, throttle } from './utils';
 
-type VeeValidateComponentInstance = {
-  _vvFields?: PrivateFieldContext[];
-  _vvForms?: PrivateFormContext[];
-};
+const DEVTOOLS_FORMS: Record<string, PrivateFormContext> = {};
 
-const fieldStateType = 'Field Validation State';
-const formStateType = 'Form Validation State';
+let API: DevtoolsPluginApi | undefined;
+
+export function registerFormWithDevTools(form: PrivateFormContext) {
+  DEVTOOLS_FORMS[form.formId] = form;
+  onUnmounted(() => {
+    delete DEVTOOLS_FORMS[form.formId];
+  });
+
+  API?.sendInspectorTree(INSPECTOR_ID);
+}
+
+const INSPECTOR_ID = 'vee-validate-inspector';
 
 const COLORS = {
   error: 0xbd4b4b,
@@ -27,195 +35,209 @@ export function setupDevtools(app: App) {
         packageName: 'vee-validate',
         homepage: 'https://vee-validate.logaretm.com/v4',
         app,
-        componentStateTypes: [fieldStateType, formStateType],
       },
       setupApiHooks
     );
   }
 }
 
+export const refreshInspector = throttle(() => {
+  setTimeout(async () => {
+    await nextTick();
+    API?.sendInspectorState(INSPECTOR_ID);
+    API?.sendInspectorTree(INSPECTOR_ID);
+  }, 100);
+}, 100);
+
 function setupApiHooks(api: DevtoolsPluginApi) {
-  api.on.visitComponentTree((payload, context) => {
-    if (shouldSkipNode(payload)) {
+  API = api;
+
+  api.addInspector({
+    id: INSPECTOR_ID,
+    icon: 'check',
+    label: 'vee-validate',
+  });
+
+  api.on.getInspectorTree(payload => {
+    if (payload.inspectorId !== INSPECTOR_ID) {
       return;
     }
 
-    const node = payload.treeNode;
-    if (payload.componentInstance._vvFields) {
-      const isMany = payload.componentInstance._vvFields.length > 1;
-      const { bgColor, textColor } = getTagTheme(payload.componentInstance);
-      node.tags.push({
-        label: isMany ? `${payload.componentInstance._vvFields.length} fields` : `Field`,
+    const forms = Object.values(DEVTOOLS_FORMS);
+
+    payload.rootNodes = forms.map(mapFormForDevtoolsInspector);
+  });
+
+  api.on.getInspectorState(payload => {
+    if (payload.inspectorId !== INSPECTOR_ID) {
+      return;
+    }
+
+    const { form, field, type } = decodeNodeId(payload.nodeId);
+    if (form && type === 'form') {
+      payload.state = buildFormState(form);
+    }
+
+    if (field && type === 'field') {
+      payload.state = buildFieldState(field);
+    }
+  });
+}
+
+function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorNode {
+  const { textColor, bgColor } = getTagTheme(form);
+
+  return {
+    id: encodeNodeId(form),
+    label: 'Form',
+    children: Object.values(form.fieldsByPath.value)
+      .flat(2)
+      .map(field => ({ ...mapFieldForDevtoolsInspector(field), id: encodeNodeId(form, field) })),
+    tags: [
+      {
+        label: 'Form',
         textColor,
         backgroundColor: bgColor,
-      });
-    }
+      },
+      {
+        label: `${Object.keys(form.fieldsByPath.value).length} fields`,
+        textColor: COLORS.white,
+        backgroundColor: COLORS.unknown,
+      },
+    ],
+  };
+}
 
-    if (payload.componentInstance._vvForms) {
-      const isMany = payload.componentInstance._vvForms.length > 1;
-      const { bgColor, textColor } = getTagTheme(payload.componentInstance);
+function mapFieldForDevtoolsInspector(field: PrivateFieldContext): Omit<CustomInspectorNode, 'id'> {
+  const { textColor, bgColor } = getTagTheme(field);
 
-      node.tags.push({
-        label: isMany ? `${payload.componentInstance._vvForms.length} forms` : `Form`,
+  return {
+    label: unref(field.name),
+    tags: [
+      {
+        label: 'Field',
         textColor,
         backgroundColor: bgColor,
-      });
-    }
-  });
-
-  api.on.inspectComponent((payload, context) => {
-    if (shouldSkipNode(payload)) {
-      return;
-    }
-
-    if (payload.componentInstance.type.name === 'Field') {
-      // pushFieldState(api, payload);
-      return;
-    }
-
-    if (payload.componentInstance.type.name === 'Form') {
-      // pushFormState(api, payload);
-    }
-  });
+      },
+    ],
+  };
 }
 
-/**
- * Determines if a component inspection should be skipped, it will be skipped if it is NOT using vee-validate
- */
-function shouldSkipNode(payload: any) {
-  if (payload.componentInstance._vvFields || payload.componentInstance._vvForms) {
-    return false;
-  }
+function encodeNodeId(form: PrivateFormContext, field?: PrivateFieldContext): string {
+  const idObject = { f: form.formId, ff: unref(field?.name), type: field ? 'field' : 'form' };
 
-  return true;
+  return btoa(JSON.stringify(idObject));
 }
 
-function pushFieldState(
-  api: DevtoolsPluginApi,
-  payload: { app: any; componentInstance: any; instanceData: InspectedComponentData }
-) {
-  const fieldPluginState: Ref<DevtoolsPluginFieldState> | undefined = payload.componentInstance._vvalidationState;
-  if (!fieldPluginState || !fieldPluginState.value) {
-    return;
+function decodeNodeId(nodeId: string): {
+  field?: PrivateFieldContext;
+  form?: PrivateFormContext;
+  type?: 'form' | 'field';
+} {
+  try {
+    const idObject = JSON.parse(atob(nodeId));
+    const form = DEVTOOLS_FORMS[idObject.f];
+
+    if (!form) {
+      return {};
+    }
+
+    return {
+      type: idObject.type,
+      form,
+      field: normalizeField(form.fieldsByPath.value[idObject.ff]),
+    };
+  } catch (err) {
+    // console.error(`Devtools: [vee-validate] Failed to parse node id ${nodeId}`);
   }
 
-  const { errors, meta, value } = fieldPluginState.value;
-
-  payload.instanceData.state.push({
-    type: fieldStateType,
-    key: 'errors',
-    value: errors,
-  });
-  payload.instanceData.state.push({
-    type: fieldStateType,
-    key: 'initialValue',
-    value: meta.initialValue,
-  });
-  payload.instanceData.state.push({
-    type: fieldStateType,
-    key: 'currentValue',
-    value: value,
-  });
-  payload.instanceData.state.push({
-    type: fieldStateType,
-    key: 'touched',
-    value: meta.touched,
-  });
-  payload.instanceData.state.push({
-    type: fieldStateType,
-    key: 'dirty',
-    value: meta.dirty,
-  });
-  payload.instanceData.state.push({
-    type: fieldStateType,
-    key: 'valid',
-    value: meta.valid,
-  });
+  return {};
 }
 
-function pushFormState(
-  api: DevtoolsPluginApi,
-  payload: { app: any; componentInstance: any; instanceData: InspectedComponentData }
-) {
-  const formPluginState: Ref<DevtoolsPluginFormState> | undefined = payload.componentInstance._vvalidationState;
-  if (!formPluginState || !formPluginState.value) {
-    return;
-  }
+function buildFieldState(field: PrivateFieldContext): CustomInspectorState {
+  const { errors, meta, value } = field;
 
-  const { errors, meta, values, isSubmitting, submitCount } = formPluginState.value;
+  return {
+    'Field state': [
+      { key: 'errors', value: errors.value },
+      {
+        key: 'initialValue',
+        value: meta.initialValue,
+      },
+      {
+        key: 'currentValue',
+        value: value.value,
+      },
+      {
+        key: 'touched',
+        value: meta.touched,
+      },
+      {
+        key: 'dirty',
+        value: meta.dirty,
+      },
+      {
+        key: 'valid',
+        value: meta.valid,
+      },
+    ],
+  };
+}
 
-  payload.instanceData.state.push({
-    type: formStateType,
-    key: 'errors',
-    value: errors.value,
-  });
-  payload.instanceData.state.push({
-    type: formStateType,
-    key: 'initialValues',
-    value: meta.initialValues,
-  });
-  payload.instanceData.state.push({
-    type: formStateType,
-    key: 'currentValues',
-    value: values,
-  });
-  payload.instanceData.state.push({
-    type: formStateType,
-    key: 'touched',
-    value: meta.touched,
-  });
-  payload.instanceData.state.push({
-    type: formStateType,
-    key: 'dirty',
-    value: meta.dirty,
-  });
-  payload.instanceData.state.push({
-    type: formStateType,
-    key: 'valid',
-    value: meta.valid,
-  });
-  payload.instanceData.state.push({
-    type: formStateType,
-    key: 'submitCount',
-    value: submitCount,
-  });
-  payload.instanceData.state.push({
-    type: formStateType,
-    key: 'isSubmitting',
-    value: isSubmitting,
-  });
+function buildFormState(form: PrivateFormContext): CustomInspectorState {
+  const { errorBag, meta, values, isSubmitting, submitCount } = form;
+
+  return {
+    'Form state': [
+      {
+        key: 'errors',
+        value: errorBag.value,
+      },
+      {
+        key: 'initialValues',
+        value: meta.value.initialValues,
+      },
+      {
+        key: 'currentValues',
+        value: values,
+      },
+      {
+        key: 'touched',
+        value: meta.value.touched,
+      },
+      {
+        key: 'dirty',
+        value: meta.value.dirty,
+      },
+      {
+        key: 'valid',
+        value: meta.value.valid,
+      },
+      {
+        key: 'submitCount',
+        value: submitCount.value,
+      },
+      {
+        key: 'isSubmitting',
+        value: isSubmitting.value,
+      },
+    ],
+  };
 }
 
 /**
  * Resolves the tag color based on the form state
  */
-function getTagTheme(component: VeeValidateComponentInstance) {
-  const fallbackColors = {
-    bgColor: COLORS.unknown,
-    textColor: COLORS.white,
+function getTagTheme(fieldOrForm: PrivateFormContext | PrivateFieldContext) {
+  // const fallbackColors = {
+  //   bgColor: COLORS.unknown,
+  //   textColor: COLORS.white,
+  // };
+
+  const isValid = 'fid' in fieldOrForm ? fieldOrForm.meta.valid : fieldOrForm.meta.value.valid;
+
+  return {
+    bgColor: isValid ? COLORS.success : COLORS.error,
+    textColor: isValid ? COLORS.black : COLORS.white,
   };
-
-  if (component._vvForms) {
-    const isValid = component._vvForms[0].meta.value.valid;
-
-    return component._vvForms.length === 1
-      ? {
-          bgColor: isValid ? COLORS.success : COLORS.error,
-          textColor: isValid ? COLORS.black : COLORS.white,
-        }
-      : fallbackColors;
-  }
-
-  if (component._vvFields) {
-    const isValid = component._vvFields[0].meta.valid;
-
-    return component._vvFields.length === 1
-      ? {
-          bgColor: isValid ? COLORS.success : COLORS.error,
-          textColor: isValid ? COLORS.black : COLORS.white,
-        }
-      : fallbackColors;
-  }
-
-  return fallbackColors;
 }
