@@ -32,6 +32,7 @@ const COLORS = {
   black: 0x000000,
   blue: 0x035397,
   purple: 0xb980f0,
+  orange: 0xf5a962,
 };
 
 export function setupDevtools(app: App) {
@@ -142,7 +143,9 @@ function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorN
     label: 'Form',
     children: Object.values(form.fieldsByPath.value)
       .flat(2)
-      .map(field => ({ ...mapFieldForDevtoolsInspector(field), id: encodeNodeId(form, field) })),
+      .map(field => {
+        return { ...mapFieldForDevtoolsInspector(form, field) };
+      }),
     tags: [
       {
         label: 'Form',
@@ -158,10 +161,13 @@ function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorN
   };
 }
 
-function mapFieldForDevtoolsInspector(field: PrivateFieldContext): Omit<CustomInspectorNode, 'id'> {
+function mapFieldForDevtoolsInspector(form: PrivateFormContext, field: PrivateFieldContext): CustomInspectorNode {
   const { textColor, bgColor } = getTagTheme(field);
+  const pathValue = form.fieldsByPath.value[unref(field.name)];
+  const isGroup = Array.isArray(pathValue) && pathValue.length > 1;
 
   return {
+    id: encodeNodeId(form, field),
     label: unref(field.name),
     tags: [
       {
@@ -183,12 +189,26 @@ function mapFieldForDevtoolsInspector(field: PrivateFieldContext): Omit<CustomIn
             backgroundColor: COLORS.purple,
           }
         : undefined,
+      isGroup
+        ? {
+            label: 'Group',
+            textColor: COLORS.black,
+            backgroundColor: COLORS.orange,
+          }
+        : undefined,
     ].filter(Boolean) as InspectorNodeTag[],
   };
 }
 
 function encodeNodeId(form: PrivateFormContext, field?: PrivateFieldContext): string {
-  const idObject = { f: form.formId, ff: unref(field?.name), type: field ? 'field' : 'form' };
+  const fieldPath = unref(field?.name);
+  const fieldGroup = fieldPath ? form.fieldsByPath.value[fieldPath] : undefined;
+  let idx: number | undefined;
+  if (field && Array.isArray(fieldGroup)) {
+    idx = fieldGroup.indexOf(field);
+  }
+
+  const idObject = { f: form.formId, ff: fieldPath, idx, type: field ? 'field' : 'form' };
 
   return btoa(JSON.stringify(idObject));
 }
@@ -206,10 +226,12 @@ function decodeNodeId(nodeId: string): {
       return {};
     }
 
+    const fieldGroup = form.fieldsByPath.value[idObject.ff];
+
     return {
       type: idObject.type,
       form,
-      field: normalizeField(form.fieldsByPath.value[idObject.ff]),
+      field: Array.isArray(fieldGroup) ? fieldGroup[idObject.idx] : fieldGroup,
     };
   } catch (err) {
     // console.error(`Devtools: [vee-validate] Failed to parse node id ${nodeId}`);
