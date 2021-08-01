@@ -1,5 +1,11 @@
 import { App, nextTick, onUnmounted, unref, watch } from 'vue';
-import { setupDevtoolsPlugin, DevtoolsPluginApi, CustomInspectorNode, CustomInspectorState } from '@vue/devtools-api';
+import {
+  setupDevtoolsPlugin,
+  DevtoolsPluginApi,
+  CustomInspectorNode,
+  CustomInspectorState,
+  InspectorNodeTag,
+} from '@vue/devtools-api';
 import { PrivateFieldContext, PrivateFormContext } from './types';
 import { keysOf, normalizeField, throttle } from './utils';
 
@@ -24,6 +30,8 @@ const COLORS = {
   unknown: 0x54436b,
   white: 0xffffff,
   black: 0x000000,
+  blue: 0x035397,
+  purple: 0xb980f0,
 };
 
 export function setupDevtools(app: App) {
@@ -161,7 +169,21 @@ function mapFieldForDevtoolsInspector(field: PrivateFieldContext): Omit<CustomIn
         textColor,
         backgroundColor: bgColor,
       },
-    ],
+      field.type === 'checkbox'
+        ? {
+            label: 'Checkbox',
+            textColor: COLORS.white,
+            backgroundColor: COLORS.blue,
+          }
+        : undefined,
+      field.type === 'radio'
+        ? {
+            label: 'Radio',
+            textColor: COLORS.white,
+            backgroundColor: COLORS.purple,
+          }
+        : undefined,
+    ].filter(Boolean) as InspectorNodeTag[],
   };
 }
 
