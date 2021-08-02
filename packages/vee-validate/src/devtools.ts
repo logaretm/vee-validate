@@ -10,6 +10,7 @@ import { PrivateFieldContext, PrivateFormContext } from './types';
 import { keysOf, normalizeField, throttle } from './utils';
 
 const DEVTOOLS_FORMS: Record<string, PrivateFormContext> = {};
+const DEVTOOLS_FIELDS: Record<string, PrivateFieldContext> = {};
 
 let API: DevtoolsPluginApi | undefined;
 
@@ -17,6 +18,17 @@ export function registerFormWithDevTools(form: PrivateFormContext) {
   DEVTOOLS_FORMS[form.formId] = form;
   onUnmounted(() => {
     delete DEVTOOLS_FORMS[form.formId];
+    API?.sendInspectorTree(INSPECTOR_ID);
+  });
+
+  API?.sendInspectorTree(INSPECTOR_ID);
+}
+
+export function registerSingleFieldWithDevtools(field: PrivateFieldContext) {
+  DEVTOOLS_FIELDS[field.fid] = field;
+  onUnmounted(() => {
+    delete DEVTOOLS_FIELDS[field.fid];
+    API?.sendInspectorTree(INSPECTOR_ID);
   });
 
   API?.sendInspectorTree(INSPECTOR_ID);
@@ -33,6 +45,7 @@ const COLORS = {
   blue: 0x035397,
   purple: 0xb980f0,
   orange: 0xf5a962,
+  gray: 0xbbbfca,
 };
 
 export function setupDevtools(app: App) {
@@ -109,8 +122,12 @@ function setupApiHooks(api: DevtoolsPluginApi) {
     }
 
     const forms = Object.values(DEVTOOLS_FORMS);
+    const fields = Object.values(DEVTOOLS_FIELDS);
 
-    payload.rootNodes = forms.map(mapFormForDevtoolsInspector);
+    payload.rootNodes = [
+      ...forms.map(mapFormForDevtoolsInspector),
+      ...fields.map(field => mapFieldForDevtoolsInspector(field)),
+    ];
   });
 
   api.on.getInspectorState(payload => {
@@ -142,7 +159,7 @@ function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorN
     id: encodeNodeId(form),
     label: 'Form',
     children: Object.values(form.fieldsByPath.value).map(field => {
-      return { ...mapFieldForDevtoolsInspector(form, field) };
+      return { ...mapFieldForDevtoolsInspector(field, form) };
     }),
     tags: [
       {
@@ -160,8 +177,8 @@ function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorN
 }
 
 function mapFieldForDevtoolsInspector(
-  form: PrivateFormContext,
-  field: PrivateFieldContext | PrivateFieldContext[]
+  field: PrivateFieldContext | PrivateFieldContext[],
+  form?: PrivateFormContext
 ): CustomInspectorNode {
   const fieldInstance = normalizeField(field) as PrivateFieldContext;
   const { textColor, bgColor } = getTagTheme(fieldInstance);
@@ -170,7 +187,7 @@ function mapFieldForDevtoolsInspector(
   return {
     id: encodeNodeId(form, fieldInstance, !isGroup),
     label: unref(fieldInstance.name),
-    children: Array.isArray(field) ? field.map(fieldItem => mapFieldForDevtoolsInspector(form, fieldItem)) : undefined,
+    children: Array.isArray(field) ? field.map(fieldItem => mapFieldForDevtoolsInspector(fieldItem, form)) : undefined,
     tags: [
       isGroup
         ? undefined
@@ -179,6 +196,13 @@ function mapFieldForDevtoolsInspector(
             textColor,
             backgroundColor: bgColor,
           },
+      !form
+        ? {
+            label: 'Standalone',
+            textColor: COLORS.black,
+            backgroundColor: COLORS.gray,
+          }
+        : undefined,
       !isGroup && fieldInstance.type === 'checkbox'
         ? {
             label: 'Checkbox',
@@ -204,15 +228,15 @@ function mapFieldForDevtoolsInspector(
   };
 }
 
-function encodeNodeId(form: PrivateFormContext, field?: PrivateFieldContext, encodeIndex = true): string {
-  const fieldPath = unref(field?.name);
-  const fieldGroup = fieldPath ? form.fieldsByPath.value[fieldPath] : undefined;
+function encodeNodeId(form?: PrivateFormContext, field?: PrivateFieldContext, encodeIndex = true): string {
+  const fieldPath = form ? unref(field?.name) : field?.fid;
+  const fieldGroup = fieldPath ? form?.fieldsByPath.value[fieldPath] : undefined;
   let idx: number | undefined;
   if (encodeIndex && field && Array.isArray(fieldGroup)) {
     idx = fieldGroup.indexOf(field);
   }
 
-  const idObject = { f: form.formId, ff: fieldPath, idx, type: field ? 'field' : 'form' };
+  const idObject = { f: form?.formId, ff: fieldPath, idx, type: field ? 'field' : 'form' };
 
   return btoa(JSON.stringify(idObject));
 }
@@ -225,6 +249,18 @@ function decodeNodeId(nodeId: string): {
   try {
     const idObject = JSON.parse(atob(nodeId));
     const form = DEVTOOLS_FORMS[idObject.f];
+
+    if (!form && idObject.ff) {
+      const field = DEVTOOLS_FIELDS[idObject.ff];
+      if (!field) {
+        return {};
+      }
+
+      return {
+        type: idObject.type,
+        field,
+      };
+    }
 
     if (!form) {
       return {};
