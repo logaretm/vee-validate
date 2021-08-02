@@ -141,11 +141,9 @@ function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorN
   return {
     id: encodeNodeId(form),
     label: 'Form',
-    children: Object.values(form.fieldsByPath.value)
-      .flat(2)
-      .map(field => {
-        return { ...mapFieldForDevtoolsInspector(form, field) };
-      }),
+    children: Object.values(form.fieldsByPath.value).map(field => {
+      return { ...mapFieldForDevtoolsInspector(form, field) };
+    }),
     tags: [
       {
         label: 'Form',
@@ -161,28 +159,34 @@ function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorN
   };
 }
 
-function mapFieldForDevtoolsInspector(form: PrivateFormContext, field: PrivateFieldContext): CustomInspectorNode {
-  const { textColor, bgColor } = getTagTheme(field);
-  const pathValue = form.fieldsByPath.value[unref(field.name)];
-  const isGroup = Array.isArray(pathValue) && pathValue.length > 1;
+function mapFieldForDevtoolsInspector(
+  form: PrivateFormContext,
+  field: PrivateFieldContext | PrivateFieldContext[]
+): CustomInspectorNode {
+  const fieldInstance = normalizeField(field) as PrivateFieldContext;
+  const { textColor, bgColor } = getTagTheme(fieldInstance);
+  const isGroup = Array.isArray(field) && field.length > 1;
 
   return {
-    id: encodeNodeId(form, field),
-    label: unref(field.name),
+    id: encodeNodeId(form, fieldInstance, !isGroup),
+    label: unref(fieldInstance.name),
+    children: Array.isArray(field) ? field.map(fieldItem => mapFieldForDevtoolsInspector(form, fieldItem)) : undefined,
     tags: [
-      {
-        label: 'Field',
-        textColor,
-        backgroundColor: bgColor,
-      },
-      field.type === 'checkbox'
+      isGroup
+        ? undefined
+        : {
+            label: 'Field',
+            textColor,
+            backgroundColor: bgColor,
+          },
+      !isGroup && fieldInstance.type === 'checkbox'
         ? {
             label: 'Checkbox',
             textColor: COLORS.white,
             backgroundColor: COLORS.blue,
           }
         : undefined,
-      field.type === 'radio'
+      !isGroup && fieldInstance.type === 'radio'
         ? {
             label: 'Radio',
             textColor: COLORS.white,
@@ -200,11 +204,11 @@ function mapFieldForDevtoolsInspector(form: PrivateFormContext, field: PrivateFi
   };
 }
 
-function encodeNodeId(form: PrivateFormContext, field?: PrivateFieldContext): string {
+function encodeNodeId(form: PrivateFormContext, field?: PrivateFieldContext, encodeIndex = true): string {
   const fieldPath = unref(field?.name);
   const fieldGroup = fieldPath ? form.fieldsByPath.value[fieldPath] : undefined;
   let idx: number | undefined;
-  if (field && Array.isArray(fieldGroup)) {
+  if (encodeIndex && field && Array.isArray(fieldGroup)) {
     idx = fieldGroup.indexOf(field);
   }
 
@@ -231,7 +235,7 @@ function decodeNodeId(nodeId: string): {
     return {
       type: idObject.type,
       form,
-      field: Array.isArray(fieldGroup) ? fieldGroup[idObject.idx] : fieldGroup,
+      field: Array.isArray(fieldGroup) ? fieldGroup[idObject.idx || 0] : fieldGroup,
     };
   } catch (err) {
     // console.error(`Devtools: [vee-validate] Failed to parse node id ${nodeId}`);
