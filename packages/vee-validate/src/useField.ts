@@ -27,7 +27,7 @@ import {
 import { isCallable } from '../../shared';
 import { FieldContextKey, FormContextKey } from './symbols';
 import { useFieldState } from './useFieldState';
-import { refreshInspector } from './devtools';
+import { refreshInspector, registerSingleFieldWithDevtools } from './devtools';
 
 interface FieldOptions<TValue = unknown> {
   initialValue?: MaybeRef<TValue>;
@@ -259,6 +259,16 @@ function _useField<TValue = unknown>(
     );
   }
 
+  if (process.env.NODE_ENV === 'development') {
+    watch(() => ({ errors: errors.value, ...meta, value: value.value }), refreshInspector, {
+      deep: true,
+    });
+
+    if (!form) {
+      registerSingleFieldWithDevtools(field);
+    }
+  }
+
   // if no associated form return the field API immediately
   if (!form) {
     return field;
@@ -310,12 +320,6 @@ function _useField<TValue = unknown>(
       meta.validated ? validateWithStateMutation() : validateValidStateOnly();
     }
   });
-
-  if (process.env.NODE_ENV === 'development') {
-    watch(() => ({ errors: errors.value, ...meta, value: value.value }), refreshInspector, {
-      deep: true,
-    });
-  }
 
   return field;
 }
