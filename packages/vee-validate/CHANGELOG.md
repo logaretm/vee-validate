@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.4.9](https://github.com/logaretm/vee-validate/compare/v4.4.8...v4.4.9) (2021-08-05)
+
+
+### Bug Fixes
+
+* ensure to clone user passed values in setters closes [#3428](https://github.com/logaretm/vee-validate/issues/3428) ([a720c24](https://github.com/logaretm/vee-validate/commit/a720c2444b64d28743ba0500aa970419029352cb))
+* prioritize the current value if another field of same name is mounted closes [#3429](https://github.com/logaretm/vee-validate/issues/3429) ([cf036ec](https://github.com/logaretm/vee-validate/commit/cf036ecf9a5dad401c752c132ef5333d0f442441))
+
+
+
+
+
 ## [4.4.8](https://github.com/logaretm/vee-validate/compare/v4.4.7...v4.4.8) (2021-07-31)
 
 **Note:** Version bump only for package vee-validate
