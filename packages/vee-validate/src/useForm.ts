@@ -167,15 +167,18 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     { force } = { force: false }
   ) {
     const fieldInstance: RegisteredField | undefined = fieldsByPath.value[field];
+    const clonedValue = deepCopy(value);
     // field wasn't found, create a virtual field as a placeholder
     if (!fieldInstance) {
-      setInPath(formValues, field as string, value);
+      setInPath(formValues, field as string, clonedValue);
       return;
     }
 
     // Multiple checkboxes, and only one of them got updated
     if (Array.isArray(fieldInstance) && fieldInstance[0]?.type === 'checkbox' && !Array.isArray(value)) {
-      const newVal = resolveNextCheckboxValue(getFromPath(formValues, field as string) || [], value, undefined);
+      const newVal = deepCopy(
+        resolveNextCheckboxValue(getFromPath(formValues, field as string) || [], value, undefined)
+      );
       setInPath(formValues, field as string, newVal);
       fieldInstance.forEach(fieldItem => {
         valuesByFid[fieldItem.fid] = newVal;
@@ -186,10 +189,12 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     let newValue = value;
     // Single Checkbox: toggles the field value unless the field is being reset then force it
     if (!Array.isArray(fieldInstance) && fieldInstance?.type === 'checkbox' && !force) {
-      newValue = resolveNextCheckboxValue<TValues[T]>(
-        getFromPath<TValues[T]>(formValues, field as string) as TValues[T],
-        value as TValues[T],
-        unref(fieldInstance.uncheckedValue) as TValues[T]
+      newValue = deepCopy(
+        resolveNextCheckboxValue<TValues[T]>(
+          getFromPath<TValues[T]>(formValues, field as string) as TValues[T],
+          value as TValues[T],
+          unref(fieldInstance.uncheckedValue) as TValues[T]
+        )
       );
     }
 
@@ -520,7 +525,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   }
 
   function setFieldInitialValue(path: string, value: unknown) {
-    setInPath(initialValues.value, path, value);
+    setInPath(initialValues.value, path, deepCopy(value));
   }
 
   /**
@@ -726,9 +731,7 @@ function useFormInitialValues<TValues extends Record<string, any>>(
   });
 
   function setInitialValues(values: Partial<TValues>, updateFields = false) {
-    initialValues.value = {
-      ...values,
-    };
+    initialValues.value = deepCopy(values);
 
     if (!updateFields) {
       return;

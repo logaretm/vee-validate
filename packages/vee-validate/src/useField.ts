@@ -13,6 +13,7 @@ import {
   nextTick,
 } from 'vue';
 import { BaseSchema } from 'yup';
+import { klona as deepCopy } from 'klona/lite';
 import isEqual from 'fast-deep-equal/es6';
 import { validate as validateValue } from './validate';
 import {
@@ -413,8 +414,8 @@ function useValidationState<TValue>({
       form.setFieldValue(fieldPath, newValue, { force: true });
       form.setFieldInitialValue(fieldPath, newValue);
     } else {
-      value.value = newValue;
-      initialValueSourceRef.value = newValue;
+      value.value = deepCopy(newValue);
+      initialValueSourceRef.value = deepCopy(newValue);
     }
 
     setErrors(state?.errors || []);
