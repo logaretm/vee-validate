@@ -2205,4 +2205,32 @@ describe('<Form />', () => {
 
     expect(value.value).toBe(undefined);
   });
+
+  // #3429
+  test('Two fields of the same name should not override each other value when either is mounted', async () => {
+    const isHidden = ref(false);
+    const value = ref('');
+    mountWithHoc({
+      setup() {
+        return {
+          value,
+          isHidden,
+        };
+      },
+      template: `
+      <VForm>
+        <Field name="name" type="text" v-model="value" /> 
+        <Field v-if="isHidden" name="name" type="text" v-model="value" /> 
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const input = document.querySelector('input') as HTMLInputElement;
+    setValue(input, '1234');
+    await flushPromises();
+    isHidden.value = true;
+    await flushPromises();
+    expect(input.value).toBe(value.value);
+  });
 });

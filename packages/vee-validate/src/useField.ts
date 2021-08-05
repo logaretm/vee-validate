@@ -486,8 +486,11 @@ export function useFieldValue<TValue>(
     return ref(unref(initialValue)) as WritableRef<TValue>;
   }
 
-  // set initial value
-  form.stageInitialValue(unref(path), unref(initialValue));
+  // to set the initial value, first check if there is a current value, if there is then use it.
+  // otherwise use the configured initial value if it exists.
+  // #3429
+  const currentValue = getFromPath(form.values, unref(path), unref(initialValue));
+  form.stageInitialValue(unref(path), currentValue === undefined ? unref(initialValue) : currentValue);
   // otherwise use a computed setter that triggers the `setFieldValue`
   const value = computed<TValue>({
     get() {
