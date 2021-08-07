@@ -1,52 +1,14 @@
-import { App, nextTick, onUnmounted, unref, watch } from 'vue';
+import { App, getCurrentInstance, nextTick, onUnmounted, unref } from 'vue';
 import {
   setupDevtoolsPlugin,
   DevtoolsPluginApi,
   CustomInspectorNode,
   CustomInspectorState,
   InspectorNodeTag,
+  ComponentInstance,
 } from '@vue/devtools-api';
 import { PrivateFieldContext, PrivateFormContext } from './types';
 import { keysOf, normalizeField, throttle } from './utils';
-
-const DEVTOOLS_FORMS: Record<string, PrivateFormContext> = {};
-const DEVTOOLS_FIELDS: Record<string, PrivateFieldContext> = {};
-
-let API: DevtoolsPluginApi | undefined;
-
-export function registerFormWithDevTools(form: PrivateFormContext) {
-  DEVTOOLS_FORMS[form.formId] = form;
-  onUnmounted(() => {
-    delete DEVTOOLS_FORMS[form.formId];
-    API?.sendInspectorTree(INSPECTOR_ID);
-  });
-
-  API?.sendInspectorTree(INSPECTOR_ID);
-}
-
-export function registerSingleFieldWithDevtools(field: PrivateFieldContext) {
-  DEVTOOLS_FIELDS[field.fid] = field;
-  onUnmounted(() => {
-    delete DEVTOOLS_FIELDS[field.fid];
-    API?.sendInspectorTree(INSPECTOR_ID);
-  });
-
-  API?.sendInspectorTree(INSPECTOR_ID);
-}
-
-const INSPECTOR_ID = 'vee-validate-inspector';
-
-const COLORS = {
-  error: 0xbd4b4b,
-  success: 0x06d77b,
-  unknown: 0x54436b,
-  white: 0xffffff,
-  black: 0x000000,
-  blue: 0x035397,
-  purple: 0xb980f0,
-  orange: 0xf5a962,
-  gray: 0xbbbfca,
-};
 
 export function setupDevtools(app: App) {
   if (process.env.NODE_ENV === 'development') {
@@ -64,6 +26,11 @@ export function setupDevtools(app: App) {
   }
 }
 
+const DEVTOOLS_FORMS: Record<string, PrivateFormContext & { _vm?: ComponentInstance | null }> = {};
+const DEVTOOLS_FIELDS: Record<string, PrivateFieldContext & { _vm?: ComponentInstance | null }> = {};
+
+let API: DevtoolsPluginApi | undefined;
+
 export const refreshInspector = throttle(() => {
   setTimeout(async () => {
     await nextTick();
@@ -72,10 +39,64 @@ export const refreshInspector = throttle(() => {
   }, 100);
 }, 100);
 
-let SELECTED_NODE: PrivateFormContext | PrivateFieldContext | null = null;
+export function registerFormWithDevTools(form: PrivateFormContext) {
+  DEVTOOLS_FORMS[form.formId] = { ...form };
+  DEVTOOLS_FORMS[form.formId]._vm = getCurrentInstance();
+  onUnmounted(() => {
+    delete DEVTOOLS_FORMS[form.formId];
+    refreshInspector();
+  });
+
+  refreshInspector();
+}
+
+export function registerSingleFieldWithDevtools(field: PrivateFieldContext) {
+  DEVTOOLS_FIELDS[field.fid] = { ...field };
+  DEVTOOLS_FIELDS[field.fid]._vm = getCurrentInstance();
+  onUnmounted(() => {
+    delete DEVTOOLS_FIELDS[field.fid];
+    refreshInspector();
+  });
+
+  refreshInspector();
+}
+
+const INSPECTOR_ID = 'vee-validate-inspector';
+
+const COLORS = {
+  error: 0xbd4b4b,
+  success: 0x06d77b,
+  unknown: 0x54436b,
+  white: 0xffffff,
+  black: 0x000000,
+  blue: 0x035397,
+  purple: 0xb980f0,
+  orange: 0xf5a962,
+  gray: 0xbbbfca,
+};
+
+let SELECTED_NODE: ((PrivateFormContext | PrivateFieldContext) & { _vm?: ComponentInstance | null }) | null = null;
 
 function setupApiHooks(api: DevtoolsPluginApi) {
   API = api;
+  let highlightTimeout: number | null = null;
+  function highlightSelected() {
+    const vm = SELECTED_NODE?._vm;
+    if (!vm) {
+      return;
+    }
+
+    if (highlightTimeout) {
+      window.clearTimeout(highlightTimeout);
+    }
+
+    api.unhighlightElement();
+    api.highlightElement(vm);
+    highlightTimeout = window.setTimeout(() => {
+      api.unhighlightElement();
+      highlightTimeout = null;
+    }, 3000);
+  }
 
   api.addInspector({
     id: INSPECTOR_ID,
@@ -130,21 +151,24 @@ function setupApiHooks(api: DevtoolsPluginApi) {
     ];
   });
 
-  api.on.getInspectorState(payload => {
-    if (payload.inspectorId !== INSPECTOR_ID) {
+  api.on.getInspectorState((payload, ctx) => {
+    if (payload.inspectorId !== INSPECTOR_ID || ctx.currentTab !== `custom-inspector:${INSPECTOR_ID}`) {
       return;
     }
 
     const { form, field, type } = decodeNodeId(payload.nodeId);
+
     if (form && type === 'form') {
       payload.state = buildFormState(form);
       SELECTED_NODE = form;
+      highlightSelected();
       return;
     }
 
     if (field && type === 'field') {
       payload.state = buildFieldState(field);
       SELECTED_NODE = field;
+      highlightSelected();
       return;
     }
 
@@ -242,8 +266,8 @@ function encodeNodeId(form?: PrivateFormContext, field?: PrivateFieldContext, en
 }
 
 function decodeNodeId(nodeId: string): {
-  field?: PrivateFieldContext;
-  form?: PrivateFormContext;
+  field?: PrivateFieldContext & { _vm?: ComponentInstance | null };
+  form?: PrivateFormContext & { _vm?: ComponentInstance | null };
   type?: 'form' | 'field';
 } {
   try {

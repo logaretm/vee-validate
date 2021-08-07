@@ -1,4 +1,15 @@
-import { watch, isRef, computed, onMounted, onBeforeUnmount, unref, WatchStopHandle, provide, nextTick } from 'vue';
+import {
+  watch,
+  isRef,
+  computed,
+  onMounted,
+  onBeforeUnmount,
+  unref,
+  WatchStopHandle,
+  provide,
+  nextTick,
+  getCurrentInstance,
+} from 'vue';
 import { BaseSchema } from 'yup';
 import { klona as deepCopy } from 'klona/lite';
 import isEqual from 'fast-deep-equal/es6';
@@ -260,6 +271,7 @@ function _useField<TValue = unknown>(
   }
 
   if (process.env.NODE_ENV === 'development') {
+    (field as any)._vm = getCurrentInstance();
     watch(() => ({ errors: errors.value, ...meta, value: value.value }), refreshInspector, {
       deep: true,
     });
