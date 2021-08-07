@@ -79,23 +79,21 @@ let SELECTED_NODE: ((PrivateFormContext | PrivateFieldContext) & { _vm?: Compone
 
 function setupApiHooks(api: DevtoolsPluginApi) {
   API = api;
-  let highlightTimeout: number | null = null;
+  // let highlightTimeout: number | null = null;
   function highlightSelected() {
-    const vm = SELECTED_NODE?._vm;
-    if (!vm) {
-      return;
-    }
-
-    if (highlightTimeout) {
-      window.clearTimeout(highlightTimeout);
-    }
-
-    api.unhighlightElement();
-    api.highlightElement(vm);
-    highlightTimeout = window.setTimeout(() => {
-      api.unhighlightElement();
-      highlightTimeout = null;
-    }, 3000);
+    // const vm = SELECTED_NODE?._vm;
+    // if (!vm) {
+    //   return;
+    // }
+    // if (highlightTimeout) {
+    //   window.clearTimeout(highlightTimeout);
+    // }
+    // api.unhighlightElement();
+    // api.highlightElement(vm);
+    // highlightTimeout = window.setTimeout(() => {
+    //   api.unhighlightElement();
+    //   highlightTimeout = null;
+    // }, 3000);
   }
 
   api.addInspector({
