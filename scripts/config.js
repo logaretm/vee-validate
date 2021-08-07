@@ -39,7 +39,7 @@ function createConfig(pkg, format) {
   const config = {
     input: {
       input: path.resolve(__dirname, `../packages/${pkg}/src/index.ts`),
-      external: ['vue', '@vue/devtools-api'],
+      external: ['vue', isEsm ? '@vue/devtools-api' : undefined].filter(Boolean),
       plugins: [
         tsPlugin,
         resolve({
