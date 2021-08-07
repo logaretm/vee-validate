@@ -336,31 +336,15 @@ function buildFormState(form: PrivateFormContext): CustomInspectorState {
   const { errorBag, meta, values, isSubmitting, submitCount } = form;
 
   return {
-    'Validation state': [
+    'Form state': [
       {
-        key: 'errors',
-        value: keysOf(errorBag.value).reduce((acc, key) => {
-          acc[key] = errorBag.value[key]?.[0];
-
-          return acc;
-        }, {} as Record<string, string | undefined>),
+        key: 'submitCount',
+        value: submitCount.value,
       },
       {
-        key: 'valid',
-        value: meta.value.valid,
+        key: 'isSubmitting',
+        value: isSubmitting.value,
       },
-    ],
-    'Form data': [
-      {
-        key: 'initialValues',
-        value: meta.value.initialValues,
-      },
-      {
-        key: 'currentValues',
-        value: values,
-      },
-    ],
-    'UX state': [
       {
         key: 'touched',
         value: meta.value.touched,
@@ -369,15 +353,28 @@ function buildFormState(form: PrivateFormContext): CustomInspectorState {
         key: 'dirty',
         value: meta.value.dirty,
       },
-    ],
-    'Submission state': [
       {
-        key: 'submitCount',
-        value: submitCount.value,
+        key: 'valid',
+        value: meta.value.valid,
       },
       {
-        key: 'isSubmitting',
-        value: isSubmitting.value,
+        key: 'initialValues',
+        value: meta.value.initialValues,
+      },
+      {
+        key: 'currentValues',
+        value: values,
+      },
+      {
+        key: 'errors',
+        value: keysOf(errorBag.value).reduce((acc, key) => {
+          const message = errorBag.value[key]?.[0];
+          if (message) {
+            acc[key] = message;
+          }
+
+          return acc;
+        }, {} as Record<string, string | undefined>),
       },
     ],
   };
