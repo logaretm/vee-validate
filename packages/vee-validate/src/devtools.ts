@@ -10,7 +10,7 @@ import {
 import { PrivateFieldContext, PrivateFormContext } from './types';
 import { keysOf, normalizeField, throttle } from './utils';
 
-export function setupDevtools(app: App) {
+function installDevtoolsPlugin(app: App) {
   if (process.env.NODE_ENV === 'development') {
     setupDevtoolsPlugin(
       {
@@ -40,8 +40,18 @@ export const refreshInspector = throttle(() => {
 }, 100);
 
 export function registerFormWithDevTools(form: PrivateFormContext) {
+  const vm = getCurrentInstance();
+  if (!API) {
+    const app = vm?.appContext.app;
+    if (!app) {
+      return;
+    }
+
+    installDevtoolsPlugin(app);
+  }
+
   DEVTOOLS_FORMS[form.formId] = { ...form };
-  DEVTOOLS_FORMS[form.formId]._vm = getCurrentInstance();
+  DEVTOOLS_FORMS[form.formId]._vm = vm;
   onUnmounted(() => {
     delete DEVTOOLS_FORMS[form.formId];
     refreshInspector();
@@ -51,8 +61,18 @@ export function registerFormWithDevTools(form: PrivateFormContext) {
 }
 
 export function registerSingleFieldWithDevtools(field: PrivateFieldContext) {
+  const vm = getCurrentInstance();
+  if (!API) {
+    const app = vm?.appContext.app;
+    if (!app) {
+      return;
+    }
+
+    installDevtoolsPlugin(app);
+  }
+
   DEVTOOLS_FIELDS[field.fid] = { ...field };
-  DEVTOOLS_FIELDS[field.fid]._vm = getCurrentInstance();
+  DEVTOOLS_FIELDS[field.fid]._vm = vm;
   onUnmounted(() => {
     delete DEVTOOLS_FIELDS[field.fid];
     refreshInspector();
