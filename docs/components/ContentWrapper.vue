@@ -114,6 +114,10 @@ export default {
     @apply my-10;
   }
 
+  video {
+    @apply my-5 rounded-lg shadow-lg;
+  }
+
   blockquote {
     @apply py-4 rounded-r-lg pl-4 bg-black border-l-4 border-accent-800 italic my-8 text-lg;
   }
