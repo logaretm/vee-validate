@@ -104,10 +104,10 @@ export interface SubmissionContext<TValues extends Record<string, unknown> = Rec
   evt?: Event;
 }
 
-export type SubmissionHandler<TValues extends Record<string, unknown> = Record<string, unknown>> = (
+export type SubmissionHandler<TValues extends Record<string, unknown> = Record<string, unknown>, TReturn = unknown> = (
   values: TValues,
   ctx: SubmissionContext<TValues>
-) => unknown;
+) => TReturn;
 
 export type RawFormSchema<TValues> = Record<keyof TValues, string | GenericValidateFunction | Record<string, any>>;
 
@@ -139,7 +139,7 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
     initialValues: TValues;
   }>;
   isSubmitting: Ref<boolean>;
-  handleSubmit(cb: SubmissionHandler<TValues>): (e?: Event) => Promise<void>;
+  handleSubmit<TReturn = unknown>(cb: SubmissionHandler<TValues, TReturn>): (e?: Event) => Promise<TReturn | undefined>;
   setFieldInitialValue(path: string, value: unknown): void;
 }
 
