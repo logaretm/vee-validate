@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0-alpha.4](https://github.com/logaretm/vee-validate/compare/v4.4.7...v4.5.0-alpha.4) (2021-08-10)
+
+
+### Bug Fixes
+
+* correctly stage the priority of the initial values ([cc48a5a](https://github.com/logaretm/vee-validate/commit/cc48a5a5a60d7e2e2038043583eef5a03dded48b))
+* ensure to clone user passed values in setters closes [#3428](https://github.com/logaretm/vee-validate/issues/3428) ([6470a1f](https://github.com/logaretm/vee-validate/commit/6470a1fa7e5c8f04498d627a3759d445b0587793))
+* preserve submission handler return value ([ee1780c](https://github.com/logaretm/vee-validate/commit/ee1780c09a4f58e55d61cfe2d2df751f753334c6))
+* prevent initial values from overwritting existing values ([edd7f9b](https://github.com/logaretm/vee-validate/commit/edd7f9bc387d01532be106a52f75ee894007afb4))
+
+
+### Features
+
+* **perf:** re-write field tracking and batch schema validation closes [#3399](https://github.com/logaretm/vee-validate/issues/3399) ([bda17b8](https://github.com/logaretm/vee-validate/commit/bda17b809bc3e108ce605cb160ee6cd739a41384))
+* expose setters in composition API ([1dcf60a](https://github.com/logaretm/vee-validate/commit/1dcf60ad083235e632fdc96be5b79a11fd7452d7))
+
+
+
+
+
 # [4.5.0-alpha.3](https://github.com/logaretm/vee-validate/compare/v4.4.7...v4.5.0-alpha.3) (2021-07-21)
 
 
