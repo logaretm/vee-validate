@@ -477,7 +477,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     return fieldInstance.validate();
   }
 
-  function handleSubmit(fn?: SubmissionHandler<TValues>) {
+  function handleSubmit<TReturn = unknown>(fn?: SubmissionHandler<TValues, TReturn>) {
     return function submissionHandler(e: unknown) {
       if (e instanceof Event) {
         e.preventDefault();
@@ -511,8 +511,10 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
           }
         })
         .then(
-          () => {
+          returnVal => {
             isSubmitting.value = false;
+
+            return returnVal;
           },
           err => {
             isSubmitting.value = false;
