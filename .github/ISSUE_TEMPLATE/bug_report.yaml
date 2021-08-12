@@ -55,6 +55,8 @@ body:
     attributes:
       label: Demo link
       description: If you can reproduce this issue on codesandbox/codepen, please paste the link here
+    validations:
+      required: true
   - type: checkboxes
     attributes:
       label: Code of Conduct
