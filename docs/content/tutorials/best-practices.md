@@ -22,7 +22,7 @@ const schema = yup.object({
 You should leverage your bundler's tree-shaking capabilities and only import what you need:
 
 ```js
-import { object, string } as yup from 'yup';
+import { object, string } from 'yup';
 
 const schema = object({
   email: string().email(),
