@@ -54,7 +54,14 @@ export function isNotNestedPath(path: string) {
  * Checks if an element is a native HTML5 multi-select input element
  */
 export function isNativeMultiSelect(el: HTMLElement): el is HTMLSelectElement {
-  return el.tagName === 'SELECT' && (el as HTMLSelectElement).multiple;
+  return isNativeSelect(el) && el.multiple;
+}
+
+/**
+ * Checks if an element is a native HTML5 select input element
+ */
+export function isNativeSelect(el: HTMLElement): el is HTMLSelectElement {
+  return el.tagName === 'SELECT';
 }
 
 /**
