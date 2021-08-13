@@ -1125,4 +1125,38 @@ describe('<Field />', () => {
     expect(error.textContent).toBe('');
     expect(input.value).toBe('');
   });
+
+  // #3440
+  test('should preserve select input options value type', async () => {
+    const value = ref();
+
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          value,
+        };
+      },
+      template: `
+        <Field as="select" v-model="value" name="hello">
+          <option id="true" :value="true">Yes</option>
+          <option id="false" :value="false">No</option>
+        </Field>
+    `,
+    });
+
+    await flushPromises();
+    const select = document.querySelector('select') as HTMLSelectElement;
+    const optTrue = document.querySelector('#true') as HTMLOptionElement;
+    const optFalse = document.querySelector('#false') as HTMLOptionElement;
+
+    optTrue.selected = true;
+    dispatchEvent(select, 'change');
+    await flushPromises();
+    expect(value.value).toBe(true);
+
+    optFalse.selected = true;
+    dispatchEvent(select, 'change');
+    await flushPromises();
+    expect(value.value).toBe(false);
+  });
 });
