@@ -42,9 +42,9 @@ export function setChecked(node: HTMLInputElement, status?: boolean) {
   node.dispatchEvent(new window.Event('input'));
 }
 
-export function dispatchEvent(node: ComponentPublicInstance | HTMLInputElement, eventName: string) {
+export function dispatchEvent(node: ComponentPublicInstance | HTMLElement, eventName: string) {
   if (HTML_TAGS.includes((node as any).tagName)) {
-    const input = node as HTMLInputElement;
+    const input = node as HTMLElement;
     input.dispatchEvent(new window.Event(eventName));
     return;
   }
