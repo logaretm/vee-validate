@@ -1095,4 +1095,34 @@ describe('<Field />', () => {
     await flushPromises();
     expect(error.textContent).toBe(REQUIRED_MESSAGE);
   });
+
+  test('resets validation state using refs and exposed API', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <div>
+        <Field name="field" ref="field" rules="required" v-slot="{ errors, field }">
+          <input type="text" v-bind="field">
+          <span id="error">{{ errors && errors[0] }}</span>
+        </Field>
+
+        <button @click="$refs.field.reset()">Reset</button>
+      </div>
+    `,
+    });
+
+    const error = wrapper.$el.querySelector('#error');
+    const input = wrapper.$el.querySelector('input');
+
+    expect(error.textContent).toBe('');
+
+    setValue(input, '');
+    await flushPromises();
+    expect(error.textContent).toBe(REQUIRED_MESSAGE);
+    setValue(input, '123');
+    await flushPromises();
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(error.textContent).toBe('');
+    expect(input.value).toBe('');
+  });
 });

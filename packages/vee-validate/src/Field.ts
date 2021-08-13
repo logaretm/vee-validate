@@ -191,6 +191,14 @@ export const Field = defineComponent({
       };
     }
 
+    ctx.expose({
+      setErrors,
+      setTouched,
+      reset: resetField,
+      validate: validateField,
+      handleChange,
+    });
+
     return () => {
       const tag = resolveDynamicComponent(resolveTag(props, ctx)) as string;
       const children = normalizeChildren(tag, ctx, slotProps);
