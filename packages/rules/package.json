@@ -9,7 +9,11 @@
   "main": "dist/vee-validate-rules.js",
   "types": "dist/vee-validate-rules.d.ts",
   "homepage": "https://vee-validate.logaretm.com/v4/guide/global-validators",
-  "repository": "https://github.com/logaretm/vee-validate",
+  "repository": {
+    "url": "https://github.com/logaretm/vee-validate.git",
+    "type": "git",
+    "directory": "packages/rules"
+  },
   "sideEffects": false,
   "keywords": [
     "VueJS",
