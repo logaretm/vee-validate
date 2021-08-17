@@ -17,7 +17,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/logaretm/vee-validate.git"
+    "url": "https://github.com/logaretm/vee-validate.git",
+    "directory": "packages/i18n"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
