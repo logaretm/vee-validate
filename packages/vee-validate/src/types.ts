@@ -53,7 +53,7 @@ export interface PrivateFieldContext<TValue = unknown> {
   uncheckedValue?: MaybeRef<TValue>;
   checked?: ComputedRef<boolean>;
   resetField(state?: FieldState<TValue>): void;
-  handleReset(state?: FieldState<TValue>): void;
+  handleReset(): void;
   validate(): Promise<ValidationResult>;
   handleChange(e: Event | unknown, shouldValidate?: boolean): void;
   handleBlur(e?: Event): void;
