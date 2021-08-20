@@ -55,7 +55,7 @@ export interface PrivateFieldContext<TValue = unknown> {
   resetField(state?: FieldState<TValue>): void;
   handleReset(): void;
   validate(): Promise<ValidationResult>;
-  handleChange(e: Event | unknown, shouldValidate?: boolean): void;
+  handleChange(e: Event | unknown, shouldValidate?: boolean): void | Promise<ValidationResult>;
   handleBlur(e?: Event): void;
   handleInput(e?: Event | unknown): void;
   setValidationState(state: ValidationResult): void;
