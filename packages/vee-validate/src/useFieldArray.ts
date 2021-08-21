@@ -18,22 +18,26 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>): FieldAr
     return getFromPath<TValue[]>(form?.values, pathName, []) as TValue[];
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const noOp = () => {};
+  const noOpApi = {
+    entries,
+    remove: noOp,
+    push: noOp,
+  };
+
   if (!form) {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const noOp = () => {};
     warn(
       'FieldArray requires being a child of `<Form/>` or `useForm` being called before it. Array fields may not work correctly'
     );
 
-    return {
-      entries,
-      remove: noOp,
-      push: noOp,
-    };
+    return noOpApi;
   }
 
   if (!unref(name)) {
     warn('FieldArray requires a field path to be provided, did you forget to pass the `name` prop?');
+
+    return noOpApi;
   }
 
   function remove(idx: number) {
