@@ -141,6 +141,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     resetForm,
     handleSubmit,
     stageInitialValue,
+    unsetInitialValue,
     setFieldInitialValue,
   };
 
@@ -199,15 +200,18 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
 
     setInPath(formValues, field as string, newValue);
-    // multiple radio fields
-    if (fieldInstance && Array.isArray(fieldInstance)) {
+    // multiple radio fields or checkboxes
+    if (fieldInstance && Array.isArray(fieldInstance) && ['radio', 'checkbox'].includes(fieldInstance[0]?.type || '')) {
       fieldInstance.forEach(fieldItem => {
         valuesByFid[fieldItem.fid] = newValue;
       });
       return;
     }
 
-    valuesByFid[fieldInstance.fid] = newValue;
+    // a single field
+    if (!Array.isArray(fieldInstance)) {
+      valuesByFid[fieldInstance.fid] = newValue;
+    }
   }
 
   /**
@@ -344,7 +348,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
           // #3325
           if (!fieldGroupExists(oldPath)) {
             unsetPath(formValues, oldPath);
-            unsetPath(initialValues.value, oldPath);
           }
         },
         {
@@ -389,7 +392,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       // #3166
       if (!fieldGroupExists(fieldName)) {
         unsetPath(formValues, fieldName);
-        unsetPath(initialValues.value, fieldName);
       }
 
       return;
@@ -416,7 +418,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
 
     unsetPath(formValues, fieldName);
-    unsetPath(initialValues.value, fieldName);
   }
 
   async function validate(): Promise<FormValidationResult<TValues>> {
@@ -528,6 +529,10 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
   function setFieldInitialValue(path: string, value: unknown) {
     setInPath(initialValues.value, path, deepCopy(value));
+  }
+
+  function unsetInitialValue(path: string) {
+    unsetPath(initialValues.value, path);
   }
 
   /**

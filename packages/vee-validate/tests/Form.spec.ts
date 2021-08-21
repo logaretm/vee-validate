@@ -1995,63 +1995,6 @@ describe('<Form />', () => {
     expect(passwordValue.textContent).toBe(value);
   });
 
-  // #3325
-  test('unsets old path value when array fields are removed', async () => {
-    const onSubmit = jest.fn();
-    mountWithHoc({
-      setup() {
-        const users = ref([
-          { id: 1, name: '111' },
-          { id: 2, name: '222' },
-          { id: 3, name: '333' },
-        ]);
-
-        function remove(idx: number) {
-          users.value.splice(idx, 1);
-        }
-
-        return {
-          onSubmit,
-          users,
-          remove,
-        };
-      },
-      template: `
-      <VForm @submit="onSubmit">
-        <fieldset v-for="(user, idx) in users" :key="user.id">
-          <legend>User #{{ idx }}</legend>
-          <label :for="'name_' + idx">Name</label>
-          <Field :id="'name_' + idx" :name="'users[' + idx + '].name'" />
-          <ErrorMessage :name="'users[' + idx + '].name'" />
-
-          <button class="remove" type="button" @click="remove(idx)">X</button>
-        </fieldset>
-
-        <button class="submit" type="submit">Submit</button>
-      </VForm>
-    `,
-    });
-
-    await flushPromises();
-    const submitBtn = document.querySelector('.submit') as HTMLButtonElement;
-    const inputs = Array.from(document.querySelectorAll('input')) as HTMLInputElement[];
-    const removeBtn = document.querySelectorAll('.remove')[1] as HTMLButtonElement; // remove the second item
-    setValue(inputs[0], '111');
-    setValue(inputs[1], '222');
-    setValue(inputs[2], '333');
-    await flushPromises();
-    removeBtn.click();
-    await flushPromises();
-    (submitBtn as HTMLButtonElement).click();
-    await flushPromises();
-    expect(onSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({
-        users: [{ name: '111' }, { name: '333' }],
-      }),
-      expect.anything()
-    );
-  });
-
   // #3332
   test('field bails prop should work with validation schema', async () => {
     const wrapper = mountWithHoc({
