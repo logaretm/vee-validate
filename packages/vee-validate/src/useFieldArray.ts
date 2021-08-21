@@ -5,14 +5,14 @@ import { MaybeRef } from './types';
 import { getFromPath, injectWithSelf, warn } from './utils';
 
 interface FieldArrayContext<TValue = unknown> {
-  arrayValues: DeepReadonly<Ref<TValue[]>>;
+  entries: DeepReadonly<Ref<TValue[]>>;
   remove(idx: number): TValue | undefined;
   push(value: TValue): void;
 }
 
 export function useFieldArray<TValue = unknown>(name: MaybeRef<string>): FieldArrayContext {
   const form = injectWithSelf(FormContextKey, undefined);
-  const arrayValues = computed(() => {
+  const entries = computed(() => {
     const pathName = unref(name);
 
     return getFromPath<TValue[]>(form?.values, pathName, []) as TValue[];
@@ -26,7 +26,7 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>): FieldAr
     );
 
     return {
-      arrayValues,
+      entries,
       remove: noOp,
       push: noOp,
     };
@@ -45,8 +45,8 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>): FieldAr
 
     const newValue = [...pathValue];
     newValue.splice(idx, 1);
+    form?.unsetInitialValue(pathName + `[${idx}]`);
     form?.setFieldValue(pathName, newValue);
-    form?.unsetInitialValue(pathName);
   }
 
   function push(value: TValue) {
@@ -64,7 +64,7 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>): FieldAr
   }
 
   return {
-    arrayValues,
+    entries,
     remove,
     push,
   };
