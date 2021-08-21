@@ -12,11 +12,11 @@ export const FieldArray = defineComponent({
     },
   },
   setup(props, ctx) {
-    const { push, remove, arrayValues } = useFieldArray(toRef(props, 'name'));
+    const { push, remove, entries } = useFieldArray(toRef(props, 'name'));
 
     function slotProps() {
       return {
-        arrayValues: arrayValues.value,
+        entries: entries.value,
         push,
         remove,
       };
