@@ -131,6 +131,7 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
   errorBag: Ref<FormErrorBag<TValues>>;
   setFieldErrorBag(field: string, messages: string | string[]): void;
   stageInitialValue(path: string, value: unknown): void;
+  unsetInitialValue(path: string): void;
   meta: ComputedRef<{
     dirty: boolean;
     touched: boolean;
@@ -155,6 +156,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
     | 'setFieldErrorBag'
     | 'stageInitialValue'
     | 'setFieldInitialValue'
+    | 'unsetInitialValue'
   > {
   errors: ComputedRef<FormErrors<TValues>>;
   handleReset: () => void;
