@@ -125,6 +125,103 @@ Submitting the previous form would result in the following values being passed t
 }
 ```
 
+## Repeatable Fields
+
+Repeatable fields are a special type of nested array fields, they are often used to collect repeatable pieces of data or repeatable forms.
+
+When dealing with those fields it is better to use `<FieldArray />` component which gives you a few helpers you can use to manage the array entries.
+
+Here is a small example that shows how easy it is to create a repeatable group of fields:
+
+```vue
+<template>
+  <Form @submit="onSubmit">
+    <FieldArray name="links" v-slot="{ entries, push, remove }">
+      <div v-for="(link, idx) in entries" :key="link.id">
+        <Field :name="`links[${idx}].name`" type="text" />
+        <Field :name="`links[${idx}].url`" type="url" />
+
+        <button type="button" @click="remove(idx)">Remove</button>
+      </div>
+
+      <button type="button" @click="push({ id: Date.now(), name: '', url: '' })">Add</button>
+    </FieldArray>
+
+    <button>Submit</button>
+  </Form>
+</template>
+
+<script>
+export default {
+  methods: {
+    onSubmit(values) {
+      alert(JSON.stringify(values, null, 2));
+    },
+  },
+};
+</script>
+```
+
+Note that you do no have to manage the array you normally have to track the entries. In case you want to have some initial entries in the array, pass `initialValues` prop to the `Form` component:
+
+```vue
+<template>
+  <Form @submit="onSubmit" :initial-values="initialValues">
+    <FieldArray name="links" v-slot="{ entries, push, remove }">
+      <div v-for="(link, idx) in entries" :key="link.id">
+        <Field :name="`links[${idx}].name`" type="text" />
+        <Field :name="`links[${idx}].url`" type="url" />
+
+        <button type="button" @click="remove(idx)">Remove</button>
+      </div>
+
+      <button type="button" @click="push({ id: Date.now(), name: '', url: '' })">Add</button>
+    </FieldArray>
+
+    <button>Submit</button>
+  </Form>
+</template>
+
+<script>
+export default {
+  data: () => ({
+    initialValues: {
+      links: [{ id: 1, name: 'GitHub', url: 'https://github.com/logaretm' }],
+    },
+  }),
+  methods: {
+    onSubmit(values) {
+      alert(JSON.stringify(values, null, 2));
+    },
+  },
+};
+</script>
+```
+
+One thing to keep in mind is you must provide a `name` prop to the `<FieldArray />` component, the `name` prop must be the component array path. Here is an example for a deeper path:
+
+```vue
+<FieldArray name="user.emails" v-slot="{ entries, push, remove }">
+  <div v-for="(user, idx) in entries" :key="user.id">
+    <Field :name="`user.emails[${idx}].email`" type="email" />
+
+    <button type="button" @click="remove(idx)">Remove</button>
+  </div>
+
+  <button type="button" @click="push({ id: Date.now(), email: '' })">Add</button>
+</FieldArray>
+```
+
+Another thing to keep in mind is that your repeatable fields should have a unique property to be used as a key, this is a Vue best practice with `v-for` loops.
+
+### Field Array Helpers
+
+The `<FieldArray />` slot provides the following properties and functions:
+
+- `entries`: a **read-only** version of your array field items, you iterate over it with `v-for`.
+- `push(item: any)`: adds an item to the end of the array.
+- `remove(idx: number)`: removes the item with the given index from the array.
+
 ## Caveats
 
 ### Paths creation and destruction
