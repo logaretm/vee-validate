@@ -4,8 +4,12 @@ import { FormContextKey } from './symbols';
 import { MaybeRef } from './types';
 import { getFromPath, injectWithSelf, warn } from './utils';
 
+interface FieldEntry<TValue = unknown> {
+  value: TValue;
+}
+
 interface FieldArrayContext<TValue = unknown> {
-  entries: DeepReadonly<Ref<TValue[]>>;
+  entries: DeepReadonly<Ref<FieldEntry[]>>;
   remove(idx: number): TValue | undefined;
   push(value: TValue): void;
 }
@@ -14,8 +18,9 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>): FieldAr
   const form = injectWithSelf(FormContextKey, undefined);
   const entries = computed(() => {
     const pathName = unref(name);
+    const array = getFromPath<TValue[]>(form?.values, pathName, []) as TValue[];
 
-    return getFromPath<TValue[]>(form?.values, pathName, []) as TValue[];
+    return array.map(i => ({ value: i }));
   });
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
