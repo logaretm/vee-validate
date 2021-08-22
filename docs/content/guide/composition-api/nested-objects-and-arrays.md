@@ -161,6 +161,90 @@ Submitting the previous form would result in the following values being passed t
 }
 ```
 
+## Repeatable Fields
+
+Repeatable fields are a special type of nested array fields, they are often used to collect repeatable pieces of data or repeatable forms.
+
+Unlike the [components](/guide/components/nested-objects-and-arrays) API, it can be tricky to set up a group of repeatable fields with the composition API as you usually need an input component to iterate over.
+
+The following snippet uses `Field` component as the input component, but you can use any component as long as they call `useField` internally.
+
+To set up a repeatable field, you can use `useFieldArray` to help you manage the array values and operations:
+
+```vue
+<template>
+  <form @submit="onSubmit" novalidate>
+    <div v-for="(entry, idx) in entries" :key="entry.value.id">
+      <Field :name="`links[${idx}].url`" type="url" />
+
+      <button type="button" @click="remove(idx)">Remove</button>
+    </div>
+
+    <button type="button" @click="push({ id: Date.now(), url: '' })">Add</button>
+
+    <button>Submit</button>
+  </form>
+</template>
+
+<script>
+import { Field, useForm, useFieldArray } from 'vee-validate';
+
+export default {
+  components: {
+    Field
+  },
+  setup() {
+    const { handleSubmit } = useForm({
+      initialValues: {
+        links: [{ id: 1, name: 'GitHub', url: 'https://github.com/logaretm' }],
+      }
+    });
+
+    const { remove, push, entries } = useFieldArray('links');
+    const onSubmit = handleSubmit((values) => {
+      console.log(JSON.stringify(values, null, 2));
+    });
+
+    return {
+      entries,
+      push
+      remove
+    };
+  },
+};
+</script>
+```
+
+<doc-tip title="Iteration keys">
+
+Note that in these examples we always generate a unique id for each array entry, [this is a Vue.js best practice](https://v3.vuejs.org/guide/list.html#maintaining-state) to make sure loops are as efficient as possible.
+
+That means while it is possible to have an array of strings or numbers, you will have a harder time getting unique ids for those fields, so it is recommended to create objects for your entries like these examples here.
+
+</doc-tip>
+
+One thing to keep in mind is you must provide a `name` to the `useFieldArray` function, the `name` must be the component array path. Here is an example for a deeper path:
+
+```js
+const { handleSubmit } = useForm({
+  initialValues: {
+    user: {
+      links: [],
+    },
+  },
+});
+
+const { remove, push, entries } = useFieldArray('user.links');
+```
+
+### Field Array Helpers
+
+The `useFieldArray` function provides the following properties and methods:
+
+- `entries`: a **read-only** version of your array field items, the actual item value is inside `.value` property. You should use it to iterate with `v-for`.
+- `push(item: any)`: adds an item to the end of the array.
+- `remove(idx: number)`: removes the item with the given index from the array.
+
 ## Caveats
 
 ### Paths creation and destruction

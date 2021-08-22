@@ -135,41 +135,9 @@ Here is a small example that shows how easy it is to create a repeatable group o
 
 ```vue
 <template>
-  <Form @submit="onSubmit">
-    <FieldArray name="links" v-slot="{ entries, push, remove }">
-      <div v-for="(link, idx) in entries" :key="link.id">
-        <Field :name="`links[${idx}].name`" type="text" />
-        <Field :name="`links[${idx}].url`" type="url" />
-
-        <button type="button" @click="remove(idx)">Remove</button>
-      </div>
-
-      <button type="button" @click="push({ id: Date.now(), name: '', url: '' })">Add</button>
-    </FieldArray>
-
-    <button>Submit</button>
-  </Form>
-</template>
-
-<script>
-export default {
-  methods: {
-    onSubmit(values) {
-      alert(JSON.stringify(values, null, 2));
-    },
-  },
-};
-</script>
-```
-
-Note that you do no have to manage the array you normally have to track the entries. In case you want to have some initial entries in the array, pass `initialValues` prop to the `Form` component:
-
-```vue
-<template>
   <Form @submit="onSubmit" :initial-values="initialValues">
     <FieldArray name="links" v-slot="{ entries, push, remove }">
-      <div v-for="(link, idx) in entries" :key="link.id">
-        <Field :name="`links[${idx}].name`" type="text" />
+      <div v-for="(entry, idx) in entries" :key="entry.value.id">
         <Field :name="`links[${idx}].url`" type="url" />
 
         <button type="button" @click="remove(idx)">Remove</button>
@@ -185,8 +153,9 @@ Note that you do no have to manage the array you normally have to track the entr
 <script>
 export default {
   data: () => ({
+    // you can set initial values for those array fields
     initialValues: {
-      links: [{ id: 1, name: 'GitHub', url: 'https://github.com/logaretm' }],
+      links: [{ id: 1, url: 'https://github.com/logaretm' }],
     },
   }),
   methods: {
@@ -198,11 +167,19 @@ export default {
 </script>
 ```
 
+<doc-tip title="Iteration keys">
+
+Note that in these examples we always generate a unique id for each array entry, [this is a Vue.js best practice](https://v3.vuejs.org/guide/list.html#maintaining-state) to make sure loops are as efficient as possible.
+
+That means while it is possible to have an array of strings or numbers, you will have a harder time getting unique ids for those fields, so it is recommended to create objects for your entries like these examples here.
+
+</doc-tip>
+
 One thing to keep in mind is you must provide a `name` prop to the `<FieldArray />` component, the `name` prop must be the component array path. Here is an example for a deeper path:
 
 ```vue
 <FieldArray name="user.emails" v-slot="{ entries, push, remove }">
-  <div v-for="(user, idx) in entries" :key="user.id">
+  <div v-for="(entry, idx) in entries" :key="entry.value.id">
     <Field :name="`user.emails[${idx}].email`" type="email" />
 
     <button type="button" @click="remove(idx)">Remove</button>
@@ -212,13 +189,11 @@ One thing to keep in mind is you must provide a `name` prop to the `<FieldArray 
 </FieldArray>
 ```
 
-Another thing to keep in mind is that your repeatable fields should have a unique property to be used as a key, this is a Vue best practice with `v-for` loops.
-
 ### Field Array Helpers
 
 The `<FieldArray />` slot provides the following properties and functions:
 
-- `entries`: a **read-only** version of your array field items, you iterate over it with `v-for`.
+- `entries`: a **read-only** version of your array field items, the actual item value is inside `.value` property. You should use it to iterate with `v-for`.
 - `push(item: any)`: adds an item to the end of the array.
 - `remove(idx: number)`: removes the item with the given index from the array.
 
