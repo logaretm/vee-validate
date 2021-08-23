@@ -36,7 +36,18 @@ export interface FieldState<TValue = unknown> {
   errors: string[];
 }
 
+/**
+ * validated-only: only mutate the previously validated fields
+ * silent: do not mutate any field
+ * force: validate all fields and mutate their state
+ */
+export type SchemaValidationMode = 'validated-only' | 'silent' | 'force';
+
 export type WritableRef<TValue> = Ref<TValue> | WritableComputedRef<TValue>;
+
+export interface ValidationOptions {
+  mode: SchemaValidationMode;
+}
 
 export interface PrivateFieldContext<TValue = unknown> {
   fid: number;
@@ -53,7 +64,7 @@ export interface PrivateFieldContext<TValue = unknown> {
   checked?: ComputedRef<boolean>;
   resetField(state?: FieldState<TValue>): void;
   handleReset(state?: FieldState<TValue>): void;
-  validate(): Promise<ValidationResult>;
+  validate(opts?: Partial<ValidationOptions>): Promise<ValidationResult>;
   handleChange(e: Event | unknown, shouldValidate?: boolean): void;
   handleBlur(e?: Event): void;
   handleInput(e?: Event | unknown): void;
@@ -111,12 +122,6 @@ export type SubmissionHandler<TValues extends Record<string, unknown> = Record<s
 
 export type RawFormSchema<TValues> = Record<keyof TValues, string | GenericValidateFunction | Record<string, any>>;
 
-/**
- * validated-only: only mutate the previously validated fields
- * silent: do not mutate any field
- * force: validate all fields and mutate their state
- */
-export type SchemaValidationMode = 'validated-only' | 'silent' | 'force';
 export interface PrivateFormContext<TValues extends Record<string, any> = Record<string, any>>
   extends FormActions<TValues> {
   register(field: PrivateFieldContext): void;
@@ -126,7 +131,8 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
   submitCount: Ref<number>;
   schema?: MaybeRef<RawFormSchema<TValues> | SchemaOf<TValues> | undefined>;
   validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues>>;
-  validate(): Promise<FormValidationResult<TValues>>;
+  validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>>;
+  validatePath(path: string | RegExp, opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>>;
   validateField(field: keyof TValues): Promise<ValidationResult>;
   errorBag: Ref<FormErrorBag<TValues>>;
   setFieldErrorBag(field: string, messages: string | string[]): void;
