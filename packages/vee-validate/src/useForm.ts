@@ -17,6 +17,7 @@ import {
   FormErrorBag,
   SchemaValidationMode,
   RawFormSchema,
+  ValidationOptions,
 } from './types';
 import {
   applyFieldMutation,
@@ -420,9 +421,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     unsetPath(formValues, fieldName);
   }
 
-  async function validate(): Promise<FormValidationResult<TValues>> {
+  async function validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>> {
     if (formCtx.validateSchema) {
-      return formCtx.validateSchema('force');
+      return formCtx.validateSchema(opts?.mode || 'force');
     }
 
     // No schema, each field is responsible to validate itself
@@ -433,7 +434,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
           return Promise.resolve({ key: '', valid: true, errors: [] });
         }
 
-        return field.validate().then((result: ValidationResult) => {
+        return field.validate(opts).then((result: ValidationResult) => {
           return {
             key: unref(field.name),
             valid: result.valid,

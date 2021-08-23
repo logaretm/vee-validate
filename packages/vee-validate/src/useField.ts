@@ -28,6 +28,7 @@ import {
   PrivateFieldContext,
   WritableRef,
   SchemaValidationMode,
+  ValidationOptions,
 } from './types';
 import {
   normalizeRules,
@@ -143,9 +144,23 @@ export function useField<TValue = unknown>(
     return setValidationState(result);
   }
 
-  async function validateValidStateOnly(): Promise<void> {
+  async function validateValidStateOnly(): Promise<ValidationResult> {
     const result = await validateCurrentValue('silent');
     meta.valid = result.valid;
+
+    return result;
+  }
+
+  function validate(opts?: Partial<ValidationOptions>) {
+    if (!opts?.mode || opts?.mode === 'force') {
+      return validateWithStateMutation();
+    }
+
+    if (opts?.mode === 'validated-only') {
+      return validateWithStateMutation();
+    }
+
+    return validateValidStateOnly();
   }
 
   // Common input/change event handler
@@ -221,7 +236,7 @@ export function useField<TValue = unknown>(
     bails,
     resetField,
     handleReset: () => resetField(),
-    validate: validateWithStateMutation,
+    validate,
     handleChange,
     handleBlur,
     handleInput,
