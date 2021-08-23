@@ -101,7 +101,7 @@ export function useField<TValue = unknown>(
     checked,
   } = useValidationState<TValue>({
     name,
-    initValue: initialValue,
+    modelValue: initialValue,
     form,
     type,
     checkedValue,
@@ -337,7 +337,7 @@ function normalizeOptions<TValue>(name: string, opts: Partial<FieldOptions<TValu
  */
 function useValidationState<TValue>({
   name,
-  initValue,
+  modelValue,
   form,
   type,
   checkedValue,
@@ -345,7 +345,7 @@ function useValidationState<TValue>({
 }: {
   name: MaybeRef<string>;
   checkedValue?: MaybeRef<TValue>;
-  initValue?: MaybeRef<TValue>;
+  modelValue?: MaybeRef<TValue>;
   form?: PrivateFormContext;
   type?: string;
   standalone?: boolean;
@@ -353,18 +353,13 @@ function useValidationState<TValue>({
   const { errors, errorMessage, setErrors } = useFieldErrors(name, form);
   const formInitialValues = standalone ? undefined : injectWithSelf(FormInitialValuesKey, undefined);
   // clones the ref value to a mutable version
-  const initialValueSourceRef = ref(unref(initValue)) as Ref<TValue>;
+  const initialValueSourceRef = ref(unref(modelValue)) as Ref<TValue>;
 
   const initialValue = computed(() => {
     return getFromPath<TValue>(unref(formInitialValues), unref(name), unref(initialValueSourceRef)) as TValue;
   });
 
-  const value = useFieldValue(
-    initialValueSourceRef.value === undefined ? initialValue : initialValueSourceRef,
-    name,
-    form
-  );
-
+  const value = useFieldValue(initialValue, modelValue, name, form);
   const meta = useFieldMeta(initialValue, value, errors);
 
   const checked = hasCheckedAttr(type)
@@ -409,7 +404,7 @@ function useValidationState<TValue>({
     const newValue =
       state && 'value' in state
         ? (state.value as TValue)
-        : (getFromPath<TValue>(unref(formInitialValues), fieldPath, unref(initValue) as TValue) as TValue);
+        : (getFromPath<TValue>(unref(formInitialValues), fieldPath, unref(modelValue) as TValue) as TValue);
 
     if (form) {
       form.setFieldValue(fieldPath, newValue, { force: true });
@@ -489,19 +484,21 @@ export function extractRuleFromSchema<TValue>(
  */
 export function useFieldValue<TValue>(
   initialValue: MaybeRef<TValue | undefined>,
+  modelValue: MaybeRef<TValue | undefined> | undefined,
   path: MaybeRef<string>,
   form?: PrivateFormContext
 ): WritableRef<TValue> {
   // if no form is associated, use a regular ref.
   if (!form) {
-    return ref(unref(initialValue)) as WritableRef<TValue>;
+    return ref(unref(modelValue || initialValue)) as WritableRef<TValue>;
   }
 
   // to set the initial value, first check if there is a current value, if there is then use it.
   // otherwise use the configured initial value if it exists.
+  // prioritize model value over form values
   // #3429
-  const currentValue = getFromPath(form.values, unref(path), unref(initialValue));
-  form.stageInitialValue(unref(path), currentValue === undefined ? unref(initialValue) : currentValue);
+  const currentValue = modelValue ? unref(modelValue) : getFromPath(form.values, unref(path), unref(initialValue));
+  form.stageInitialValue(unref(path), currentValue);
   // otherwise use a computed setter that triggers the `setFieldValue`
   const value = computed<TValue>({
     get() {
