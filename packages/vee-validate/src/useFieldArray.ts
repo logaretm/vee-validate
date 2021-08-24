@@ -1,11 +1,12 @@
+import { DeepReadonly, Ref, unref, ref, watch, readonly } from 'vue';
 import { isNullOrUndefined } from '../../shared';
-import { computed, DeepReadonly, Ref, unref } from 'vue';
 import { FormContextKey } from './symbols';
 import { MaybeRef } from './types';
 import { getFromPath, injectWithSelf, warn } from './utils';
 
 interface FieldEntry<TValue = unknown> {
   value: TValue;
+  key: string | number;
 }
 
 interface FieldArrayContext<TValue = unknown> {
@@ -14,21 +15,17 @@ interface FieldArrayContext<TValue = unknown> {
   push(value: TValue): void;
 }
 
-export function useFieldArray<TValue = unknown>(name: MaybeRef<string>): FieldArrayContext {
+export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath: MaybeRef<string>): FieldArrayContext {
   const form = injectWithSelf(FormContextKey, undefined);
-  const entries = computed(() => {
-    const pathName = unref(name);
-    const array = getFromPath<TValue[]>(form?.values, pathName, []) as TValue[];
-
-    return array.map(i => ({ value: i }));
-  });
+  const entries: Ref<FieldEntry<TValue>[]> = ref([]);
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const noOp = () => {};
   const noOpApi = {
-    entries,
+    entries: readonly(entries),
     remove: noOp,
     push: noOp,
+    swap: noOp,
   };
 
   if (!form) {
@@ -45,6 +42,25 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>): FieldAr
     return noOpApi;
   }
 
+  function createEntry(value: TValue, keyFallback: number): FieldEntry<TValue> {
+    const key = getFromPath<number | string>(value as any, unref(keyPath), keyFallback);
+
+    return {
+      key,
+      value,
+    };
+  }
+
+  watch(
+    () => getFromPath<TValue[]>(form?.values, unref(name)) as TValue[],
+    values => {
+      entries.value = values.map((value, idx) => createEntry(value, idx));
+    },
+    {
+      immediate: true,
+    }
+  );
+
   function remove(idx: number) {
     const pathName = unref(name);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
@@ -54,6 +70,7 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>): FieldAr
 
     const newValue = [...pathValue];
     newValue.splice(idx, 1);
+    entries.value.splice(idx, 1);
     form?.unsetInitialValue(pathName + `[${idx}]`);
     form?.setFieldValue(pathName, newValue);
   }
@@ -70,10 +87,11 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>): FieldAr
     newValue.push(value);
     form?.stageInitialValue(pathName + `[${newValue.length - 1}]`, value);
     form?.setFieldValue(pathName, newValue);
+    entries.value.push(createEntry(value, entries.value.length));
   }
 
   return {
-    entries,
+    entries: readonly(entries),
     remove,
     push,
   };

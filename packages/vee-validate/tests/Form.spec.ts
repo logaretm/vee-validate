@@ -799,7 +799,7 @@ describe('<Form />', () => {
 
         <span id="errors">{{ errors }}</span>
 
-        <button>ValidSate</button>
+        <button>Submit</button>
       </VForm>
     `,
     });

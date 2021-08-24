@@ -51,8 +51,8 @@ test('un-sets old path value when array fields are removed', async () => {
     },
     template: `
       <VForm @submit="onSubmit" :initial-values="initialValues">
-        <FieldArray name="users" v-slot="{ remove, push, entries }">
-          <fieldset v-for="(entry, idx) in entries" :key="entry.value.id">
+        <FieldArray name="users" key-path="id" v-slot="{ remove, push, entries }">
+          <fieldset v-for="(entry, idx) in entries" :key="entry.key">
             <legend>User #{{ idx }}</legend>
             <label :for="'name_' + idx">Name</label>
             <Field :id="'name_' + idx" :name="'users[' + idx + '].name'" />
@@ -137,8 +137,8 @@ test('array fields should update their values when swapped', async () => {
     template: `
       <VForm :initial-values="initial">
 
-        <FieldArray name="users" v-slot="{ remove, push, entries }">
-          <fieldset v-for="(entry, idx) in entries" :key="entry.value.id">
+        <FieldArray name="users" key-path="id" v-slot="{ remove, push, entries }">
+          <fieldset v-for="(entry, idx) in entries" :key="entry.key">
             <Field :id="\`name_\${idx}\`" :name="\`users[\${idx}].name\`" />
             <button :class="\`remove_\${idx}\`" type="button" @click="remove(idx)">X</button>
           </fieldset>
