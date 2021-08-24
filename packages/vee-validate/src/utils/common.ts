@@ -16,11 +16,17 @@ type NestedRecord = Record<string, unknown> | { [k: string]: NestedRecord };
 /**
  * Gets a nested property value from an object
  */
-export function getFromPath<TValue = unknown>(
+export function getFromPath<TValue = unknown>(object: NestedRecord | undefined, path: string): TValue | undefined;
+export function getFromPath<TValue = unknown, TFallback = TValue>(
   object: NestedRecord | undefined,
   path: string,
-  fallback: TValue | undefined = undefined
-): TValue | undefined {
+  fallback: TFallback
+): TValue | TFallback;
+export function getFromPath<TValue = unknown, TFallback = TValue>(
+  object: NestedRecord | undefined,
+  path: string,
+  fallback?: TFallback
+): TValue | TFallback | undefined {
   if (!object) {
     return fallback;
   }
@@ -29,7 +35,7 @@ export function getFromPath<TValue = unknown>(
     return object[cleanupNonNestedPath(path)] as TValue | undefined;
   }
 
-  const resolvedValue = path
+  const resolvedValue = (path || '')
     .split(/\.|\[(\d+)\]/)
     .filter(Boolean)
     .reduce((acc, propKey) => {

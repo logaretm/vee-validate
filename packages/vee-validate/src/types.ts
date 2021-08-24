@@ -132,7 +132,6 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
   schema?: MaybeRef<RawFormSchema<TValues> | SchemaOf<TValues> | undefined>;
   validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues>>;
   validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>>;
-  validatePath(path: string | RegExp, opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>>;
   validateField(field: keyof TValues): Promise<ValidationResult>;
   errorBag: Ref<FormErrorBag<TValues>>;
   setFieldErrorBag(field: string, messages: string | string[]): void;
