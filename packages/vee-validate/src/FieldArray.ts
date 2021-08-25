@@ -17,19 +17,21 @@ export const FieldArray = defineComponent({
   },
   setup(props, ctx) {
     const { name, keyPath } = toRefs(props);
-    const { push, remove, entries } = useFieldArray(name, keyPath);
+    const { push, remove, swap, entries } = useFieldArray(name, keyPath);
 
     function slotProps() {
       return {
         entries: entries.value,
         push,
         remove,
+        swap,
       };
     }
 
     ctx.expose({
       push,
       remove,
+      swap,
     });
 
     return () => {

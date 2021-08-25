@@ -156,7 +156,7 @@ function _useField<TValue = unknown>(
 
     value.value = newValue;
     if (!validateOnValueUpdate && shouldValidate) {
-      return validateWithStateMutation();
+      validateWithStateMutation();
     }
   };
 

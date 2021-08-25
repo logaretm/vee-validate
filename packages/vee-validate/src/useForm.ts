@@ -289,7 +289,10 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
         // set the value at the new path
         setFieldValue(newPath, nextValue as any);
-        await nextTick();
+        // re-validate if either path had errors before
+        if (errors.value[oldPath] || errors.value[newPath]) {
+          validateField(newPath);
+        }
 
         // clean up the old path if no other field is sharing that name
         // #3325
