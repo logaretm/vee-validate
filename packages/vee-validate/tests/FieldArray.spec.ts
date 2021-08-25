@@ -1,5 +1,7 @@
-import flushPromises from 'flush-promises';
-import { mountWithHoc, setValue, getValue, dispatchEvent } from './helpers';
+import * as yup from 'yup';
+import { mountWithHoc, setValue, getValue, dispatchEvent, flushPromises } from './helpers';
+
+const REQUIRED_MESSAGE = 'REQUIRED';
 
 test('warns if no form is detected', async () => {
   const spy = jest.spyOn(console, 'warn').mockImplementation();
@@ -162,4 +164,110 @@ test('array fields should update their values when swapped', async () => {
   await flushPromises();
   expect(document.querySelectorAll('input')).toHaveLength(3);
   expect(getValue('#name_2')).toBe('');
+});
+
+test('can swap array fields with swap helper', async () => {
+  const onSubmit = jest.fn();
+  mountWithHoc({
+    setup() {
+      let id = 1;
+      const schema = yup.object({
+        users: yup
+          .array()
+          .of(
+            yup.object({
+              name: yup.string().required(REQUIRED_MESSAGE),
+            })
+          )
+          .strict(),
+      });
+
+      const initial = {
+        users: [
+          {
+            id: id++,
+            name: 'first',
+          },
+          {
+            id: id++,
+            name: 'second',
+          },
+          {
+            id: id++,
+            name: 'third',
+          },
+        ],
+      };
+
+      return {
+        initial,
+        schema,
+        onSubmit,
+      };
+    },
+    template: `
+    <VForm @submit="onSubmit" :validation-schema="schema" :initial-values="initial">
+      <FieldArray name="users" key-path="id" v-slot="{ swap, entries }">
+          <div v-for="(entry, idx) in entries" :key="entry.key">
+            <button class="up" @click="swap(idx, idx - 1)" type="button">⬆️</button>
+
+            <Field :name="'users[' + idx + '].name'" />
+            <ErrorMessage :class="'error-' + idx" :name="'users[' + idx + '].name'" />
+          </div>
+      </FieldArray>
+
+      <button class="submit" type="submit">Submit</button>
+    </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const inputAt = (idx: number) => (document.querySelectorAll('input') || [])[idx] as HTMLInputElement;
+  const errorAt = (idx: number) => document.querySelector(`.error-${idx}`) as HTMLElement;
+  const upButtonAt = (idx: number) => (document.querySelectorAll('.up') || [])[idx] as HTMLElement;
+  const submitBtn = () => document.querySelector('.submit') as HTMLButtonElement;
+
+  expect(getValue(inputAt(0))).toBe('first');
+  expect(getValue(inputAt(1))).toBe('second');
+  expect(getValue(inputAt(2))).toBe('third');
+
+  setValue(inputAt(1), '');
+  await flushPromises();
+  expect(errorAt(1)?.textContent).toBe(REQUIRED_MESSAGE);
+
+  upButtonAt(2).click();
+  await flushPromises();
+  expect(getValue(inputAt(1))).toBe('third');
+  // undefined because it should be unmounted
+  expect(errorAt(1)?.textContent).toBe(undefined);
+
+  expect(getValue(inputAt(2))).toBe('');
+  expect(errorAt(2)?.textContent).toBe(REQUIRED_MESSAGE);
+
+  setValue(inputAt(2), 'edited');
+  await flushPromises();
+
+  submitBtn().click();
+  await flushPromises();
+
+  expect(onSubmit).toHaveBeenCalledTimes(1);
+  expect(onSubmit).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      users: [
+        {
+          id: 1,
+          name: 'first',
+        },
+        {
+          id: 3,
+          name: 'third',
+        },
+        {
+          id: 2,
+          name: 'edited',
+        },
+      ],
+    }),
+    expect.anything()
+  );
 });

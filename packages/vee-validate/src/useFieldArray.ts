@@ -13,6 +13,7 @@ interface FieldArrayContext<TValue = unknown> {
   entries: DeepReadonly<Ref<FieldEntry[]>>;
   remove(idx: number): TValue | undefined;
   push(value: TValue): void;
+  swap(indexA: number, indexB: number): void;
 }
 
 export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath: MaybeRef<string>): FieldArrayContext {
@@ -90,9 +91,25 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath:
     entries.value.push(createEntry(value, entries.value.length));
   }
 
+  function swap(indexA: number, indexB: number) {
+    const pathName = unref(name);
+    const pathValue = getFromPath<TValue[]>(form?.values, pathName);
+    if (!Array.isArray(pathValue) || !pathValue[indexA] || !pathValue[indexB]) {
+      return;
+    }
+
+    const newValue = [...pathValue];
+    // the old switcheroo
+    const temp = newValue[indexA];
+    newValue[indexA] = newValue[indexB];
+    newValue[indexB] = temp;
+    form?.setFieldValue(pathName, newValue);
+  }
+
   return {
     entries: readonly(entries),
     remove,
     push,
+    swap,
   };
 }

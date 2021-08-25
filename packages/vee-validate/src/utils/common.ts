@@ -195,6 +195,7 @@ export function debounceAsync<TFunction extends (...args: any) => Promise<any>, 
       // Get the result of the inner function, then apply it to the resolve function of
       // each promise that has been created since the last time the inner function was run
       const result = inner(...(args as any));
+
       resolves.forEach(r => r(result));
       resolves = [];
     }, ms);
