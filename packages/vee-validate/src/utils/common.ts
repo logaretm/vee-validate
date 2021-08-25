@@ -164,29 +164,6 @@ export function normalizeField<TValue = unknown>(
   return field;
 }
 
-/**
- * Applies a mutation function on a field or field group
- */
-export function applyFieldMutation(
-  field: PrivateFieldContext<unknown> | PrivateFieldContext<unknown>[],
-  mutation: (field: PrivateFieldContext<unknown>) => unknown,
-  onlyFirst = false
-) {
-  if (!Array.isArray(field)) {
-    mutation(field);
-
-    return;
-  }
-
-  if (onlyFirst) {
-    mutation(field[0]);
-
-    return;
-  }
-
-  field.forEach(mutation);
-}
-
 export function resolveNextCheckboxValue<T>(currentValue: T, checkedValue: T, uncheckedValue: T): T;
 export function resolveNextCheckboxValue<T>(currentValue: T[], checkedValue: T, uncheckedValue: T): T[];
 export function resolveNextCheckboxValue<T>(currentValue: T | T[], checkedValue: T, uncheckedValue: T) {

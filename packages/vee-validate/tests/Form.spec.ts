@@ -632,9 +632,9 @@ describe('<Form />', () => {
       },
       template: `
       <VForm :validation-schema="schema" v-slot="{ errors, values }">
-        <Field name="drink" as="input" type="checkbox" value="" /> Coffee
-        <Field name="drink" as="input" type="checkbox" value="Tea" /> Tea
-        <Field name="drink" as="input" type="checkbox" value="Coke" /> Coke
+        <Field name="drink" type="checkbox" value="" /> Coffee
+        <Field name="drink" type="checkbox" value="Tea" /> Tea
+        <Field name="drink" type="checkbox" value="Coke" /> Coke
 
         <span id="err">{{ errors.drink }}</span>
         <span id="values">{{ values.drink && values.drink.toString() }}</span>
@@ -887,14 +887,12 @@ describe('<Form />', () => {
   });
 
   test('checkboxes v-model value syncing', async () => {
-    let drinks!: Ref<string[]>;
+    const drinks = ref<string[]>([]);
     const wrapper = mountWithHoc({
       setup() {
         const schema = yup.object({
           drink: yup.array().required().min(1),
         });
-
-        drinks = ref([]);
 
         return {
           schema,
@@ -2119,7 +2117,7 @@ describe('<Form />', () => {
     expect(meta.textContent).toBe('true');
   });
 
-  // 3424
+  // #3424
   test('Checkbox with v-model should not propagate the empty value symbol', async () => {
     const value = ref('');
     mountWithHoc({

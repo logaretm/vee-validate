@@ -13,6 +13,7 @@ import {
   PrivateFieldContext,
   SchemaValidationMode,
   ValidationOptions,
+  PrivateFormContext,
 } from './types';
 import {
   normalizeRules,
@@ -236,6 +237,7 @@ function _useField<TValue = unknown>(
     checkedValue,
     uncheckedValue,
     bails,
+    instances: 1,
     resetField,
     handleReset: () => resetField(),
     validate,
@@ -369,36 +371,62 @@ function useCheckboxField<TValue = unknown>(
   rules?: MaybeRef<RuleExpression<TValue>>,
   opts?: Partial<FieldOptions<TValue>>
 ): FieldContext<TValue> {
+  const form = !opts?.standalone ? injectWithSelf(FormContextKey) : undefined;
   const checkedValue = opts?.checkedValue;
   const uncheckedValue = opts?.uncheckedValue;
 
-  const form = !opts?.standalone ? injectWithSelf(FormContextKey) : undefined;
-  const field = _useField(name, rules, opts);
-  const handleChange = field.handleChange;
+  function patchCheckboxApi(field: FieldContext<TValue> & { originalHandleChange?: FieldContext['handleChange'] }) {
+    const handleChange = field.originalHandleChange || field.handleChange;
 
-  function handleCheckboxChange(e: unknown, shouldValidate = true) {
-    if (checked && checked.value === ((e as Event)?.target as HTMLInputElement)?.checked) {
-      return;
+    const checked = computed(() => {
+      const currentValue = unref(field.value);
+      const checkedVal = unref(checkedValue);
+
+      return Array.isArray(currentValue) ? currentValue.includes(checkedVal) : checkedVal === currentValue;
+    });
+
+    function handleCheckboxChange(e: unknown, shouldValidate = true) {
+      if (checked.value === ((e as Event)?.target as HTMLInputElement)?.checked) {
+        return;
+      }
+
+      let newValue = normalizeEventValue(e) as TValue;
+      // Single checkbox field without a form to toggle it's value
+      if (!form) {
+        newValue = resolveNextCheckboxValue(unref(field.value), unref(checkedValue), unref(uncheckedValue)) as TValue;
+      }
+
+      handleChange(newValue, shouldValidate);
     }
 
-    let newValue = normalizeEventValue(e) as TValue;
-    // Single checkbox field without a form to toggle it's value
-    if (checked && field.type === 'checkbox' && !form) {
-      newValue = resolveNextCheckboxValue(unref(field.value), unref(checkedValue), unref(uncheckedValue)) as TValue;
-    }
+    onBeforeUnmount(() => {
+      // toggles the checkbox value if it was checked
+      if (checked.value) {
+        handleCheckboxChange(unref(checkedValue), false);
+      }
+    });
 
-    handleChange(newValue, shouldValidate);
+    return {
+      ...field,
+      checked,
+      checkedValue,
+      uncheckedValue,
+      originalHandleChange: handleChange,
+      handleChange: handleCheckboxChange,
+    };
   }
 
-  const checked = computed(() => {
-    const currentValue = unref(field.value);
-    const checkedValue = unref(field.checkedValue);
+  if (!form) {
+    return patchCheckboxApi(_useField<TValue>(name, rules, opts));
+  }
 
-    return Array.isArray(currentValue) ? currentValue.includes(checkedValue) : checkedValue === currentValue;
-  });
+  // try to see if the field exists before
+  const field = form.fieldsByPath.value[unref(name)] as PrivateFieldContext<TValue> | undefined;
+  if (!field) {
+    return patchCheckboxApi(_useField<TValue>(name, rules, opts));
+  }
 
-  field.checked = checked;
-  field.handleChange = handleCheckboxChange;
+  field.instances++;
 
-  return field;
+  return patchCheckboxApi(field);
 }

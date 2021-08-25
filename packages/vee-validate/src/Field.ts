@@ -1,7 +1,7 @@
 import { h, defineComponent, toRef, SetupContext, resolveDynamicComponent, computed, watch, PropType } from 'vue';
 import { getConfig } from './config';
 import { useField } from './useField';
-import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent } from './utils';
+import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent, normalizeEventValue } from './utils';
 import { toNumber } from '../../shared';
 import { IS_ABSENT } from './symbols';
 
@@ -120,7 +120,12 @@ export const Field = defineComponent({
         }
       : handleChange;
 
-    const handleInput = (e: any) => handleChange(e, false);
+    const handleInput = (e: any) => {
+      if (!hasCheckedAttr(ctx.attrs.type)) {
+        value.value = normalizeEventValue(e);
+      }
+    };
+
     const onInputHandler = hasModelEvents
       ? function handleInputWithModel(e: any) {
           handleInput(e);
