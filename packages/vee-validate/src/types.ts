@@ -43,8 +43,6 @@ export interface FieldState<TValue = unknown> {
  */
 export type SchemaValidationMode = 'validated-only' | 'silent' | 'force';
 
-export type WritableRef<TValue> = Ref<TValue> | WritableComputedRef<TValue>;
-
 export interface ValidationOptions {
   mode: SchemaValidationMode;
 }
@@ -52,23 +50,22 @@ export interface ValidationOptions {
 export interface PrivateFieldContext<TValue = unknown> {
   fid: number;
   name: MaybeRef<string>;
-  value: WritableRef<TValue>;
+  value: Ref<TValue>;
   meta: FieldMeta<TValue>;
   errors: Ref<string[]>;
-  errorMessage: ComputedRef<string | undefined>;
+  errorMessage: Ref<string | undefined>;
   label?: MaybeRef<string | undefined>;
   type?: string;
   bails?: boolean;
   checkedValue?: MaybeRef<TValue>;
   uncheckedValue?: MaybeRef<TValue>;
-  checked?: ComputedRef<boolean>;
+  checked?: Ref<boolean>;
   resetField(state?: FieldState<TValue>): void;
   handleReset(state?: FieldState<TValue>): void;
   validate(opts?: Partial<ValidationOptions>): Promise<ValidationResult>;
   handleChange(e: Event | unknown, shouldValidate?: boolean): void;
   handleBlur(e?: Event): void;
-  handleInput(e?: Event | unknown): void;
-  setValidationState(state: ValidationResult): void;
+  setState(state: Partial<FieldState<TValue>>): void;
   setTouched(isTouched: boolean): void;
   setErrors(message: string | string[]): void;
   setValue(value: TValue): void;
@@ -134,6 +131,7 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
   validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>>;
   validateField(field: keyof TValues): Promise<ValidationResult>;
   errorBag: Ref<FormErrorBag<TValues>>;
+  errors: ComputedRef<FormErrors<TValues>>;
   setFieldErrorBag(field: string, messages: string | string[]): void;
   stageInitialValue(path: string, value: unknown): void;
   unsetInitialValue(path: string): void;
@@ -163,7 +161,6 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
     | 'setFieldInitialValue'
     | 'unsetInitialValue'
   > {
-  errors: ComputedRef<FormErrors<TValues>>;
   handleReset: () => void;
   submitForm: (e?: unknown) => Promise<void>;
 }

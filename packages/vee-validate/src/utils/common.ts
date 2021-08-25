@@ -20,7 +20,7 @@ export function getFromPath<TValue = unknown>(object: NestedRecord | undefined, 
 export function getFromPath<TValue = unknown, TFallback = TValue>(
   object: NestedRecord | undefined,
   path: string,
-  fallback: TFallback
+  fallback?: TFallback
 ): TValue | TFallback;
 export function getFromPath<TValue = unknown, TFallback = TValue>(
   object: NestedRecord | undefined,

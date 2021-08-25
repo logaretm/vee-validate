@@ -6,13 +6,13 @@ describe('useIsFormDirty()', () => {
     mountWithHoc({
       setup() {
         useForm();
-        const { value, handleInput } = useField('test');
+        const { value, handleChange } = useField('test');
         const isDirty = useIsFormDirty();
 
         return {
           value,
           isDirty,
-          handleInput,
+          handleInput: (e: any) => handleChange(e, false),
         };
       },
       template: `

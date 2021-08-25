@@ -31,7 +31,7 @@ import {
   normalizeField,
   debounceAsync,
 } from './utils';
-import { FormErrorsKey, FormContextKey, FormInitialValuesKey } from './symbols';
+import { FormContextKey } from './symbols';
 import { validateYupSchema, validateObjectSchema } from './validate';
 
 interface FormOptions<TValues extends Record<string, any>> {
@@ -123,6 +123,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     fieldsByPath,
     values: formValues,
     errorBag,
+    errors,
     schema,
     submitCount,
     meta,
@@ -614,7 +615,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
           return validation;
         }
 
-        applyFieldMutation(field, f => f.setValidationState(fieldResult), true);
+        applyFieldMutation(field, f => f.setState({ errors: fieldResult.errors }), true);
 
         return validation;
       },
@@ -659,7 +660,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
   // Provide injections
   provide(FormContextKey, formCtx as PrivateFormContext);
-  provide(FormErrorsKey, errors);
 
   return {
     errors,
@@ -773,8 +773,6 @@ function useFormInitialValues<TValues extends Record<string, any>>(
       }
     );
   }
-
-  provide(FormInitialValuesKey, computedInitials);
 
   return {
     readonlyInitialValues: computedInitials,
