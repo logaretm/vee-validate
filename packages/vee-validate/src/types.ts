@@ -60,6 +60,7 @@ export interface PrivateFieldContext<TValue = unknown> {
   checkedValue?: MaybeRef<TValue>;
   uncheckedValue?: MaybeRef<TValue>;
   checked?: Ref<boolean>;
+  instances: number;
   resetField(state?: FieldState<TValue>): void;
   handleReset(state?: FieldState<TValue>): void;
   validate(opts?: Partial<ValidationOptions>): Promise<ValidationResult>;
@@ -119,12 +120,16 @@ export type SubmissionHandler<TValues extends Record<string, unknown> = Record<s
 
 export type RawFormSchema<TValues> = Record<keyof TValues, string | GenericValidateFunction | Record<string, any>>;
 
+export type FieldPathLookup<TValues extends Record<string, any> = Record<string, any>> = Partial<
+  Record<keyof TValues, PrivateFieldContext>
+>;
+
 export interface PrivateFormContext<TValues extends Record<string, any> = Record<string, any>>
   extends FormActions<TValues> {
   register(field: PrivateFieldContext): void;
   unregister(field: PrivateFieldContext): void;
   values: TValues;
-  fieldsByPath: Ref<Record<keyof TValues, PrivateFieldContext | PrivateFieldContext[]>>;
+  fieldsByPath: Ref<FieldPathLookup>;
   submitCount: Ref<number>;
   schema?: MaybeRef<RawFormSchema<TValues> | SchemaOf<TValues> | undefined>;
   validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues>>;

@@ -18,9 +18,9 @@ import {
   SchemaValidationMode,
   RawFormSchema,
   ValidationOptions,
+  FieldPathLookup,
 } from './types';
 import {
-  applyFieldMutation,
   getFromPath,
   isYupValidator,
   keysOf,
@@ -28,7 +28,6 @@ import {
   setInPath,
   unsetPath,
   isFormSubmitEvent,
-  normalizeField,
   debounceAsync,
 } from './utils';
 import { FormContextKey } from './symbols';
@@ -44,13 +43,11 @@ interface FormOptions<TValues extends Record<string, any>> {
   validateOnMount?: boolean;
 }
 
-type RegisteredField = PrivateFieldContext | PrivateFieldContext[];
-
 export function useForm<TValues extends Record<string, any> = Record<string, any>>(
   opts?: FormOptions<TValues>
 ): FormContext<TValues> {
   // A lookup containing fields or field groups
-  const fieldsByPath: Ref<Record<keyof TValues, RegisteredField>> = ref({} as any);
+  const fieldsByPath: Ref<FieldPathLookup<TValues>> = ref({} as any);
 
   // If the form is currently submitting
   const isSubmitting = ref(false);
@@ -84,7 +81,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
    */
   const fieldNames = computed(() => {
     return keysOf(fieldsByPath.value).reduce((names, path) => {
-      const field = normalizeField(fieldsByPath.value[path]);
+      const field = fieldsByPath.value[path];
       if (field) {
         names[path as string] = unref(field.label || field.name) || '';
       }
@@ -95,7 +92,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
   const fieldBailsMap = computed(() => {
     return keysOf(fieldsByPath.value).reduce((map, path) => {
-      const field = normalizeField(fieldsByPath.value[path]);
+      const field = fieldsByPath.value[path];
       if (field) {
         map[path as string] = field.bails ?? true;
       }
@@ -169,7 +166,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     value: TValues[T] | undefined,
     { force } = { force: false }
   ) {
-    const fieldInstance: RegisteredField | undefined = fieldsByPath.value[field];
+    const fieldInstance = fieldsByPath.value[field];
     const clonedValue = deepCopy(value);
     // field wasn't found, create a virtual field as a placeholder
     if (!fieldInstance) {
@@ -178,20 +175,19 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
 
     // Multiple checkboxes, and only one of them got updated
-    if (Array.isArray(fieldInstance) && fieldInstance[0]?.type === 'checkbox' && !Array.isArray(value)) {
-      const newVal = deepCopy(
+    if (fieldInstance.type === 'checkbox' && fieldInstance.instances > 1 && !Array.isArray(value)) {
+      const newValue = deepCopy(
         resolveNextCheckboxValue(getFromPath(formValues, field as string) || [], value, undefined)
       );
-      setInPath(formValues, field as string, newVal);
-      fieldInstance.forEach(fieldItem => {
-        valuesByFid[fieldItem.fid] = newVal;
-      });
+
+      setInPath(formValues, field as string, newValue);
+      valuesByFid[fieldInstance.fid] = newValue;
       return;
     }
 
     let newValue = value;
     // Single Checkbox: toggles the field value unless the field is being reset then force it
-    if (!Array.isArray(fieldInstance) && fieldInstance?.type === 'checkbox' && !force) {
+    if (fieldInstance.type === 'checkbox' && fieldInstance.instances === 1 && !force) {
       newValue = deepCopy(
         resolveNextCheckboxValue<TValues[T]>(
           getFromPath<TValues[T]>(formValues, field as string) as TValues[T],
@@ -202,18 +198,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
 
     setInPath(formValues, field as string, newValue);
-    // multiple radio fields or checkboxes
-    if (fieldInstance && Array.isArray(fieldInstance) && ['radio', 'checkbox'].includes(fieldInstance[0]?.type || '')) {
-      fieldInstance.forEach(fieldItem => {
-        valuesByFid[fieldItem.fid] = newValue;
-      });
-      return;
-    }
-
-    // a single field
-    if (!Array.isArray(fieldInstance)) {
-      valuesByFid[fieldInstance.fid] = newValue;
-    }
+    valuesByFid[fieldInstance.fid] = newValue;
   }
 
   /**
@@ -235,12 +220,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
    * Sets the touched meta state on a field
    */
   function setFieldTouched(field: keyof TValues, isTouched: boolean) {
-    const fieldInstance: RegisteredField | undefined = fieldsByPath.value[field];
-    if (!fieldInstance) {
-      return;
-    }
+    const fieldInstance = fieldsByPath.value[field];
 
-    applyFieldMutation(fieldInstance, f => f.setTouched(isTouched));
+    fieldInstance?.setTouched(isTouched);
   }
 
   /**
@@ -266,7 +248,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
 
     // Reset all fields state
-    Object.values(fieldsByPath.value).forEach(fieldGroup => applyFieldMutation(fieldGroup, f => f.resetField()));
+    Object.values(fieldsByPath.value).forEach(f => f && f.resetField());
 
     if (state?.touched) {
       setTouched(state.touched);
@@ -280,54 +262,27 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     const rawField = markRaw(field);
     const fieldPath: keyof TValues = path;
     // if the field was not added before
-    if (!fieldsByPath.value[path]) {
-      fieldsByPath.value[fieldPath] = rawField;
-      return;
-    }
+    fieldsByPath.value[fieldPath] = rawField;
 
-    const existingField: RegisteredField = fieldsByPath.value[fieldPath];
-    if (!Array.isArray(existingField)) {
-      fieldsByPath.value[fieldPath] = [existingField];
-    }
+    // TODO: Figure out what happens if they try to add a duplicate field at that path
+    // const existingField = fieldsByPath.value[fieldPath];
+    // if (!Array.isArray(existingField)) {
+    //   fieldsByPath.value[fieldPath] = [existingField];
+    // }
 
-    const fieldGroup = fieldsByPath.value[fieldPath] as PrivateFieldContext[];
-    fieldGroup.push(rawField);
+    // const fieldGroup = fieldsByPath.value[fieldPath] as PrivateFieldContext[];
+    // fieldGroup.push(rawField);
   }
 
   function removeFieldFromPath(field: PrivateFieldContext, path: string) {
     const fieldPath: keyof TValues = path;
-    const fieldOrFieldGroup = fieldsByPath.value[fieldPath];
-    if (!fieldOrFieldGroup) {
-      return;
-    }
-
-    if (!Array.isArray(fieldOrFieldGroup)) {
-      // delete the path if its a singular field
-      delete fieldsByPath.value[fieldPath];
-
-      return;
-    }
-
-    // if its a field group remove that specific field
-    const fieldIdx = fieldOrFieldGroup.indexOf(field);
-    if (fieldIdx !== -1) {
-      fieldOrFieldGroup.splice(fieldIdx, 1);
-    }
-
-    // if no field in the group remains, remove the entire group
-    if (fieldOrFieldGroup.length === 0) {
+    if (fieldExists(path)) {
       delete fieldsByPath.value[fieldPath];
     }
   }
 
-  function fieldGroupExists(path: string) {
-    const oldGroup = fieldsByPath.value[path];
-
-    if (Array.isArray(oldGroup)) {
-      return oldGroup.length > 0;
-    }
-
-    return !!oldGroup;
+  function fieldExists(path: string) {
+    return !!fieldsByPath.value[path];
   }
 
   function registerField(field: PrivateFieldContext) {
@@ -348,7 +303,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
           // const isSharingName = fields.value.find(f => unref(f.name) === oldPath);
           // clean up the old path if no other field is sharing that name
           // #3325
-          if (!fieldGroupExists(oldPath)) {
+          // TODO: This might break
+          if (!fieldExists(oldPath)) {
             unsetPath(formValues, oldPath);
           }
         },
@@ -372,54 +328,25 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
   function unregisterField(field: PrivateFieldContext<unknown>) {
     const fieldName = unref(field.name);
-    removeFieldFromPath(field, fieldName);
-    const fid = field.fid;
-    // cleans up the field value from fid lookup
-    nextTick(() => {
+    field.instances--;
+    if (field.instances <= 0) {
+      removeFieldFromPath(field, fieldName);
+      const fid = field.fid;
+      // cleans up the field value from fid lookup
       delete valuesByFid[fid];
-      // clears a field error on unmounted
-      // we wait till next tick to make sure if the field is completely removed and doesn't have any siblings like checkboxes
-      // #3384
-      if (!fieldsByPath.value[fieldName]) {
-        setFieldError(fieldName, undefined);
-      }
-    });
-
-    const fieldGroup = fieldsByPath.value[fieldName];
-    // in this case, this is a single field not a group (checkbox or radio)
-    // so remove the field value key immediately
-    if (!Array.isArray(fieldGroup)) {
-      // avoid un-setting the value if the field was switched with another that shares the same name
-      // they will be unset once the new field takes over the new name, look at `#registerField()`
-      // #3166
-      if (!fieldGroupExists(fieldName)) {
-        unsetPath(formValues, fieldName);
-      }
-
-      return;
+      nextTick(() => {
+        // clears a field error on unmounted
+        // we wait till next tick to make sure if the field is completely removed and doesn't have any siblings like checkboxes
+        // #3384
+        if (!fieldsByPath.value[fieldName]) {
+          setFieldError(fieldName, undefined);
+        }
+      });
     }
 
-    // otherwise find the actual value in the current array of values and remove it
-    const valueIdx: number | undefined = getFromPath<unknown[] | undefined>(formValues, fieldName)?.indexOf?.(
-      unref(field.checkedValue)
-    );
-
-    if (valueIdx === undefined) {
+    if (!fieldExists(fieldName)) {
       unsetPath(formValues, fieldName);
-
-      return;
     }
-
-    if (valueIdx === -1) {
-      return;
-    }
-
-    if (Array.isArray(formValues[fieldName])) {
-      unsetPath(formValues, `${fieldName}.${valueIdx}`);
-      return;
-    }
-
-    unsetPath(formValues, fieldName);
   }
 
   async function validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>> {
@@ -429,8 +356,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
     // No schema, each field is responsible to validate itself
     const validations = await Promise.all(
-      Object.values(fieldsByPath.value).map(fieldGroup => {
-        const field = normalizeField(fieldGroup);
+      Object.values(fieldsByPath.value).map(field => {
         if (!field) {
           return Promise.resolve({ key: '', valid: true, errors: [] });
         }
@@ -466,7 +392,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   }
 
   async function validateField(field: keyof TValues): Promise<ValidationResult> {
-    const fieldInstance: RegisteredField | undefined = fieldsByPath.value[field];
+    const fieldInstance = fieldsByPath.value[field];
     if (!fieldInstance) {
       warn(`field with name ${field} was not found`);
 
@@ -586,7 +512,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     // aggregates the paths into a single result object while applying the results on the fields
     return paths.reduce(
       (validation, path) => {
-        const field: RegisteredField | undefined = fieldsById[path];
+        const field = fieldsById[path];
         const messages = (formResult.results[path] || { errors: [] as string[] }).errors;
         const fieldResult = {
           errors: messages,
@@ -605,7 +531,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
         }
 
         // always update the valid flag regardless of the mode
-        applyFieldMutation(field, f => (f.meta.valid = fieldResult.valid));
+        field.meta.valid = fieldResult.valid;
         if (mode === 'silent') {
           return validation;
         }
@@ -615,7 +541,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
           return validation;
         }
 
-        applyFieldMutation(field, f => f.setState({ errors: fieldResult.errors }), true);
+        field.setState({ errors: fieldResult.errors });
 
         return validation;
       },
@@ -686,7 +612,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
  * Manages form meta aggregation
  */
 function useFormMeta<TValues extends Record<string, unknown>>(
-  fieldsByPath: Ref<Record<keyof TValues, RegisteredField>>,
+  fieldsByPath: Ref<FieldPathLookup<TValues>>,
   currentValues: TValues,
   initialValues: MaybeRef<TValues>,
   errors: Ref<FormErrors<TValues>>
@@ -702,9 +628,7 @@ function useFormMeta<TValues extends Record<string, unknown>>(
   });
 
   const flags = computed(() => {
-    const fields = Object.values(fieldsByPath.value)
-      .map(f => normalizeField(f))
-      .filter(Boolean) as PrivateFieldContext[];
+    const fields = Object.values(fieldsByPath.value).filter(Boolean) as PrivateFieldContext[];
 
     return keysOf(MERGE_STRATEGIES).reduce((acc, flag) => {
       const mergeMethod = MERGE_STRATEGIES[flag];
@@ -728,7 +652,7 @@ function useFormMeta<TValues extends Record<string, unknown>>(
  * Manages the initial values prop
  */
 function useFormInitialValues<TValues extends Record<string, any>>(
-  fields: Ref<Record<keyof TValues, RegisteredField>>,
+  fields: Ref<FieldPathLookup<TValues>>,
   formValues: TValues,
   providedValues?: MaybeRef<TValues>
 ) {
@@ -749,11 +673,9 @@ function useFormInitialValues<TValues extends Record<string, any>>(
     // those are excluded because it's unlikely you want to change the form values using initial values
     // we mostly watch them for API population or newly inserted fields
     // if the user API is taking too much time before user interaction they should consider disabling or hiding their inputs until the values are ready
-    const hadInteraction = (f: PrivateFieldContext) => f.meta.touched;
     keysOf(fields.value).forEach(fieldPath => {
-      const field: RegisteredField = fields.value[fieldPath];
-      const touchedByUser = Array.isArray(field) ? field.some(hadInteraction) : hadInteraction(field);
-      if (touchedByUser) {
+      const field = fields.value[fieldPath];
+      if (!field || field.meta.touched) {
         return;
       }
 
