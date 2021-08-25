@@ -48,7 +48,7 @@ export interface ValidationOptions {
 }
 
 export interface PrivateFieldContext<TValue = unknown> {
-  fid: number;
+  id: number;
   name: MaybeRef<string>;
   value: Ref<TValue>;
   meta: FieldMeta<TValue>;
@@ -72,7 +72,7 @@ export interface PrivateFieldContext<TValue = unknown> {
   setValue(value: TValue): void;
 }
 
-export type FieldContext<TValue = unknown> = Omit<PrivateFieldContext<TValue>, 'idx' | 'fid'>;
+export type FieldContext<TValue = unknown> = Omit<PrivateFieldContext<TValue>, 'id' | 'instances'>;
 
 export type GenericValidateFunction = (
   value: unknown,
