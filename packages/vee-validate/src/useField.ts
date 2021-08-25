@@ -13,7 +13,6 @@ import {
   PrivateFieldContext,
   SchemaValidationMode,
   ValidationOptions,
-  PrivateFormContext,
 } from './types';
 import {
   normalizeRules,
@@ -84,15 +83,7 @@ function _useField<TValue = unknown>(
 
   const form = !standalone ? injectWithSelf(FormContextKey) : undefined;
 
-  const {
-    id: fid,
-    value,
-    initialValue,
-    meta,
-    setState,
-    errors,
-    errorMessage,
-  } = useFieldState(name, {
+  const { id, value, initialValue, meta, setState, errors, errorMessage } = useFieldState(name, {
     modelValue,
     standalone,
   });
@@ -226,7 +217,7 @@ function _useField<TValue = unknown>(
   }
 
   const field: PrivateFieldContext<TValue> = {
-    fid,
+    id,
     name,
     label,
     value,
