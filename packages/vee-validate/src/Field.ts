@@ -93,7 +93,6 @@ export const Field = defineComponent({
       validate: validateField,
       handleChange,
       handleBlur,
-      handleInput,
       setTouched,
       resetField,
       handleReset,
@@ -121,8 +120,9 @@ export const Field = defineComponent({
         }
       : handleChange;
 
+    const handleInput = (e: any) => handleChange(e, false);
     const onInputHandler = hasModelEvents
-      ? function handleChangeWithModel(e: any) {
+      ? function handleInputWithModel(e: any) {
           handleInput(e);
           ctx.emit('update:modelValue', value.value);
         }

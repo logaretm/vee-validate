@@ -7,13 +7,13 @@ describe('useIsFieldDirty()', () => {
     mountWithHoc({
       setup() {
         useForm();
-        const { value, handleInput } = useField('test');
+        const { value, handleChange } = useField('test');
         const isDirty = useIsFieldDirty('test');
 
         return {
           value,
           isDirty,
-          handleInput,
+          handleInput: (e: any) => handleChange(e, false),
         };
       },
       template: `
@@ -49,11 +49,11 @@ describe('useIsFieldDirty()', () => {
       },
       setup() {
         useForm();
-        const { value, handleInput } = useField('test');
+        const { value, handleChange } = useField('test');
 
         return {
           value,
-          handleInput,
+          handleInput: (e: any) => handleChange(e, false),
         };
       },
       template: `
@@ -76,14 +76,14 @@ describe('useIsFieldDirty()', () => {
     mountWithHoc({
       setup() {
         useForm();
-        const { value, handleInput } = useField('test');
+        const { value, handleChange } = useField('test');
         useField('test');
         const isDirty = useIsFieldDirty('test');
 
         return {
           value,
           isDirty,
-          handleInput,
+          handleInput: (e: any) => handleChange(e, false),
         };
       },
       template: `

@@ -1,32 +1,16 @@
-import {
-  watch,
-  ref,
-  isRef,
-  reactive,
-  computed,
-  onMounted,
-  onBeforeUnmount,
-  unref,
-  WatchStopHandle,
-  provide,
-  Ref,
-  nextTick,
-} from 'vue';
+import { watch, isRef, computed, onMounted, onBeforeUnmount, unref, WatchStopHandle, provide, nextTick } from 'vue';
 import { BaseSchema } from 'yup';
 import { klona as deepCopy } from 'klona/lite';
 import isEqual from 'fast-deep-equal/es6';
 import { validate as validateValue } from './validate';
 import {
-  PrivateFormContext,
   ValidationResult,
   MaybeRef,
   GenericValidateFunction,
-  FieldMeta,
   YupValidator,
   FieldContext,
   FieldState,
   PrivateFieldContext,
-  WritableRef,
   SchemaValidationMode,
   ValidationOptions,
 } from './types';
@@ -41,7 +25,8 @@ import {
   isYupValidator,
 } from './utils';
 import { isCallable } from '../../shared';
-import { FieldContextKey, FormInitialValuesKey, FormContextKey } from './symbols';
+import { FieldContextKey, FormContextKey } from './symbols';
+import { useFieldState } from './useFieldState';
 
 interface FieldOptions<TValue = unknown> {
   initialValue?: MaybeRef<TValue>;
@@ -64,8 +49,6 @@ type RuleExpression<TValue> =
   | BaseSchema<TValue>
   | undefined;
 
-let ID_COUNTER = 0;
-
 /**
  * Creates a field composite.
  */
@@ -74,9 +57,20 @@ export function useField<TValue = unknown>(
   rules?: MaybeRef<RuleExpression<TValue>>,
   opts?: Partial<FieldOptions<TValue>>
 ): FieldContext<TValue> {
-  const fid = ID_COUNTER >= Number.MAX_SAFE_INTEGER ? 0 : ++ID_COUNTER;
+  if (hasCheckedAttr(opts?.type)) {
+    return useCheckboxField(name, rules, opts);
+  }
+
+  return _useField(name, rules, opts);
+}
+
+function _useField<TValue = unknown>(
+  name: MaybeRef<string>,
+  rules?: MaybeRef<RuleExpression<TValue>>,
+  opts?: Partial<FieldOptions<TValue>>
+): FieldContext<TValue> {
   const {
-    initialValue,
+    initialValue: modelValue,
     validateOnMount,
     bails,
     type,
@@ -90,24 +84,24 @@ export function useField<TValue = unknown>(
   const form = !standalone ? injectWithSelf(FormContextKey) : undefined;
 
   const {
+    id: fid,
+    value,
+    initialValue,
     meta,
+    setState,
     errors,
     errorMessage,
-    handleBlur,
-    handleInput,
-    resetValidationState,
-    setValidationState,
-    setErrors,
-    value,
-    checked,
-  } = useValidationState<TValue>({
-    name,
-    modelValue: initialValue,
-    form,
-    type,
-    checkedValue,
+  } = useFieldState(name, {
+    modelValue,
     standalone,
   });
+
+  /**
+   * Handles common onBlur meta update
+   */
+  const handleBlur = () => {
+    meta.touched = true;
+  };
 
   const normalizedRules = computed(() => {
     let rulesValue = unref(rules);
@@ -139,9 +133,10 @@ export function useField<TValue = unknown>(
     meta.pending = true;
     meta.validated = true;
     const result = await validateCurrentValue('validated-only');
+    setState({ errors: result.errors });
     meta.pending = false;
 
-    return setValidationState(result);
+    return result;
   }
 
   async function validateValidStateOnly(): Promise<ValidationResult> {
@@ -165,15 +160,7 @@ export function useField<TValue = unknown>(
 
   // Common input/change event handler
   const handleChange = (e: unknown, shouldValidate = true) => {
-    if (checked && checked.value === ((e as Event)?.target as HTMLInputElement)?.checked) {
-      return;
-    }
-
-    let newValue = normalizeEventValue(e) as TValue;
-    // Single checkbox field without a form to toggle it's value
-    if (checked && type === 'checkbox' && !form) {
-      newValue = resolveNextCheckboxValue(value.value, unref(checkedValue), unref(uncheckedValue)) as TValue;
-    }
+    const newValue = normalizeEventValue(e) as TValue;
 
     value.value = newValue;
     if (!validateOnValueUpdate && shouldValidate) {
@@ -209,8 +196,20 @@ export function useField<TValue = unknown>(
 
   function resetField(state?: Partial<FieldState<TValue>>) {
     unwatchValue?.();
-    resetValidationState(state);
+
+    const newValue = state && 'value' in state ? (state.value as TValue) : initialValue.value;
+
+    setState({
+      value: deepCopy(newValue),
+      initialValue: deepCopy(newValue),
+      touched: state?.touched ?? false,
+      errors: state?.errors || [],
+    });
+
+    meta.pending = false;
+    meta.validated = false;
     validateValidStateOnly();
+
     // need to watch at next tick to avoid triggering the value watcher
     nextTick(() => {
       watchValue();
@@ -219,6 +218,10 @@ export function useField<TValue = unknown>(
 
   function setValue(newValue: TValue) {
     value.value = newValue;
+  }
+
+  function setErrors(errors: string[] | string) {
+    setState({ errors: Array.isArray(errors) ? errors : [errors] });
   }
 
   const field: PrivateFieldContext<TValue> = {
@@ -232,15 +235,13 @@ export function useField<TValue = unknown>(
     type,
     checkedValue,
     uncheckedValue,
-    checked,
     bails,
     resetField,
     handleReset: () => resetField(),
     validate,
     handleChange,
     handleBlur,
-    handleInput,
-    setValidationState,
+    setState,
     setTouched,
     setErrors,
     setValue,
@@ -348,137 +349,6 @@ function normalizeOptions<TValue>(name: string, opts: Partial<FieldOptions<TValu
 }
 
 /**
- * Manages the validation state of a field.
- */
-function useValidationState<TValue>({
-  name,
-  modelValue,
-  form,
-  type,
-  checkedValue,
-  standalone,
-}: {
-  name: MaybeRef<string>;
-  checkedValue?: MaybeRef<TValue>;
-  modelValue?: MaybeRef<TValue>;
-  form?: PrivateFormContext;
-  type?: string;
-  standalone?: boolean;
-}) {
-  const { errors, errorMessage, setErrors } = useFieldErrors(name, form);
-  const formInitialValues = standalone ? undefined : injectWithSelf(FormInitialValuesKey, undefined);
-  // clones the ref value to a mutable version
-  const initialValueSourceRef = ref(unref(modelValue)) as Ref<TValue>;
-
-  const initialValue = computed(() => {
-    return getFromPath<TValue>(unref(formInitialValues), unref(name), unref(initialValueSourceRef)) as TValue;
-  });
-
-  const value = useFieldValue(initialValue, modelValue, name, form);
-  const meta = useFieldMeta(initialValue, value, errors);
-
-  const checked = hasCheckedAttr(type)
-    ? computed(() => {
-        if (Array.isArray(value.value)) {
-          return value.value.includes(unref(checkedValue));
-        }
-
-        return unref(checkedValue) === value.value;
-      })
-    : undefined;
-
-  /**
-   * Handles common onBlur meta update
-   */
-  const handleBlur = () => {
-    meta.touched = true;
-  };
-
-  /**
-   * Handles common on blur events
-   * @deprecated You should use `handleChange` instead
-   */
-  const handleInput = (e: unknown) => {
-    // Checkboxes/Radio will emit a `change` event anyway, custom components will use `update:modelValue`
-    // so this is redundant
-    if (!hasCheckedAttr(type)) {
-      value.value = normalizeEventValue(e) as TValue;
-    }
-  };
-
-  // Updates the validation state with the validation result
-  function setValidationState(result: ValidationResult) {
-    setErrors(result.errors);
-
-    return result;
-  }
-
-  // Resets the validation state
-  function resetValidationState(state?: Partial<FieldState<TValue>>) {
-    const fieldPath = unref(name);
-    const newValue =
-      state && 'value' in state
-        ? (state.value as TValue)
-        : (getFromPath<TValue>(unref(formInitialValues), fieldPath, unref(modelValue) as TValue) as TValue);
-
-    if (form) {
-      form.setFieldValue(fieldPath, newValue, { force: true });
-      form.setFieldInitialValue(fieldPath, newValue);
-    } else {
-      value.value = deepCopy(newValue);
-      initialValueSourceRef.value = deepCopy(newValue);
-    }
-
-    setErrors(state?.errors || []);
-    meta.touched = state?.touched ?? false;
-    meta.pending = false;
-    meta.validated = false;
-  }
-
-  return {
-    meta,
-    errors,
-    errorMessage,
-    setErrors,
-    setValidationState,
-    resetValidationState,
-    handleBlur,
-    handleInput,
-    value,
-    checked,
-  };
-}
-
-/**
- * Exposes meta flags state and some associated actions with them.
- */
-export function useFieldMeta<TValue>(initialValue: MaybeRef<TValue>, currentValue: Ref<TValue>, errors: Ref<string[]>) {
-  const meta = reactive({
-    touched: false,
-    pending: false,
-    valid: true,
-    validated: !!unref(errors).length,
-    initialValue: computed(() => unref(initialValue) as TValue | undefined),
-    dirty: computed(() => {
-      return !isEqual(unref(currentValue), unref(initialValue));
-    }),
-  }) as FieldMeta<TValue>;
-
-  watch(
-    errors,
-    value => {
-      meta.valid = !value.length;
-    },
-    {
-      immediate: true,
-      flush: 'sync',
-    }
-  );
-
-  return meta;
-}
-
-/**
  * Extracts the validation rules from a schema
  */
 export function extractRuleFromSchema<TValue>(
@@ -494,58 +364,41 @@ export function extractRuleFromSchema<TValue>(
   return schema[fieldName];
 }
 
-/**
- * Manages the field value
- */
-export function useFieldValue<TValue>(
-  initialValue: MaybeRef<TValue | undefined>,
-  modelValue: MaybeRef<TValue | undefined> | undefined,
-  path: MaybeRef<string>,
-  form?: PrivateFormContext
-): WritableRef<TValue> {
-  // if no form is associated, use a regular ref.
-  if (!form) {
-    return ref(unref(modelValue || initialValue)) as WritableRef<TValue>;
+function useCheckboxField<TValue = unknown>(
+  name: MaybeRef<string>,
+  rules?: MaybeRef<RuleExpression<TValue>>,
+  opts?: Partial<FieldOptions<TValue>>
+): FieldContext<TValue> {
+  const checkedValue = opts?.checkedValue;
+  const uncheckedValue = opts?.uncheckedValue;
+
+  const form = !opts?.standalone ? injectWithSelf(FormContextKey) : undefined;
+  const field = _useField(name, rules, opts);
+  const handleChange = field.handleChange;
+
+  function handleCheckboxChange(e: unknown, shouldValidate = true) {
+    if (checked && checked.value === ((e as Event)?.target as HTMLInputElement)?.checked) {
+      return;
+    }
+
+    let newValue = normalizeEventValue(e) as TValue;
+    // Single checkbox field without a form to toggle it's value
+    if (checked && field.type === 'checkbox' && !form) {
+      newValue = resolveNextCheckboxValue(unref(field.value), unref(checkedValue), unref(uncheckedValue)) as TValue;
+    }
+
+    handleChange(newValue, shouldValidate);
   }
 
-  // to set the initial value, first check if there is a current value, if there is then use it.
-  // otherwise use the configured initial value if it exists.
-  // prioritize model value over form values
-  // #3429
-  const currentValue = modelValue ? unref(modelValue) : getFromPath(form.values, unref(path), unref(initialValue));
-  form.stageInitialValue(unref(path), currentValue);
-  // otherwise use a computed setter that triggers the `setFieldValue`
-  const value = computed<TValue>({
-    get() {
-      return getFromPath<TValue>(form.values, unref(path)) as TValue;
-    },
-    set(newVal) {
-      form.setFieldValue(unref(path), newVal);
-    },
+  const checked = computed(() => {
+    const currentValue = unref(field.value);
+    const checkedValue = unref(field.checkedValue);
+
+    return Array.isArray(currentValue) ? currentValue.includes(checkedValue) : checkedValue === currentValue;
   });
 
-  return value as WritableRef<TValue>;
-}
+  field.checked = checked;
+  field.handleChange = handleCheckboxChange;
 
-export function useFieldErrors(path: MaybeRef<string>, form?: PrivateFormContext) {
-  if (!form) {
-    const errors = ref<string[]>([]);
-    return {
-      errors: computed(() => errors.value),
-      errorMessage: computed<string | undefined>(() => errors.value[0]),
-      setErrors: (messages: string | string[]) => {
-        errors.value = Array.isArray(messages) ? messages : [messages];
-      },
-    };
-  }
-
-  const errors = computed(() => form.errorBag.value[unref(path)] || []);
-
-  return {
-    errors,
-    errorMessage: computed<string | undefined>(() => errors.value[0]),
-    setErrors: (messages: string | string[]) => {
-      form.setFieldErrorBag(unref(path), messages);
-    },
-  };
+  return field;
 }
