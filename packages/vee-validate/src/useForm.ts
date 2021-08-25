@@ -434,7 +434,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     };
   }
 
-  async function validateField(field: keyof TValues): Promise<ValidationResult> {
+  function validateField(field: keyof TValues): Promise<ValidationResult> {
     const fieldInstance: RegisteredField | undefined = fieldsById.value[field];
     if (!fieldInstance) {
       warn(`field with name ${field} was not found`);
