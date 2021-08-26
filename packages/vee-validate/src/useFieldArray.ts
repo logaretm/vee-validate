@@ -53,7 +53,7 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath:
   }
 
   watch(
-    () => getFromPath<TValue[]>(form?.values, unref(name)) as TValue[],
+    () => getFromPath<TValue[]>(form?.values, unref(name), []) as TValue[],
     values => {
       entries.value = values.map((value, idx) => createEntry(value, idx));
     },
