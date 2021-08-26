@@ -282,11 +282,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       watch(field.name, async (newPath, oldPath) => {
         // cache the value
         const nextValue = field.value.value;
-        // wait for any animations to finish
+        // wait for the actual name change and animations
         await nextTick();
         removeFieldFromPath(field, oldPath);
-        // wait for the name change
-        await nextTick();
         insertFieldAtPath(field, newPath);
 
         // set the value at the new path
