@@ -10,4 +10,7 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.+)$': '<rootDir>/packages/$1/src',
   },
+  globals: {
+    __DEV__: true,
+  },
 };

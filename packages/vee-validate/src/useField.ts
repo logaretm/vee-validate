@@ -270,7 +270,7 @@ function _useField<TValue = unknown>(
     );
   }
 
-  if (process.env.NODE_ENV === 'development') {
+  if (__DEV__) {
     (field as any)._vm = getCurrentInstance();
     watch(() => ({ errors: errors.value, ...meta, value: value.value }), refreshInspector, {
       deep: true,

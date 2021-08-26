@@ -581,7 +581,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   // Provide injections
   provide(FormContextKey, formCtx as PrivateFormContext);
 
-  if (process.env.NODE_ENV === 'development') {
+  if (__DEV__) {
     registerFormWithDevTools(formCtx as PrivateFormContext);
     watch(
       () => ({

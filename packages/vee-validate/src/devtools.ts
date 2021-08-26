@@ -11,7 +11,7 @@ import { PrivateFieldContext, PrivateFormContext } from './types';
 import { keysOf, normalizeField, throttle } from './utils';
 
 function installDevtoolsPlugin(app: App) {
-  if (process.env.NODE_ENV === 'development') {
+  if (__DEV__) {
     setupDevtoolsPlugin(
       {
         id: 'vee-validate-devtools-plugin',
