@@ -1,6 +1,6 @@
 import { createApp, ComponentPublicInstance } from 'vue';
 import flushP from 'flush-promises';
-import { Field, Form, ErrorMessage } from '@/vee-validate';
+import { Field, Form, ErrorMessage, FieldArray } from '@/vee-validate';
 
 export function mount(component: Record<string, any>) {
   const app = createApp(component);
@@ -17,6 +17,7 @@ export function mountWithHoc(component: Record<string, any>) {
     Field,
     VForm: Form,
     ErrorMessage,
+    FieldArray,
   };
 
   return mount(component);
@@ -36,13 +37,28 @@ export function setValue(node: ComponentPublicInstance | HTMLInputElement, value
   (node as any).$emit('input', value);
 }
 
+export function getValue(selectorOrNode: HTMLElement | string) {
+  if (typeof selectorOrNode === 'string') {
+    const el = document.querySelector(selectorOrNode) as HTMLInputElement | null;
+    return el?.value;
+  }
+
+  return (selectorOrNode as HTMLInputElement)?.value;
+}
+
 export function setChecked(node: HTMLInputElement, status?: boolean) {
   node.checked = status !== undefined ? status : !node.checked;
   node.dispatchEvent(new window.Event('change'));
   node.dispatchEvent(new window.Event('input'));
 }
 
-export function dispatchEvent(node: ComponentPublicInstance | HTMLElement, eventName: string) {
+export function dispatchEvent(node: ComponentPublicInstance | HTMLElement | string, eventName: string) {
+  if (typeof node === 'string') {
+    const el = document.querySelector(node) as HTMLElement | null;
+    el?.dispatchEvent(new window.Event(eventName));
+    return;
+  }
+
   if (HTML_TAGS.includes((node as any).tagName)) {
     const input = node as HTMLElement;
     input.dispatchEvent(new window.Event(eventName));

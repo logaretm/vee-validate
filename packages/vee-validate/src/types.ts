@@ -36,34 +36,43 @@ export interface FieldState<TValue = unknown> {
   errors: string[];
 }
 
-export type WritableRef<TValue> = Ref<TValue> | WritableComputedRef<TValue>;
+/**
+ * validated-only: only mutate the previously validated fields
+ * silent: do not mutate any field
+ * force: validate all fields and mutate their state
+ */
+export type SchemaValidationMode = 'validated-only' | 'silent' | 'force';
+
+export interface ValidationOptions {
+  mode: SchemaValidationMode;
+}
 
 export interface PrivateFieldContext<TValue = unknown> {
-  fid: number;
+  id: number;
   name: MaybeRef<string>;
-  value: WritableRef<TValue>;
+  value: Ref<TValue>;
   meta: FieldMeta<TValue>;
   errors: Ref<string[]>;
-  errorMessage: ComputedRef<string | undefined>;
+  errorMessage: Ref<string | undefined>;
   label?: MaybeRef<string | undefined>;
   type?: string;
   bails?: boolean;
   checkedValue?: MaybeRef<TValue>;
   uncheckedValue?: MaybeRef<TValue>;
-  checked?: ComputedRef<boolean>;
+  checked?: Ref<boolean>;
+  instances: number;
   resetField(state?: FieldState<TValue>): void;
   handleReset(state?: FieldState<TValue>): void;
-  validate(): Promise<ValidationResult>;
+  validate(opts?: Partial<ValidationOptions>): Promise<ValidationResult>;
   handleChange(e: Event | unknown, shouldValidate?: boolean): void;
   handleBlur(e?: Event): void;
-  handleInput(e?: Event | unknown): void;
-  setValidationState(state: ValidationResult): void;
+  setState(state: Partial<FieldState<TValue>>): void;
   setTouched(isTouched: boolean): void;
   setErrors(message: string | string[]): void;
   setValue(value: TValue): void;
 }
 
-export type FieldContext<TValue = unknown> = Omit<PrivateFieldContext<TValue>, 'idx' | 'fid'>;
+export type FieldContext<TValue = unknown> = Omit<PrivateFieldContext<TValue>, 'id' | 'instances'>;
 
 export type GenericValidateFunction = (
   value: unknown,
@@ -111,26 +120,26 @@ export type SubmissionHandler<TValues extends Record<string, unknown> = Record<s
 
 export type RawFormSchema<TValues> = Record<keyof TValues, string | GenericValidateFunction | Record<string, any>>;
 
-/**
- * validated-only: only mutate the previously validated fields
- * silent: do not mutate any field
- * force: validate all fields and mutate their state
- */
-export type SchemaValidationMode = 'validated-only' | 'silent' | 'force';
+export type FieldPathLookup<TValues extends Record<string, any> = Record<string, any>> = Partial<
+  Record<keyof TValues, PrivateFieldContext>
+>;
+
 export interface PrivateFormContext<TValues extends Record<string, any> = Record<string, any>>
   extends FormActions<TValues> {
   register(field: PrivateFieldContext): void;
   unregister(field: PrivateFieldContext): void;
   values: TValues;
-  fieldsByPath: Ref<Record<keyof TValues, PrivateFieldContext | PrivateFieldContext[]>>;
+  fieldsByPath: Ref<FieldPathLookup>;
   submitCount: Ref<number>;
   schema?: MaybeRef<RawFormSchema<TValues> | SchemaOf<TValues> | undefined>;
   validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues>>;
-  validate(): Promise<FormValidationResult<TValues>>;
+  validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>>;
   validateField(field: keyof TValues): Promise<ValidationResult>;
   errorBag: Ref<FormErrorBag<TValues>>;
+  errors: ComputedRef<FormErrors<TValues>>;
   setFieldErrorBag(field: string, messages: string | string[]): void;
   stageInitialValue(path: string, value: unknown): void;
+  unsetInitialValue(path: string): void;
   meta: ComputedRef<{
     dirty: boolean;
     touched: boolean;
@@ -155,8 +164,8 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
     | 'setFieldErrorBag'
     | 'stageInitialValue'
     | 'setFieldInitialValue'
+    | 'unsetInitialValue'
   > {
-  errors: ComputedRef<FormErrors<TValues>>;
   handleReset: () => void;
   submitForm: (e?: unknown) => Promise<void>;
 }

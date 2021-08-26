@@ -1,5 +1,5 @@
 import { inject, h, defineComponent, computed, resolveDynamicComponent } from 'vue';
-import { FormErrorsKey } from './symbols';
+import { FormContextKey } from './symbols';
 import { normalizeChildren } from './utils';
 
 export const ErrorMessage = defineComponent({
@@ -15,9 +15,9 @@ export const ErrorMessage = defineComponent({
     },
   },
   setup(props, ctx) {
-    const errors = inject(FormErrorsKey, undefined);
+    const form = inject(FormContextKey, undefined);
     const message = computed<string | undefined>(() => {
-      return errors?.value[props.name];
+      return form?.errors.value[props.name];
     });
 
     function slotProps() {
