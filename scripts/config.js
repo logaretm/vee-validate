@@ -1,6 +1,6 @@
 const path = require('path');
 const typescript = require('rollup-plugin-typescript2');
-const replace = require('rollup-plugin-replace');
+const replace = require('@rollup/plugin-replace');
 const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
 
@@ -41,16 +41,18 @@ function createConfig(pkg, format) {
       input: path.resolve(__dirname, `../packages/${pkg}/src/index.ts`),
       external: ['vue', isEsm ? '@vue/devtools-api' : undefined].filter(Boolean),
       plugins: [
+        replace({
+          preventAssignment: true,
+          values: {
+            __VERSION__: version,
+            __DEV__: isEsm ? `(process.env.NODE_ENV !== 'production')` : 'false',
+          },
+        }),
         tsPlugin,
         resolve({
           dedupe: ['fast-deep-equal/es6', 'fast-deep-equal', 'klona', 'klona/lite'],
         }),
         commonjs(),
-        replace({
-          __VERSION__: version,
-          __VUE_PROD_DEVTOOLS__: isEsm ? '__VUE_PROD_DEVTOOLS__' : 'true',
-          'process.env.NODE_ENV': isEsm ? 'process.env.NODE_ENV' : JSON.stringify('production'),
-        }),
       ],
     },
     output: {
