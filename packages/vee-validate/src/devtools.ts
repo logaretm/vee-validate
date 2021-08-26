@@ -71,10 +71,10 @@ export function registerSingleFieldWithDevtools(field: PrivateFieldContext) {
     installDevtoolsPlugin(app);
   }
 
-  DEVTOOLS_FIELDS[field.fid] = { ...field };
-  DEVTOOLS_FIELDS[field.fid]._vm = vm;
+  DEVTOOLS_FIELDS[field.id] = { ...field };
+  DEVTOOLS_FIELDS[field.id]._vm = vm;
   onUnmounted(() => {
-    delete DEVTOOLS_FIELDS[field.fid];
+    delete DEVTOOLS_FIELDS[field.id];
     refreshInspector();
   });
 
@@ -144,7 +144,7 @@ function setupApiHooks(api: DevtoolsPluginApi) {
             return;
           }
 
-          if ('fid' in SELECTED_NODE) {
+          if ('id' in SELECTED_NODE) {
             SELECTED_NODE.resetField();
             return;
           }
@@ -201,7 +201,7 @@ function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorN
     id: encodeNodeId(form),
     label: 'Form',
     children: Object.values(form.fieldsByPath.value).map(field => {
-      return { ...mapFieldForDevtoolsInspector(field, form) };
+      return { ...mapFieldForDevtoolsInspector(field as PrivateFieldContext, form) };
     }),
     tags: [
       {
@@ -271,7 +271,7 @@ function mapFieldForDevtoolsInspector(
 }
 
 function encodeNodeId(form?: PrivateFormContext, field?: PrivateFieldContext, encodeIndex = true): string {
-  const fieldPath = form ? unref(field?.name) : field?.fid;
+  const fieldPath = form ? unref(field?.name) : field?.id;
   const fieldGroup = fieldPath ? form?.fieldsByPath.value[fieldPath] : undefined;
   let idx: number | undefined;
   if (encodeIndex && field && Array.isArray(fieldGroup)) {
@@ -409,7 +409,7 @@ function getTagTheme(fieldOrForm: PrivateFormContext | PrivateFieldContext) {
   //   textColor: COLORS.white,
   // };
 
-  const isValid = 'fid' in fieldOrForm ? fieldOrForm.meta.valid : fieldOrForm.meta.value.valid;
+  const isValid = 'id' in fieldOrForm ? fieldOrForm.meta.valid : fieldOrForm.meta.value.valid;
 
   return {
     bgColor: isValid ? COLORS.success : COLORS.error,
