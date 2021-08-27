@@ -16,6 +16,7 @@ interface FieldArrayContext<TValue = unknown> {
   remove(idx: number): TValue | undefined;
   push(value: TValue): void;
   swap(indexA: number, indexB: number): void;
+  insert(idx: number, value: TValue): void;
 }
 
 export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath: MaybeRef<string>): FieldArrayContext {
@@ -29,6 +30,7 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath:
     remove: noOp,
     push: noOp,
     swap: noOp,
+    insert: noOp,
   };
 
   if (!form) {
@@ -127,10 +129,25 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath:
     updateIterationFlags();
   }
 
+  function insert(idx: number, value: TValue) {
+    const pathName = unref(name);
+    const pathValue = getFromPath<TValue[]>(form?.values, pathName);
+    if (!Array.isArray(pathValue) || pathValue.length - 1 < idx) {
+      return;
+    }
+
+    const newValue = [...pathValue];
+    newValue.splice(idx, 0, value);
+    entries.value.splice(idx, 0, createEntry(value, idx));
+    form?.setFieldValue(pathName, newValue);
+    updateIterationFlags();
+  }
+
   return {
     entries: readonly(entries),
     remove,
     push,
     swap,
+    insert,
   };
 }
