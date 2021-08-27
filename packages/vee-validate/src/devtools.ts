@@ -8,7 +8,8 @@ import {
   ComponentInstance,
 } from '@vue/devtools-api';
 import { PrivateFieldContext, PrivateFormContext } from './types';
-import { keysOf, normalizeField, throttle } from './utils';
+import { keysOf, normalizeField, setInPath, throttle } from './utils';
+import { isObject } from '../../shared';
 
 function installDevtoolsPlugin(app: App) {
   if (__DEV__) {
@@ -197,12 +198,49 @@ function setupApiHooks(api: DevtoolsPluginApi) {
 function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorNode {
   const { textColor, bgColor } = getTagTheme(form);
 
+  const formTreeNodes = {};
+  Object.values(form.fieldsByPath.value).forEach(field => {
+    if (!field) {
+      return;
+    }
+
+    setInPath(formTreeNodes, unref(field.name), mapFieldForDevtoolsInspector(field, form));
+  });
+
+  function buildFormTree(tree: any[] | Record<string, any>, path: string[] = []): CustomInspectorNode {
+    const key = [...path].pop();
+    if ('id' in tree) {
+      return {
+        ...tree,
+        label: key || tree.label,
+      } as CustomInspectorNode;
+    }
+
+    if (isObject(tree)) {
+      return {
+        id: `${path.join('.')}`,
+        label: key || '',
+        children: Object.keys(tree).map(key => buildFormTree(tree[key], [...path, key])),
+      };
+    }
+
+    if (Array.isArray(tree)) {
+      return {
+        id: `${path.join('.')}`,
+        label: `${key}[]`,
+        children: tree.map((c, idx) => buildFormTree(c, [...path, String(idx)])),
+      };
+    }
+
+    return { id: '', label: '', children: [] };
+  }
+
+  const { children } = buildFormTree(formTreeNodes);
+
   return {
     id: encodeNodeId(form),
     label: 'Form',
-    children: Object.values(form.fieldsByPath.value).map(field => {
-      return { ...mapFieldForDevtoolsInspector(field as PrivateFieldContext, form) };
-    }),
+    children,
     tags: [
       {
         label: 'Form',
