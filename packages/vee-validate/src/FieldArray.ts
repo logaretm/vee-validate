@@ -17,7 +17,7 @@ export const FieldArray = defineComponent({
   },
   setup(props, ctx) {
     const { name, keyPath } = toRefs(props);
-    const { push, remove, swap, entries } = useFieldArray(name, keyPath);
+    const { push, remove, swap, insert, entries } = useFieldArray(name, keyPath);
 
     function slotProps() {
       return {
@@ -25,6 +25,7 @@ export const FieldArray = defineComponent({
         push,
         remove,
         swap,
+        insert,
       };
     }
 
@@ -32,6 +33,7 @@ export const FieldArray = defineComponent({
       push,
       remove,
       swap,
+      insert,
     });
 
     return () => {

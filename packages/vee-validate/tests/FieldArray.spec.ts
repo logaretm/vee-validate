@@ -353,3 +353,55 @@ test('entries have isFirst and isLast flags to help with conditions', async () =
   expect(downButtonAt(1).disabled).toBe(false);
   expect(downButtonAt(2).disabled).toBe(true);
 });
+
+test('can insert new items at specific index', async () => {
+  mountWithHoc({
+    setup() {
+      let id = 1;
+      const initial = {
+        users: [
+          {
+            id: id++,
+            name: 'first',
+          },
+          {
+            id: id++,
+            name: 'second',
+          },
+          {
+            id: id++,
+            name: 'third',
+          },
+        ],
+      };
+
+      return {
+        initial,
+      };
+    },
+    template: `
+    <VForm :initial-values="initial">
+      <FieldArray name="users" key-path="id" v-slot="{ entries, insert }">
+          <div v-for="(entry, idx) in entries" :key="entry.key">
+            <Field :name="'users[' + idx + '].name'" />
+          </div>
+          <button class="insert" type="button" @click="insert(1, { id: Date.now(), name: 'inserted' })">Add User +</button>
+      </FieldArray>
+    </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const inputAt = (idx: number) => (document.querySelectorAll('input') || [])[idx] as HTMLInputElement;
+  const insertButton = () => document.querySelector('.insert') as HTMLButtonElement;
+
+  expect(getValue(inputAt(1))).toBe('second');
+  expect(getValue(inputAt(2))).toBe('third');
+
+  insertButton().click();
+  await flushPromises();
+
+  expect(getValue(inputAt(1))).toBe('inserted');
+  expect(getValue(inputAt(2))).toBe('second');
+  expect(getValue(inputAt(3))).toBe('third');
+});
