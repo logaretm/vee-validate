@@ -7,6 +7,8 @@ import { getFromPath, injectWithSelf, warn } from './utils';
 interface FieldEntry<TValue = unknown> {
   value: TValue;
   key: string | number;
+  isFirst: boolean;
+  isLast: boolean;
 }
 
 interface FieldArrayContext<TValue = unknown> {
@@ -43,19 +45,35 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath:
     return noOpApi;
   }
 
+  function updateIterationFlags() {
+    for (let i = 0; i < entries.value.length; i++) {
+      const entry = entries.value[i];
+      entry.isFirst = i === 0;
+      entry.isLast = i === entries.value.length - 1;
+    }
+  }
+
   function createEntry(value: TValue, keyFallback: number): FieldEntry<TValue> {
     const key = getFromPath<number | string>(value as any, unref(keyPath), keyFallback);
 
     return {
       key,
       value,
+      isFirst: false,
+      isLast: false,
     };
   }
 
   watch(
     () => getFromPath<TValue[]>(form?.values, unref(name), []) as TValue[],
     values => {
-      entries.value = values.map((value, idx) => createEntry(value, idx));
+      entries.value = values.map((value, idx) => {
+        return {
+          ...createEntry(value, idx),
+          isFirst: idx === 0,
+          isLast: values.length - 1 === idx,
+        };
+      });
     },
     {
       immediate: true,
@@ -72,6 +90,7 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath:
     const newValue = [...pathValue];
     newValue.splice(idx, 1);
     entries.value.splice(idx, 1);
+    updateIterationFlags();
     form?.unsetInitialValue(pathName + `[${idx}]`);
     form?.setFieldValue(pathName, newValue);
   }
@@ -89,6 +108,7 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath:
     form?.stageInitialValue(pathName + `[${newValue.length - 1}]`, value);
     form?.setFieldValue(pathName, newValue);
     entries.value.push(createEntry(value, entries.value.length));
+    updateIterationFlags();
   }
 
   function swap(indexA: number, indexB: number) {
@@ -104,6 +124,7 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath:
     newValue[indexA] = newValue[indexB];
     newValue[indexB] = temp;
     form?.setFieldValue(pathName, newValue);
+    updateIterationFlags();
   }
 
   return {

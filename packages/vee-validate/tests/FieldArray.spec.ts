@@ -271,3 +271,85 @@ test('can swap array fields with swap helper', async () => {
     expect.anything()
   );
 });
+
+test('entries have isFirst and isLast flags to help with conditions', async () => {
+  mountWithHoc({
+    setup() {
+      let id = 1;
+      const initial = {
+        users: [
+          {
+            id: id++,
+            name: 'first',
+          },
+          {
+            id: id++,
+            name: 'second',
+          },
+          {
+            id: id++,
+            name: 'third',
+          },
+        ],
+      };
+
+      return {
+        initial,
+      };
+    },
+    template: `
+    <VForm :initial-values="initial">
+      <FieldArray name="users" key-path="id" v-slot="{ swap, entries, push, remove }">
+          <div v-for="(entry, idx) in entries" :key="entry.key">
+            <button class="up" @click="swap(idx, idx - 1)" :disabled="entry.isFirst" type="button">⬆️</button>
+            <button class="down" @click="swap(idx, idx + 1)" :disabled="entry.isLast" type="button">⬇️</button>
+            <button class="remove" type="button" @click="remove(idx)">X</button>
+
+
+            <Field :name="'users[' + idx + '].name'" />
+          </div>
+          <button class="add" type="button" @click="push({ id: Date.now(), name: '' })">Add User +</button>
+      </FieldArray>
+
+    </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const upButtonAt = (idx: number) => (document.querySelectorAll('.up') || [])[idx] as HTMLButtonElement;
+  const downButtonAt = (idx: number) => (document.querySelectorAll('.down') || [])[idx] as HTMLButtonElement;
+  const rmButtonAt = (idx: number) => (document.querySelectorAll('.remove') || [])[idx] as HTMLButtonElement;
+  const addButton = () => document.querySelector('.add') as HTMLButtonElement;
+
+  expect(upButtonAt(0).disabled).toBe(true);
+  expect(upButtonAt(1).disabled).toBe(false);
+  expect(upButtonAt(2).disabled).toBe(false);
+
+  expect(downButtonAt(0).disabled).toBe(false);
+  expect(downButtonAt(1).disabled).toBe(false);
+  expect(downButtonAt(2).disabled).toBe(true);
+
+  addButton().click();
+  await flushPromises();
+
+  expect(upButtonAt(0).disabled).toBe(true);
+  expect(upButtonAt(1).disabled).toBe(false);
+  expect(upButtonAt(2).disabled).toBe(false);
+  expect(upButtonAt(3).disabled).toBe(false);
+
+  expect(downButtonAt(0).disabled).toBe(false);
+  expect(downButtonAt(1).disabled).toBe(false);
+  expect(downButtonAt(2).disabled).toBe(false);
+  expect(downButtonAt(3).disabled).toBe(true);
+
+  rmButtonAt(2).click();
+  await flushPromises();
+
+  expect(upButtonAt(0).disabled).toBe(true);
+  expect(upButtonAt(1).disabled).toBe(false);
+  expect(upButtonAt(2).disabled).toBe(false);
+
+  expect(downButtonAt(0).disabled).toBe(false);
+  expect(downButtonAt(1).disabled).toBe(false);
+  expect(downButtonAt(2).disabled).toBe(true);
+});
