@@ -1,7 +1,7 @@
 ---
 title: Composition Helpers
 description: Various composable functions to compose validation logic into your components
-order: 7
+order: 9
 ---
 
 # Composition Helpers

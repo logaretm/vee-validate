@@ -19,7 +19,12 @@ interface FieldArrayContext<TValue = unknown> {
   insert(idx: number, value: TValue): void;
 }
 
-export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath: MaybeRef<string>): FieldArrayContext {
+interface FieldArrayOptions {
+  name: MaybeRef<string>;
+  keyPath: MaybeRef<string>;
+}
+
+export function useFieldArray<TValue = unknown>(opts: FieldArrayOptions): FieldArrayContext {
   const form = injectWithSelf(FormContextKey, undefined);
   const entries: Ref<FieldEntry<TValue>[]> = ref([]);
 
@@ -41,8 +46,14 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath:
     return noOpApi;
   }
 
-  if (!unref(name)) {
+  if (!unref(opts.name)) {
     warn('FieldArray requires a field path to be provided, did you forget to pass the `name` prop?');
+
+    return noOpApi;
+  }
+
+  if (!unref(opts.keyPath)) {
+    warn('FieldArray requires a key path to be provided, did you forget to pass the `keyPath` prop?');
 
     return noOpApi;
   }
@@ -56,7 +67,7 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath:
   }
 
   function createEntry(value: TValue, keyFallback: number): FieldEntry<TValue> {
-    const key = getFromPath<number | string>(value as any, unref(keyPath), keyFallback);
+    const key = getFromPath<number | string>(value as any, unref(opts.keyPath), keyFallback);
 
     return {
       key,
@@ -67,7 +78,7 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath:
   }
 
   watch(
-    () => getFromPath<TValue[]>(form?.values, unref(name), []) as TValue[],
+    () => getFromPath<TValue[]>(form?.values, unref(opts.name), []) as TValue[],
     values => {
       entries.value = values.map((value, idx) => {
         return {
@@ -83,7 +94,7 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath:
   );
 
   function remove(idx: number) {
-    const pathName = unref(name);
+    const pathName = unref(opts.name);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
     if (!pathValue || !Array.isArray(pathValue)) {
       return;
@@ -98,7 +109,7 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath:
   }
 
   function push(value: TValue) {
-    const pathName = unref(name);
+    const pathName = unref(opts.name);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
     const normalizedPathValue = isNullOrUndefined(pathValue) ? [] : pathValue;
     if (!Array.isArray(normalizedPathValue)) {
@@ -114,7 +125,7 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath:
   }
 
   function swap(indexA: number, indexB: number) {
-    const pathName = unref(name);
+    const pathName = unref(opts.name);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
     if (!Array.isArray(pathValue) || !pathValue[indexA] || !pathValue[indexB]) {
       return;
@@ -130,7 +141,7 @@ export function useFieldArray<TValue = unknown>(name: MaybeRef<string>, keyPath:
   }
 
   function insert(idx: number, value: TValue) {
-    const pathName = unref(name);
+    const pathName = unref(opts.name);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
     if (!Array.isArray(pathValue) || pathValue.length - 1 < idx) {
       return;

@@ -11,7 +11,7 @@ vee-validate supports nested objects and arrays by using field name syntax to in
 
 ## Nested Objects
 
-You can specify a field to be nested in an object using dot paths, like what you would normally do in JavaScript do access a nested property. The field's `name` acts as the path for that field in the form values:
+You can specify a field to be nested in an object using dot paths, like what you would normally do in JavaScript to access a nested property. The field's `name` acts as the path for that field in the form values:
 
 ```vue
 <template>
@@ -161,20 +161,20 @@ Submitting the previous form would result in the following values being passed t
 }
 ```
 
-## Repeatable Fields
+## Field Arrays
 
-Repeatable fields are a special type of nested array fields, they are often used to collect repeatable pieces of data or repeatable forms.
+Field arrays are a special type of nested array fields, they are often used to collect repeatable pieces of data or repeatable forms. They are often called "repeatable fields".
 
-Unlike the [components](/guide/components/nested-objects-and-arrays) API, it can be tricky to set up a group of repeatable fields with the composition API as you usually need an input component to iterate over.
+Unlike the [components](/guide/components/nested-objects-and-arrays) API, it can be tricky to set up a group of repeatable fields with the composition API in the same component. This is because you usually need an input component to iterate over.
 
-The following snippet uses `Field` component as the input component, but you can use any component as long as they call `useField` internally.
+The following snippet uses the `Field` component as the input component, but you can use any component as long as they call `useField` internally.
 
 To set up a repeatable field, you can use `useFieldArray` to help you manage the array values and operations:
 
 ```vue
 <template>
   <form @submit="onSubmit" novalidate>
-    <div v-for="(entry, idx) in entries" :key="entry.value.id">
+    <div v-for="(entry, idx) in entries" :key="entry.key">
       <Field :name="`links[${idx}].url`" type="url" />
 
       <button type="button" @click="remove(idx)">Remove</button>
@@ -191,59 +191,128 @@ import { Field, useForm, useFieldArray } from 'vee-validate';
 
 export default {
   components: {
-    Field
+    Field,
   },
   setup() {
     const { handleSubmit } = useForm({
       initialValues: {
-        links: [{ id: 1, name: 'GitHub', url: 'https://github.com/logaretm' }],
-      }
+        links: [{ id: 1, url: 'https://github.com/logaretm' }],
+      },
     });
 
-    const { remove, push, entries } = useFieldArray('links');
-    const onSubmit = handleSubmit((values) => {
+    const { remove, push, entries } = useFieldArray({
+      // Those can be reactive refs
+      name: 'links',
+      keyPath: 'id',
+    });
+
+    const onSubmit = handleSubmit(values => {
       console.log(JSON.stringify(values, null, 2));
     });
 
     return {
       entries,
-      push
-      remove
+      push,
+      remove,
+      onSubmit,
     };
   },
 };
 </script>
 ```
 
-<doc-tip title="Iteration keys">
+### Field Array Paths
 
-Note that in these examples we always generate a unique id for each array entry, [this is a Vue.js best practice](https://v3.vuejs.org/guide/list.html#maintaining-state) to make sure loops are as efficient as possible.
+When planning to use `useFieldArray` you need to provide a `name` prop which is the path of the array starting from the root form value, you can use dot notation for object paths or indices for array paths.
+
+Here are a few examples:
+
+_*Iterate over the `users` array:*_
+
+```js
+const { remove, push, entries } = useFieldArray({
+  name: 'users',
+  keyPath: 'id',
+});
+```
+
+_*Iterate over the `domains` inside `settings.dns` object:*_
+
+```js
+const { remove, push, entries } = useFieldArray({
+  name: 'settings.dns.domains',
+  keyPath: 'id',
+});
+```
+
+### Iteration Keys
+
+You probably have noted in the previous examples we always generate a unique id for each array entry. This is a [Vue.js best practice](https://v3.vuejs.org/guide/list.html#maintaining-state) to make sure loops are efficient.
+
+The `key-path` prop is another required prop that vee-validate exposes its value on the `entries` items as the `key` property, this enables you to use the `key` property as the iteration key for your loops.
+
+```vue
+<template>
+  <form @submit="onSubmit" novalidate>
+    <div v-for="(entry, idx) in entries" :key="entry.key">
+      <Field :name="`links[${idx}].url`" type="url" />
+    </div>
+  </form>
+</template>
+
+<script>
+import { Field, useForm, useFieldArray } from 'vee-validate';
+
+export default {
+  components: {
+    Field,
+  },
+  setup() {
+    const { handleSubmit } = useForm({
+      initialValues: {
+        links: [{ id: 1, url: 'https://github.com/logaretm' }],
+      },
+    });
+
+    const { entries } = useFieldArray({
+      name: 'links',
+      keyPath: 'id',
+    });
+
+    return {
+      entries,
+    };
+  },
+};
+</script>
+```
 
 That means while it is possible to have an array of strings or numbers, you will have a harder time getting unique ids for those fields, so it is recommended to create objects for your entries like these examples here.
 
-</doc-tip>
+```ts
+// ❌ Don't
+// No each to tell two entries apart, indexes are not unique and mutable
+const links = ['link1', 'link2'];
 
-One thing to keep in mind is you must provide a `name` to the `useFieldArray` function, the `name` must be the component array path. Here is an example for a deeper path:
-
-```js
-const { handleSubmit } = useForm({
-  initialValues: {
-    user: {
-      links: [],
-    },
-  },
-});
-
-const { remove, push, entries } = useFieldArray('user.links');
+// ✅ Do
+// Each entry has a unique id that is not the index and is not mutable
+const links = [
+  { id: 1, value: 'link1' },
+  { id: 2, value: 'link2' },
+];
 ```
 
-### Field Array Helpers
+### Array Helpers
 
-The `useFieldArray` function provides the following properties and methods:
+The `<useFieldArray />` function provides the following properties and functions:
 
-- `entries`: a **read-only** version of your array field items, the actual item value is inside `.value` property. You should use it to iterate with `v-for`.
+- `entries`: a **read-only** version of your array field items, it includes some useful properties like `key`, `isFirst` and `isLast`, the actual item value is inside `.value` property. You should use it to iterate with `v-for`.
 - `push(item: any)`: adds an item to the end of the array.
 - `remove(idx: number)`: removes the item with the given index from the array.
+- `swap(idxA: number, idxB: number)`: Swaps two array elements by their indexes.
+- `insert(idx: number, item: any)`: Inserts an array item at the specified index.
+
+[Read the API reference](/api/use-field-array) for more information.
 
 ## Caveats
 
