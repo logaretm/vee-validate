@@ -1,13 +1,13 @@
 ---
-title: useArrayField
-description: API reference for the useArrayField composition API function
-menuTitle: useArrayField()
+title: useFieldArray
+description: API reference for the useFieldArray composition API function
+menuTitle: useFieldArray()
 order: 7
 ---
 
-# useField
+# useFieldArray
 
-`useArrayField` is a custom composition API function that allows you to manage repeatable fields and forms entries and provides common operation helpers.
+`useFieldArray` is a custom composition API function that allows you to manage repeatable fields and forms entries and provides common operation helpers.
 
 Basic usage:
 
