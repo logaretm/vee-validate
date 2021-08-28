@@ -58,14 +58,6 @@ export function useFieldArray<TValue = unknown>(opts: FieldArrayOptions): FieldA
     return noOpApi;
   }
 
-  function updateIterationFlags() {
-    for (let i = 0; i < entries.value.length; i++) {
-      const entry = entries.value[i];
-      entry.isFirst = i === 0;
-      entry.isLast = i === entries.value.length - 1;
-    }
-  }
-
   function createEntry(value: TValue, keyFallback: number): FieldEntry<TValue> {
     const key = getFromPath<number | string>(value as any, unref(opts.keyPath), keyFallback);
 
@@ -102,8 +94,6 @@ export function useFieldArray<TValue = unknown>(opts: FieldArrayOptions): FieldA
 
     const newValue = [...pathValue];
     newValue.splice(idx, 1);
-    entries.value.splice(idx, 1);
-    updateIterationFlags();
     form?.unsetInitialValue(pathName + `[${idx}]`);
     form?.setFieldValue(pathName, newValue);
   }
@@ -120,8 +110,6 @@ export function useFieldArray<TValue = unknown>(opts: FieldArrayOptions): FieldA
     newValue.push(value);
     form?.stageInitialValue(pathName + `[${newValue.length - 1}]`, value);
     form?.setFieldValue(pathName, newValue);
-    entries.value.push(createEntry(value, entries.value.length));
-    updateIterationFlags();
   }
 
   function swap(indexA: number, indexB: number) {
@@ -137,7 +125,6 @@ export function useFieldArray<TValue = unknown>(opts: FieldArrayOptions): FieldA
     newValue[indexA] = newValue[indexB];
     newValue[indexB] = temp;
     form?.setFieldValue(pathName, newValue);
-    updateIterationFlags();
   }
 
   function insert(idx: number, value: TValue) {
@@ -149,9 +136,7 @@ export function useFieldArray<TValue = unknown>(opts: FieldArrayOptions): FieldA
 
     const newValue = [...pathValue];
     newValue.splice(idx, 0, value);
-    entries.value.splice(idx, 0, createEntry(value, idx));
     form?.setFieldValue(pathName, newValue);
-    updateIterationFlags();
   }
 
   return {
