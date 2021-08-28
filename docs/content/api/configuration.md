@@ -1,7 +1,7 @@
 ---
 title: Configuration
 description: VeeValidate Global Config Reference
-order: 6
+order: 8
 ---
 
 # Configuration
