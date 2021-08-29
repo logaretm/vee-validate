@@ -125,7 +125,7 @@ Submitting the previous form would result in the following values being passed t
 }
 ```
 
-## Field Arrays
+## Field Arrays <DocBadge title="v4.5" />
 
 Field arrays are a special type of nested array fields, they are often used to collect repeatable pieces of data or repeatable forms. They are often called "repeatable fields".
 

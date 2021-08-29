@@ -5,7 +5,7 @@ menuTitle: '<FieldArray />'
 order: 4
 ---
 
-# FieldArray
+# FieldArray <DocBadge title="v4.5" />
 
 <doc-tip title="Form Context" type="warn">
 

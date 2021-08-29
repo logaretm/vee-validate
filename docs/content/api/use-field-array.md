@@ -5,7 +5,7 @@ menuTitle: useFieldArray()
 order: 7
 ---
 
-# useFieldArray
+# useFieldArray <DocBadge title="v4.5" />
 
 `useFieldArray` is a custom composition API function that allows you to manage repeatable fields and forms entries and provides common operation helpers.
 
