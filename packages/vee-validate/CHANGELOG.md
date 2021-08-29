@@ -3,6 +3,45 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0-alpha.5](https://github.com/logaretm/vee-validate/compare/v4.5.0-alpha.4...v4.5.0-alpha.5) (2021-08-29)
+
+
+### Bug Fixes
+
+* added another tick for animations ([06a70ca](https://github.com/logaretm/vee-validate/commit/06a70caa4b78d1088ae4646995c3c52ffe1b4353))
+* added array fallback for array path ([456e3cc](https://github.com/logaretm/vee-validate/commit/456e3cc129f6b11e175e50554cce44e8e39d1e9e))
+* added input type tag ([896d6e0](https://github.com/logaretm/vee-validate/commit/896d6e0015a8ff6fa3ec7f3591b28972ed68c997))
+* ensure option bound value type is preserved closes [#3440](https://github.com/logaretm/vee-validate/issues/3440) ([a2f3ed4](https://github.com/logaretm/vee-validate/commit/a2f3ed44fead972227da42b042db208ba128a3d7))
+* generate ids properly for group fields ([b80936d](https://github.com/logaretm/vee-validate/commit/b80936df6c51dc7cf37d547d820c9708fe39861d))
+* handle registeration overwrites and unmouting logic ([bf2455f](https://github.com/logaretm/vee-validate/commit/bf2455f5b9c69284281b945da327cd52e566d7af))
+* priotrize model value over form path value closes [#3429](https://github.com/logaretm/vee-validate/issues/3429) ([37d26bb](https://github.com/logaretm/vee-validate/commit/37d26bb7f8ed1a39751648393c684841638045b1))
+* reduce the ticks needed to swap names ([62af959](https://github.com/logaretm/vee-validate/commit/62af959d77ebea19b3d96b7592926b9fe7eff9f3))
+* resolve merge issues ([d6c984b](https://github.com/logaretm/vee-validate/commit/d6c984b090c217f3e2ca48bda598297d26f38d7e))
+
+
+### Features
+
+* added basic highlighting when clicking on a node ([60ae9cc](https://github.com/logaretm/vee-validate/commit/60ae9cc2f3fb48d60c0822c527fb2487aa082da5))
+* added basic plugin tags ([0131828](https://github.com/logaretm/vee-validate/commit/0131828ea61bfed95e04b69019af8c3460d4fd1f))
+* added custom inspector ([d60eac0](https://github.com/logaretm/vee-validate/commit/d60eac0ca93dc37b5ebf117c07c8332522ed2f18))
+* added insert helper ([4da2258](https://github.com/logaretm/vee-validate/commit/4da22587791cc7c3dab1171a63c2c91e1bfdbcc7))
+* added isFirst and isLast entry helpers ([c852e30](https://github.com/logaretm/vee-validate/commit/c852e30a769ec001ce6974332173b86437219d19))
+* added key generation ([1d5ce41](https://github.com/logaretm/vee-validate/commit/1d5ce415e3465527ace384d80965f63fe635d158))
+* added placeholder text ([3ba88a9](https://github.com/logaretm/vee-validate/commit/3ba88a99704a371f1a1f990b2d70fb50ed9339b6))
+* added swap helper ([9abc1b5](https://github.com/logaretm/vee-validate/commit/9abc1b57edcf582a9339a9ca5e53041cea3cc899))
+* added useFieldArray and FieldArray component ([2ea87de](https://github.com/logaretm/vee-validate/commit/2ea87de994d55c5fb6378d52586e753e5d95a006))
+* added validation options ([a3e8695](https://github.com/logaretm/vee-validate/commit/a3e86954d58a4e5ba74055b6e85095d6906cbb95))
+* auto install the plugin ([9234537](https://github.com/logaretm/vee-validate/commit/92345374fbf844fe55a7141f1205d53f55549f0b))
+* disable highlighting for now ([921f503](https://github.com/logaretm/vee-validate/commit/921f50318864bf941ca242d5b1c8328d08a715bf))
+* expose field API methods on refs with vue.expose closes [#3443](https://github.com/logaretm/vee-validate/issues/3443) ([9f96ef0](https://github.com/logaretm/vee-validate/commit/9f96ef07c72df2310ee2c5dfe1cb5e3df6a5214a))
+* handle standalone fields ([51f0530](https://github.com/logaretm/vee-validate/commit/51f0530aa7a56b11bc2db98b97f4fba59e7dce33))
+* simplify form state ([24daf40](https://github.com/logaretm/vee-validate/commit/24daf4049f3165d9d992b3e5f7a05a927df71e9c))
+* various enhancemnts to the custom inspector ([9906241](https://github.com/logaretm/vee-validate/commit/99062416a06ea671e7ea69c1fbabb40d8d0370a2))
+
+
+
+
+
 # [4.5.0-alpha.4](https://github.com/logaretm/vee-validate/compare/v4.4.7...v4.5.0-alpha.4) (2021-08-10)
 
 
