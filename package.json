@@ -1,6 +1,6 @@
 {
   "name": "vee-validate",
-  "version": "3.4.11",
+  "version": "3.4.12",
   "description": "Template Based Validation Framework for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
