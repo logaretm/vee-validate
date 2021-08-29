@@ -5,9 +5,12 @@ module.exports = {
   rootDir: __dirname,
   testMatch: ['<rootDir>/packages/**/tests/**/*spec.[jt]s?(x)'],
   testPathIgnorePatterns: ['/helpers/', '/setup.ts'],
-  collectCoverageFrom: ['packages/*/src/**/*.ts'],
+  collectCoverageFrom: ['packages/*/src/**/*.ts', '!**/*/devtools.ts'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'json'],
   moduleNameMapper: {
     '^@/(.+)$': '<rootDir>/packages/$1/src',
+  },
+  globals: {
+    __DEV__: true,
   },
 };

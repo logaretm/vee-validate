@@ -30,6 +30,15 @@ export interface FieldMeta<TValue> {
   initialValue?: TValue;
 }
 
+export interface FormMeta<TValues extends Record<string, any>> {
+  touched: boolean;
+  dirty: boolean;
+  valid: boolean;
+  validated: boolean;
+  pending: boolean;
+  initialValues?: TValues;
+}
+
 export interface FieldState<TValue = unknown> {
   value: TValue;
   touched: boolean;
@@ -126,6 +135,7 @@ export type FieldPathLookup<TValues extends Record<string, any> = Record<string,
 
 export interface PrivateFormContext<TValues extends Record<string, any> = Record<string, any>>
   extends FormActions<TValues> {
+  formId: number;
   register(field: PrivateFieldContext): void;
   unregister(field: PrivateFieldContext): void;
   values: TValues;
@@ -140,13 +150,7 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
   setFieldErrorBag(field: string, messages: string | string[]): void;
   stageInitialValue(path: string, value: unknown): void;
   unsetInitialValue(path: string): void;
-  meta: ComputedRef<{
-    dirty: boolean;
-    touched: boolean;
-    valid: boolean;
-    pending: boolean;
-    initialValues: TValues;
-  }>;
+  meta: ComputedRef<FormMeta<TValues>>;
   isSubmitting: Ref<boolean>;
   handleSubmit<TReturn = unknown>(cb: SubmissionHandler<TValues, TReturn>): (e?: Event) => Promise<TReturn | undefined>;
   setFieldInitialValue(path: string, value: unknown): void;
@@ -155,6 +159,7 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
 export interface FormContext<TValues extends Record<string, any> = Record<string, any>>
   extends Omit<
     PrivateFormContext<TValues>,
+    | 'formId'
     | 'register'
     | 'unregister'
     | 'fieldsByPath'
@@ -168,4 +173,20 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
   > {
   handleReset: () => void;
   submitForm: (e?: unknown) => Promise<void>;
+}
+
+export interface DevtoolsPluginFieldState {
+  name: string;
+  value: any;
+  initialValue: any;
+  errors: string[];
+  meta: FieldMeta<any>;
+}
+
+export interface DevtoolsPluginFormState {
+  meta: FormMeta<Record<string, any>>;
+  errors: FormErrors<Record<string, any>>;
+  values: Record<string, any>;
+  isSubmitting: boolean;
+  submitCount: number;
 }

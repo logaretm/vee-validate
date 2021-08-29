@@ -32,6 +32,7 @@ import {
 } from './utils';
 import { FormContextKey } from './symbols';
 import { validateYupSchema, validateObjectSchema } from './validate';
+import { refreshInspector, registerFormWithDevTools } from './devtools';
 
 interface FormOptions<TValues extends Record<string, any>> {
   validationSchema?: MaybeRef<
@@ -43,9 +44,13 @@ interface FormOptions<TValues extends Record<string, any>> {
   validateOnMount?: boolean;
 }
 
+let FORM_COUNTER = 0;
+
 export function useForm<TValues extends Record<string, any> = Record<string, any>>(
   opts?: FormOptions<TValues>
 ): FormContext<TValues> {
+  const formId = FORM_COUNTER++;
+
   // A lookup containing fields or field groups
   const fieldsByPath: Ref<FieldPathLookup<TValues>> = ref({} as any);
 
@@ -114,6 +119,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
   const schema = opts?.validationSchema;
   const formCtx: PrivateFormContext<TValues> = {
+    formId,
     fieldsByPath,
     values: formValues,
     errorBag,
@@ -574,6 +580,23 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
   // Provide injections
   provide(FormContextKey, formCtx as PrivateFormContext);
+
+  if (__DEV__) {
+    registerFormWithDevTools(formCtx as PrivateFormContext);
+    watch(
+      () => ({
+        errors: errorBag.value,
+        ...meta.value,
+        values: formValues,
+        isSubmitting: isSubmitting.value,
+        submitCount: submitCount.value,
+      }),
+      refreshInspector,
+      {
+        deep: true,
+      }
+    );
+  }
 
   return {
     errors,

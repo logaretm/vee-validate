@@ -1,6 +1,6 @@
 const path = require('path');
 const typescript = require('rollup-plugin-typescript2');
-const replace = require('rollup-plugin-replace');
+const replace = require('@rollup/plugin-replace');
 const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
 
@@ -34,18 +34,25 @@ function createConfig(pkg, format) {
   });
 
   const version = require(path.resolve(__dirname, `../packages/${pkg}/package.json`)).version;
+  const isEsm = format === 'es';
 
   const config = {
     input: {
       input: path.resolve(__dirname, `../packages/${pkg}/src/index.ts`),
-      external: ['vue'],
+      external: ['vue', isEsm ? '@vue/devtools-api' : undefined].filter(Boolean),
       plugins: [
+        replace({
+          preventAssignment: true,
+          values: {
+            __VERSION__: version,
+            __DEV__: isEsm ? `(process.env.NODE_ENV !== 'production')` : 'false',
+          },
+        }),
         tsPlugin,
         resolve({
           dedupe: ['fast-deep-equal/es6', 'fast-deep-equal', 'klona', 'klona/lite'],
         }),
         commonjs(),
-        replace({ __VERSION__: version }),
       ],
     },
     output: {

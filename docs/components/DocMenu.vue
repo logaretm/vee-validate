@@ -5,7 +5,16 @@
         <p class="md:text-xs font-bold text-gray-400 uppercase">{{ category.title }}</p>
         <div class="mt-3 space-y-2 w-full">
           <div v-for="page in category.pages" :key="page.title" class="group">
-            <nuxt-link v-if="!page.pages" :to="page.path">{{ page.menuTitle || page.title }}</nuxt-link>
+            <nuxt-link v-if="!page.pages" :to="page.path" class="flex items-center">
+              {{ page.menuTitle || page.title }}
+
+              <svg v-if="page.new" class="ml-2 w-4 h-4 text-error" viewBox="0 0 24 24">
+                <path
+                  fill="currentColor"
+                  d="M21 13H14.4L19.1 17.7L17.7 19.1L13 14.4V21H11V14.3L6.3 19L4.9 17.6L9.4 13H3V11H9.6L4.9 6.3L6.3 4.9L11 9.6V3H13V9.4L17.6 4.8L19 6.3L14.3 11H21V13Z"
+                />
+              </svg>
+            </nuxt-link>
 
             <div v-else class="flex flex-col bg-gray-200 dark:bg-gray-600 w-full rounded-lg py-3 px-2">
               <button
@@ -124,13 +133,13 @@ export default {
   async fetch() {
     const categories = [];
     for (const group of GROUPS) {
-      const pages = await this.$content(group.contentPath).only(['title', 'path', 'order', 'menuTitle']).fetch();
+      const pages = await this.$content(group.contentPath).only(['title', 'path', 'order', 'menuTitle', 'new']).fetch();
       let children = [];
 
       if (group.children) {
         for (const child of group.children) {
           const childPages = await this.$content(child.contentPath)
-            .only(['title', 'path', 'order', 'menuTitle'])
+            .only(['title', 'path', 'order', 'menuTitle', 'new'])
             .fetch();
 
           children.push({
