@@ -6,7 +6,7 @@ next: guide/testing
 new: true
 ---
 
-# Devtools Plugin <DocBadge title="4.5.0-alpha-4" />
+# Devtools Plugin <DocBadge title="v4.5" />
 
 vee-validate ships with a Vue.js devtools plugin that allows you to inspect your forms. The terms "devtools plugin" or "plugin" in this page will refer to vee-validate's devtools plugin from now on.
 
