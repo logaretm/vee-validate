@@ -62,7 +62,11 @@
 <script>
 const GROUPS = [
   {
-    name: 'guide',
+    name: 'tutorials',
+    contentPath: 'tutorials',
+  },
+  {
+    name: 'Guide',
     contentPath: 'guide',
     children: [
       {
@@ -105,10 +109,6 @@ const GROUPS = [
         `,
       },
     ],
-  },
-  {
-    name: 'tutorials',
-    contentPath: 'tutorials',
   },
   {
     name: 'examples',
