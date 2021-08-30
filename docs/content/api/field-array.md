@@ -72,7 +72,7 @@ The default slot gives you access to the following props:
 
 This is a **read-only** version of your array items, wrapped inside a `FieldArrayEntry` object which has the following interface:
 
-```typescript
+```ts
 interface FieldEntry<TValue = unknown> {
   // The actual value of the item, this is what exists in the form values
   value: TValue;

@@ -154,7 +154,7 @@ The default slot gives you access to the following props:
 
 Contains useful information/flags about the field status.
 
-```typescript
+```ts
 interface FieldMeta {
   touched: boolean; // if the field has been blurred (via handleBlur)
   dirty: boolean; // if the field has been manipulated (via handleChange)

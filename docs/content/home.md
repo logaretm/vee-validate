@@ -29,7 +29,7 @@ features:
 
 ### Installation
 
-```bash
+```sh
 # install with yarn
 yarn add vee-validate@next
 

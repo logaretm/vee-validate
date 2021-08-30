@@ -56,7 +56,7 @@ We have a few requirements to fulfill:
 
 The initial draft would look like this:
 
-```typescript
+```ts
 // The field schema shape
 interface FieldSchema {
   as: string;

@@ -62,7 +62,7 @@ You are responsible for when the field validates, blurs or when its value change
 
 You can use `useField` with typescript and type the field's value type to ensure safety when manipulating it's value. The `useField` function is a generic function that receives the value type and applies it on the various interactions you have with its API.
 
-```typescript
+```ts
 const { value, resetField } = useField<string>('email', yup.string().email());
 
 value.value = 1; // ⛔️  Error
@@ -80,7 +80,7 @@ resetField({
 
 The full signature of the `useField` function looks like this:
 
-```typescript
+```ts
 interface FieldOptions {
   initialValue?: any; // the initial value, cannot be a ref
   validateOnMount?: boolean; // if the field should be validated when the component is mounted
@@ -186,7 +186,7 @@ You can also bind it with `v-model` to get two-way value binding with validation
 
 Contains useful information/flags about the field status, should be treated as **read only**.
 
-```typescript
+```ts
 interface FieldMeta {
   touched: boolean; // if the field has been blurred (via handleBlur)
   dirty: boolean; // if the field has been manipulated (via handleChange)

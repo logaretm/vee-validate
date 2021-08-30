@@ -230,8 +230,8 @@ This allows you to create more concise rules, you can reference any number of fi
 
 There is another way to use global validators which is more expressive by using JavaScript objects to describe the validation for your fields. For example this:
 
-```
-required|between:0,10
+```js
+"required|between:0,10"
 ```
 
 Could be rewritten as an object like this

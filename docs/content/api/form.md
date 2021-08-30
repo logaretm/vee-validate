@@ -150,7 +150,7 @@ Indicates if the submission handler is still running, once it resolves/rejects i
 
 Contains an aggregated meta information/flags reflecting the state of all the fields inside the form.
 
-```typescript
+```ts
 interface FormMeta {
   touched: boolean; // if at least one field is touched (was blurred)
   dirty: boolean; // if at least one field is dirty (manipulated)

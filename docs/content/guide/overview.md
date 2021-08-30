@@ -39,7 +39,7 @@ Whichever approach you prefer to use, both flavors can be used interchangeably s
 
 For a more modern workflow with a bundler, you can install vee-validate using a package manager like `yarn` or `npm`:
 
-```bash
+```sh
 yarn add vee-validate@next
 # or
 npm i vee-validate@next --save

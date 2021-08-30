@@ -48,7 +48,7 @@ const { errors } = useForm<LoginForm>();
 
 Or simply provide initial values to `useForm` and it will automatically pick up the type of `initialValues` and use it for the field types.
 
-```typescript
+```ts
 import { useForm } from 'vee-validate';
 
 const { errors, setErrors, setFieldValue } = useForm({
@@ -94,7 +94,7 @@ It will error out because `age` is not defined in the `LoginForm` type you defin
 
 The full signature of the `useForm` function looks like this:
 
-```typescript
+```ts
 interface FormOptions {
   validationSchema?: any; // A yup schema, or a Record<string, any> containing valid rules as `useField`
   initialValues?: Record<string, any>;
@@ -262,7 +262,7 @@ isSubmitting.value; // true or false
 
 A computed property that contains an aggregated meta information/flags reflecting the state of all the fields inside the form.
 
-```typescript
+```ts
 interface FormMeta {
   touched: boolean; // if at least one field is touched (was blurred)
   dirty: boolean; // if at least one field is dirty (manipulated)
@@ -546,7 +546,7 @@ Clears error messages, resets the meta state for all fields and reverts their va
 
 This is the `FormState` interface:
 
-```typescript
+```ts
 type TouchedFlags = { [k: string]: boolean };
 
 interface FormState {
