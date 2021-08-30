@@ -43,6 +43,14 @@ export default {
     @apply font-display;
   }
 
+  details {
+    @apply bg-gray-400 bg-opacity-50 px-8 py-4 rounded-lg;
+
+    summary {
+      @apply text-lg cursor-pointer;
+    }
+  }
+
   h2,
   h3,
   h4,
@@ -81,7 +89,8 @@ export default {
     @apply mt-4;
   }
 
-  ul {
+  ul,
+  ol {
     @apply px-8 my-4 list-disc;
 
     li {
@@ -90,6 +99,10 @@ export default {
 
     li + li {
       @apply mt-2;
+    }
+
+    ::marker {
+      @apply text-accent-800;
     }
   }
 
@@ -204,14 +217,6 @@ export default {
     @apply font-mono text-base p-1 rounded bg-gray-100 border border-gray-300 text-gray-500;
   }
 
-  details {
-    @apply my-10 px-3;
-
-    summary {
-      @apply outline-none mb-8;
-    }
-  }
-
   ol {
     @apply list-decimal px-8;
   }
@@ -248,6 +253,10 @@ export default {
   * >>> {
     *:not(pre) > code:not([class]) {
       @apply px-1 bg-black border border-gray-500 text-gray-300;
+    }
+
+    details {
+      @apply bg-black bg-opacity-50;
     }
 
     table,

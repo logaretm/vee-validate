@@ -22,36 +22,27 @@ Also to make it clear, this tutorial code snippets are formatted into steps and 
 
 It is preferable to use a local development environment to follow along, make sure to have the following:
 
-- Prepare a Vue 3.x project using the [`vue-cli`](https://cli.vuejs.org/)
-- Install `vee-validate`
+1. Prepare a Vue 3.x project using the [`vue-cli`](https://cli.vuejs.org/)
 
 <details>
 
-<summary>Optional: Detailed Steps</summary>
+<summary>Detailed Steps</summary>
 
-1. If not already prepared, install the New Vue CLI
+If not already prepared, install the New Vue CLI
 
 ```sh
 npm install -g @vue/cli@next
 ```
 
-2. Using the `vue-cli`, create a new project and choose Vue 3 template:
+Using the `vue-cli`, create a new project and choose Vue 3 template:
 
 ```sh
 vue create vee-validate-tutorial
 ```
 
-<doc-tip>
+</details>
 
-If your project was created using Vue 2 project you can migrate to Vue 3:
-
-```sh
-vue add vue-next
-```
-
-</doc-tip>
-
-3. Add `vee-validate` to your project
+2. Add `vee-validate` to your project
 
 ```sh
 yarn add vee-validate
@@ -61,7 +52,7 @@ yarn add vee-validate
 npm install vee-validate
 ```
 
-4. Cleanup the contents of `App.vue` so it contains an empty template, it should look like the following:
+3. Cleanup the contents of `App.vue`, it should look like the following:
 
 ```vue
 <template>
@@ -73,13 +64,11 @@ export default {};
 </script>
 ```
 
-And that's it, follow the tutorial for the next steps.
-
-</details>
+And that's it, now you have an empty Vue project and vee-validate installed.
 
 ## Building the Form
 
-First, start by adding the markup you would typically have for a sign-up form, you can start by having a `form` wrapping a few `input` elements.
+First, start by adding some markup, you can start by having a `form` wrapping a few `input` elements:
 
 ```vue
 <template>
@@ -97,11 +86,15 @@ export default {};
 </script>
 ```
 
-So far so good, this form currently submits whenever the button is clicked and is not being validated and the page refreshes because by default forms submit a `GET` request to the current page if not specified otherwise.
+So far so good, try filling the `email` field with a dummy value like `hello`. Then click the submit button once and see what happens.
 
-Fix that by adding a `submit` event handler that prevents the native form submission using the `prevent` modifier, we will use `onSubmit` function to handle our form submission.
+You will notice that the form submits and you should see `?email=` added in your URL in the address bar, it should have the sme value that you entered in the `email` field.
 
-```vue
+This is the native HTML form submission behavior. Usually in modern applications you don't want that and you prefer to handle submission with JavaScript.
+
+Add a `submit` event handler that prevents the native form submission, we will use `onSubmit` function to handle our form submission.
+
+```vue{3,13-17}
 <template>
   <div id="app">
     <form @submit.prevent="onSubmit">
@@ -116,20 +109,30 @@ Fix that by adding a `submit` event handler that prevents the native form submis
 export default {
   methods: {
     onSubmit() {
-      alert('Submitted');
+      console.log('Submitted');
     },
   },
 };
 </script>
 ```
 
-And that typically represents most of your forms, while your forms would have more fields with more complex markup, the same principles apply. Now that you have the form not reloading the page on submit and is correctly triggering our handlers, we've yet to make sure it validates our input.
+Now type anything in the `email` field and click submit. You will notice a couple of things:
+
+1. The word "Submitted" being logged to the console.
+2. The value you entered wasn't added to the address bar, this means you've prevented the default submission behavior.
+
+So far so good, but the form isn't that useful unless it takes the correct data from the user. So let's add validation to the form.
 
 ## Adding Validation
 
-VeeValidate exposes 2 components that you will be using regularly, the `<Field>` and `<Form>` components are higher-order components (HOC) that will help you validate your forms and inputs. Import them and register them on the component, then use them to re-write the form:
+VeeValidate exposes 2 components that you will be using regularly, the `<Field>` and `<Form>` are components that will help you validate your forms and inputs.
 
-```vue
+Import them and register them on the Vue component, then replace the following elements with the vee-validate component:
+
+- Replace `<input>` with `<Field />` while keeping the same attributes.
+- Replace `<form>` with `<Form />` but remove the `.prevent` modifier.
+
+```vue{3,4,7,12,15-18}
 <template>
   <div id="app">
     <Form @submit="onSubmit">
@@ -150,28 +153,87 @@ export default {
   },
   methods: {
     onSubmit() {
-      alert('Submitting :(');
+      console.log('Submitting :(');
     },
   },
 };
 </script>
 ```
 
-<doc-tip type="danger" title="Component Registration">
+Change the `onSubmit` method so it receives an argument called `values` and logs it:
 
-It might be necessary to rename the `Form` and `Field` components to something else to avoid conflicting with HTML native elements tag names, while this will work fine in [Vue's single-file components (SFCs)](https://v3.vuejs.org/guide/single-file-component.html) because the compiler can determine which one to render, but in the native browser environment, the `Form` will still render the native HTML counterpart because HTML is case-insensitive.
+```js{7-9}
+export default {
+  components: {
+    Form,
+    Field,
+  },
+  methods: {
+    onSubmit(values) {
+      console.log(values);
+    },
+  },
+};
+```
 
-</doc-tip>
+Try typing anything into the `email` field and click submit. You will see form values being logged into the console with the value you entered, this means vee-validate extracted the form values for you and passed it to your `onSubmit` handler. Now all that remains is to add the validation rules.
 
-Another distinction is that the `.prevents` modifier is removed, this is because the `Form` component does that automatically for you since you won't be listening to the `submit` event unless you want to handle it in JavaScript. And lastly, it sends all the fields' values to your submit handler and that saves you the need to use `v-model` to bind your inputs.
+There are multiple ways to define rules with VeeValidate, the most straightforward way is to use regular Vue methods.
 
-Similarly, the `Field` component also accepts an `as` prop that allows it to render any type of input, in our case we still want it to render an `input` element.
+Create a function called `validateEmail` that receives 1 argument called `value`.
 
-This is all the boilerplate necessary to prepare your forms for validation, all that remains is to add validation rules to validate the input as currently it doesn't have any rules and will still submit in any case.
+It should look like this:
 
-There are multiple ways to define rules with VeeValidate, this tutorial will cover the most basic and straightforward way which is just defining our rules directly in the setup function:
+```vue{23-37}
+<template>
+  <div id="app">
+    <Form @submit="onSubmit">
+      <Field name="email" type="email" />
 
-```vue
+      <button>Sign up</button>
+    </Form>
+  </div>
+</template>
+
+<script>
+import { Form, Field } from 'vee-validate';
+
+export default {
+  components: {
+    Form,
+    Field,
+  },
+  methods: {
+    onSubmit(values) {
+      console.log(JSON.stringify(values, null, 2));
+    },
+    validateEmail(value) {
+      // if the field is empty
+      if (!value) {
+        return 'This field is required';
+      }
+
+      // if the field is not a valid email
+      const regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+      if (!regex.test(value)) {
+        return 'This field must be a valid email';
+      }
+
+      // All is good
+      return true;
+    },
+  },
+};
+</script>
+```
+
+The `validateEmail` function makes sure the `email` field is both required and is a valid email.
+
+Now you need to tell the `<Field name="email />` component to use that function as a validation rule.
+
+You can do that by passing the `validateEmail` function to the `rules` prop on the `Field` component:
+
+```vue{4}
 <template>
   <div id="app">
     <Form @submit="onSubmit">
@@ -192,7 +254,7 @@ export default {
   },
   methods: {
     onSubmit(values) {
-      alert(JSON.stringify(values, null, 2));
+      console.log(JSON.stringify(values, null, 2));
     },
     validateEmail(value) {
       // if the field is empty
@@ -201,7 +263,8 @@ export default {
       }
 
       // if the field is not a valid email
-      if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
+      const regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+      if (!regex.test(value)) {
         return 'This field must be a valid email';
       }
 
@@ -213,19 +276,24 @@ export default {
 </script>
 ```
 
-The `validateEmail` validator function makes sure the `email` field is both required and is a valid email. Using the `rules` prop, you can define validators for your `Field` components and whenever their value changes the validators will be run against the new value.
+Try testing these scenarios:
 
-If you try submitting the form now you will notice that it doesn't submit while the field is empty, but once you input a valid email and click on the button it will be submitted, this means the validation is now working and is preventing submission until the form as a whole becomes valid.
+1. Type a random non-email value like `example` into the `email` field and try clicking submit.
+2. Type a valid email like `hello@example.com` into the `email` field and try clicking submit.
 
-You are not quite there yet, The last step is to show error messages that you already return in the `validateEmail` so that your users have a better understanding of what is going on and why the form isn't submitting.
+In the first case you will notice that nothing was logged to the console, while in the second case you will see your form values being logged into the console same as before.
+
+This means validation is working and vee-validate is not executing your `onSubmit` handler until the `email` field validation passes.
+
+The last step is to show error messages that you already return in the `validateEmail` so that your users have a better understanding of what is going on and why the form isn't submitting.
 
 ## Displaying Error Messages
 
-There are multiple ways to display error messages with VeeValidate. In this tutorial, you will use the `ErrorMessage` component to display the error message.
+To display the error message, you will use the `ErrorMessage` component.
 
 First, grab the `ErrorMessage` component from `vee-validate` and register it in your component:
 
-```js
+```js{1,7}
 import { Field, Form, ErrorMessage } from 'vee-validate';
 
 export default {
@@ -237,13 +305,13 @@ export default {
 };
 ```
 
-Then add the `<ErrorMessage />` component to your template, passing a `name` prop that matches the `<Field />` name prop:
+Then add the `<ErrorMessage />` component to your template, passing a `name` prop that matches the `<Field />` name prop which is `"email"`.
 
-```vue
+```vue{5}
 <template>
   <div id="app">
     <Form @submit="onSubmit">
-      <Field name="email" :rules="validateEmail" />
+      <Field name="email" type="email" :rules="validateEmail" />
       <ErrorMessage name="email" />
 
       <button>Sign up</button>
@@ -262,7 +330,7 @@ export default {
   },
   methods: {
     onSubmit(values) {
-      alert(JSON.stringify(values, null, 2));
+      console.log(values, null, 2);
     },
     validateEmail(value) {
       // if the field is empty
@@ -271,7 +339,8 @@ export default {
       }
 
       // if the field is not a valid email
-      if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
+      const regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+      if (!regex.test(value)) {
         return 'This field must be a valid email';
       }
 
@@ -283,7 +352,9 @@ export default {
 </script>
 ```
 
-If you try the form now, it validates and renders error messages while preventing submitting the form while invalid.
+If you try the form now without entering anything you will see the required error message appear. Try filling anything that's not an email and notice the invalid email message appearing instead.
+
+Now you have successfully created a simple form and implemented validation and submission.
 
 You can checkout the finished code in action:
 
@@ -295,7 +366,7 @@ You can checkout the finished code in action:
 
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
-There is a lot more you can do with vee-validate and while this example is verbose, there are other ways and features you can use to clean up your form validation logic. Here are a few things that you can do with vee-validate:
+There is a lot more you can do with vee-validate, there are other ways and features you can use to clean up your form validation logic. Here are a few things that you can do with vee-validate:
 
 - Declare rules globally and use them in a Laravel-like syntax
 - Using 3rd-party libraries like `yup` to validate
@@ -303,3 +374,5 @@ There is a lot more you can do with vee-validate and while this example is verbo
 - Advanced rendering of your inputs and forms using scoped-slots
 - Component-less validation with the composition API
 - Generating localized messages
+
+You can visit the [guide section](/guide) to begin learning more about vee-validate.
