@@ -1,82 +1,88 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* taken from here https://github.com/nuxt/content/blob/35718b99fcc581073ea14afd6a7b5f16dbca9051/packages/content/parsers/markdown/handlers/code.js */
-const Prism = require('prismjs');
-const escapeHtml = require('escape-html');
-const u = require('unist-builder');
+const shiki = require('shiki');
+const cheerio = require('cheerio');
 
-require('prismjs/components/index')();
+async function highlighter() {
+  const highlighter = await shiki.getHighlighter({
+    // Complete themes: https://github.com/shikijs/shiki/tree/master/packages/themes
+    theme: require('./theme.json'),
+    langs: ['js', 'ts', 'vue', 'css', 'sh', 'html', 'json', 'diff'],
+  });
 
-// enable syntax highlighting on diff language
-require('prismjs/components/prism-diff');
-require('prismjs/plugins/diff-highlight/prism-diff-highlight');
-// enable line numbers
-require('prismjs/plugins/line-numbers/prism-line-numbers');
-// enable line highlights
-require('prismjs/plugins/line-highlight/prism-line-highlight');
+  return (rawCode, lang, { fileName, lineHighlights }) => {
+    try {
+      const html = replaceColorsWithVariables(highlighter.codeToHtml(rawCode, lang || 'sh'));
+      const $ = cheerio.load(html);
 
-const DIFF_HIGHLIGHT_SYNTAX = /^(diff)-([\w-]+)/i;
+      $('.shiki').attr('data-language', lang);
+      $('.shiki').prepend(`<span class="shiki-language">${lang}</span>`);
 
-// https://stackoverflow.com/questions/59508413/static-html-generation-with-prismjs-how-to-enable-line-numbers
-const NEW_LINE_EXP = /\n(?!$)/g;
-let lineNumbersWrapper;
+      if (lineHighlights) {
+        const lines = parseLines(lineHighlights);
+        lines.forEach(line => {
+          $(`.line:nth-child(${line})`).addClass('is-highlighted');
+        });
+        $('.shiki').addClass('with-line-highlights');
+      }
 
-Prism.hooks.add('after-tokenize', function (env) {
-  const match = env.code.match(NEW_LINE_EXP);
-  const linesNum = match ? match.length + 1 : 1;
-  const lines = new Array(linesNum + 1).join('<span></span>');
+      if (fileName) {
+        $('.shiki').prepend(`<span class="filename">${fileName}</span>`);
+        $('.shiki').addClass('with-filename');
+      }
 
-  lineNumbersWrapper = `<span aria-hidden="true" class="line-numbers-rows">${lines}</span>`;
-});
+      $('.line:last-child:empty').remove();
 
-const prismHighlighter = (rawCode, language, { lineHighlights, fileName }, { h, node }) => {
-  let lang = language || '';
-  let grammer;
+      return $.html($('.shiki'));
+    } catch (err) {
+      console.error(err);
 
-  const diffLanguage = lang.match(DIFF_HIGHLIGHT_SYNTAX);
-  if (diffLanguage) {
-    lang = diffLanguage[2];
-    grammer = Prism.languages.diff;
-  }
-
-  lang = lang === 'vue' ? 'html' : lang;
-
-  if (!grammer) {
-    grammer = Prism.languages[lang];
-  }
-
-  const highlightLanguage = diffLanguage ? `diff-${lang}` : lang;
-  let code = grammer ? Prism.highlight(rawCode, grammer, highlightLanguage) + lineNumbersWrapper : rawCode;
-
-  if (!lang || !grammer) {
-    lang = 'text';
-    code = escapeHtml(code);
-  }
-
-  const props = {
-    className: [`language-${lang}`, 'line-numbers'],
+      process.exit(1);
+    }
   };
+}
 
-  if (lineHighlights) {
-    props.dataLine = lineHighlights;
-  }
+function replaceColorsWithVariables(html) {
+  const colors = [
+    { variable: '--code-foreground', value: '#f8f8f2' },
+    { variable: '--code-background', value: '#22212c' },
+    { variable: '--code-token-constant', value: '#9580ff' },
+    { variable: '--code-token-operator', value: '#ff80bf' },
+    { variable: '--code-token-type', value: '#80ffea' },
+    { variable: '--code-token-parameter', value: '#ffca80' },
+    { variable: '--code-token-attribute', value: '#8aff80' },
+    { variable: '--code-token-regex', value: '#ff9580' },
+    { variable: '--code-token-string', value: '#ffff80' },
+    { variable: '--code-token-comment', value: '#7970a9' },
+  ];
 
-  const childs = [];
+  let str = html;
+  colors.forEach(color => {
+    str = str.replace(new RegExp(`color:\\s*${color.value}`, 'ig'), `color: var(${color.variable})`);
+  });
 
-  /**
-   * If filename, then set span as a first child
-   */
-  if (fileName) {
-    childs.push(h(node, 'span', { className: ['filename'] }, [u('text', fileName)]));
-  }
+  return str;
+}
 
-  /**
-   * Set pre as a child
-   */
-  childs.push(h(node, 'pre', props, [h(node, 'code', [u('raw', code)])]));
+function parseLines(lines) {
+  return lines.split(',').reduce((acc, line) => {
+    if (/-/.test(line)) {
+      const [start, end] = line.split('-').map(ln => Number(ln));
+      let current = start;
+      while (current <= end) {
+        acc.push(current);
+        current++;
+      }
 
-  return h(node.position, 'div', { className: ['nuxt-content-highlight'] }, childs);
-};
+      return acc;
+    }
+
+    acc.push(Number(line));
+
+    return acc;
+  }, []);
+}
 
 module.exports = {
-  prismHighlighter,
+  highlighter,
 };

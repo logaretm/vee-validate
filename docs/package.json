@@ -17,12 +17,14 @@
     "nuxt": "^2.15.2"
   },
   "devDependencies": {
+    "cheerio": "^1.0.0-rc.10",
     "css-loader": "^5.0.2",
     "postcss": "^8.2.6",
     "postcss-import": "^13.0.0",
     "postcss-loader": "4.1",
     "postcss-nested": "5.0.1",
     "postcss-url": "10",
+    "shiki": "0.9.8",
     "tailwindcss": "^2.0.3"
   }
 }
