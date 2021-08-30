@@ -282,7 +282,7 @@ meta.value; // { valid: false, invalid: true, dirty: true, .... }
 
 <code-title level="4">
 
-`values: ComputedRef<Record<string, any>>`
+`values: Record<string, any>`
 
 </code-title>
 
