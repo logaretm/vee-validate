@@ -16,7 +16,7 @@ This is where this package comes in.
 
 ## Installation
 
-```bash
+```sh
 yarn add @vee-validate/i18n
 
 # or with npm

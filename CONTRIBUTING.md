@@ -6,13 +6,13 @@ First of all, thanks for taking interest into contributing to this repository, b
 
 Fork the repository, or clone it:
 
-```bash
+```sh
 git clone https://github.com/logaretm/vee-validate.git
 ```
 
 Install dependencies using [yarn](https://yarnpkg.com)
 
-```bash
+```sh
 yarn
 ```
 
@@ -38,7 +38,7 @@ The docs are using `Nuxt` and `nuxt/content` module, the content itself is prese
 
 To run the documentation locally:
 
-```bash
+```sh
 yarn docs:dev
 # or
 npm run docs:dev
@@ -69,7 +69,7 @@ Each test file represents a unit test to the corresponding file in the src folde
 
 To run the tests:
 
-```bash
+```sh
 yarn test
 # or
 npm run test
@@ -77,7 +77,7 @@ npm run test
 
 To check the tests coverage:
 
-```bash
+```sh
 yarn cover
 # or
 npm run cover
@@ -91,7 +91,7 @@ this project uses mono-repo style using [lerna](https://github.com/lerna/lerna).
 
 Use this command to build all project bundles
 
-```bash
+```sh
 yarn build
 # or
 npm run build
