@@ -212,6 +212,7 @@ function _useField<TValue = unknown>(
 
     meta.pending = false;
     meta.validated = false;
+    validateValidStateOnly();
 
     // need to watch at next tick to avoid triggering the value watcher
     nextTick(() => {

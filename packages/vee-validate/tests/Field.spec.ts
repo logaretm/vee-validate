@@ -871,7 +871,7 @@ describe('<Field />', () => {
     expect(input.value).toBe(modelValue);
   });
 
-  test('resetField should reset the valid flag to true', async () => {
+  test('resetField should reset the valid flag to false if the rules are incorrect', async () => {
     const wrapper = mountWithHoc({
       template: `
       <div>
@@ -895,7 +895,7 @@ describe('<Field />', () => {
 
     wrapper.$el.querySelector('button').click();
     await flushPromises();
-    expect(meta?.textContent).toBe('valid');
+    expect(meta?.textContent).toBe('invalid');
   });
 
   test('valid flag is synced with the field errors array length', async () => {

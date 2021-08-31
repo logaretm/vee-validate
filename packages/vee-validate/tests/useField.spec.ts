@@ -3,6 +3,7 @@ import { mountWithHoc, setValue, flushPromises } from './helpers';
 
 describe('useField()', () => {
   const REQUIRED_MESSAGE = 'Field is required';
+  const MIN_MESSAGE = 'Field must be at least 3';
   test('validates when value changes', async () => {
     mountWithHoc({
       setup() {
@@ -27,38 +28,60 @@ describe('useField()', () => {
     expect(error?.textContent).toBe(REQUIRED_MESSAGE);
   });
 
-  test('valid flag is true after reset', async () => {
+  test('valid flag is correct after reset', async () => {
     mountWithHoc({
       setup() {
-        const { value, meta, resetField } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
+        const {
+          value: value1,
+          meta: meta1,
+          resetField: reset1,
+        } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
+        const {
+          value: value2,
+          meta: meta2,
+          resetField: reset2,
+        } = useField('field', val => (!val || (val as string).length >= 3 ? true : MIN_MESSAGE));
 
         return {
-          value,
-          meta,
-          resetField,
+          value1,
+          value2,
+          meta1,
+          meta2,
+          reset1,
+          reset2,
         };
       },
       template: `
-      <input name="field" v-model="value" />
-      <span id="meta">{{ meta.valid ? 'valid' : 'invalid' }}</span>
-      <button @click="resetField()">Reset</button>
+      <input id="input1" name="field" v-model="value1" />
+      <span id="meta1">{{ meta1.valid ? 'valid' : 'invalid' }}</span>
+      <button id="r1" @click="reset1()">Reset</button>
+      <input id="input2" name="field" v-model="value2" />
+      <span id="meta2">{{ meta2.valid ? 'valid' : 'invalid' }}</span>
+      <button id="r2" @click="reset2()">Reset</button>
     `,
     });
 
-    const input = document.querySelector('input') as HTMLInputElement;
-    const meta = document.querySelector('#meta');
+    const input1 = document.querySelector('#input1') as HTMLInputElement;
+    const meta1 = document.querySelector('#meta1');
+    const input2 = document.querySelector('#input2') as HTMLInputElement;
+    const meta2 = document.querySelector('#meta2');
 
     await flushPromises();
-    expect(meta?.textContent).toBe('invalid');
+    expect(meta1?.textContent).toBe('invalid');
+    expect(meta2?.textContent).toBe('valid');
 
-    setValue(input, '');
+    setValue(input1, '12');
+    setValue(input2, '12');
     await flushPromises();
-    expect(meta?.textContent).toBe('invalid');
+    expect(meta1?.textContent).toBe('valid');
+    expect(meta2?.textContent).toBe('invalid');
 
     // trigger reset
-    document.querySelector('button')?.click();
+    (document.querySelector('#r1') as HTMLButtonElement).click();
+    (document.querySelector('#r2') as HTMLButtonElement).click();
     await flushPromises();
-    expect(meta?.textContent).toBe('valid');
+    expect(meta1?.textContent).toBe('invalid');
+    expect(meta2?.textContent).toBe('valid');
   });
 
   test('valid flag is synced with fields errors length', async () => {
