@@ -168,7 +168,7 @@ export const Field = defineComponent({
       }
 
       if (newModelValue !== applyModifiers(value.value, props.modelModifiers)) {
-        value.value = newModelValue;
+        value.value = (newModelValue as any) === IS_ABSENT ? undefined : newModelValue;
         validateField();
       }
     });
