@@ -1610,7 +1610,7 @@ describe('<Form />', () => {
     expect(span.textContent).toBe('invalid');
     wrapper.$el.querySelector('button').click();
     await flushPromises();
-    expect(span.textContent).toBe('valid');
+    expect(span.textContent).toBe('invalid');
   });
 
   test('resetForm should reset the meta flag based on the errors length', async () => {

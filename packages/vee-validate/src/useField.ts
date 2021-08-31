@@ -195,6 +195,7 @@ export function useField<TValue = unknown>(
   function resetField(state?: Partial<FieldState<TValue>>) {
     unwatchValue?.();
     resetValidationState(state);
+    validateValidStateOnly();
     // need to watch at next tick to avoid triggering the value watcher
     nextTick(() => {
       watchValue();

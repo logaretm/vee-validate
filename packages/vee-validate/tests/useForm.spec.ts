@@ -2,6 +2,7 @@ import flushPromises from 'flush-promises';
 import { FormContext, useField, useForm } from '@/vee-validate';
 import { mountWithHoc, setValue } from './helpers';
 import * as yup from 'yup';
+import { Ref } from 'vue';
 
 describe('useForm()', () => {
   const REQUIRED_MESSAGE = 'Field is required';
@@ -284,36 +285,52 @@ describe('useForm()', () => {
   });
 
   test('resets the meta valid state on reset', async () => {
+    let passwordValue!: Ref<string>;
     mountWithHoc({
       setup() {
-        const { meta: formMeta, resetForm } = useForm();
+        const { meta: formMeta, resetForm, errors } = useForm();
         const { value } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
-        useField('password', val => (val ? true : REQUIRED_MESSAGE));
+        const { value: pwValue } = useField<string>('password', val => (val ? true : REQUIRED_MESSAGE));
+        passwordValue = pwValue;
 
         return {
           value,
           formMeta,
           resetForm,
+          errors,
         };
       },
       template: `
       <input v-model="value" />
       <span id="meta">{{ formMeta.valid ? 'valid': 'invalid' }}</span>
+      <span id="errors">{{ errors }}</span>
       <button @click="resetForm()">Reset Meta</button>
     `,
     });
 
     await flushPromises();
     const span = document.querySelector('#meta');
+    const errors = document.querySelector('#errors');
     const input = document.querySelector('input') as HTMLInputElement;
     expect(span?.textContent).toBe('invalid');
-    setValue(input, '');
+    setValue(input, '12');
     await flushPromises();
+    // still other field is invalid
     expect(span?.textContent).toBe('invalid');
+    // but the error is silent so errors should be empty
+    expect(errors?.textContent).toBe('{}');
+
+    passwordValue.value = '12';
+    await flushPromises();
+    // now both should be valid
+    expect(span?.textContent).toBe('valid');
+    expect(errors?.textContent).toBe('{}');
 
     document.querySelector('button')?.click();
     await flushPromises();
-    expect(span?.textContent).toBe('valid');
+    // validation was run again silently
+    expect(span?.textContent).toBe('invalid');
+    expect(errors?.textContent).toBe('{}');
   });
 
   test('resets the meta valid state on reset with the errors length', async () => {
