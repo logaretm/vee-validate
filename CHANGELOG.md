@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.4.10](https://github.com/logaretm/vee-validate/compare/v4.4.9...v4.4.10) (2021-08-31)
+
+
+### Bug Fixes
+
+* added silent validation run after reset closes [#3463](https://github.com/logaretm/vee-validate/issues/3463) ([a61f7ab](https://github.com/logaretm/vee-validate/commit/a61f7ab532d6d2fd9f237145f91bbcc9043431f6))
+* handle absent model value closes [#3468](https://github.com/logaretm/vee-validate/issues/3468) ([2c4a7ff](https://github.com/logaretm/vee-validate/commit/2c4a7ffb84811ae86a1698e6e15f41dc32f8fb8d))
+* **types:** remove arguments of PrivateFieldContext.handleReset ([2e45d1f](https://github.com/logaretm/vee-validate/commit/2e45d1f8a8444c0aabfd307364cadfab74802d02))
+* ensure option bound value type is preserved closes [#3440](https://github.com/logaretm/vee-validate/issues/3440) ([b144615](https://github.com/logaretm/vee-validate/commit/b1446152d6f6cd4843ab206d667a7d744c2a14fc))
+
+
+
+
+
 ## [4.4.9](https://github.com/logaretm/vee-validate/compare/v4.4.8...v4.4.9) (2021-08-05)
 
 
