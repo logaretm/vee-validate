@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0-alpha.6](https://github.com/logaretm/vee-validate/compare/v4.5.0-alpha.5...v4.5.0-alpha.6) (2021-08-31)
+
+
+### Bug Fixes
+
+* added silent validation run after reset closes [#3463](https://github.com/logaretm/vee-validate/issues/3463) ([166d7bf](https://github.com/logaretm/vee-validate/commit/166d7bf3eee824247ef7244f7edb0c55d366a1c4))
+* handle absent model value closes [#3468](https://github.com/logaretm/vee-validate/issues/3468) ([e2f903e](https://github.com/logaretm/vee-validate/commit/e2f903e6e4ac931a14be5a7e2929254fc96e49f8))
+
+
+
+
+
 # [4.5.0-alpha.5](https://github.com/logaretm/vee-validate/compare/v4.5.0-alpha.4...v4.5.0-alpha.5) (2021-08-29)
 
 
