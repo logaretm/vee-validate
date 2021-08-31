@@ -1067,4 +1067,28 @@ describe('<Field />', () => {
     await flushPromises();
     expect(value.value).toBe(false);
   });
+
+  // #3468
+  test('should avoid setting the absent value to Vue', async () => {
+    const form = ref({});
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          form,
+        };
+      },
+      template: `
+        <Field v-model="form.value" name="hello" />
+      `,
+    });
+
+    await flushPromises();
+    const input = document.querySelector('input') as HTMLInputElement;
+    setValue(input, '1234');
+    await flushPromises();
+    expect(input.value).toBe('1234');
+    form.value = {};
+    await flushPromises();
+    expect(input.value).toBe('');
+  });
 });
