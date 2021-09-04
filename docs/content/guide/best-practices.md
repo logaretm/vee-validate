@@ -1,10 +1,45 @@
 ---
 title: Best Practices
 description: Tips and best practices to improve your workflow with vee-validate
-order: 3
+order: 9
 ---
 
 # Best Practices
+
+## Displaying Errors
+
+vee-validate may choose to display form errors if they already existed before the form is mounted, at any case it is a good practice to explicitly define when should an error message appear.
+
+For example it could a good idea to display the message if the field is `touched`:
+
+```vue{4-6}
+<template>
+  <div>
+    <input name="fieldName" v-model="value" />
+    <span v-if="errorMessage && meta.touched">
+      {{ errorMessage }}
+    </span>
+  </div>
+</template>
+
+<script>
+import { useField } from 'vee-validate';
+
+export default {
+  setup() {
+    const { errorMessage, meta, value } = useField('fieldName');
+
+    return {
+      errorMessage,
+      meta,
+      value
+    };  
+  }
+};
+</script>
+```
+
+This ensures the fields are not aggressive towards the user.
 
 ## Yup Bundle Size
 

@@ -68,7 +68,11 @@ And that's it, now you have an empty Vue project and vee-validate installed.
 
 ## Building the Form
 
-First, start by adding some markup, you can start by having a `form` wrapping a few `input` elements:
+<div class="tutorial-step is-first">
+
+First, start by adding some markup, you can start by having a `form` wrapping a few `input` elements.
+
+</div>
 
 ```vue
 <template>
@@ -92,7 +96,11 @@ You will notice that the form submits and you should see `?email=` added in your
 
 This is the native HTML form submission behavior. Usually in modern applications you don't want that and you prefer to handle submission with JavaScript.
 
+<div class="tutorial-step">
+
 Add a `submit` event handler that prevents the native form submission, we will use `onSubmit` function to handle our form submission.
+
+</div>
 
 ```vue{3,13-17}
 <template>
@@ -127,10 +135,14 @@ So far so good, but the form isn't that useful unless it takes the correct data 
 
 VeeValidate exposes 2 components that you will be using regularly, the `<Field>` and `<Form>` are components that will help you validate your forms and inputs.
 
+<div class="tutorial-step">
+
 Import them and register them on the Vue component, then replace the following elements with the vee-validate component:
 
 - Replace `<input>` with `<Field />` while keeping the same attributes.
 - Replace `<form>` with `<Form />` but remove the `.prevent` modifier.
+
+</div>
 
 ```vue{3,4,7,12,15-18}
 <template>
@@ -160,7 +172,11 @@ export default {
 </script>
 ```
 
-Change the `onSubmit` method so it receives an argument called `values` and logs it:
+<div class="tutorial-step">
+
+Change the `onSubmit` method so it receives an argument called `values` and logs it
+
+</div>
 
 ```js{7-9}
 export default {
@@ -180,7 +196,11 @@ Try typing anything into the `email` field and click submit. You will see form v
 
 There are multiple ways to define rules with VeeValidate, the most straightforward way is to use regular Vue methods.
 
+<div class="tutorial-step">
+
 Create a function called `validateEmail` that receives 1 argument called `value`.
+
+</div>
 
 It should look like this:
 
@@ -231,7 +251,11 @@ The `validateEmail` function makes sure the `email` field is both required and i
 
 Now you need to tell the `<Field name="email />` component to use that function as a validation rule.
 
+<div class="tutorial-step">
+
 You can do that by passing the `validateEmail` function to the `rules` prop on the `Field` component:
+
+</div>
 
 ```vue{4}
 <template>
@@ -291,7 +315,11 @@ The last step is to show error messages that you already return in the `validate
 
 To display the error message, you will use the `ErrorMessage` component.
 
+<div class="tutorial-step">
+
 First, grab the `ErrorMessage` component from `vee-validate` and register it in your component:
+
+</div>
 
 ```js{1,7}
 import { Field, Form, ErrorMessage } from 'vee-validate';
@@ -305,7 +333,11 @@ export default {
 };
 ```
 
-Then add the `<ErrorMessage />` component to your template, passing a `name` prop that matches the `<Field />` name prop which is `"email"`.
+<div class="tutorial-step">
+
+Add the `<ErrorMessage />` component to your template, passing a `name` prop that matches the `<Field />` name prop which is `"email"`.
+
+</div>
 
 ```vue{5}
 <template>

@@ -12,9 +12,9 @@
     "@docsearch/js": "^1.0.0-alpha.28",
     "@nuxt/content": "^1.13.1",
     "@nuxtjs/pwa": "^3.3.5",
-    "@nuxtjs/tailwindcss": "^3.4.2",
-    "autoprefixer": "^10.2.4",
-    "nuxt": "^2.15.2"
+    "@nuxtjs/tailwindcss": "^4.2.1",
+    "autoprefixer": "^10.3.4",
+    "nuxt": "^2.15.8"
   },
   "devDependencies": {
     "cheerio": "^1.0.0-rc.10",
@@ -24,7 +24,7 @@
     "postcss-loader": "4.1",
     "postcss-nested": "5.0.1",
     "postcss-url": "10",
-    "shiki": "0.9.8",
-    "tailwindcss": "^2.0.3"
+    "shiki": "0.9.10",
+    "tailwindcss": "^2.2.9"
   }
 }

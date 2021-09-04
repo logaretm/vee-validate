@@ -12,6 +12,7 @@ export default {
 .content {
   @apply overflow-y-hidden;
 }
+
 * >>> {
   p {
     @apply text-lg antialiased;
@@ -44,7 +45,7 @@ export default {
   }
 
   details {
-    @apply bg-gray-400 bg-opacity-50 px-8 py-4 rounded-lg;
+    @apply bg-gray-400 bg-opacity-50 px-8 py-4 rounded-lg my-4;
 
     summary {
       @apply text-lg cursor-pointer;
@@ -247,6 +248,19 @@ export default {
   td {
     @apply p-3;
   }
+
+  .tutorial-step {
+    counter-increment: step;
+    @apply my-4 px-6 py-3 rounded-lg border-accent-800 border transition-colors duration-300 bg-gray-100 bg-opacity-50 hover:bg-opacity-100;
+    &::before {
+      @apply text-accent-800 font-medium text-lg mb-4 block;
+      content: 'Step ' counter(step);
+    }
+
+    &.is-first {
+      counter-reset: step;
+    }
+  }
 }
 
 .dark {
@@ -263,6 +277,10 @@ export default {
     th,
     td {
       @apply border border-gray-600;
+    }
+
+    .tutorial-step {
+      @apply bg-black bg-opacity-30 hover:bg-opacity-100;
     }
   }
 }

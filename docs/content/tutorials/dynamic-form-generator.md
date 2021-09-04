@@ -6,7 +6,9 @@ order: 2
 
 # Build a Form Generator
 
-Building forms is annoying and an often repetitive task and requires a lot of back and forth to maintain, maybe your client asked to add a field, maybe they asked to remove a field, for most cases using static markup is good enough for your web form needs but in some cases, it would great if you had a dynamic form generator that would quickly render your fields based on some JSON schema.
+Building forms is often a repetitive task and requires a lot of back and forth to maintain. Maybe your client asked to add a field, maybe they asked to remove a field.
+
+For most cases using static markup is good enough for your form needs but in some cases it would great if you had a dynamic form generator that would quickly render your fields based on some JSON schema.
 
 In this tutorial you will learn how to use vee-validate to build your own form-generator without external libraries.
 
@@ -26,7 +28,7 @@ Let's quickly recap what you will be building, the component we will be building
 
 This guide will cover how to build a basic form generator.
 
-If you are looking for a more robust solution for form generation, take a look at [Formvuelate](https://formvuelate.js.org/), and it has first-party [vee-validate support](https://formvuelate.js.org/#vee-validate-plugin).
+If you are looking for a more robust solution for form generation, take a look at [Formvuelate](https://formvuelate.js.org/), and it has first-party [vee-validate support](https://formvuelate.js.org/guide/veevalidate.html).
 
 </doc-tip>
 
@@ -38,9 +40,11 @@ Some basic understanding of typescript would help understand some ideas but not 
 
 ## Laying The Foundation
 
-Instead of diving into the details first, let's take a step back and imagine we got the implementation done. How would you use such a component? It is often a good practice to mock/use your abstractions before implementing them to make sure you are on the right track.
+First, let's take a step back and imagine we got the implementation done. How would you use such a component?
 
-So assuming we have a component called `DynamicForm` that accepts a schema prop that has all the information needed to render the form, we probably will have the following in our template:
+It is often a good practice to mock/use your abstractions before implementing them to make sure you are on the right track.
+
+So assuming we have a component called `DynamicForm` that accepts a `schema` prop that has all the information needed to render the form, we probably will have the following in our template:
 
 ```vue
 <DynamicForm :schema="formSchema" />
@@ -94,15 +98,21 @@ const formSchema = {
 };
 ```
 
-That looks fine for now, we will tackle initial values and validation later on, start to write some code.
+That looks fine for now, we will tackle initial values and validation later on.
 
 ## Rendering Fields
+
+<div class="tutorial-step is-first">
 
 The initial implementation will follow these generic steps:
 
 - Use `Form` component from vee-validate to render the form
 - Iterate over each field in `schema.fields`
 - Render each field as a `Field` component passing all props to it
+
+Let's put that into some code.
+
+</div>
 
 ```vue
 <template>
@@ -135,7 +145,7 @@ export default {
 </script>
 ```
 
-We have a problem though, our password field is showing the user input to everyone around them which isn't very responsible on our part. This means that some inputs may require additional props that we may need to pass to our `Field` component, let's update our `FieldSchema` definition:
+We have a problem though, our password field is showing the user input to everyone around them which isn't very responsible on our part. This means that some inputs may require additional props that we may need to pass to our `Field` component. This means our `FieldSchema` definition will look now like this:
 
 ```diff
 interface FieldSchema {
@@ -146,16 +156,49 @@ interface FieldSchema {
 }
 ```
 
-Then in the template we will update the iteration with `v-for` portion to extract the known keys that we would expect and collecting the rest in another object using ES6 object rest operator:
+<div class="tutorial-step">
 
-```vue
-<div v-for="{ as, name, label, ...attrs } in schema.fields" :key="name">
-  <label :for="name">{{ label }}</label>
-  <Field :as="as" :id="name" :name="name" v-bind="attrs" />
+In the template, update the iteration with `v-for` portion to extract the known keys that we expect and collecting the rest in another object using ES6 object rest operator.
+
 </div>
+
+```vue{3-9}
+<template>
+  <Form>
+    <div 
+      v-for="{ as, name, label, ...attrs } in schema.fields"
+      :key="name"
+    >
+      <label :for="name">{{ label }}</label>
+      <Field :as="as" :id="name" :name="name" v-bind="attrs" />
+    </div>
+
+    <button>Submit</button>
+  </Form>
+</template>
+
+<script>
+import { Form, Field } from 'vee-validate';
+
+export default {
+  name: 'DynamicForm',
+  components: {
+    Form,
+    Field,
+  },
+  props: {
+    schema: {
+      type: Object,
+      required: true,
+    },
+  },
+};
+</script>
 ```
 
-The `v-bind` there allows us to bind everything in the `attrs` object which is all the other props we didn't extract explicitly and bind them to the `Field` component, and luckily for us, the `Field` component will pass down any props that it doesn't accept to whatever gets rendered in its place, effectively passing down our attributes to our `input` tags.
+The `v-bind` there allows us to bind everything in the `attrs` object which is all the other props we didn't extract explicitly and bind them to the `Field` component. 
+
+The `Field` component will pass down any props that it doesn't accept to whatever gets rendered in its place, effectively passing down our attributes to our `input` tags.
 
 That looks alright for now, but before we tackle validation and other things, what if we wanted to render a `select` input?
 
@@ -165,7 +208,7 @@ That looks alright for now, but before we tackle validation and other things, wh
 
 The `select` input introduces an edge case where your field would need to have children nodes inside its slot, the nodes being `option` tags. If you are rendering a component that accepts its options via prop you don't need to do this but let's tackle this edge case head-on.
 
-First, back to our schema and let's add support for `children` prop that accepts a flat array of child nodes:
+First, add support for `children` prop that accepts a flat array of child nodes:
 
 ```diff
 interface FieldSchema {
@@ -185,17 +228,47 @@ The `children` field now can both specify props and a text node if needed in cas
 
 Let's update the template:
 
-```vue
-<div v-for="{ as, name, label, children, ...attrs } in schema.fields" :key="name">
-  <label :for="name">{{ label }}</label>
-  <Field :as="as" :id="name" :name="name" v-bind="attrs">
-    <template v-if="children && children.length">
-      <component v-for="({ tag, text, ...childAttrs }, idx) in children" :key="idx" :is="tag" v-bind="childAttrs">
-        {{ text }}
-      </component>
-    </template>
-  </Field>
-</div>
+```vue{4,9-16}
+<template>
+  <Form>
+    <div 
+      v-for="{ as, name, label, children, ...attrs } in schema.fields"
+      :key="name"
+    >
+      <label :for="name">{{ label }}</label>
+      <Field :as="as" :id="name" :name="name" v-bind="attrs">
+        <template v-if="children && children.length">
+          <component v-for="({ tag, text, ...childAttrs }, idx) in children"
+            :key="idx"
+            :is="tag" v-bind="childAttrs"
+          >
+            {{ text }}
+          </component>
+        </template>
+      </Field>
+    </div>
+
+    <button>Submit</button>
+  </Form>
+</template>
+
+<script>
+import { Form, Field } from 'vee-validate';
+
+export default {
+  name: 'DynamicForm',
+  components: {
+    Form,
+    Field,
+  },
+  props: {
+    schema: {
+      type: Object,
+      required: true,
+    },
+  },
+};
+</script>
 ```
 
 The template started to get a little bit more complex, so we will stop there but now we have support for `select` elements and any other type of inputs you may need.
@@ -243,7 +316,9 @@ const formSchema = {
 
 We can go two ways here, either allow each field to define its own validation rules, or let it be defined on the form-level which is much easier with vee-validate and yup. We will go with the latter approach.
 
-The `Form` component already has support for validating fields on the form-level by accepting a `validation-schema` prop which can be a yup object validation schema. Let's add support for the `validation` prop on our own `FormSchema` object:
+The `Form` component already has support for validating fields on the form-level by accepting a `validation-schema` prop which can be a yup object validation schema.
+
+Add support for the `validation` prop on the `FormSchema` interface:
 
 ```diff
 interface FormSchema {
@@ -254,16 +329,16 @@ interface FormSchema {
 
 Now let's use `yup` to add the validation schema:
 
-```diff
+```js{5-9}
 const formSchema = {
   fields: [
     // ...
   ],
-+ validation: yup.object({
-+   email: yup.string().email().required(),
-+   name: yup.string().required(),
-+   password: yup.string().min(8).required(),
-+ }),
+ validation: yup.object({
+   email: yup.string().email().required(),
+   name: yup.string().required(),
+   password: yup.string().min(8).required(),
+ }),
 };
 ```
 
@@ -277,9 +352,13 @@ Let's update the `DynamicForm` component to accept the validation schema:
 
 Now validation is working but we still need to show error messages, so let's update the `v-for` block that's rendering our fields to use the `<ErrorMessage />` component to render messages.
 
-First import and register the `ErrorMessage` component inside the `DynamicForm` component:
+<div class="tutorial-step">
 
-```js
+Import and register the `ErrorMessage` component inside the `DynamicForm` component:
+
+</div>
+
+```js{1,7}
 import { Form, Field, ErrorMessage } from 'vee-validate';
 
 export default {
@@ -292,7 +371,11 @@ export default {
 };
 ```
 
-Then add it after the field passing the `name` prop to it so it can correctly show the field's error message.
+<div class="tutorial-step">
+
+Add the `ErrorMessage` component after the field and pass the `name` prop to it so it can correctly show the field's error message.
+
+</div>
 
 ```vue
 <div v-for="{ as, name, label, ...attrs } in schema.fields" :key="name">
