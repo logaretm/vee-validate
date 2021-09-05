@@ -261,6 +261,16 @@ export default {
       counter-reset: step;
     }
   }
+
+  .filename {
+    @apply w-full block py-2 px-8 bg-gray-200 rounded-t-lg font-extrabold text-sm select-none tracking-wide absolute inset-x-0;
+    top: calc(-1 * 1rem);
+    font-family: 'Courier New', monospace;
+  }
+
+  .filename + pre {
+    @apply mt-0 rounded-t-none;
+  }
 }
 
 .dark {
@@ -281,6 +291,10 @@ export default {
 
     .tutorial-step {
       @apply bg-black bg-opacity-30 hover:bg-opacity-100;
+    }
+
+    .filename {
+      @apply bg-gray-800;
     }
   }
 }

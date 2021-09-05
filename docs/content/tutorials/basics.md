@@ -317,7 +317,7 @@ To display the error message, you will use the `ErrorMessage` component.
 
 <div class="tutorial-step">
 
-First, grab the `ErrorMessage` component from `vee-validate` and register it in your component:
+Import the `ErrorMessage` component from `vee-validate` and register it in your component:
 
 </div>
 
