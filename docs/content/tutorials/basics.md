@@ -14,9 +14,10 @@ In this tutorial, we will be building a "sign up newsletter" form where the user
 
 ## Prerequisites
 
-You will need to be familiar with HTML and a good understanding of modern JavaScript like arrow functions and ES modules, also you will need to have a basic understanding of Vue's scoped slots feature.
+This tutorial assumes you know:
 
-Also to make it clear, this tutorial code snippets are formatted into steps and to avoid repetitive code, any unchanged snippets in-between steps will be collapsed as comments.
+- Modern JavaScript features like arrow functions and ES modules.
+- Vue's [SFC file syntax](https://v3.vuejs.org/guide/single-file-component.html#introduction).
 
 ## Setup
 
@@ -92,9 +93,9 @@ export default {};
 
 So far so good, try filling the `email` field with a dummy value like `hello`. Then click the submit button once and see what happens.
 
-You will notice that the form submits and you should see `?email=` added in your URL in the address bar, it should have the sme value that you entered in the `email` field.
+You will notice that the form submits and you should see `?email=` added in your URL in the address bar, it should have the same value that you entered in the `email` field.
 
-This is the native HTML form submission behavior. Usually in modern applications you don't want that and you prefer to handle submission with JavaScript.
+This is the native HTML form submission behavior. Usually, in modern applications, you don't want that and you prefer to handle submission with JavaScript.
 
 <div class="tutorial-step">
 
@@ -305,7 +306,7 @@ Try testing these scenarios:
 1. Type a random non-email value like `example` into the `email` field and try clicking submit.
 2. Type a valid email like `hello@example.com` into the `email` field and try clicking submit.
 
-In the first case you will notice that nothing was logged to the console, while in the second case you will see your form values being logged into the console same as before.
+In the first case, you will notice that nothing was logged to the console, while in the second case you will see your form values being logged into the console the same as before.
 
 This means validation is working and vee-validate is not executing your `onSubmit` handler until the `email` field validation passes.
 
@@ -388,15 +389,9 @@ If you try the form now without entering anything you will see the required erro
 
 Now you have successfully created a simple form and implemented validation and submission.
 
-You can checkout the finished code in action:
+You can check out the finished code in action:
 
-<p class="codepen" data-height="265" data-theme-id="light" data-default-tab="js,result" data-user="logaretm" data-slug-hash="yLeraZR" style="height: 265px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;" data-pen-title="Tutorial - Basics">
-  <span>See the Pen <a href="https://codepen.io/logaretm/pen/yLeraZR">
-  Tutorial - Basics</a> by Abdelrahman Awad (<a href="https://codepen.io/logaretm">@logaretm</a>)
-  on <a href="https://codepen.io">CodePen</a>.</span>
-</p>
-
-<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+<code-sandbox id="vee-validate-basic-example-nc7eh" title="vee-validate basic validation example"></code-sandbox>
 
 There is a lot more you can do with vee-validate, there are other ways and features you can use to clean up your form validation logic. Here are a few things that you can do with vee-validate:
 

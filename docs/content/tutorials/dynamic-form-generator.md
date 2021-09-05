@@ -8,9 +8,9 @@ order: 2
 
 Building forms is often a repetitive task and requires a lot of back and forth to maintain. Maybe your client asked to add a field, maybe they asked to remove a field.
 
-For most cases using static markup is good enough for your form needs but in some cases it would great if you had a dynamic form generator that would quickly render your fields based on some JSON schema.
+For most cases using static markup is good enough for your form needs but in some cases, it would be great if you had a dynamic form generator that would quickly render your fields based on some JSON schema.
 
-In this tutorial you will learn how to use vee-validate to build your own form-generator without external libraries.
+In this tutorial, you will learn how to use vee-validate to build a form-generator without external libraries.
 
 Let's quickly recap what you will be building, the component we will be building should:
 
@@ -33,9 +33,10 @@ If you are looking for a more robust solution for form generation, take a look a
 
 ## Prerequisites
 
-This tutorial assumes you have knowledge of:
+This tutorial assumes you know:
 
 - Modern JavaScript like arrow functions and ES modules.
+- Vue's [SFC file syntax](https://v3.vuejs.org/guide/single-file-component.html#introduction).
 - Vue's [list rendering with `v-for`](https://v3.vuejs.org/guide/list.html#mapping-an-array-to-elements-with-v-for).
 - Vue's [dynamic components](https://v3.vuejs.org/guide/component-basics.html#dynamic-components).
 
@@ -248,7 +249,7 @@ The `Field` component will pass down any props that it doesn't accept to whateve
 
 The `select` input introduces an edge case where your field would need to have child elements (i.e: `<option>` elements) inside its slot. Let's tackle this edge case head-on.
 
-Add a new fourth entry to the fields schema. This new entry will have a new `children` property that contains the options we want to render in the select element.
+Add a new fourth entry to the form's schema. This new entry will have a new `children` property that contains the options we want to render in the select element.
 
 ```vue{16-40}[App.vue]
 <template>
@@ -360,7 +361,7 @@ We would like each field to have its own validation rules defined on the schema.
 
 <div class="tutorial-step">
 
-In `App.vue`, update the fields schema so that each fields has a new `rules` property with sensible validation rules
+In `App.vue`, update the form's schema so that each field has a new `rules` property with sensible validation rules
 
 </div>
 
