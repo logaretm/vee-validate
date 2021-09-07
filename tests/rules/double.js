@@ -1,7 +1,7 @@
 import { validate } from '@/rules/double';
 
-const valid = [2.2, 1.1222, -2.32, '2.3333', '-2.4444'];
-const invalid = ['', undefined, null, true, false, {}, '+32.32', 'a', '323ads232', 1, '1', '2..2'];
+const valid = [2.2, 1.1222, -2.32, '2.3333', 1, '1', '-2.4444'];
+const invalid = ['', undefined, null, true, false, {}, '+32.32', 'a', '323ads232', '2..2'];
 
 test('validates that the value contains a decimal number', () => {
   valid.forEach(value => expect(validate(value)).toBe(true));
@@ -28,7 +28,7 @@ test('validates that the contain a decimal number using a comma as seperator', (
 test('validates that the contain a decimal number with a specific count of decimal places', () => {
   const param = { decimals: '2' };
 
-  const localValid = [1.11, '1.11', '-1.11', -1.11];
+  const localValid = [1.11, '1.11', '-1.11', -1.11, 1, -1, '1', '-1'];
   const localInvalid = [...invalid, 1.1, 1.111, -1.1, '-1.1111', '1.1111'];
 
   localValid.forEach(value => expect(validate(value, param)).toBe(true));
