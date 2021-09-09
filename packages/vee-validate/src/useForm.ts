@@ -19,6 +19,7 @@ import {
   RawFormSchema,
   ValidationOptions,
   FieldPathLookup,
+  PrivateFieldArrayContext,
 } from './types';
 import {
   getFromPath,
@@ -59,6 +60,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
   // The number of times the user tried to submit the form
   const submitCount = ref(0);
+
+  // dictionary for field arrays to receive various signals like reset
+  const fieldArraysLookup: Record<string, PrivateFieldArrayContext> = {};
 
   // a private ref for all form values
   const formValues = reactive(deepCopy(unref(opts?.initialValues) || {})) as TValues;
@@ -128,6 +132,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     submitCount,
     meta,
     isSubmitting,
+    fieldArraysLookup,
     validateSchema: unref(schema) ? validateSchema : undefined,
     validate,
     register: registerField,
@@ -249,6 +254,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
 
     // Reset all fields state
+    Object.values(fieldArraysLookup).forEach(f => f && f.reset());
     Object.values(fieldsByPath.value).forEach(f => f && f.resetField());
 
     if (state?.touched) {
@@ -302,6 +308,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
         // clean up the old path if no other field is sharing that name
         // #3325
+        await nextTick();
         if (!fieldExists(oldPath)) {
           unsetPath(formValues, oldPath);
         }

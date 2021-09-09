@@ -10,17 +10,13 @@ export const FieldArray = defineComponent({
       type: String,
       required: true,
     },
-    keyPath: {
-      type: String,
-      required: true,
-    },
   },
   setup(props, ctx) {
-    const { push, remove, swap, insert, entries } = useFieldArray(toRefs(props));
+    const { push, remove, swap, insert, fields } = useFieldArray(toRefs(props));
 
     function slotProps() {
       return {
-        entries: entries.value,
+        fields: fields.value,
         push,
         remove,
         swap,

@@ -53,8 +53,8 @@ test('un-sets old path value when array fields are removed', async () => {
     },
     template: `
       <VForm @submit="onSubmit" :initial-values="initialValues">
-        <FieldArray name="users" key-path="id" v-slot="{ remove, push, entries }">
-          <fieldset v-for="(entry, idx) in entries" :key="entry.key">
+        <FieldArray name="users" v-slot="{ remove, push, fields }">
+          <fieldset v-for="(field, idx) in fields" :key="field.key">
             <legend>User #{{ idx }}</legend>
             <label :for="'name_' + idx">Name</label>
             <Field :id="'name_' + idx" :name="'users[' + idx + '].name'" />
@@ -113,20 +113,15 @@ test('un-sets old path value when array fields are removed', async () => {
 test('array fields should update their values when swapped', async () => {
   mountWithHoc({
     setup() {
-      let id = 1;
-
       const initial = {
         users: [
           {
-            id: id++,
             name: 'first',
           },
           {
-            id: id++,
             name: 'second',
           },
           {
-            id: id++,
             name: 'third',
           },
         ],
@@ -139,8 +134,8 @@ test('array fields should update their values when swapped', async () => {
     template: `
       <VForm :initial-values="initial">
 
-        <FieldArray name="users" key-path="id" v-slot="{ remove, push, entries }">
-          <fieldset v-for="(entry, idx) in entries" :key="entry.key">
+        <FieldArray name="users" v-slot="{ remove, push, fields }">
+          <fieldset v-for="(field, idx) in fields" :key="field.key">
             <Field :id="\`name_\${idx}\`" :name="\`users[\${idx}].name\`" />
             <button :class="\`remove_\${idx}\`" type="button" @click="remove(idx)">X</button>
           </fieldset>
@@ -170,7 +165,6 @@ test('can swap array fields with swap helper', async () => {
   const onSubmit = jest.fn();
   mountWithHoc({
     setup() {
-      let id = 1;
       const schema = yup.object({
         users: yup
           .array()
@@ -185,15 +179,12 @@ test('can swap array fields with swap helper', async () => {
       const initial = {
         users: [
           {
-            id: id++,
             name: 'first',
           },
           {
-            id: id++,
             name: 'second',
           },
           {
-            id: id++,
             name: 'third',
           },
         ],
@@ -207,8 +198,8 @@ test('can swap array fields with swap helper', async () => {
     },
     template: `
     <VForm @submit="onSubmit" :validation-schema="schema" :initial-values="initial">
-      <FieldArray name="users" key-path="id" v-slot="{ swap, entries }">
-          <div v-for="(entry, idx) in entries" :key="entry.key">
+      <FieldArray name="users" v-slot="{ swap, fields }">
+          <div v-for="(field, idx) in fields" :key="field.key">
             <button class="up" @click="swap(idx, idx - 1)" type="button">⬆️</button>
 
             <Field :name="'users[' + idx + '].name'" />
@@ -255,15 +246,12 @@ test('can swap array fields with swap helper', async () => {
     expect.objectContaining({
       users: [
         {
-          id: 1,
           name: 'first',
         },
         {
-          id: 3,
           name: 'third',
         },
         {
-          id: 2,
           name: 'edited',
         },
       ],
@@ -272,22 +260,18 @@ test('can swap array fields with swap helper', async () => {
   );
 });
 
-test('entries have isFirst and isLast flags to help with conditions', async () => {
+test('fields have isFirst and isLast flags to help with conditions', async () => {
   mountWithHoc({
     setup() {
-      let id = 1;
       const initial = {
         users: [
           {
-            id: id++,
             name: 'first',
           },
           {
-            id: id++,
             name: 'second',
           },
           {
-            id: id++,
             name: 'third',
           },
         ],
@@ -299,10 +283,10 @@ test('entries have isFirst and isLast flags to help with conditions', async () =
     },
     template: `
     <VForm :initial-values="initial">
-      <FieldArray name="users" key-path="id" v-slot="{ swap, entries, push, remove }">
-          <div v-for="(entry, idx) in entries" :key="entry.key">
-            <button class="up" @click="swap(idx, idx - 1)" :disabled="entry.isFirst" type="button">⬆️</button>
-            <button class="down" @click="swap(idx, idx + 1)" :disabled="entry.isLast" type="button">⬇️</button>
+      <FieldArray name="users" v-slot="{ swap, fields, push, remove }">
+          <div v-for="(field, idx) in fields" :key="field.key">
+            <button class="up" @click="swap(idx, idx - 1)" :disabled="field.isFirst" type="button">⬆️</button>
+            <button class="down" @click="swap(idx, idx + 1)" :disabled="field.isLast" type="button">⬇️</button>
             <button class="remove" type="button" @click="remove(idx)">X</button>
 
 
@@ -357,19 +341,15 @@ test('entries have isFirst and isLast flags to help with conditions', async () =
 test('can insert new items at specific index', async () => {
   mountWithHoc({
     setup() {
-      let id = 1;
       const initial = {
         users: [
           {
-            id: id++,
             name: 'first',
           },
           {
-            id: id++,
             name: 'second',
           },
           {
-            id: id++,
             name: 'third',
           },
         ],
@@ -381,11 +361,11 @@ test('can insert new items at specific index', async () => {
     },
     template: `
     <VForm :initial-values="initial">
-      <FieldArray name="users" key-path="id" v-slot="{ entries, insert }">
-          <div v-for="(entry, idx) in entries" :key="entry.key">
+      <FieldArray name="users" v-slot="{ fields, insert }">
+          <div v-for="(field, idx) in fields" :key="field.key">
             <Field :name="'users[' + idx + '].name'" />
           </div>
-          <button class="insert" type="button" @click="insert(1, { id: Date.now(), name: 'inserted' })">Add User +</button>
+          <button class="insert" type="button" @click="insert(1, { name: 'inserted' })">Add User +</button>
       </FieldArray>
     </VForm>
     `,

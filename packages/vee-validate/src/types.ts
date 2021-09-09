@@ -1,4 +1,4 @@
-import { ComputedRef, Ref, WritableComputedRef } from 'vue';
+import { ComputedRef, DeepReadonly, Ref, WritableComputedRef } from 'vue';
 import { SchemaOf, AnySchema, AnyObjectSchema } from 'yup';
 import { FieldValidationMetaInfo } from '../../shared';
 
@@ -46,6 +46,25 @@ export type SchemaValidationMode = 'validated-only' | 'silent' | 'force';
 
 export interface ValidationOptions {
   mode: SchemaValidationMode;
+}
+
+export interface FieldEntry<TValue = unknown> {
+  value: Ref<TValue>;
+  key: string | number;
+  isFirst: boolean;
+  isLast: boolean;
+}
+
+export interface FieldArrayContext<TValue = unknown> {
+  fields: DeepReadonly<Ref<FieldEntry<TValue>[]>>;
+  remove(idx: number): void;
+  push(value: TValue): void;
+  swap(indexA: number, indexB: number): void;
+  insert(idx: number, value: TValue): void;
+}
+
+export interface PrivateFieldArrayContext {
+  reset(): void;
 }
 
 export interface PrivateFieldContext<TValue = unknown> {
@@ -128,22 +147,23 @@ export type FieldPathLookup<TValues extends Record<string, any> = Record<string,
 export interface PrivateFormContext<TValues extends Record<string, any> = Record<string, any>>
   extends FormActions<TValues> {
   formId: number;
-  register(field: PrivateFieldContext): void;
-  unregister(field: PrivateFieldContext): void;
   values: TValues;
   fieldsByPath: Ref<FieldPathLookup>;
+  fieldArraysLookup: Record<string, PrivateFieldArrayContext>;
   submitCount: Ref<number>;
   schema?: MaybeRef<RawFormSchema<TValues> | SchemaOf<TValues> | undefined>;
+  errorBag: Ref<FormErrorBag<TValues>>;
+  errors: ComputedRef<FormErrors<TValues>>;
+  meta: ComputedRef<FormMeta<TValues>>;
+  isSubmitting: Ref<boolean>;
   validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues>>;
   validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>>;
   validateField(field: keyof TValues): Promise<ValidationResult>;
-  errorBag: Ref<FormErrorBag<TValues>>;
-  errors: ComputedRef<FormErrors<TValues>>;
   setFieldErrorBag(field: string, messages: string | string[]): void;
   stageInitialValue(path: string, value: unknown): void;
   unsetInitialValue(path: string): void;
-  meta: ComputedRef<FormMeta<TValues>>;
-  isSubmitting: Ref<boolean>;
+  register(field: PrivateFieldContext): void;
+  unregister(field: PrivateFieldContext): void;
   handleSubmit<TReturn = unknown>(cb: SubmissionHandler<TValues, TReturn>): (e?: Event) => Promise<TReturn | undefined>;
   setFieldInitialValue(path: string, value: unknown): void;
 }
@@ -162,6 +182,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
     | 'stageInitialValue'
     | 'setFieldInitialValue'
     | 'unsetInitialValue'
+    | 'fieldArraysLookup'
   > {
   handleReset: () => void;
   submitForm: (e?: unknown) => Promise<void>;

@@ -174,8 +174,8 @@ To set up a repeatable field, you can use `useFieldArray` to help you manage the
 ```vue
 <template>
   <form @submit="onSubmit" novalidate>
-    <div v-for="(entry, idx) in entries" :key="entry.key">
-      <Field :name="`links[${idx}].url`" type="url" />
+    <div v-for="(field, idx) in fields" :key="field.key">
+      <Field :name="`links[${idx}]`" type="url" />
 
       <button type="button" @click="remove(idx)">Remove</button>
     </div>
@@ -196,14 +196,13 @@ export default {
   setup() {
     const { handleSubmit } = useForm({
       initialValues: {
-        links: [{ id: 1, url: 'https://github.com/logaretm' }],
+        links: ['https://github.com/logaretm'],
       },
     });
 
-    const { remove, push, entries } = useFieldArray({
-      // Those can be reactive refs
+    const { remove, push, fields } = useFieldArray({
+      // This can be a reactive ref
       name: 'links',
-      keyPath: 'id',
     });
 
     const onSubmit = handleSubmit(values => {
@@ -211,7 +210,7 @@ export default {
     });
 
     return {
-      entries,
+      fields,
       push,
       remove,
       onSubmit,
@@ -230,32 +229,28 @@ Here are a few examples:
 _*Iterate over the `users` array:*_
 
 ```js
-const { remove, push, entries } = useFieldArray({
+const { remove, push, fields } = useFieldArray({
   name: 'users',
-  keyPath: 'id',
 });
 ```
 
 _*Iterate over the `domains` inside `settings.dns` object:*_
 
 ```js
-const { remove, push, entries } = useFieldArray({
+const { remove, push, fields } = useFieldArray({
   name: 'settings.dns.domains',
-  keyPath: 'id',
 });
 ```
 
 ### Iteration Keys
 
-You probably have noted in the previous examples we always generate a unique id for each array entry. This is a [Vue.js best practice](https://v3.vuejs.org/guide/list.html#maintaining-state) to make sure loops are efficient.
-
-The `key-path` prop is another required prop that vee-validate exposes its value on the `entries` items as the `key` property, this enables you to use the `key` property as the iteration key for your loops.
+The `FieldArrayEntry` item exposes a `key` property, this property is unique and is auto-generated for you so you can use it as an iteration key.
 
 ```vue
 <template>
   <form @submit="onSubmit" novalidate>
-    <div v-for="(entry, idx) in entries" :key="entry.key">
-      <Field :name="`links[${idx}].url`" type="url" />
+    <div v-for="(field, idx) in fields" :key="field.key">
+      <Field :name="`links[${idx}]`" type="url" />
     </div>
   </form>
 </template>
@@ -270,43 +265,29 @@ export default {
   setup() {
     const { handleSubmit } = useForm({
       initialValues: {
-        links: [{ id: 1, url: 'https://github.com/logaretm' }],
+        links: ['https://github.com/logaretm'],
       },
     });
 
-    const { entries } = useFieldArray({
+    const { fields } = useFieldArray({
       name: 'links',
-      keyPath: 'id',
     });
 
     return {
-      entries,
+      fields,
     };
   },
 };
 </script>
 ```
 
-That means while it is possible to have an array of strings or numbers, you will have a harder time getting unique ids for those fields, so it is recommended to create objects for your entries like these examples here.
-
-```ts
-// ❌ Don't
-// No each to tell two entries apart, indexes are not unique and mutable
-const links = ['link1', 'link2'];
-
-// ✅ Do
-// Each entry has a unique id that is not the index and is not mutable
-const links = [
-  { id: 1, value: 'link1' },
-  { id: 2, value: 'link2' },
-];
-```
+This auto-generated `key` property is very convenient as you no longer have to provide your own unique key for each item.
 
 ### Array Helpers
 
 The `<useFieldArray />` function provides the following properties and functions:
 
-- `entries`: a **read-only** version of your array field items, it includes some useful properties like `key`, `isFirst` and `isLast`, the actual item value is inside `.value` property. You should use it to iterate with `v-for`.
+- `fields`: a **read-only** version of your array field items, it includes some useful properties like `key`, `isFirst` and `isLast`, the actual item value is inside `.value` property. You should use it to iterate with `v-for`.
 - `push(item: any)`: adds an item to the end of the array.
 - `remove(idx: number)`: removes the item with the given index from the array.
 - `swap(idxA: number, idxB: number)`: Swaps two array elements by their indexes.

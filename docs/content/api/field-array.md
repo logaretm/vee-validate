@@ -18,8 +18,8 @@ The `<FieldArray />` component is used to manage repeatable array fields. It is 
 ```vue
 <template>
   <Form @submit="onSubmit" :initial-values="initialValues">
-    <FieldArray name="links" key-path="id" v-slot="{ entries, push, remove }">
-      <div v-for="(entry, idx) in entries" :key="entry.key">
+    <FieldArray name="links" key-path="id" v-slot="{ fields, push, remove }">
+      <div v-for="(field, idx) in fields" :key="field.key">
         <Field :name="`links[${idx}].url`" type="url" />
 
         <button type="button" @click="remove(idx)">Remove</button>
@@ -53,10 +53,9 @@ export default {
 
 ### Props
 
-| Prop       | Type     | Required/Default | Description                                                                                                          |
-| :--------- | :------- | :--------------- | :------------------------------------------------------------------------------------------------------------------- |
-| `name`     | `string` | Yes              | The array path you wish to iterate on                                                                                |
-| `key-path` | `string` | Yes              | The value path of the property you want to use as an iteration key, you can use object dot notation or array indices |
+| Prop   | Type     | Required/Default | Description                           |
+| :----- | :------- | :--------------- | :------------------------------------ |
+| `name` | `string` | Yes              | The array path you wish to iterate on |
 
 ### Slots
 
@@ -66,7 +65,7 @@ The default slot gives you access to the following props:
 
 <code-title level="4">
 
-`entries: FieldArrayEntry<TValue>`
+`fields: FieldArrayEntry<TValue>`
 
 </code-title>
 

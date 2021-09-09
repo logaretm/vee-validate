@@ -129,16 +129,16 @@ Submitting the previous form would result in the following values being passed t
 
 Field arrays are a special type of nested array fields, they are often used to collect repeatable pieces of data or repeatable forms. They are often called "repeatable fields".
 
-When dealing with those fields it is better to use `<FieldArray />` component which gives you a few helpers you can use to manage the array entries.
+When dealing with those fields it is better to use `<FieldArray />` component which gives you a few helpers you can use to manage the array fields.
 
 Here is a small example that shows how easy it is to create a repeatable group of fields:
 
 ```vue
 <template>
   <Form @submit="onSubmit" :initial-values="initialValues">
-    <FieldArray name="links" key-path="id" v-slot="{ entries, push, remove }">
-      <div v-for="(entry, idx) in entries" :key="entry.key">
-        <Field :name="`links[${idx}].url`" type="url" />
+    <FieldArray name="links" v-slot="{ fields, push, remove }">
+      <div v-for="(entry, idx) in fields" :key="entry.key">
+        <Field :name="`links[${idx}]`" type="url" />
 
         <button type="button" @click="remove(idx)">Remove</button>
       </div>
@@ -155,7 +155,7 @@ export default {
   data: () => ({
     // you can set initial values for those array fields
     initialValues: {
-      links: [{ id: 1, url: 'https://github.com/logaretm' }],
+      links: ['https://github.com/logaretm'],
     },
   }),
   methods: {
@@ -183,8 +183,8 @@ _*Iterate over the `users` array:*_
 
 ```vue
 <Form>
-  <FieldArray name="users" key-path="id" v-slot="{ entries }">
-    <div v-for="(entry, idx) in entries" :key="entry.key">
+  <FieldArray name="users" v-slot="{ fields }">
+    <div v-for="(entry, idx) in fields" :key="entry.key">
       <Field :name="`users[${idx}].name`" />
     </div>
   </FieldArray>
@@ -195,9 +195,9 @@ _*Iterate over the `domains` inside `settings.dns` object:*_
 
 ```vue
 <Form>
-  <FieldArray name="settings.dns.domains" key-path="id" v-slot="{ entries }">
-    <div v-for="(entry, idx) in entries" :key="entry.key">
-      <Field :name="`settings.dns.domains[${idx}].domain`" />
+  <FieldArray name="settings.dns.domains" v-slot="{ fields }">
+    <div v-for="(entry, idx) in fields" :key="entry.key">
+      <Field :name="`settings.dns.domains[${idx}]`" />
     </div>
   </FieldArray>
 </Form>
@@ -207,11 +207,11 @@ _*Iterate over both `users` and `links`:*_
 
 ```vue
 <Form>
-  <FieldArray name="users" key-path="id" v-slot="{ entries: users }">
+  <FieldArray name="users" v-slot="{ fields: users }">
     <div v-for="(userEntry, userIdx) in users">
-      <FieldArray :name="`users[${userIdx}].links`" key-path="id" v-slot="{ entries: links }">
-        <div v-for="(entry, idx) in entries" :key="entry.key">
-          <Field :name="`users[${userIdx}].links[idx].url`" />
+      <FieldArray :name="`users[${userIdx}].links`" v-slot="{ fields: links }">
+        <div v-for="(entry, idx) in fields" :key="entry.key">
+          <Field :name="`users[${userIdx}].links[idx]`" />
         </div>
       </FieldArray>
     </div>
@@ -221,38 +221,23 @@ _*Iterate over both `users` and `links`:*_
 
 ### Iteration Keys
 
-You probably have noted in the previous examples we always generate a unique id for each array entry. This is a [Vue.js best practice](https://v3.vuejs.org/guide/list.html#maintaining-state) to make sure loops are efficient.
-
-The `key-path` prop is another required prop that vee-validate exposes its value on the `entries` items as the `key` property, this enables you to use the `key` property as the iteration key for your loops.
+The `FieldArrayEntry` item exposes a `key` property, this property is unique and is auto-generated for you so you can use it as an iteration key.
 
 ```vue
-<FieldArray name="users" key-path="id" v-slot="{ entries }">
-  <div v-for="(entry, idx) in entries" :key="entry.key">
+<FieldArray name="users" v-slot="{ fields }">
+  <div v-for="(entry, idx) in fields" :key="entry.key">
     <Field :name="`users[${idx}].name`" />
   </div>
 </FieldArray>
 ```
 
-That means while it is possible to have an array of strings or numbers, you will have a harder time getting unique ids for those fields, so it is recommended to create objects for your entries like these examples here.
-
-```ts
-// ❌ Don't
-// No each to tell two entries apart, indexes are not unique and mutable
-const links = ['link1', 'link2'];
-
-// ✅ Do
-// Each entry has a unique id that is not the index and is not mutable
-const links = [
-  { id: 1, value: 'link1' },
-  { id: 2, value: 'link2' },
-];
-```
+This auto-generated `key` property is very convenient as you no longer have to provide your own unique key for each item.
 
 ### Array Helpers
 
 The `<FieldArray />` slot provides the following properties and functions:
 
-- `entries`: a **read-only** version of your array field items, it includes some useful properties like `key`, `isFirst` and `isLast`, the actual item value is inside `.value` property. You should use it to iterate with `v-for`.
+- `fields`: a **read-only** version of your array field items, it includes some useful properties like `key`, `isFirst` and `isLast`, the actual item value is inside `.value` property. You should use it to iterate with `v-for`.
 - `push(item: any)`: adds an item to the end of the array.
 - `remove(idx: number)`: removes the item with the given index from the array.
 - `swap(idxA: number, idxB: number)`: Swaps two array elements by their indexes.
