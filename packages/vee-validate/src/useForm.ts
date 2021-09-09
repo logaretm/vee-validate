@@ -112,14 +112,14 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   const initialErrors = { ...(opts?.initialErrors || {}) };
 
   // initial form values
-  const { readonlyInitialValues, initialValues, setInitialValues } = useFormInitialValues<TValues>(
+  const { initialValues, originalInitialValues, setInitialValues } = useFormInitialValues<TValues>(
     fieldsByPath,
     formValues,
     opts?.initialValues
   );
 
   // form meta aggregations
-  const meta = useFormMeta(fieldsByPath, formValues, readonlyInitialValues, errors);
+  const meta = useFormMeta(fieldsByPath, formValues, initialValues, errors);
 
   const schema = opts?.validationSchema;
   const formCtx: PrivateFormContext<TValues> = {
@@ -220,6 +220,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     keysOf(fields).forEach(path => {
       setFieldValue(path, fields[path]);
     });
+
+    // regenerate the arrays when the form values change
+    Object.values(fieldArraysLookup).forEach(f => f && f.reset());
   }
 
   /**
@@ -249,12 +252,12 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       setInitialValues(state.values);
       setValues(state?.values);
     } else {
+      // clean up the initial values back to the original
+      setInitialValues(originalInitialValues.value);
       // otherwise clean the current values
-      setValues(initialValues.value);
+      setValues(originalInitialValues.value);
     }
 
-    // Reset all fields state
-    Object.values(fieldArraysLookup).forEach(f => f && f.reset());
     Object.values(fieldsByPath.value).forEach(f => f && f.resetField());
 
     if (state?.touched) {
@@ -674,14 +677,18 @@ function useFormInitialValues<TValues extends Record<string, any>>(
   formValues: TValues,
   providedValues?: MaybeRef<TValues>
 ) {
-  const initialValues = ref<TValues>((unref(providedValues) as TValues) || ({} as TValues));
-  // acts as a read only proxy of the initial values object
-  const computedInitials = computed<TValues>(() => {
-    return initialValues.value as TValues;
-  });
+  // these are the mutable initial values as the fields are mounted/unmounted
+  const initialValues = ref<TValues>(deepCopy(unref(providedValues) as TValues) || ({} as TValues));
+  // these are the original initial value as provided by the user initially, they don't keep track of conditional fields
+  // this is important because some conditional fields will overwrite the initial values for other fields who had the same name
+  // like array fields, any push/insert operation will overwrite the initial values because they "create new fields"
+  // so these are the values that the reset function should use
+  // these only change when the user explicitly chanegs the initial values or when the user resets them with new values.
+  const originalInitialValues = ref<TValues>(deepCopy(unref(providedValues) as TValues) || ({} as TValues));
 
   function setInitialValues(values: Partial<TValues>, updateFields = false) {
     initialValues.value = deepCopy(values);
+    originalInitialValues.value = deepCopy(values);
 
     if (!updateFields) {
       return;
@@ -698,7 +705,7 @@ function useFormInitialValues<TValues extends Record<string, any>>(
       }
 
       const newValue = getFromPath(initialValues.value, fieldPath as string);
-      setInPath(formValues, fieldPath as string, newValue);
+      setInPath(formValues, fieldPath as string, deepCopy(newValue));
     });
   }
 
@@ -715,8 +722,8 @@ function useFormInitialValues<TValues extends Record<string, any>>(
   }
 
   return {
-    readonlyInitialValues: computedInitials,
     initialValues,
+    originalInitialValues,
     setInitialValues,
   };
 }

@@ -42,10 +42,10 @@ export function useFieldArray<TValue = unknown>(opts: FieldArrayOptions): FieldA
   function initFields() {
     const currentValues = getFromPath<TValue[]>(form?.values, unref(opts.name), []);
     fields.value = currentValues.map(createEntry);
+    updateEntryFlags();
   }
 
   initFields();
-  updateEntryFlags();
 
   function updateEntryFlags() {
     const fieldsLength = fields.value.length;
