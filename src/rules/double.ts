@@ -9,8 +9,9 @@ const validate = (value: StringOrNumber | StringOrNumber[], params: Record<strin
     comma: ','
   };
 
-  const regexPart = +decimals === 0 ? '+' : `{${decimals}}`;
-  const regex = new RegExp(`^-?\\d+\\${separators[separator as Separator] || '.'}\\d${regexPart}$`);
+  const delimiterRegexPart = separator === 'comma' ? ',?' : '\\.?';
+  const decimalRegexPart = decimals === 0 ? '\\d*' : `(\\d{${decimals}})?`;
+  const regex = new RegExp(`^-?\\d+${delimiterRegexPart}${decimalRegexPart}$`);
 
   return Array.isArray(value) ? value.every(val => regex.test(String(val))) : regex.test(String(value));
 };
