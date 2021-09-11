@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.4.11](https://github.com/logaretm/vee-validate/compare/v4.4.10...v4.4.11) (2021-09-11)
+
+
+### Bug Fixes
+
+* dynamic rule forcing validation closes [#3485](https://github.com/logaretm/vee-validate/issues/3485) ([d3f0fc0](https://github.com/logaretm/vee-validate/commit/d3f0fc094c89375bd67bdd3f533e5ab545a83611))
+
+
+
+
+
 ## [4.4.10](https://github.com/logaretm/vee-validate/compare/v4.4.9...v4.4.10) (2021-08-31)
 
 
