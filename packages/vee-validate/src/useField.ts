@@ -237,7 +237,7 @@ export function useField<TValue = unknown>(
           return;
         }
 
-        return validateWithStateMutation();
+        meta.validated ? validateWithStateMutation() : validateValidStateOnly();
       },
       {
         deep: true,
@@ -293,7 +293,7 @@ export function useField<TValue = unknown>(
 
     const shouldValidate = !isEqual(deps, oldDeps);
     if (shouldValidate) {
-      meta.dirty ? validateWithStateMutation() : validateValidStateOnly();
+      meta.validated ? validateWithStateMutation() : validateValidStateOnly();
     }
   });
 

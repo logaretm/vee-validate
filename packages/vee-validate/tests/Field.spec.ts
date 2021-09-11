@@ -2,7 +2,7 @@ import flushPromises from 'flush-promises';
 import { defineRule, configure } from '@/vee-validate';
 import { mountWithHoc, setValue, dispatchEvent, setChecked } from './helpers';
 import * as yup from 'yup';
-import { reactive, ref, Ref } from 'vue';
+import { computed, reactive, ref, Ref } from 'vue';
 
 jest.useFakeTimers();
 
@@ -1061,5 +1061,39 @@ describe('<Field />', () => {
     form.value = {};
     await flushPromises();
     expect(input.value).toBe('');
+  });
+
+  // #3485
+  test('computed rules should not generate errors unless the field was validated before', async () => {
+    const isRequired = ref(false);
+    const rules = computed(() => (isRequired.value ? 'required' : ''));
+    mountWithHoc({
+      setup() {
+        return {
+          rules,
+        };
+      },
+      template: `
+        <Field name="field" :rules="rules" v-slot="{ errorMessage, field }">
+          <input v-bind="field" />
+          <span>{{ errorMessage }}</span>
+        </Field>
+      `,
+    });
+
+    await flushPromises();
+    const input = document.querySelector('input') as HTMLInputElement;
+    const error = document.querySelector('span') as HTMLInputElement;
+    isRequired.value = true;
+    await flushPromises();
+    expect(error.textContent).toBe('');
+    isRequired.value = false;
+    await flushPromises();
+    expect(error.textContent).toBe('');
+    setValue(input, '');
+    await flushPromises();
+    isRequired.value = true;
+    await flushPromises();
+    expect(error.textContent).toBe(REQUIRED_MESSAGE);
   });
 });
