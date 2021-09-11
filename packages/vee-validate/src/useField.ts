@@ -53,7 +53,7 @@ interface FieldOptions<TValue = unknown> {
   standalone?: boolean;
 }
 
-type RuleExpression<TValue> =
+export type RuleExpression<TValue> =
   | string
   | Record<string, unknown>
   | GenericValidateFunction

@@ -1,6 +1,6 @@
 import { h, defineComponent, toRef, SetupContext, resolveDynamicComponent, computed, watch, PropType } from 'vue';
 import { getConfig } from './config';
-import { useField } from './useField';
+import { RuleExpression, useField } from './useField';
 import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent, normalizeEventValue } from './utils';
 import { toNumber } from '../../shared';
 import { IS_ABSENT } from './symbols';
@@ -26,7 +26,7 @@ export const Field = defineComponent({
       required: true,
     },
     rules: {
-      type: [Object, String, Function],
+      type: [Object, String, Function] as PropType<RuleExpression<unknown>>,
       default: undefined,
     },
     validateOnMount: {
@@ -53,7 +53,6 @@ export const Field = defineComponent({
       type: Boolean,
       default: () => getConfig().bails,
     },
-
     label: {
       type: String,
       default: undefined,
