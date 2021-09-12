@@ -82,12 +82,22 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }, {} as FormErrors<TValues>);
   });
 
+  function getFirstFieldAtPath(path: string): PrivateFieldContext<unknown> | undefined {
+    const fieldOrGroup = fieldsByPath.value[path];
+
+    return Array.isArray(fieldOrGroup) ? fieldOrGroup[0] : fieldOrGroup;
+  }
+
+  function fieldExists(path: string) {
+    return !!fieldsByPath.value[path];
+  }
+
   /**
    * Holds a computed reference to all fields names and labels
    */
   const fieldNames = computed(() => {
     return keysOf(fieldsByPath.value).reduce((names, path) => {
-      const field = fieldsByPath.value[path];
+      const field = getFirstFieldAtPath(path as string);
       if (field) {
         names[path as string] = unref(field.label || field.name) || '';
       }
@@ -98,7 +108,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
   const fieldBailsMap = computed(() => {
     return keysOf(fieldsByPath.value).reduce((map, path) => {
-      const field = fieldsByPath.value[path];
+      const field = getFirstFieldAtPath(path as string);
       if (field) {
         map[path as string] = field.bails ?? true;
       }
@@ -152,6 +162,23 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     setFieldInitialValue,
   };
 
+  function isFieldGroup(
+    fieldOrGroup: PrivateFieldContext | PrivateFieldContext[]
+  ): fieldOrGroup is PrivateFieldContext[] {
+    return Array.isArray(fieldOrGroup);
+  }
+
+  function applyFieldMutation(
+    fieldOrGroup: PrivateFieldContext | PrivateFieldContext[],
+    mutation: (f: PrivateFieldContext) => unknown
+  ) {
+    if (Array.isArray(fieldOrGroup)) {
+      return fieldOrGroup.forEach(mutation);
+    }
+
+    return mutation(fieldOrGroup);
+  }
+
   /**
    * Manually sets an error message on a specific field
    */
@@ -183,7 +210,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
 
     // Multiple checkboxes, and only one of them got updated
-    if (fieldInstance.type === 'checkbox' && fieldInstance.instances > 1 && !Array.isArray(value)) {
+    if (isFieldGroup(fieldInstance) && fieldInstance[0]?.type === 'checkbox' && !Array.isArray(value)) {
       const newValue = deepCopy(
         resolveNextCheckboxValue(getFromPath(formValues, field as string) || [], value, undefined)
       );
@@ -194,7 +221,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
     let newValue = value;
     // Single Checkbox: toggles the field value unless the field is being reset then force it
-    if (fieldInstance.type === 'checkbox' && fieldInstance.instances === 1 && !force) {
+    if (!isFieldGroup(fieldInstance) && fieldInstance.type === 'checkbox' && !force) {
       newValue = deepCopy(
         resolveNextCheckboxValue<TValues[T]>(
           getFromPath<TValues[T]>(formValues, field as string) as TValues[T],
@@ -231,7 +258,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   function setFieldTouched(field: keyof TValues, isTouched: boolean) {
     const fieldInstance = fieldsByPath.value[field];
 
-    fieldInstance?.setTouched(isTouched);
+    if (fieldInstance) {
+      applyFieldMutation(fieldInstance, f => f.setTouched(isTouched));
+    }
   }
 
   /**
@@ -258,7 +287,13 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       setValues(originalInitialValues.value);
     }
 
-    Object.values(fieldsByPath.value).forEach(f => f && f.resetField());
+    Object.values(fieldsByPath.value).forEach(field => {
+      if (!field) {
+        return;
+      }
+
+      applyFieldMutation(field, f => f.resetField());
+    });
 
     if (state?.touched) {
       setTouched(state.touched);
@@ -271,20 +306,52 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   function insertFieldAtPath(field: PrivateFieldContext, path: string) {
     const rawField = markRaw(field);
     const fieldPath: keyof TValues = path;
-    fieldsByPath.value[fieldPath] = rawField;
+
+    // first field at that path
+    if (!fieldsByPath.value[fieldPath]) {
+      fieldsByPath.value[fieldPath] = rawField;
+      return;
+    }
+
+    const fieldAtPath = fieldsByPath.value[fieldPath];
+    if (fieldAtPath && !Array.isArray(fieldAtPath)) {
+      fieldsByPath.value[fieldPath] = [fieldAtPath];
+    }
+
+    // add the new array to that path
+    fieldsByPath.value[fieldPath] = [...(fieldsByPath.value[fieldPath] as PrivateFieldContext[]), rawField];
   }
 
   function removeFieldFromPath(field: PrivateFieldContext, path: string) {
     const fieldPath: keyof TValues = path;
     const fieldAtPath = fieldsByPath.value[fieldPath];
-
-    if (fieldExists(path) && field.id === fieldAtPath?.id) {
-      delete fieldsByPath.value[fieldPath];
+    if (!fieldAtPath) {
+      return;
     }
-  }
 
-  function fieldExists(path: string) {
-    return !!fieldsByPath.value[path];
+    // same field at path
+    if (!isFieldGroup(fieldAtPath) && field.id === fieldAtPath.id) {
+      delete fieldsByPath.value[fieldPath];
+      return;
+    }
+
+    if (isFieldGroup(fieldAtPath)) {
+      const idx = fieldAtPath.findIndex(f => f.id === field.id);
+      if (idx === -1) {
+        return;
+      }
+
+      fieldAtPath.splice(idx, 1);
+
+      if (fieldAtPath.length === 1) {
+        fieldsByPath.value[fieldPath] = fieldAtPath[0];
+        return;
+      }
+
+      if (!fieldAtPath.length) {
+        delete fieldsByPath.value[fieldPath];
+      }
+    }
   }
 
   function registerField(field: PrivateFieldContext) {
@@ -332,19 +399,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
   function unregisterField(field: PrivateFieldContext<unknown>) {
     const fieldName = unref(field.name);
-    const fieldAtPath = fieldsByPath.value[fieldName];
-
-    // some other field was written over it, skip registration
-    if (fieldAtPath && fieldAtPath.id !== field.id) {
-      return;
-    }
-
-    field.instances--;
-    // remove the field only if it has 0 instances left
-    // this is because checkboxes and radio may have multiple instances
-    if (field.instances <= 0) {
-      removeFieldFromPath(field, fieldName);
-    }
+    removeFieldFromPath(field, fieldName);
 
     nextTick(() => {
       // clears a field error on unmounted
@@ -365,13 +420,14 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     // No schema, each field is responsible to validate itself
     const validations = await Promise.all(
       Object.values(fieldsByPath.value).map(field => {
-        if (!field) {
+        const fieldInstance: PrivateFieldContext | undefined = Array.isArray(field) ? field[0] : field;
+        if (!fieldInstance) {
           return Promise.resolve({ key: '', valid: true, errors: [] });
         }
 
-        return field.validate(opts).then((result: ValidationResult) => {
+        return fieldInstance.validate(opts).then((result: ValidationResult) => {
           return {
-            key: unref(field.name),
+            key: unref(fieldInstance.name),
             valid: result.valid,
             errors: result.errors,
           };
@@ -535,7 +591,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
         }
 
         // always update the valid flag regardless of the mode
-        field.meta.valid = fieldResult.valid;
+        applyFieldMutation(field, f => (f.meta.valid = fieldResult.valid));
         if (mode === 'silent') {
           return validation;
         }
@@ -545,7 +601,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
           return validation;
         }
 
-        field.setState({ errors: fieldResult.errors });
+        applyFieldMutation(field, f => f.setState({ errors: fieldResult.errors }));
 
         return validation;
       },
@@ -649,7 +705,7 @@ function useFormMeta<TValues extends Record<string, unknown>>(
   });
 
   const flags = computed(() => {
-    const fields = Object.values(fieldsByPath.value).filter(Boolean) as PrivateFieldContext[];
+    const fields = Object.values(fieldsByPath.value).flat(1).filter(Boolean) as PrivateFieldContext[];
 
     return keysOf(MERGE_STRATEGIES).reduce((acc, flag) => {
       const mergeMethod = MERGE_STRATEGIES[flag];
@@ -700,7 +756,8 @@ function useFormInitialValues<TValues extends Record<string, any>>(
     // if the user API is taking too much time before user interaction they should consider disabling or hiding their inputs until the values are ready
     keysOf(fields.value).forEach(fieldPath => {
       const field = fields.value[fieldPath];
-      if (!field || field.meta.touched) {
+      const wasTouched = Array.isArray(field) ? field.some(f => f.meta.touched) : field?.meta.touched;
+      if (!field || wasTouched) {
         return;
       }
 

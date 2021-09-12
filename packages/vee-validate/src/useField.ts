@@ -240,7 +240,6 @@ function _useField<TValue = unknown>(
     checkedValue,
     uncheckedValue,
     bails,
-    instances: 1,
     resetField,
     handleReset: () => resetField(),
     validate,
@@ -389,8 +388,10 @@ function useCheckboxField<TValue = unknown>(
   const checkedValue = opts?.checkedValue;
   const uncheckedValue = opts?.uncheckedValue;
 
-  function patchCheckboxApi(field: FieldContext<TValue> & { originalHandleChange?: FieldContext['handleChange'] }) {
-    const handleChange = field.originalHandleChange || field.handleChange;
+  function patchCheckboxApi(
+    field: FieldContext<TValue> & { originalHandleChange?: FieldContext['handleChange'] }
+  ): FieldContext<TValue> {
+    const handleChange = field.handleChange;
 
     const checked = computed(() => {
       const currentValue = unref(field.value);
@@ -425,22 +426,9 @@ function useCheckboxField<TValue = unknown>(
       checked,
       checkedValue,
       uncheckedValue,
-      originalHandleChange: handleChange,
       handleChange: handleCheckboxChange,
     };
   }
 
-  if (!form) {
-    return patchCheckboxApi(_useField<TValue>(name, rules, opts));
-  }
-
-  // try to see if the field exists before
-  const field = form.fieldsByPath.value[unref(name)] as PrivateFieldContext<TValue> | undefined;
-  if (!field) {
-    return patchCheckboxApi(_useField<TValue>(name, rules, opts));
-  }
-
-  field.instances++;
-
-  return patchCheckboxApi(field);
+  return patchCheckboxApi(_useField<TValue>(name, rules, opts));
 }

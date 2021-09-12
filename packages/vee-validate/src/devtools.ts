@@ -200,11 +200,12 @@ function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorN
 
   const formTreeNodes = {};
   Object.values(form.fieldsByPath.value).forEach(field => {
-    if (!field) {
+    const fieldInstance: PrivateFieldContext | undefined = Array.isArray(field) ? field[0] : field;
+    if (!fieldInstance) {
       return;
     }
 
-    setInPath(formTreeNodes, unref(field.name), mapFieldForDevtoolsInspector(field, form));
+    setInPath(formTreeNodes, unref(fieldInstance.name), mapFieldForDevtoolsInspector(fieldInstance, form));
   });
 
   function buildFormTree(tree: any[] | Record<string, any>, path: string[] = []): CustomInspectorNode {
