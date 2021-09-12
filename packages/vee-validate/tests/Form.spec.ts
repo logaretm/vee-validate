@@ -711,15 +711,14 @@ describe('<Form />', () => {
   });
 
   // broken as of 3.0.0-rc.12 for some reason
-  // FIXME: try to resolve values reactivity issues when removing attributes
-  test.skip('unmounted fields gets unregistered and their values cleaned up', async () => {
+  test('unmounted fields gets unregistered and their values cleaned up', async () => {
     const showFields = ref(true);
     const wrapper = mountWithHoc({
       setup() {
-        const schema = {
-          field: 'required',
+        const schema = computed(() => ({
+          field: showFields.value ? 'required' : '',
           drink: 'required',
-        };
+        }));
 
         return {
           schema,
@@ -727,7 +726,7 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm @submit="submit" as="form" :validationSchema="schema" v-slot="{ errors, values }">
+      <VForm as="form" :validationSchema="schema" v-slot="{ errors, values }">
         <template v-if="showFields">
           <Field name="field" as="input" />
           <Field name="nested.field" />
