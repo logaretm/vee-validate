@@ -180,7 +180,7 @@ To set up a repeatable field, you can use `useFieldArray` to help you manage the
       <button type="button" @click="remove(idx)">Remove</button>
     </div>
 
-    <button type="button" @click="push({ id: Date.now(), url: '' })">Add</button>
+    <button type="button" @click="push('')">Add</button>
 
     <button>Submit</button>
   </form>
@@ -200,10 +200,7 @@ export default {
       },
     });
 
-    const { remove, push, fields } = useFieldArray({
-      // This can be a reactive ref
-      name: 'links',
-    });
+    const { remove, push, fields } = useFieldArray('links');
 
     const onSubmit = handleSubmit(values => {
       console.log(JSON.stringify(values, null, 2));
@@ -229,17 +226,13 @@ Here are a few examples:
 _*Iterate over the `users` array:*_
 
 ```js
-const { remove, push, fields } = useFieldArray({
-  name: 'users',
-});
+const { remove, push, fields } = useFieldArray('users');
 ```
 
 _*Iterate over the `domains` inside `settings.dns` object:*_
 
 ```js
-const { remove, push, fields } = useFieldArray({
-  name: 'settings.dns.domains',
-});
+const { remove, push, fields } = useFieldArray('settings.dns.domains');
 ```
 
 ### Iteration Keys
@@ -269,9 +262,7 @@ export default {
       },
     });
 
-    const { fields } = useFieldArray({
-      name: 'links',
-    });
+    const { fields } = useFieldArray('links');
 
     return {
       fields,
