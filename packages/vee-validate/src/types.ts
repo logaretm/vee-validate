@@ -49,7 +49,7 @@ export interface ValidationOptions {
 }
 
 export interface FieldEntry<TValue = unknown> {
-  value: Ref<TValue>;
+  value: TValue;
   key: string | number;
   isFirst: boolean;
   isLast: boolean;
@@ -58,6 +58,8 @@ export interface FieldEntry<TValue = unknown> {
 export interface FieldArrayContext<TValue = unknown> {
   fields: DeepReadonly<Ref<FieldEntry<TValue>[]>>;
   remove(idx: number): void;
+  replace(newArray: TValue[]): void;
+  update(idx: number, value: TValue): void;
   push(value: TValue): void;
   swap(indexA: number, indexB: number): void;
   insert(idx: number, value: TValue): void;

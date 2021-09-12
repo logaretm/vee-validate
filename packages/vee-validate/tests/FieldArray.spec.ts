@@ -385,3 +385,97 @@ test('can insert new items at specific index', async () => {
   expect(getValue(inputAt(2))).toBe('second');
   expect(getValue(inputAt(3))).toBe('third');
 });
+
+test('can replace all the items in the field array', async () => {
+  mountWithHoc({
+    setup() {
+      const initial = {
+        users: [
+          {
+            name: 'first',
+          },
+          {
+            name: 'second',
+          },
+          {
+            name: 'third',
+          },
+        ],
+      };
+
+      return {
+        initial,
+      };
+    },
+    template: `
+    <VForm :initial-values="initial">
+      <FieldArray name="users" v-slot="{ fields, replace }">
+          <div v-for="(field, idx) in fields" :key="field.key">
+            <Field :name="'users[' + idx + '].name'" />
+          </div>
+          <button class="replace" type="button" @click="replace([{ name: 'replaced' }])">Replace</button>
+      </FieldArray>
+    </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const inputAt = (idx: number) => (document.querySelectorAll('input') || [])[idx] as HTMLInputElement;
+  const replaceButton = () => document.querySelector('.replace') as HTMLButtonElement;
+
+  expect(getValue(inputAt(0))).toBe('first');
+  expect(getValue(inputAt(1))).toBe('second');
+  expect(getValue(inputAt(2))).toBe('third');
+
+  replaceButton().click();
+  await flushPromises();
+
+  expect(getValue(inputAt(0))).toBe('replaced');
+  expect(getValue(inputAt(1))).toBe(undefined);
+  expect(getValue(inputAt(2))).toBe(undefined);
+});
+
+test('can update an item value at a given array index', async () => {
+  mountWithHoc({
+    setup() {
+      const initial = {
+        users: [
+          {
+            name: 'first',
+          },
+          {
+            name: 'second',
+          },
+          {
+            name: 'third',
+          },
+        ],
+      };
+
+      return {
+        initial,
+      };
+    },
+    template: `
+    <VForm :initial-values="initial">
+      <FieldArray name="users" v-slot="{ fields, update }">
+          <div v-for="(field, idx) in fields" :key="field.key">
+            <Field :name="'users[' + idx + '].name'" />
+          </div>
+          <button class="update" type="button" @click="update(1, { name: 'updated' })">Update</button>
+      </FieldArray>
+    </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const inputAt = (idx: number) => (document.querySelectorAll('input') || [])[idx] as HTMLInputElement;
+  const updateButton = () => document.querySelector('.update') as HTMLButtonElement;
+
+  expect(getValue(inputAt(1))).toBe('second');
+
+  updateButton().click();
+  await flushPromises();
+
+  expect(getValue(inputAt(1))).toBe('updated');
+});

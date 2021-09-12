@@ -53,9 +53,9 @@ export default {
 
 ### Props
 
-| Prop   | Type     | Required/Default | Description                           |
-| :----- | :------- | :--------------- | :------------------------------------ |
-| `name` | `string` | Yes              | The array path you wish to iterate on |
+| Prop        | Type     | Required/Default | Description                            |
+| :---------- | :------- | :--------------- | :------------------------------------- |
+| `arrayPath` | `string` | Yes              | The form array path you wish to manage |
 
 ### Slots
 
@@ -115,3 +115,19 @@ Swaps the items at the given indexes with each other. Both indexes must exist in
 </code-title>
 
 Adds an item at the specified index. If the specified index will place the item out of bounds (i.e: larger than length) the operation will be ignored.
+
+<code-title level="4">
+
+`update(idx: number, value: any)`
+
+</code-title>
+
+Updates the value at the specified index, note that it doesn't merge the values if they are objects. If the specified index is outside the array boundary the operation will be ignored.
+
+<code-title level="4">
+
+`replace(items: any[])`
+
+</code-title>
+
+Replaces the entire array of fields.

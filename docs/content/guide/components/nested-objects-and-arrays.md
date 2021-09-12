@@ -242,6 +242,8 @@ The `<FieldArray />` slot provides the following properties and functions:
 - `remove(idx: number)`: removes the item with the given index from the array.
 - `swap(idxA: number, idxB: number)`: Swaps two array elements by their indexes.
 - `insert(idx: number, item: any)`: Inserts an array item at the specified index.
+- `update(idx: number, value: any)`: Updates an array item value at the specified index.
+- `replace(items: any[])`: Replaces the entire array values with the given items.
 
 [Read the API reference](/api/field-array) for more information.
 

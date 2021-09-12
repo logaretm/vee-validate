@@ -1,4 +1,4 @@
-import { defineComponent, toRefs } from 'vue';
+import { defineComponent, toRef } from 'vue';
 import { useFieldArray } from './useFieldArray';
 import { normalizeChildren } from './utils';
 
@@ -12,7 +12,7 @@ export const FieldArray = defineComponent({
     },
   },
   setup(props, ctx) {
-    const { push, remove, swap, insert, fields } = useFieldArray(toRefs(props));
+    const { push, remove, swap, insert, replace, update, fields } = useFieldArray(toRef(props, 'name'));
 
     function slotProps() {
       return {
@@ -21,6 +21,8 @@ export const FieldArray = defineComponent({
         remove,
         swap,
         insert,
+        update,
+        replace,
       };
     }
 
@@ -29,6 +31,8 @@ export const FieldArray = defineComponent({
       remove,
       swap,
       insert,
+      update,
+      replace,
     });
 
     return () => {

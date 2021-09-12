@@ -4,12 +4,8 @@ import { FormContextKey } from './symbols';
 import { FieldArrayContext, FieldEntry, MaybeRef } from './types';
 import { getFromPath, injectWithSelf, warn } from './utils';
 
-interface FieldArrayOptions {
-  name: MaybeRef<string>;
-}
-
 let FIELD_ARRAY_COUNTER = 0;
-export function useFieldArray<TValue = unknown>(opts: FieldArrayOptions): FieldArrayContext<TValue> {
+export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): FieldArrayContext<TValue> {
   const id = FIELD_ARRAY_COUNTER++;
   const form = injectWithSelf(FormContextKey, undefined);
   const fields: Ref<FieldEntry<TValue>[]> = ref([]);
@@ -22,6 +18,8 @@ export function useFieldArray<TValue = unknown>(opts: FieldArrayOptions): FieldA
     push: noOp,
     swap: noOp,
     insert: noOp,
+    update: noOp,
+    replace: noOp,
   };
 
   if (!form) {
@@ -32,7 +30,7 @@ export function useFieldArray<TValue = unknown>(opts: FieldArrayOptions): FieldA
     return noOpApi;
   }
 
-  if (!unref(opts.name)) {
+  if (!unref(arrayPath)) {
     warn('FieldArray requires a field path to be provided, did you forget to pass the `name` prop?');
 
     return noOpApi;
@@ -40,7 +38,7 @@ export function useFieldArray<TValue = unknown>(opts: FieldArrayOptions): FieldA
 
   let entryCounter = 0;
   function initFields() {
-    const currentValues = getFromPath<TValue[]>(form?.values, unref(opts.name), []);
+    const currentValues = getFromPath<TValue[]>(form?.values, unref(arrayPath), []);
     fields.value = currentValues.map(createEntry);
     updateEntryFlags();
   }
@@ -59,14 +57,14 @@ export function useFieldArray<TValue = unknown>(opts: FieldArrayOptions): FieldA
   function createEntry(value: TValue): FieldEntry<TValue> {
     const key = entryCounter++;
 
-    const entry = {
+    const entry: FieldEntry<TValue> = {
       key,
       value: computed<TValue>(() => {
-        const currentValues = getFromPath<TValue[]>(form?.values, unref(opts.name), []);
+        const currentValues = getFromPath<TValue[]>(form?.values, unref(arrayPath), []);
         const idx = fields.value.findIndex(e => e.key === key);
 
         return idx === -1 ? value : currentValues[idx];
-      }),
+      }) as any, // will be auto unwrapped
       isFirst: false,
       isLast: false,
     };
@@ -75,7 +73,7 @@ export function useFieldArray<TValue = unknown>(opts: FieldArrayOptions): FieldA
   }
 
   function remove(idx: number) {
-    const pathName = unref(opts.name);
+    const pathName = unref(arrayPath);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
     if (!pathValue || !Array.isArray(pathValue)) {
       return;
@@ -90,7 +88,7 @@ export function useFieldArray<TValue = unknown>(opts: FieldArrayOptions): FieldA
   }
 
   function push(value: TValue) {
-    const pathName = unref(opts.name);
+    const pathName = unref(arrayPath);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
     const normalizedPathValue = isNullOrUndefined(pathValue) ? [] : pathValue;
     if (!Array.isArray(normalizedPathValue)) {
@@ -106,7 +104,7 @@ export function useFieldArray<TValue = unknown>(opts: FieldArrayOptions): FieldA
   }
 
   function swap(indexA: number, indexB: number) {
-    const pathName = unref(opts.name);
+    const pathName = unref(arrayPath);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
     if (!Array.isArray(pathValue) || !pathValue[indexA] || !pathValue[indexB]) {
       return;
@@ -130,7 +128,7 @@ export function useFieldArray<TValue = unknown>(opts: FieldArrayOptions): FieldA
   }
 
   function insert(idx: number, value: TValue) {
-    const pathName = unref(opts.name);
+    const pathName = unref(arrayPath);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
     if (!Array.isArray(pathValue) || pathValue.length - 1 < idx) {
       return;
@@ -144,6 +142,21 @@ export function useFieldArray<TValue = unknown>(opts: FieldArrayOptions): FieldA
     form?.setFieldValue(pathName, newValue);
     fields.value = newFields;
     updateEntryFlags();
+  }
+
+  function replace(arr: TValue[]) {
+    const pathName = unref(arrayPath);
+    form?.setFieldValue(pathName, arr);
+    initFields();
+  }
+
+  function update(idx: number, value: TValue) {
+    const pathName = unref(arrayPath);
+    const pathValue = getFromPath<TValue[]>(form?.values, pathName);
+    if (!Array.isArray(pathValue) || pathValue.length - 1 < idx) {
+      return;
+    }
+    form?.setFieldValue(`${pathName}[${idx}]`, value);
   }
 
   form.fieldArraysLookup[id] = {
@@ -160,5 +173,7 @@ export function useFieldArray<TValue = unknown>(opts: FieldArrayOptions): FieldA
     push,
     swap,
     insert,
+    update,
+    replace,
   };
 }
