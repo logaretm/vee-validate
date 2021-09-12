@@ -130,7 +130,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
   function insert(idx: number, value: TValue) {
     const pathName = unref(arrayPath);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
-    if (!Array.isArray(pathValue) || pathValue.length - 1 < idx) {
+    if (!Array.isArray(pathValue) || pathValue.length < idx) {
       return;
     }
 

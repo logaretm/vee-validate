@@ -157,7 +157,7 @@ swap(3, 4);
 
 </code-title>
 
-Adds an item at the specified index. If the specified index will place the item out of bounds (i.e: larger than length) the operation will be ignored.
+Adds an item at the specified index. If the specified index will place the item out of bounds (i.e: larger than length) the operation will be ignored, you still can add items as the last item of the array.
 
 ```js
 const { insert, fields } = useFieldArray('links');
