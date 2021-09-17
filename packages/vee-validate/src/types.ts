@@ -11,14 +11,6 @@ export type YupValidator = AnySchema | AnyObjectSchema;
 
 export type Locator = { __locatorRef: string } & ((values: Record<string, unknown>) => unknown);
 
-// Extracts explicit keys of an interface without index signature
-// https://stackoverflow.com/questions/51465182/typescript-remove-index-signature-using-mapped-types
-export type KnownKeys<T> = {
-  [K in keyof T]: string extends K ? never : number extends K ? never : K;
-} extends { [_ in keyof T]: infer U }
-  ? U
-  : never;
-
 export type MaybeRef<T> = Ref<T> | T;
 
 export interface FieldMeta<TValue> {
