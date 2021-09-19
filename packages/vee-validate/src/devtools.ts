@@ -30,7 +30,7 @@ function installDevtoolsPlugin(app: App) {
 const DEVTOOLS_FORMS: Record<string, PrivateFormContext & { _vm?: ComponentInstance | null }> = {};
 const DEVTOOLS_FIELDS: Record<string, PrivateFieldContext & { _vm?: ComponentInstance | null }> = {};
 
-let API: DevtoolsPluginApi | undefined;
+let API: DevtoolsPluginApi<Record<string, any>> | undefined;
 
 export const refreshInspector = throttle(() => {
   setTimeout(async () => {
@@ -98,7 +98,7 @@ const COLORS = {
 
 let SELECTED_NODE: ((PrivateFormContext | PrivateFieldContext) & { _vm?: ComponentInstance | null }) | null = null;
 
-function setupApiHooks(api: DevtoolsPluginApi) {
+function setupApiHooks(api: DevtoolsPluginApi<Record<string, any>>) {
   API = api;
   // let highlightTimeout: number | null = null;
   function highlightSelected() {
