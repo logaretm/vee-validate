@@ -94,6 +94,14 @@ Adds an item to the end of the array.
 
 <code-title level="4">
 
+`prepend(item: any)`
+
+</code-title>
+
+Adds an item to the start of the array.
+
+<code-title level="4">
+
 `remove(idx: number)`
 
 </code-title>

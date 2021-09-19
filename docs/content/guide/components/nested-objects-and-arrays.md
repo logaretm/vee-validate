@@ -239,11 +239,12 @@ The `<FieldArray />` slot provides the following properties and functions:
 
 - `fields`: a **read-only** version of your array field items, it includes some useful properties like `key`, `isFirst` and `isLast`, the actual item value is inside `.value` property. You should use it to iterate with `v-for`.
 - `push(item: any)`: adds an item to the end of the array.
+- `insert(idx: number, item: any)`: Inserts an array item at the specified index.
+- `prepend(item: any)`: adds an item to the start of the array.
 - `remove(idx: number)`: removes the item with the given index from the array.
 - `swap(idxA: number, idxB: number)`: Swaps two array elements by their indexes.
-- `insert(idx: number, item: any)`: Inserts an array item at the specified index.
-- `update(idx: number, value: any)`: Updates an array item value at the specified index.
 - `replace(items: any[])`: Replaces the entire array values with the given items.
+- `update(idx: number, value: any)`: Updates an array item value at the specified index.
 
 [Read the API reference](/api/field-array) for more information.
 
