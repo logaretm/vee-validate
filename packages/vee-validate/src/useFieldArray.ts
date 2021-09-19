@@ -12,7 +12,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const noOp = () => {};
-  const noOpApi = {
+  const noOpApi: FieldArrayContext<TValue> = {
     fields: readonly(fields),
     remove: noOp,
     push: noOp,
@@ -20,6 +20,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     insert: noOp,
     update: noOp,
     replace: noOp,
+    prepend: noOp,
   };
 
   if (!form) {
@@ -159,6 +160,21 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     form?.setFieldValue(`${pathName}[${idx}]`, value);
   }
 
+  function prepend(value: TValue) {
+    const pathName = unref(arrayPath);
+    const pathValue = getFromPath<TValue[]>(form?.values, pathName);
+    const normalizedPathValue = isNullOrUndefined(pathValue) ? [] : pathValue;
+    if (!Array.isArray(normalizedPathValue)) {
+      return;
+    }
+
+    const newValue = [value, ...normalizedPathValue];
+    form?.stageInitialValue(pathName + `[${newValue.length - 1}]`, value);
+    form?.setFieldValue(pathName, newValue);
+    fields.value.unshift(createEntry(value));
+    updateEntryFlags();
+  }
+
   form.fieldArraysLookup[id] = {
     reset: initFields,
   };
@@ -175,5 +191,6 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     insert,
     update,
     replace,
+    prepend,
   };
 }

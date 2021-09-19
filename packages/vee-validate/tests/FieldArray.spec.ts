@@ -33,17 +33,12 @@ test('warns if no name path is provided', async () => {
   spy.mockRestore();
 });
 
-// #3325
-test('un-sets old path value when array fields are removed', async () => {
+test('adds items to the end of the array with push()', async () => {
   const onSubmit = jest.fn();
   mountWithHoc({
     setup() {
       const initialValues = {
-        users: [
-          { id: 1, name: '111' },
-          { id: 2, name: '222' },
-          { id: 3, name: '333' },
-        ],
+        users: [{ name: '111' }, { name: '222' }, { name: '333' }],
       };
 
       return {
@@ -63,7 +58,7 @@ test('un-sets old path value when array fields are removed', async () => {
             <button class="remove" type="button" @click="remove(idx)">X</button>
           </fieldset>  
 
-          <button class="add" type="button" @click="push({ id: 4, name: 'new' })">Add User +</button>
+          <button class="add" type="button" @click="push({ name: 'new' })">Add User +</button>
         </FieldArray>
 
         <button class="submit" type="submit">Submit</button>
@@ -85,10 +80,7 @@ test('un-sets old path value when array fields are removed', async () => {
   await flushPromises();
   expect(onSubmit).toHaveBeenLastCalledWith(
     expect.objectContaining({
-      users: [
-        { id: 1, name: '111' },
-        { id: 3, name: '333' },
-      ],
+      users: [{ name: '111' }, { name: '333' }],
     }),
     expect.anything()
   );
@@ -99,17 +91,12 @@ test('un-sets old path value when array fields are removed', async () => {
   await flushPromises();
   expect(onSubmit).toHaveBeenLastCalledWith(
     expect.objectContaining({
-      users: [
-        { id: 1, name: '111' },
-        { id: 3, name: '333' },
-        { id: 4, name: 'new' },
-      ],
+      users: [{ name: '111' }, { name: '333' }, { name: 'new' }],
     }),
     expect.anything()
   );
 });
 
-// #3325 but with initial values
 test('array fields should update their values when swapped', async () => {
   mountWithHoc({
     setup() {
@@ -140,7 +127,7 @@ test('array fields should update their values when swapped', async () => {
             <button :class="\`remove_\${idx}\`" type="button" @click="remove(idx)">X</button>
           </fieldset>
 
-          <button class="add" type="button" @click="push({ id: Date.now(), name: '' })">Add User +</button>
+          <button class="add" type="button" @click="push({ name: '' })">Add User +</button>
         </FieldArray>
 
         <button type="submit">Submit</button>
@@ -292,7 +279,7 @@ test('fields have isFirst and isLast flags to help with conditions', async () =>
 
             <Field :name="'users[' + idx + '].name'" />
           </div>
-          <button class="add" type="button" @click="push({ id: Date.now(), name: '' })">Add User +</button>
+          <button class="add" type="button" @click="push({ name: '' })">Add User +</button>
       </FieldArray>
 
     </VForm>
@@ -478,4 +465,58 @@ test('can update an item value at a given array index', async () => {
   await flushPromises();
 
   expect(getValue(inputAt(1))).toBe('updated');
+});
+
+test('adds items to the start of the array with prepend()', async () => {
+  const onSubmit = jest.fn();
+  mountWithHoc({
+    setup() {
+      const initialValues = {
+        users: [{ name: '111' }, { name: '222' }],
+      };
+
+      return {
+        onSubmit,
+        initialValues,
+      };
+    },
+    template: `
+      <VForm @submit="onSubmit" :initial-values="initialValues">
+        <FieldArray name="users" v-slot="{ remove, prepend, fields }">
+          <fieldset v-for="(field, idx) in fields" :key="field.key">
+            <legend>User #{{ idx }}</legend>
+            <label :for="'name_' + idx">Name</label>
+            <Field :id="'name_' + idx" :name="'users[' + idx + '].name'" />
+            <ErrorMessage :name="'users[' + idx + '].name'" />
+
+            <button class="remove" type="button" @click="remove(idx)">X</button>
+          </fieldset>  
+
+          <button class="prepend" type="button" @click="prepend({ name: 'new' })">Add User +</button>
+        </FieldArray>
+
+        <button class="submit" type="submit">Submit</button>
+      </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const submitBtn = document.querySelector('.submit') as HTMLButtonElement;
+  const inputAt = (idx: number) => (document.querySelectorAll('input') || [])[idx] as HTMLInputElement;
+
+  expect(getValue(inputAt(0))).toBe('111');
+  expect(getValue(inputAt(1))).toBe('222');
+  dispatchEvent('.prepend', 'click');
+  await flushPromises();
+  expect(getValue(inputAt(0))).toBe('new');
+  expect(getValue(inputAt(1))).toBe('111');
+  expect(getValue(inputAt(2))).toBe('222');
+  (submitBtn as HTMLButtonElement).click();
+  await flushPromises();
+  expect(onSubmit).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      users: [{ name: 'new' }, { name: '111' }, { name: '222' }],
+    }),
+    expect.anything()
+  );
 });

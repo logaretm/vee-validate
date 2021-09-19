@@ -63,6 +63,7 @@ export interface FieldArrayContext<TValue = unknown> {
   push(value: TValue): void;
   swap(indexA: number, indexB: number): void;
   insert(idx: number, value: TValue): void;
+  prepend(value: TValue): void;
 }
 
 export interface PrivateFieldArrayContext {

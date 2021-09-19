@@ -12,7 +12,7 @@ export const FieldArray = defineComponent({
     },
   },
   setup(props, ctx) {
-    const { push, remove, swap, insert, replace, update, fields } = useFieldArray(toRef(props, 'name'));
+    const { push, remove, swap, insert, replace, update, prepend, fields } = useFieldArray(toRef(props, 'name'));
 
     function slotProps() {
       return {
@@ -23,6 +23,7 @@ export const FieldArray = defineComponent({
         insert,
         update,
         replace,
+        prepend,
       };
     }
 
@@ -33,6 +34,7 @@ export const FieldArray = defineComponent({
       insert,
       update,
       replace,
+      prepend,
     });
 
     return () => {
