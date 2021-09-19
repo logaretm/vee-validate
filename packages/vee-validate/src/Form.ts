@@ -1,6 +1,6 @@
 import { h, defineComponent, toRef, resolveDynamicComponent, PropType } from 'vue';
 import { useForm } from './useForm';
-import { SubmissionHandler } from './types';
+import { SubmissionHandler, InvalidSubmissionHandler } from './types';
 import { isEvent, normalizeChildren } from './utils';
 
 export const Form = defineComponent({
@@ -35,6 +35,10 @@ export const Form = defineComponent({
       type: Function as PropType<SubmissionHandler>,
       default: undefined,
     },
+    onInvalidSubmit: {
+      type: Function as PropType<InvalidSubmissionHandler>,
+      default: undefined,
+    },
   },
   setup(props, ctx) {
     const initialValues = toRef(props, 'initialValues');
@@ -66,7 +70,7 @@ export const Form = defineComponent({
       validateOnMount: props.validateOnMount,
     });
 
-    const onSubmit = props.onSubmit ? handleSubmit(props.onSubmit) : submitForm;
+    const onSubmit = props.onSubmit ? handleSubmit(props.onSubmit, props.onInvalidSubmit) : submitForm;
     function handleFormReset(e?: Event) {
       if (isEvent(e)) {
         // Prevent default form reset behavior

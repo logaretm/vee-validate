@@ -1,6 +1,8 @@
-import { ComputedRef, DeepReadonly, Ref, WritableComputedRef } from 'vue';
+import { ComputedRef, DeepReadonly, Ref } from 'vue';
 import { SchemaOf, AnySchema, AnyObjectSchema } from 'yup';
 import { FieldValidationMetaInfo } from '../../shared';
+
+export type GenericFormValues = Record<string, unknown>;
 
 export interface ValidationResult {
   errors: string[];
@@ -9,7 +11,7 @@ export interface ValidationResult {
 
 export type YupValidator = AnySchema | AnyObjectSchema;
 
-export type Locator = { __locatorRef: string } & ((values: Record<string, unknown>) => unknown);
+export type Locator = { __locatorRef: string } & ((values: GenericFormValues) => unknown);
 
 export type MaybeRef<T> = Ref<T> | T;
 
@@ -108,13 +110,13 @@ export interface FormState<TValues> {
   submitCount: number;
 }
 
-export type FormErrors<TValues extends Record<string, unknown>> = Partial<Record<keyof TValues, string | undefined>>;
-export type FormErrorBag<TValues extends Record<string, unknown>> = Partial<Record<keyof TValues, string[]>>;
+export type FormErrors<TValues extends GenericFormValues> = Partial<Record<keyof TValues, string | undefined>>;
+export type FormErrorBag<TValues extends GenericFormValues> = Partial<Record<keyof TValues, string[]>>;
 
 export interface SetFieldValueOptions {
   force: boolean;
 }
-export interface FormActions<TValues extends Record<string, unknown>> {
+export interface FormActions<TValues extends GenericFormValues> {
   setFieldValue<T extends keyof TValues>(field: T, value: TValues[T], opts?: Partial<SetFieldValueOptions>): void;
   setFieldError: (field: keyof TValues, message: string | string[] | undefined) => void;
   setErrors: (fields: FormErrors<TValues>) => void;
@@ -130,15 +132,25 @@ export interface FormValidationResult<TValues> {
   errors: Partial<Record<keyof TValues, string>>;
 }
 
-export interface SubmissionContext<TValues extends Record<string, unknown> = Record<string, unknown>>
-  extends FormActions<TValues> {
+export interface SubmissionContext<TValues extends GenericFormValues = GenericFormValues> extends FormActions<TValues> {
   evt?: Event;
 }
 
-export type SubmissionHandler<TValues extends Record<string, unknown> = Record<string, unknown>, TReturn = unknown> = (
+export type SubmissionHandler<TValues extends GenericFormValues = GenericFormValues, TReturn = unknown> = (
   values: TValues,
   ctx: SubmissionContext<TValues>
 ) => TReturn;
+
+export interface InvalidSubmissionContext<TValues extends GenericFormValues = GenericFormValues> {
+  values: TValues;
+  evt?: Event;
+  errors: Partial<Record<keyof TValues, string>>;
+  results: Partial<Record<keyof TValues, ValidationResult>>;
+}
+
+export type InvalidSubmissionHandler<TValues extends GenericFormValues = GenericFormValues> = (
+  ctx: InvalidSubmissionContext<TValues>
+) => void;
 
 export type RawFormSchema<TValues> = Record<keyof TValues, string | GenericValidateFunction | Record<string, any>>;
 
@@ -166,7 +178,10 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
   unsetInitialValue(path: string): void;
   register(field: PrivateFieldContext): void;
   unregister(field: PrivateFieldContext): void;
-  handleSubmit<TReturn = unknown>(cb: SubmissionHandler<TValues, TReturn>): (e?: Event) => Promise<TReturn | undefined>;
+  handleSubmit<TReturn = unknown>(
+    cb: SubmissionHandler<TValues, TReturn>,
+    onSubmitValidationErrorCb?: InvalidSubmissionHandler<TValues>
+  ): (e?: Event) => Promise<TReturn | undefined>;
   setFieldInitialValue(path: string, value: unknown): void;
 }
 

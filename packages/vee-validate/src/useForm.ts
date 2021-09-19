@@ -20,6 +20,7 @@ import {
   ValidationOptions,
   FieldPathLookup,
   PrivateFieldArrayContext,
+  InvalidSubmissionHandler,
 } from './types';
 import {
   getFromPath,
@@ -466,7 +467,10 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     return fieldInstance.validate();
   }
 
-  function handleSubmit<TReturn = unknown>(fn?: SubmissionHandler<TValues, TReturn>) {
+  function handleSubmit<TReturn = unknown>(
+    fn?: SubmissionHandler<TValues, TReturn>,
+    onValidationError?: InvalidSubmissionHandler<TValues>
+  ) {
     return function submissionHandler(e: unknown) {
       if (e instanceof Event) {
         e.preventDefault();
@@ -496,6 +500,15 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
               setValues,
               setFieldValue,
               resetForm,
+            });
+          }
+
+          if (!result.valid && typeof onValidationError === 'function') {
+            onValidationError({
+              values: deepCopy(formValues),
+              evt: e as Event,
+              errors: result.errors,
+              results: result.results,
             });
           }
         })

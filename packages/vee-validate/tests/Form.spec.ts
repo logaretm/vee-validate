@@ -2,6 +2,7 @@ import { defineRule } from '@/vee-validate';
 import { mountWithHoc, setValue, setChecked, dispatchEvent, flushPromises } from './helpers';
 import * as yup from 'yup';
 import { computed, onErrorCaptured, reactive, ref, Ref } from 'vue';
+import { InvalidSubmissionContext } from '../src/types';
 
 describe('<Form />', () => {
   const REQUIRED_MESSAGE = `This field is required`;
@@ -2170,5 +2171,64 @@ describe('<Form />', () => {
     isHidden.value = true;
     await flushPromises();
     expect(input.value).toBe(value.value);
+  });
+
+  test('handles invalid submissions', async () => {
+    const invalidSpy = jest.fn();
+    const validSpy = jest.fn();
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = yup.object({
+          email: yup.string().required().email(),
+          password: yup.string().required().min(8),
+        });
+
+        return {
+          schema,
+          onInvalidSubmit: invalidSpy,
+          onSubmit: validSpy,
+        };
+      },
+      template: `
+      <VForm :validationSchema="schema" @invalid-submit="onInvalidSubmit" @submit="onSubmit" v-slot="{ errors }">
+        <Field id="email" name="email" as="input" />
+        <span id="emailErr">{{ errors.email }}</span>
+
+        <Field id="password" name="password" as="input" type="password" />
+        <span id="passwordErr">{{ errors.password }}</span>
+
+        <button>Submit</button>
+      </VForm>
+    `,
+    });
+
+    const expectedEmailError = 'email is a required field';
+    const expectedPasswordError = 'password is a required field';
+    await flushPromises();
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(invalidSpy).toHaveBeenCalledTimes(1);
+    expect(invalidSpy).toHaveBeenLastCalledWith({
+      values: {
+        email: undefined,
+        password: undefined,
+      },
+      errors: {
+        email: expectedEmailError,
+        password: expectedPasswordError,
+      },
+      evt: expect.anything(),
+      results: {
+        email: {
+          valid: false,
+          errors: [expectedEmailError],
+        },
+        password: {
+          valid: false,
+          errors: [expectedPasswordError],
+        },
+      },
+    } as InvalidSubmissionContext);
+    expect(validSpy).not.toHaveBeenCalled();
   });
 });
