@@ -24,7 +24,7 @@
     "postcss-loader": "4.1",
     "postcss-nested": "5.0.1",
     "postcss-url": "10",
-    "shiki": "0.9.10",
+    "shiki": "0.9.11",
     "tailwindcss": "^2.2.9"
   }
 }

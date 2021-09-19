@@ -264,6 +264,60 @@ The `Form` component exposes a `submitCount` state that you can use to track the
 
 </doc-tip>
 
+## Handling Invalid Submissions
+
+In case you want to perform some logic after a form fails to submit due to validation errors (e.g: focusing the first invalid field), you can listen for the `onInvalidSubmit` event emitted by the `<Form />` component.
+
+```vue
+<template>
+  <Form @submit="onSubmit" :validation-schema="schema" @invalid-submit="onInvalidSubmit">
+    <Field name="email" type="email" />
+    <ErrorMessage name="email" />
+
+    <Field name="password" type="password" />
+    <ErrorMessage name="password" />
+
+    <button>Submit</button>
+  </Form>
+</template>
+
+<script>
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
+
+export default {
+  components: {
+    Form,
+    Field,
+    ErrorMessage,
+  },
+  data() {
+    const schema = yup.object({
+      email: yup.string().required().email(),
+      password: yup.string().required().min(8),
+    });
+
+    return {
+      schema,
+    };
+  },
+  methods: {
+    onSubmit(values) {
+      // Submit values to API...
+      alert(JSON.stringify(values, null, 2));
+    },
+    onInvalidSubmit({ values, errors, results }) {
+      console.log(values); // current form values
+      console.log(errors); // a map of field names and their first error message
+      console.log(results); // a detailed map of field names and their validation results
+    },
+  },
+};
+</script>
+```
+
+Specifying a `onInvalidSubmit` prop or `@invalid-submit` will run your handler if you submit your form using either `handleSubmit` or the regular form submit event but not the `submitForm` function.
+
 ## Initial Values
 
 Since with vee-validate you don't have to use `v-model` to track your values, the `Form` component allows you to define the starting values for your fields, by default all fields start with `undefined` as a value.

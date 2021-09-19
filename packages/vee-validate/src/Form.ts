@@ -86,7 +86,7 @@ export const Form = defineComponent({
     function handleScopedSlotSubmit(evt: Event | SubmissionHandler, onSubmit?: SubmissionHandler) {
       const onSuccess = typeof evt === 'function' && !onSubmit ? evt : onSubmit;
 
-      return handleSubmit(onSuccess as SubmissionHandler<Record<string, unknown>>)(evt as Event);
+      return handleSubmit(onSuccess as SubmissionHandler<Record<string, unknown>>, props.onInvalidSubmit)(evt as Event);
     }
 
     function slotProps() {
