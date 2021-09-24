@@ -27,20 +27,25 @@ class Dictionary {
     return this.format(this.locale, ctx);
   }
 
+  public getLocaleDefault(locale: string, field: string): string | ValidationMessageGenerator | undefined {
+    return this.container[locale]?.fields?.[field]?._default || this.container[locale]?.messages?._default;
+  }
+
   public format(locale: string, ctx: FieldValidationMetaInfo) {
     let message!: ValidationMessageTemplate | undefined;
     const { field, rule, form } = ctx;
+    const fieldName = this.container[locale]?.names?.[field] ?? field;
+
     if (!rule) {
-      return `${field} is not valid`;
+      message = this.getLocaleDefault(locale, field) || `${field} is not valid`;
+      return isCallable(message) ? message(ctx) : interpolate(message, { ...form, field: fieldName });
     }
 
     // find if specific message for that field was specified.
     message = this.container[locale]?.fields?.[field]?.[rule.name] || this.container[locale]?.messages?.[rule.name];
     if (!message) {
-      message = `${field} is not valid`;
+      message = this.getLocaleDefault(locale, field) || 'field is not valid';
     }
-
-    const fieldName = this.container[locale]?.names?.[field] ?? field;
 
     return isCallable(message)
       ? message(ctx)

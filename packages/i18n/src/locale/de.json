@@ -1,6 +1,7 @@
 {
   "code": "de",
   "messages": {
+    "_default": "{field} ist ungültig",
     "alpha": "{field} darf nur alphabetische Zeichen enthalten",
     "alpha_dash": "{field} darf alphanumerische Zeichen sowie Striche und Unterstriche enthalten",
     "alpha_num": "{field} darf nur alphanumerische Zeichen enthalten",

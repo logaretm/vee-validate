@@ -128,6 +128,36 @@ test('falls back to the default message if rule without message exists', async (
   expect(error.textContent).toContain('field is not valid');
 });
 
+test('falls back to a language specific default message if rule without message exists', async () => {
+  defineRule('i18n', () => false);
+  configure({
+    generateMessage: localize('nl', {
+      messages: {
+        _default: '{field} is ongeldig',
+      },
+    }),
+  });
+  setLocale('nl');
+
+  const wrapper = mountWithHoc({
+    template: `
+      <div>
+        <Field name="field" rules="required|i18n" v-slot="{ field, errors }">
+          <input v-bind="field" type="text">
+          <span id="error">{{ errors[0] }}</span>
+        </Field>
+      </div>
+    `,
+  });
+
+  const error = wrapper.$el.querySelector('#error');
+  const input = wrapper.$el.querySelector('input');
+  setValue(input, '12');
+  await flushPromises();
+
+  expect(error.textContent).toContain('field is ongeldig');
+});
+
 test('can switch between locales with setLocale', async () => {
   configure({
     generateMessage: localize({
