@@ -586,7 +586,7 @@ describe('<Field />', () => {
     expect(errors.children).toHaveLength(2);
   });
 
-  test('is synced with v-model', async () => {
+  test('handleInput() updates the model', async () => {
     let inputValue!: Ref<string>;
     const wrapper = mountWithHoc({
       setup() {
@@ -597,7 +597,9 @@ describe('<Field />', () => {
       },
       template: `
       <div>
-        <Field v-model="value" type="text" name="field" />
+        <Field v-model="value" name="field" v-slot="{ handleInput }">
+          <input :value="value" @input="handleInput" />
+        </Field>
       </div>
     `,
     });
