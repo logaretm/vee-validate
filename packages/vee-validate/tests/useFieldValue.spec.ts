@@ -1,5 +1,5 @@
 import { useField, useFieldValue, useForm } from '@/vee-validate';
-import { mountWithHoc, setValue, flushPromises } from './helpers';
+import { mountWithHoc, setValue, flushPromises, getValue } from './helpers';
 import { defineComponent } from 'vue';
 
 describe('useFieldValue()', () => {
@@ -10,8 +10,8 @@ describe('useFieldValue()', () => {
     mountWithHoc({
       setup() {
         useForm();
-        const { value } = useField('test', validate);
-        const { value: currValue, setValue } = useFieldValue('test');
+        const { value, setValue } = useField('test', validate);
+        const currValue = useFieldValue('test');
 
         return {
           value,
@@ -42,23 +42,24 @@ describe('useFieldValue()', () => {
   });
 
   test('gives access to a single field value in a child component without specifying a path', async () => {
-    const CustomErrorComponent = defineComponent({
+    const CustomChildValueDisplay = defineComponent({
       template: '<span>{{ value }}</span>',
       setup() {
-        const { value } = useFieldValue();
+        const value = useFieldValue();
 
         return {
           value,
         };
       },
     });
+
     mountWithHoc({
       components: {
-        CustomErrorComponent,
+        CustomChildValueDisplay,
       },
       setup() {
         useForm();
-        const { value } = useField('test', validate);
+        const { value } = useField('test');
 
         return {
           value,
@@ -66,16 +67,16 @@ describe('useFieldValue()', () => {
       },
       template: `
       <input name="field" v-model="value" />
-      <CustomErrorComponent />
+      <CustomChildValueDisplay />
     `,
     });
 
     await flushPromises();
     const input = document.querySelector('input');
-    const valueSpan = document.querySelector('span');
     const inputValue = '1234';
     setValue(input as any, inputValue);
     await flushPromises();
+    const valueSpan = document.querySelector('span');
     expect(valueSpan?.textContent).toBe(inputValue);
   });
 
@@ -83,7 +84,7 @@ describe('useFieldValue()', () => {
     mountWithHoc({
       setup() {
         useForm();
-        const { value } = useFieldValue('something');
+        const value = useFieldValue('something');
 
         return {
           value,
@@ -102,7 +103,7 @@ describe('useFieldValue()', () => {
   test('returns undefined if form is not found', async () => {
     mountWithHoc({
       setup() {
-        const { value } = useFieldValue('something');
+        const value = useFieldValue('something');
 
         return {
           value,

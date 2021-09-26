@@ -12,21 +12,7 @@ export function useFormValues<TValues extends Record<string, unknown> = Record<s
     warn('No vee-validate <Form /> or `useForm` was detected in the component tree');
   }
 
-  const values = computed(() => {
+  return computed(() => {
     return form?.values || ({} as Partial<TValues>);
   });
-
-  function setFieldValue(path: string, value: any) {
-    form?.setFieldValue(path, value);
-  }
-
-  function setValues(values: Partial<TValues>) {
-    form?.setValues(values as any);
-  }
-
-  return {
-    values,
-    setFieldValue,
-    setValues,
-  };
 }
