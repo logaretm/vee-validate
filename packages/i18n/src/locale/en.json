@@ -1,6 +1,7 @@
 {
   "code": "en",
   "messages": {
+    "_default": "The {field} is not valid",
     "alpha": "The {field} field may only contain alphabetic characters",
     "alpha_num": "The {field} field may only contain alpha-numeric characters",
     "alpha_dash": "The {field} field may contain alpha-numeric characters as well as dashes and underscores",

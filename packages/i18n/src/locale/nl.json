@@ -1,6 +1,7 @@
 {
   "code": "nl",
   "messages": {
+    "_default": "{field} is ongeldig",
     "alpha": "{field} mag alleen letters bevatten",
     "alpha_dash": "{field} mag alleen letters, nummers, en streepjes bevatten",
     "alpha_num": "{field} mag alleen letters en nummers bevatten",

@@ -1,6 +1,7 @@
 {
   "code": "fr",
   "messages": {
+    "_default": "Le champ {field} est invalide",
     "alpha": "Le champ {field} ne peut contenir que des lettres",
     "alpha_num": "Le champ {field} ne peut contenir que des caractères alpha-numériques",
     "alpha_dash": "Le champ {field} ne peut contenir que des caractères alpha-numériques, tirets ou soulignés",
