@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/logaretm/vee-validate/compare/v4.4.11...v4.5.0) (2021-09-26)
+
+
+### Features
+
+* added language specific default ([#3501](https://github.com/logaretm/vee-validate/issues/3501)) ([debdee0](https://github.com/logaretm/vee-validate/commit/debdee032030a3209af8df34f710361150c924c2))
+
+
+
+
+
 ## [4.4.11](https://github.com/logaretm/vee-validate/compare/v4.4.10...v4.4.11) (2021-09-11)
 
 **Note:** Version bump only for package @vee-validate/i18n
