@@ -30,7 +30,7 @@ The devtools plugin adds a new "vee-validate" inspector that allows you to view 
 
 To use the vee-validate inspector, switch from the `components` inspector to the `vee-validate` inspector:
 
-<video src="/video/inspector.mp4" autoplay muted loop loading="lazy"></video>
+<video src="/v4/video/inspector.mp4" autoplay muted loop loading="lazy"></video>
 
 ## Disabling the plugin
 
@@ -40,4 +40,4 @@ Also please don't forget to report the issue [here](https://github.com/logaretm/
 
 This short video shows how to disable the vee-validate devtools plugin:
 
-<video src="/video/disable-plugin.mp4" autoplay muted loop loading="lazy"></video>
+<video src="/v4/video/disable-plugin.mp4" autoplay muted loop loading="lazy"></video>
