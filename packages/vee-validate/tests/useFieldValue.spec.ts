@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
 import { useField, useFieldValue, useForm } from '@/vee-validate';
-import { mountWithHoc, setValue } from './helpers';
+import { mountWithHoc, setValue, flushPromises, getValue } from './helpers';
 import { defineComponent } from 'vue';
 
 describe('useFieldValue()', () => {
@@ -11,17 +10,19 @@ describe('useFieldValue()', () => {
     mountWithHoc({
       setup() {
         useForm();
-        const { value } = useField('test', validate);
+        const { value, setValue } = useField('test', validate);
         const currValue = useFieldValue('test');
 
         return {
           value,
           currValue,
+          setValue,
         };
       },
       template: `
       <input name="field" v-model="value" />
       <span>{{ currValue }}</span>
+      <button @click="setValue('5')"></button>
     `,
     });
 
@@ -32,10 +33,16 @@ describe('useFieldValue()', () => {
     setValue(input as any, inputValue);
     await flushPromises();
     expect(valueSpan?.textContent).toBe(inputValue);
+
+    // test value setting
+    const btn = document.querySelector('button');
+    btn?.click();
+    await flushPromises();
+    expect(input?.value).toBe('5');
   });
 
-  test('gives access to a single field value in a child component with specifying a path', async () => {
-    const CustomErrorComponent = defineComponent({
+  test('gives access to a single field value in a child component without specifying a path', async () => {
+    const CustomChildValueDisplay = defineComponent({
       template: '<span>{{ value }}</span>',
       setup() {
         const value = useFieldValue();
@@ -45,13 +52,14 @@ describe('useFieldValue()', () => {
         };
       },
     });
+
     mountWithHoc({
       components: {
-        CustomErrorComponent,
+        CustomChildValueDisplay,
       },
       setup() {
         useForm();
-        const { value } = useField('test', validate);
+        const { value } = useField('test');
 
         return {
           value,
@@ -59,16 +67,16 @@ describe('useFieldValue()', () => {
       },
       template: `
       <input name="field" v-model="value" />
-      <CustomErrorComponent />
+      <CustomChildValueDisplay />
     `,
     });
 
     await flushPromises();
     const input = document.querySelector('input');
-    const valueSpan = document.querySelector('span');
     const inputValue = '1234';
     setValue(input as any, inputValue);
     await flushPromises();
+    const valueSpan = document.querySelector('span');
     expect(valueSpan?.textContent).toBe(inputValue);
   });
 

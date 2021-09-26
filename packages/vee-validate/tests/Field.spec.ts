@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
 import { defineRule, configure } from '@/vee-validate';
-import { mountWithHoc, setValue, dispatchEvent, setChecked } from './helpers';
+import { mountWithHoc, setValue, dispatchEvent, setChecked, flushPromises } from './helpers';
 import * as yup from 'yup';
 import { computed, reactive, ref, Ref } from 'vue';
 
@@ -587,7 +586,7 @@ describe('<Field />', () => {
     expect(errors.children).toHaveLength(2);
   });
 
-  test('is synced with v-model', async () => {
+  test('handleInput() updates the model', async () => {
     let inputValue!: Ref<string>;
     const wrapper = mountWithHoc({
       setup() {
@@ -598,7 +597,9 @@ describe('<Field />', () => {
       },
       template: `
       <div>
-        <Field v-model="value" type="text" name="field" />
+        <Field v-model="value" name="field" v-slot="{ handleInput }">
+          <input :value="value" @input="handleInput" />
+        </Field>
       </div>
     `,
     });
@@ -1095,5 +1096,35 @@ describe('<Field />', () => {
     isRequired.value = true;
     await flushPromises();
     expect(error.textContent).toBe(REQUIRED_MESSAGE);
+  });
+
+  test('resets validation state using refs and exposed API', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <div>
+        <Field name="field" ref="field" rules="required" v-slot="{ errors, field }">
+          <input type="text" v-bind="field">
+          <span id="error">{{ errors && errors[0] }}</span>
+        </Field>
+
+        <button @click="$refs.field.reset()">Reset</button>
+      </div>
+    `,
+    });
+
+    const error = wrapper.$el.querySelector('#error');
+    const input = wrapper.$el.querySelector('input');
+
+    expect(error.textContent).toBe('');
+
+    setValue(input, '');
+    await flushPromises();
+    expect(error.textContent).toBe(REQUIRED_MESSAGE);
+    setValue(input, '123');
+    await flushPromises();
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(error.textContent).toBe('');
+    expect(input.value).toBe('');
   });
 });

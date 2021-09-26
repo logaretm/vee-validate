@@ -13,9 +13,9 @@ export function useFieldValue<TValue = unknown>(path?: MaybeRef<string>) {
 
   return computed(() => {
     if (path) {
-      return getFromPath(form?.values, unref(path)) as TValue | undefined;
+      return getFromPath(form?.values, unref(path)) as TValue;
     }
 
-    return field?.value?.value as TValue | undefined;
+    return unref(field?.value) as TValue;
   });
 }

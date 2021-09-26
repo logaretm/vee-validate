@@ -1,8 +1,8 @@
-import flushPromises from 'flush-promises';
 import { defineRule } from '@/vee-validate';
-import { mountWithHoc, setValue, setChecked, dispatchEvent } from './helpers';
+import { mountWithHoc, setValue, setChecked, dispatchEvent, flushPromises } from './helpers';
 import * as yup from 'yup';
 import { computed, onErrorCaptured, reactive, ref, Ref } from 'vue';
+import { InvalidSubmissionContext } from '../src/types';
 
 describe('<Form />', () => {
   const REQUIRED_MESSAGE = `This field is required`;
@@ -382,6 +382,7 @@ describe('<Form />', () => {
     const passwordError = wrapper.$el.querySelector('#passwordErr');
 
     wrapper.$el.querySelector('button').click();
+
     await flushPromises();
 
     expect(emailError.textContent).toBe('email is a required field');
@@ -389,6 +390,7 @@ describe('<Form />', () => {
 
     setValue(email, 'hello@');
     setValue(password, '1234');
+
     await flushPromises();
 
     expect(emailError.textContent).toBe('email must be a valid email');
@@ -396,6 +398,7 @@ describe('<Form />', () => {
 
     setValue(email, 'hello@email.com');
     setValue(password, '12346789');
+
     await flushPromises();
 
     expect(emailError.textContent).toBe('');
@@ -630,9 +633,9 @@ describe('<Form />', () => {
       },
       template: `
       <VForm :validation-schema="schema" v-slot="{ errors, values }">
-        <Field name="drink" as="input" type="checkbox" value="" /> Coffee
-        <Field name="drink" as="input" type="checkbox" value="Tea" /> Tea
-        <Field name="drink" as="input" type="checkbox" value="Coke" /> Coke
+        <Field name="drink" type="checkbox" value="" /> Coffee
+        <Field name="drink" type="checkbox" value="Tea" /> Tea
+        <Field name="drink" type="checkbox" value="Coke" /> Coke
 
         <span id="err">{{ errors.drink }}</span>
         <span id="values">{{ values.drink && values.drink.toString() }}</span>
@@ -709,15 +712,14 @@ describe('<Form />', () => {
   });
 
   // broken as of 3.0.0-rc.12 for some reason
-  // FIXME: try to resolve values reactivity issues when removing attributes
-  test.skip('unmounted fields gets unregistered and their values cleaned up', async () => {
+  test('unmounted fields gets unregistered and their values cleaned up', async () => {
     const showFields = ref(true);
     const wrapper = mountWithHoc({
       setup() {
-        const schema = {
-          field: 'required',
+        const schema = computed(() => ({
+          field: showFields.value ? 'required' : '',
           drink: 'required',
-        };
+        }));
 
         return {
           schema,
@@ -725,7 +727,7 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm @submit="submit" as="form" :validationSchema="schema" v-slot="{ errors, values }">
+      <VForm as="form" :validationSchema="schema" v-slot="{ errors, values }">
         <template v-if="showFields">
           <Field name="field" as="input" />
           <Field name="nested.field" />
@@ -797,7 +799,7 @@ describe('<Form />', () => {
 
         <span id="errors">{{ errors }}</span>
 
-        <button>ValidSate</button>
+        <button>Submit</button>
       </VForm>
     `,
     });
@@ -885,14 +887,12 @@ describe('<Form />', () => {
   });
 
   test('checkboxes v-model value syncing', async () => {
-    let drinks!: Ref<string[]>;
+    const drinks = ref<string[]>([]);
     const wrapper = mountWithHoc({
       setup() {
         const schema = yup.object({
           drink: yup.array().required().min(1),
         });
-
-        drinks = ref([]);
 
         return {
           schema,
@@ -937,8 +937,6 @@ describe('<Form />', () => {
   });
 
   test('isSubmitting state', async () => {
-    jest.useFakeTimers();
-
     let throws = false;
     const wrapper = mountWithHoc({
       setup() {
@@ -983,8 +981,6 @@ describe('<Form />', () => {
     jest.advanceTimersByTime(501);
     await flushPromises();
     expect(submitting.textContent).toBe('false');
-
-    jest.useRealTimers();
   });
 
   test('aggregated meta reactivity', async () => {
@@ -1580,11 +1576,11 @@ describe('<Form />', () => {
     const input = () => document.querySelector('input');
     setModified(data[3]);
     await flushPromises();
-    expect(input()?.value).not.toBe('');
+    expect(input()?.value).toBe(data[3].title);
 
     setModified(data[2]);
     await flushPromises();
-    expect(input()?.value).not.toBe('');
+    expect(input()?.value).toBe(data[2].title);
   });
 
   test('resetForm should reset the meta flag', async () => {
@@ -1997,63 +1993,6 @@ describe('<Form />', () => {
     expect(passwordValue.textContent).toBe(value);
   });
 
-  // #3325
-  test('unsets old path value when array fields are removed', async () => {
-    const onSubmit = jest.fn();
-    mountWithHoc({
-      setup() {
-        const users = ref([
-          { id: 1, name: '111' },
-          { id: 2, name: '222' },
-          { id: 3, name: '333' },
-        ]);
-
-        function remove(idx: number) {
-          users.value.splice(idx, 1);
-        }
-
-        return {
-          onSubmit,
-          users,
-          remove,
-        };
-      },
-      template: `
-      <VForm @submit="onSubmit">
-        <fieldset v-for="(user, idx) in users" :key="user.id">
-          <legend>User #{{ idx }}</legend>
-          <label :for="'name_' + idx">Name</label>
-          <Field :id="'name_' + idx" :name="'users[' + idx + '].name'" />
-          <ErrorMessage :name="'users[' + idx + '].name'" />
-
-          <button class="remove" type="button" @click="remove(idx)">X</button>
-        </fieldset>
-
-        <button class="submit" type="submit">Submit</button>
-      </VForm>
-    `,
-    });
-
-    await flushPromises();
-    const submitBtn = document.querySelector('.submit') as HTMLButtonElement;
-    const inputs = Array.from(document.querySelectorAll('input')) as HTMLInputElement[];
-    const removeBtn = document.querySelectorAll('.remove')[1] as HTMLButtonElement; // remove the second item
-    setValue(inputs[0], '111');
-    setValue(inputs[1], '222');
-    setValue(inputs[2], '333');
-    await flushPromises();
-    removeBtn.click();
-    await flushPromises();
-    (submitBtn as HTMLButtonElement).click();
-    await flushPromises();
-    expect(onSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({
-        users: [{ name: '111' }, { name: '333' }],
-      }),
-      expect.anything()
-    );
-  });
-
   // #3332
   test('field bails prop should work with validation schema', async () => {
     const wrapper = mountWithHoc({
@@ -2178,7 +2117,7 @@ describe('<Form />', () => {
     expect(meta.textContent).toBe('true');
   });
 
-  // 3424
+  // #3424
   test('Checkbox with v-model should not propagate the empty value symbol', async () => {
     const value = ref('');
     mountWithHoc({
@@ -2232,5 +2171,64 @@ describe('<Form />', () => {
     isHidden.value = true;
     await flushPromises();
     expect(input.value).toBe(value.value);
+  });
+
+  test('handles invalid submissions', async () => {
+    const invalidSpy = jest.fn();
+    const validSpy = jest.fn();
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = yup.object({
+          email: yup.string().required().email(),
+          password: yup.string().required().min(8),
+        });
+
+        return {
+          schema,
+          onInvalidSubmit: invalidSpy,
+          onSubmit: validSpy,
+        };
+      },
+      template: `
+      <VForm :validationSchema="schema" @invalid-submit="onInvalidSubmit" @submit="onSubmit" v-slot="{ errors }">
+        <Field id="email" name="email" as="input" />
+        <span id="emailErr">{{ errors.email }}</span>
+
+        <Field id="password" name="password" as="input" type="password" />
+        <span id="passwordErr">{{ errors.password }}</span>
+
+        <button>Submit</button>
+      </VForm>
+    `,
+    });
+
+    const expectedEmailError = 'email is a required field';
+    const expectedPasswordError = 'password is a required field';
+    await flushPromises();
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(invalidSpy).toHaveBeenCalledTimes(1);
+    expect(invalidSpy).toHaveBeenLastCalledWith({
+      values: {
+        email: undefined,
+        password: undefined,
+      },
+      errors: {
+        email: expectedEmailError,
+        password: expectedPasswordError,
+      },
+      evt: expect.anything(),
+      results: {
+        email: {
+          valid: false,
+          errors: [expectedEmailError],
+        },
+        password: {
+          valid: false,
+          errors: [expectedPasswordError],
+        },
+      },
+    } as InvalidSubmissionContext);
+    expect(validSpy).not.toHaveBeenCalled();
   });
 });

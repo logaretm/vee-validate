@@ -23,8 +23,38 @@ body {
 :root {
   --accent: #09a884;
 
+  --code-foreground: #2c3e50;
+  --code-background: #f6f6f6;
+  --code-token-constant: #c25205;
+  --code-token-operator: #b2085f;
+  --code-token-type: #b92dbc;
+  --code-token-parameter: #2c3e50;
+  --code-token-attribute: #c25205;
+  --code-token-regex: #ff9580;
+  --code-token-string: #0a7a34;
+  --code-token-comment: #848486;
+  --code-line-numbers: #bbbbbb;
+  --code-line-highlight: #f8f4e4;
+  --code-line-highlight-border: #b92dbc;
+  --code-lang-label: #bbbbbb;
+
   .dark {
     --accent: #09a884;
+
+    --code-foreground: #f8f8f2;
+    --code-background: #22212c;
+    --code-token-constant: #9580ff;
+    --code-token-operator: #ff80bf;
+    --code-token-type: #80ffea;
+    --code-token-parameter: #ffca80;
+    --code-token-attribute: #8aff80;
+    --code-token-regex: #ff9580;
+    --code-token-string: #ffff80;
+    --code-token-comment: #7970a9;
+    --code-line-numbers: #7970a9;
+    --code-line-highlight: #16171d;
+    --code-line-highlight-border: #7970a9;
+    --code-lang-label: #7970a9;
   }
 }
 

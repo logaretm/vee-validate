@@ -205,7 +205,7 @@ export default {
 
 vee-validate will try to do its best to infer the types of the form values if you are using the composition API, vee-validate can infer the types of the form values when you provide either a `yup` or a converted `zod` validation schema.
 
-```typescript
+```ts
 const validationSchema = toFormValidator(
   zod.object({
     email: zod.string().nonempty('This is required').email({ message: 'Must be a valid email' }),

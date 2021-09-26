@@ -1,7 +1,7 @@
 import { h, defineComponent, toRef, SetupContext, resolveDynamicComponent, computed, watch, PropType } from 'vue';
 import { getConfig } from './config';
-import { useField } from './useField';
-import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent } from './utils';
+import { RuleExpression, useField } from './useField';
+import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent, normalizeEventValue } from './utils';
 import { toNumber } from '../../shared';
 import { IS_ABSENT } from './symbols';
 
@@ -26,7 +26,7 @@ export const Field = defineComponent({
       required: true,
     },
     rules: {
-      type: [Object, String, Function],
+      type: [Object, String, Function] as PropType<RuleExpression<unknown>>,
       default: undefined,
     },
     validateOnMount: {
@@ -53,7 +53,6 @@ export const Field = defineComponent({
       type: Boolean,
       default: () => getConfig().bails,
     },
-
     label: {
       type: String,
       default: undefined,
@@ -93,7 +92,6 @@ export const Field = defineComponent({
       validate: validateField,
       handleChange,
       handleBlur,
-      handleInput,
       setTouched,
       resetField,
       handleReset,
@@ -121,8 +119,14 @@ export const Field = defineComponent({
         }
       : handleChange;
 
+    const handleInput = (e: any) => {
+      if (!hasCheckedAttr(ctx.attrs.type)) {
+        value.value = normalizeEventValue(e);
+      }
+    };
+
     const onInputHandler = hasModelEvents
-      ? function handleChangeWithModel(e: any) {
+      ? function handleInputWithModel(e: any) {
           handleInput(e);
           ctx.emit('update:modelValue', value.value);
         }
@@ -190,6 +194,14 @@ export const Field = defineComponent({
         setErrors,
       };
     }
+
+    ctx.expose({
+      setErrors,
+      setTouched,
+      reset: resetField,
+      validate: validateField,
+      handleChange,
+    });
 
     return () => {
       const tag = resolveDynamicComponent(resolveTag(props, ctx)) as string;

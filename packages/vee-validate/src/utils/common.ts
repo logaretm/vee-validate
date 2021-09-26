@@ -16,11 +16,17 @@ type NestedRecord = Record<string, unknown> | { [k: string]: NestedRecord };
 /**
  * Gets a nested property value from an object
  */
-export function getFromPath<TValue = unknown>(
+export function getFromPath<TValue = unknown>(object: NestedRecord | undefined, path: string): TValue | undefined;
+export function getFromPath<TValue = unknown, TFallback = TValue>(
   object: NestedRecord | undefined,
   path: string,
-  fallback: TValue | undefined = undefined
-): TValue | undefined {
+  fallback?: TFallback
+): TValue | TFallback;
+export function getFromPath<TValue = unknown, TFallback = TValue>(
+  object: NestedRecord | undefined,
+  path: string,
+  fallback?: TFallback
+): TValue | TFallback | undefined {
   if (!object) {
     return fallback;
   }
@@ -29,7 +35,7 @@ export function getFromPath<TValue = unknown>(
     return object[cleanupNonNestedPath(path)] as TValue | undefined;
   }
 
-  const resolvedValue = path
+  const resolvedValue = (path || '')
     .split(/\.|\[(\d+)\]/)
     .filter(Boolean)
     .reduce((acc, propKey) => {
@@ -158,29 +164,6 @@ export function normalizeField<TValue = unknown>(
   return field;
 }
 
-/**
- * Applies a mutation function on a field or field group
- */
-export function applyFieldMutation(
-  field: PrivateFieldContext<unknown> | PrivateFieldContext<unknown>[],
-  mutation: (field: PrivateFieldContext<unknown>) => unknown,
-  onlyFirst = false
-) {
-  if (!Array.isArray(field)) {
-    mutation(field);
-
-    return;
-  }
-
-  if (onlyFirst) {
-    mutation(field[0]);
-
-    return;
-  }
-
-  field.forEach(mutation);
-}
-
 export function resolveNextCheckboxValue<T>(currentValue: T, checkedValue: T, uncheckedValue: T): T;
 export function resolveNextCheckboxValue<T>(currentValue: T[], checkedValue: T, uncheckedValue: T): T[];
 export function resolveNextCheckboxValue<T>(currentValue: T | T[], checkedValue: T, uncheckedValue: T) {
@@ -193,4 +176,57 @@ export function resolveNextCheckboxValue<T>(currentValue: T | T[], checkedValue:
   }
 
   return currentValue === checkedValue ? uncheckedValue : checkedValue;
+}
+
+// https://github.com/bameyrick/throttle-typescript
+type ThrottledFunction<T extends (...args: any) => any> = (...args: Parameters<T>) => ReturnType<T>;
+
+/**
+ * Creates a throttled function that only invokes the provided function (`func`) at most once per within a given number of milliseconds
+ * (`limit`)
+ */
+export function throttle<T extends (...args: any) => any>(func: T, limit: number): ThrottledFunction<T> {
+  let inThrottle: boolean;
+  let lastResult: ReturnType<T>;
+
+  return function (this: any, ...args: any[]): ReturnType<T> {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const context = this;
+
+    if (!inThrottle) {
+      inThrottle = true;
+
+      setTimeout(() => (inThrottle = false), limit);
+
+      lastResult = func.apply(context, args);
+    }
+
+    return lastResult;
+  };
+}
+
+export function debounceAsync<TFunction extends (...args: any) => Promise<any>, TResult = ReturnType<TFunction>>(
+  inner: TFunction,
+  ms = 0
+): (...args: Parameters<TFunction>) => Promise<TResult> {
+  let timer: number | null = null;
+  let resolves: any[] = [];
+
+  return function (...args: Parameters<TFunction>) {
+    // Run the function after a certain amount of time
+    if (timer) {
+      window.clearTimeout(timer);
+    }
+
+    timer = window.setTimeout(() => {
+      // Get the result of the inner function, then apply it to the resolve function of
+      // each promise that has been created since the last time the inner function was run
+      const result = inner(...(args as any));
+
+      resolves.forEach(r => r(result));
+      resolves = [];
+    }, ms);
+
+    return new Promise<TResult>(resolve => resolves.push(resolve));
+  };
 }

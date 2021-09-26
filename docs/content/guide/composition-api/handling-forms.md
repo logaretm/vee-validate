@@ -89,6 +89,42 @@ export default {
 
 In that case **YOU MUST** use `submitForm` as an event handler for the `submit` event for a native `form` element, otherwise, it would have no effect.
 
+### Handling Invalid Submissions
+
+In case you want to perform some logic after a form fails to submit due to validation errors (e.g: focusing the first invalid field), you can pass a callback as the second argument to `handleSubmit` function.
+
+```vue{14-18,22}
+<template>
+  <form @submit="onSubmit">
+    <!-- some fields -->
+  </form>
+</template>
+
+<script>
+import { useForm } from 'vee-validate';
+
+export default {
+  setup() {
+    const { handleSubmit } = useForm();
+
+    function onInvalidSubmit({ values, errors, results }) {
+      console.log(values); // current form values
+      console.log(errors); // a map of field names and their first error message
+      console.log(results); // a detailed map of field names and their validation results
+    }
+
+    const onSubmit = handleSubmit(values => {
+      alert(JSON.stringify(values, null, 2));
+    }, onInvalidSubmit);
+
+    return {
+      onSubmit,
+    };
+  },
+};
+</script>
+```
+
 ## Submission Progress
 
 Quite often you need to show your users a submission indicator, or you might want to disable the submit button entirely until the submission attempt is done. The `useForm` function exposes an `isSubmitting` ref that you can use.

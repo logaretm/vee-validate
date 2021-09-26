@@ -1,7 +1,8 @@
 ---
 title: Testing
 description: Testing form validation in your apps
-order: 7
+order: 8
+next: guide/best-practices
 ---
 
 # Testing

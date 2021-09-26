@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
 import { useField, useForm, useIsFieldTouched } from '@/vee-validate';
-import { dispatchEvent, mountWithHoc } from './helpers';
+import { dispatchEvent, mountWithHoc, flushPromises } from './helpers';
 import { defineComponent } from 'vue';
 
 describe('useIsFieldTouched()', () => {
@@ -79,8 +78,8 @@ describe('useIsFieldTouched()', () => {
     mountWithHoc({
       setup() {
         useForm();
-        const { value, handleBlur } = useField('test');
-        useField('test');
+        const { value, handleBlur } = useField('test', undefined, { type: 'checkbox' });
+        useField('test', undefined, { type: 'checkbox' });
         const isTouched = useIsFieldTouched('test');
 
         return {

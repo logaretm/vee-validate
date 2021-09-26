@@ -11,7 +11,7 @@ vee-validate supports nested objects and arrays, using field name syntax to indi
 
 ## Nested Objects
 
-You can specify a field to be nested in an object using dot paths, like what you would normally do in JavaScript do access a nested property. The field `name` prop acts as the path for that field:
+You can specify a field to be nested in an object using dot paths, like what you would normally do in JavaScript to access a nested property. The field `name` prop acts as the path for that field:
 
 ```vue
 <template>
@@ -124,6 +124,129 @@ Submitting the previous form would result in the following values being passed t
   "links.github": "https://github.com/logaretm"
 }
 ```
+
+## Field Arrays <DocBadge title="v4.5" />
+
+Field arrays are a special type of nested array fields, they are often used to collect repeatable pieces of data or repeatable forms. They are often called "repeatable fields".
+
+When dealing with those fields it is better to use `<FieldArray />` component which gives you a few helpers you can use to manage the array fields.
+
+Here is a small example that shows how easy it is to create a repeatable group of fields:
+
+```vue
+<template>
+  <Form @submit="onSubmit" :initial-values="initialValues">
+    <FieldArray name="links" v-slot="{ fields, push, remove }">
+      <div v-for="(entry, idx) in fields" :key="entry.key">
+        <Field :name="`links[${idx}]`" type="url" />
+
+        <button type="button" @click="remove(idx)">Remove</button>
+      </div>
+
+      <button type="button" @click="push({ id: Date.now(), name: '', url: '' })">Add</button>
+    </FieldArray>
+
+    <button>Submit</button>
+  </Form>
+</template>
+
+<script>
+export default {
+  data: () => ({
+    // you can set initial values for those array fields
+    initialValues: {
+      links: ['https://github.com/logaretm'],
+    },
+  }),
+  methods: {
+    onSubmit(values) {
+      alert(JSON.stringify(values, null, 2));
+    },
+  },
+};
+</script>
+```
+
+<doc-tip title="Form Context" type="warn">
+
+The `<FieldArray />` component requires being used inside a `Form` component or a `useForm` to be called at its parent tree.
+
+</doc-tip>
+
+### Field Array Paths
+
+When planning to use `<FieldArray />` you need to provide a `name` prop which is the path of the array starting from the root form value, you can use dot notation for object paths or indices for array paths.
+
+Here are a few examples:
+
+_*Iterate over the `users` array:*_
+
+```vue
+<Form>
+  <FieldArray name="users" v-slot="{ fields }">
+    <div v-for="(entry, idx) in fields" :key="entry.key">
+      <Field :name="`users[${idx}].name`" />
+    </div>
+  </FieldArray>
+</Form>
+```
+
+_*Iterate over the `domains` inside `settings.dns` object:*_
+
+```vue
+<Form>
+  <FieldArray name="settings.dns.domains" v-slot="{ fields }">
+    <div v-for="(entry, idx) in fields" :key="entry.key">
+      <Field :name="`settings.dns.domains[${idx}]`" />
+    </div>
+  </FieldArray>
+</Form>
+```
+
+_*Iterate over both `users` and `links`:*_
+
+```vue
+<Form>
+  <FieldArray name="users" v-slot="{ fields: users }">
+    <div v-for="(userEntry, userIdx) in users">
+      <FieldArray :name="`users[${userIdx}].links`" v-slot="{ fields: links }">
+        <div v-for="(entry, idx) in fields" :key="entry.key">
+          <Field :name="`users[${userIdx}].links[idx]`" />
+        </div>
+      </FieldArray>
+    </div>
+  </FieldArray>
+</Form>
+```
+
+### Iteration Keys
+
+The `FieldArrayEntry` item exposes a `key` property, this property is unique and is auto-generated for you so you can use it as an iteration key.
+
+```vue
+<FieldArray name="users" v-slot="{ fields }">
+  <div v-for="(entry, idx) in fields" :key="entry.key">
+    <Field :name="`users[${idx}].name`" />
+  </div>
+</FieldArray>
+```
+
+This auto-generated `key` property is very convenient as you no longer have to provide your own unique key for each item.
+
+### Array Helpers
+
+The `<FieldArray />` slot provides the following properties and functions:
+
+- `fields`: a **read-only** version of your array field items, it includes some useful properties like `key`, `isFirst` and `isLast`, the actual item value is inside `.value` property. You should use it to iterate with `v-for`.
+- `push(item: any)`: adds an item to the end of the array.
+- `insert(idx: number, item: any)`: Inserts an array item at the specified index.
+- `prepend(item: any)`: adds an item to the start of the array.
+- `remove(idx: number)`: removes the item with the given index from the array.
+- `swap(idxA: number, idxB: number)`: Swaps two array elements by their indexes.
+- `replace(items: any[])`: Replaces the entire array values with the given items.
+- `update(idx: number, value: any)`: Updates an array item value at the specified index.
+
+[Read the API reference](/api/field-array) for more information.
 
 ## Caveats
 

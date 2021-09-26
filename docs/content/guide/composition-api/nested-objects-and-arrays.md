@@ -11,7 +11,7 @@ vee-validate supports nested objects and arrays by using field name syntax to in
 
 ## Nested Objects
 
-You can specify a field to be nested in an object using dot paths, like what you would normally do in JavaScript do access a nested property. The field's `name` acts as the path for that field in the form values:
+You can specify a field to be nested in an object using dot paths, like what you would normally do in JavaScript to access a nested property. The field's `name` acts as the path for that field in the form values:
 
 ```vue
 <template>
@@ -160,6 +160,134 @@ Submitting the previous form would result in the following values being passed t
   "links.github": "https://github.com/logaretm"
 }
 ```
+
+## Field Arrays <DocBadge title="v4.5" />
+
+Field arrays are a special type of nested array fields, they are often used to collect repeatable pieces of data or repeatable forms. They are often called "repeatable fields".
+
+Unlike the [components](/guide/components/nested-objects-and-arrays) API, it can be tricky to set up a group of repeatable fields with the composition API in the same component. This is because you usually need an input component to iterate over.
+
+The following snippet uses the `Field` component as the input component, but you can use any component as long as they call `useField` internally.
+
+To set up a repeatable field, you can use `useFieldArray` to help you manage the array values and operations:
+
+```vue
+<template>
+  <form @submit="onSubmit" novalidate>
+    <div v-for="(field, idx) in fields" :key="field.key">
+      <Field :name="`links[${idx}]`" type="url" />
+
+      <button type="button" @click="remove(idx)">Remove</button>
+    </div>
+
+    <button type="button" @click="push('')">Add</button>
+
+    <button>Submit</button>
+  </form>
+</template>
+
+<script>
+import { Field, useForm, useFieldArray } from 'vee-validate';
+
+export default {
+  components: {
+    Field,
+  },
+  setup() {
+    const { handleSubmit } = useForm({
+      initialValues: {
+        links: ['https://github.com/logaretm'],
+      },
+    });
+
+    const { remove, push, fields } = useFieldArray('links');
+
+    const onSubmit = handleSubmit(values => {
+      console.log(JSON.stringify(values, null, 2));
+    });
+
+    return {
+      fields,
+      push,
+      remove,
+      onSubmit,
+    };
+  },
+};
+</script>
+```
+
+### Field Array Paths
+
+When planning to use `useFieldArray` you need to provide a `name` prop which is the path of the array starting from the root form value, you can use dot notation for object paths or indices for array paths.
+
+Here are a few examples:
+
+_*Iterate over the `users` array:*_
+
+```js
+const { remove, push, fields } = useFieldArray('users');
+```
+
+_*Iterate over the `domains` inside `settings.dns` object:*_
+
+```js
+const { remove, push, fields } = useFieldArray('settings.dns.domains');
+```
+
+### Iteration Keys
+
+The `FieldArrayEntry` item exposes a `key` property, this property is unique and is auto-generated for you so you can use it as an iteration key.
+
+```vue
+<template>
+  <form @submit="onSubmit" novalidate>
+    <div v-for="(field, idx) in fields" :key="field.key">
+      <Field :name="`links[${idx}]`" type="url" />
+    </div>
+  </form>
+</template>
+
+<script>
+import { Field, useForm, useFieldArray } from 'vee-validate';
+
+export default {
+  components: {
+    Field,
+  },
+  setup() {
+    const { handleSubmit } = useForm({
+      initialValues: {
+        links: ['https://github.com/logaretm'],
+      },
+    });
+
+    const { fields } = useFieldArray('links');
+
+    return {
+      fields,
+    };
+  },
+};
+</script>
+```
+
+This auto-generated `key` property is very convenient as you no longer have to provide your own unique key for each item.
+
+### Array Helpers
+
+The `<useFieldArray />` function provides the following properties and functions:
+
+- `fields`: a **read-only** version of your array field items, it includes some useful properties like `key`, `isFirst` and `isLast`, the actual item value is inside `.value` property. You should use it to iterate with `v-for`.
+- `push(item: any)`: adds an item to the end of the array.
+- `prepend(item: any)`: adds an item to the start of the array.
+- `insert(idx: number, item: any)`: Inserts an array item at the specified index.
+- `remove(idx: number)`: removes the item with the given index from the array.
+- `swap(idxA: number, idxB: number)`: Swaps two array elements by their indexes.
+- `replace(items: any[])`: Replaces the entire array values with the given items.
+- `update(idx: number, value: any)`: Updates an array item value at the specified index.
+
+[Read the API reference](/api/use-field-array) for more information.
 
 ## Caveats
 

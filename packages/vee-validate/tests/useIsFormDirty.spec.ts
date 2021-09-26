@@ -1,19 +1,18 @@
-import flushPromises from 'flush-promises';
 import { useField, useForm, useIsFormDirty } from '@/vee-validate';
-import { mountWithHoc, setValue } from './helpers';
+import { mountWithHoc, setValue, flushPromises } from './helpers';
 
 describe('useIsFormDirty()', () => {
   test('gives access to the forms isDirty status', async () => {
     mountWithHoc({
       setup() {
         useForm();
-        const { value, handleInput } = useField('test');
+        const { value, handleChange } = useField('test');
         const isDirty = useIsFormDirty();
 
         return {
           value,
           isDirty,
-          handleInput,
+          handleInput: (e: any) => handleChange(e, false),
         };
       },
       template: `

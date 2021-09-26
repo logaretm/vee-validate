@@ -1,6 +1,6 @@
-import flushPromises from 'flush-promises';
 import { useField } from '@/vee-validate';
-import { mountWithHoc, setValue } from './helpers';
+import { onMounted } from '@vue/runtime-core';
+import { mountWithHoc, setValue, flushPromises } from './helpers';
 
 describe('useField()', () => {
   const REQUIRED_MESSAGE = 'Field is required';
@@ -185,5 +185,86 @@ describe('useField()', () => {
     document.querySelector('button')?.click();
     await flushPromises();
     expect(meta?.textContent).toBe('clean');
+  });
+
+  describe('has validation modes', () => {
+    test('silent mode does not generate messages', async () => {
+      let validateFn!: ReturnType<typeof useField>['validate'];
+      mountWithHoc({
+        setup() {
+          const { errorMessage, validate } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
+          validateFn = validate;
+
+          return {
+            errorMessage,
+          };
+        },
+        template: `
+      <span>{{ errorMessage }}</span>
+    `,
+      });
+      const error = document.querySelector('span');
+      expect(error?.textContent).toBe('');
+
+      // won't show any errors
+      await validateFn({ mode: 'silent' });
+      await flushPromises();
+      expect(error?.textContent).toBe('');
+    });
+
+    test('validated-only mode only generates messages when it was validated before by user action', async () => {
+      let validateFn!: ReturnType<typeof useField>['validate'];
+      mountWithHoc({
+        setup() {
+          const { errorMessage, validate, value, setErrors } = useField('field', val =>
+            val ? true : REQUIRED_MESSAGE
+          );
+          validateFn = validate;
+          // marks it as dirty/touched
+          value.value = '';
+          onMounted(() => {
+            setErrors('');
+          });
+
+          return {
+            errorMessage,
+          };
+        },
+        template: `
+      <span>{{ errorMessage }}</span>
+    `,
+      });
+      const error = document.querySelector('span');
+      expect(error?.textContent).toBe('');
+
+      // won't show any errors
+      await validateFn({ mode: 'validated-only' });
+      await flushPromises();
+      expect(error?.textContent).toBe(REQUIRED_MESSAGE);
+    });
+
+    test('force mode always generates new error messages', async () => {
+      let validateFn!: ReturnType<typeof useField>['validate'];
+      mountWithHoc({
+        setup() {
+          const { errorMessage, validate } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
+          validateFn = validate;
+
+          return {
+            errorMessage,
+          };
+        },
+        template: `
+      <span>{{ errorMessage }}</span>
+    `,
+      });
+      const error = document.querySelector('span');
+      expect(error?.textContent).toBe('');
+
+      // won't show any errors
+      await validateFn({ mode: 'force' });
+      await flushPromises();
+      expect(error?.textContent).toBe(REQUIRED_MESSAGE);
+    });
   });
 });

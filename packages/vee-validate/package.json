@@ -1,6 +1,6 @@
 {
   "name": "vee-validate",
-  "version": "4.4.11",
+  "version": "4.5.0-alpha.6",
   "description": "Form Validation for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
@@ -29,5 +29,8 @@
   ],
   "peerDependencies": {
     "vue": "^3.0.0"
+  },
+  "dependencies": {
+    "@vue/devtools-api": "^6.0.0-beta.15"
   }
 }

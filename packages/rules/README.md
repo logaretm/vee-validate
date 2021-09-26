@@ -16,7 +16,7 @@ This is where this package comes in, It includes the most common validators you 
 
 ## Installation
 
-```bash
+```sh
 yarn add @vee-validate/rules
 
 # or with npm
