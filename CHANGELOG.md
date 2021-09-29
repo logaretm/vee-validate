@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.5.1](https://github.com/logaretm/vee-validate/compare/v4.5.0...v4.5.1) (2021-09-29)
+
+
+### Bug Fixes
+
+* **i18n:** field name in default error message ([#3506](https://github.com/logaretm/vee-validate/issues/3506)) ([f1f5127](https://github.com/logaretm/vee-validate/commit/f1f51279d7cc343e7d3226fda025259e59945cfa))
+
+
+
+
+
 # [4.5.0](https://github.com/logaretm/vee-validate/compare/v4.4.11...v4.5.0) (2021-09-26)
 
 
