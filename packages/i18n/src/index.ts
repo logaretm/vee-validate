@@ -37,14 +37,14 @@ class Dictionary {
     const fieldName = this.container[locale]?.names?.[field] ?? field;
 
     if (!rule) {
-      message = this.getLocaleDefault(locale, field) || `${field} is not valid`;
+      message = this.getLocaleDefault(locale, field) || `${fieldName} is not valid`;
       return isCallable(message) ? message(ctx) : interpolate(message, { ...form, field: fieldName });
     }
 
     // find if specific message for that field was specified.
     message = this.container[locale]?.fields?.[field]?.[rule.name] || this.container[locale]?.messages?.[rule.name];
     if (!message) {
-      message = this.getLocaleDefault(locale, field) || 'field is not valid';
+      message = this.getLocaleDefault(locale, field) || `${fieldName} is not valid`;
     }
 
     return isCallable(message)
