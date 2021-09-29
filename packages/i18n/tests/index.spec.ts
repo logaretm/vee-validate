@@ -111,7 +111,7 @@ test('falls back to the default message if rule without message exists', async (
   const wrapper = mountWithHoc({
     template: `
       <div>
-        <Field name="field" rules="required|i18n" v-slot="{ field, errors }">
+        <Field name="name" rules="required|i18n" v-slot="{ field, errors }">
           <input v-bind="field" type="text">
           <span id="error">{{ errors[0] }}</span>
         </Field>
@@ -124,7 +124,7 @@ test('falls back to the default message if rule without message exists', async (
   setValue(input, '12');
   await flushPromises();
 
-  expect(error.textContent).toContain('field is not valid');
+  expect(error.textContent).toContain('name is not valid');
 });
 
 test('falls back to a language specific default message if rule without message exists', async () => {
