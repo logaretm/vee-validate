@@ -11,8 +11,8 @@ features:
     details: Build faster forms faster with intuitive API and small footprint
   - title: 🏏 Minimal
     details: Only handles the complicated and painful form concerns, gives you full control over everything else
-  - title: 🍤 Tiny
-    details: Small footprint < 5kb which makes your apps faster to load
+  - title: 🌲 Tree-shakeable
+    details: Smaller bundle size means faster startup times, import what you need.
   - title: 😎 UI Agnostic
     details: Works with native HTML elements or your favorite UI library components
   - title: 🦾 Progressive
