@@ -1,7 +1,7 @@
 import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch, unref, nextTick, warn, markRaw } from 'vue';
 import isEqual from 'fast-deep-equal/es6';
 import type { SchemaOf } from 'yup';
-import { klona as deepCopy } from 'klona/lite';
+import { klona as deepCopy } from 'klona/full';
 import {
   FieldMeta,
   SubmissionHandler,

@@ -50,7 +50,7 @@ function createConfig(pkg, format) {
         }),
         tsPlugin,
         resolve({
-          dedupe: ['fast-deep-equal/es6', 'fast-deep-equal', 'klona', 'klona/lite'],
+          dedupe: ['fast-deep-equal/es6', 'fast-deep-equal', 'klona', 'klona/full'],
         }),
         commonjs(),
       ],

@@ -11,7 +11,7 @@ import {
   getCurrentInstance,
 } from 'vue';
 import { BaseSchema } from 'yup';
-import { klona as deepCopy } from 'klona/lite';
+import { klona as deepCopy } from 'klona/full';
 import isEqual from 'fast-deep-equal/es6';
 import { validate as validateValue } from './validate';
 import {
