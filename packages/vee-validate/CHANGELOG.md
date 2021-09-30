@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.5.2](https://github.com/logaretm/vee-validate/compare/v4.5.1...v4.5.2) (2021-09-30)
+
+
+### Bug Fixes
+
+* use klona/full mode to handle luxon values closes [#3508](https://github.com/logaretm/vee-validate/issues/3508) ([048c9c0](https://github.com/logaretm/vee-validate/commit/048c9c03d38ffd871ee4b3504daf1c83d42e9516))
+
+
+
+
+
 ## [4.5.1](https://github.com/logaretm/vee-validate/compare/v4.5.0...v4.5.1) (2021-09-29)
 
 **Note:** Version bump only for package vee-validate
