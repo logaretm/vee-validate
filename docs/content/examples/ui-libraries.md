@@ -34,6 +34,14 @@ In the next few examples you will find examples on how to do that in various way
 
 <code-sandbox id="vee-validate-headless-ui-example-9jz9h" title="vee-validate headless ui example"></code-sandbox>
 
+## Ionic Framework
+
+> [Ionic Framework](https://ionicframework.com/): An open source mobile toolkit for building high quality, cross-platform native and web app experiences.
+
+This example is originally forked from another example created by [Aaron Saunders](https://twitter.com/aaronksaunders).
+
+<code-sandbox id="vee-validate-ionic-example-yynyp" title="vee-validate ionic example"></code-sandbox>
+
 ## Request a UI library
 
 Can't find your favorite UI library here? You can request adding an example for it by creating an [issue here](https://github.com/logaretm/vee-validate/issues/new/choose) and we will consider adding it here.
