@@ -363,11 +363,19 @@ You can also specify if a `handleChange` call should trigger validation or not b
 
 When applying `v-bind="field"` to a Vue component, be careful that the listeners will both be applied for Vue and native DOM events, meaning you might trigger validation unintentionally.
 
-It is recommended that you listen to the proper events when using `v-bind` with custom components, the following sample uses `modelValue` events.
+An example of that could be `input[type="file"]` inputs, because you cannot bind the `value` attribute to a file instance which means two-way binding won't work there. In that case, only listing to handful of events makes more sense:
 
 ```vue
-<Field v-slot="{ handleChange, field }">
-  <CustomInput :modelValue="field.value" @update:modelValue="handleChange" />
+<Field name="file" v-slot="{ handleChange, handleBlur }">
+  <input type="file" @change="handleChange" @blur="handleBlur" />
+</Field>
+```
+
+For custom components, it is recommended that you listen to the proper events when using `v-bind` with custom components, the following sample uses `modelValue` events.
+
+```vue
+<Field v-slot="{ handleChange, value }">
+  <CustomInput :modelValue="value" @update:modelValue="handleChange" />
 </Field>
 ```
 

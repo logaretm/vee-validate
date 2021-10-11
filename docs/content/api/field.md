@@ -79,7 +79,21 @@ The `as` prop is very easy to use but also limited as you cannot render a group 
 </Field>
 ```
 
-The most crucial part of rendering fields with `v-slot` is that you **must bind the `field` object to your input element/input**, the `field` object contains all the attributes and listeners required for the field to be validated, this is done automatically if you are using the `as` prop.
+The most crucial part of rendering fields with `v-slot` is that you **bind the `field` object to your input element/input**, the `field` object contains all the common attributes and listeners required for the field to be validated, this is done automatically if you are using the `as` prop.
+
+<doc-tip title="File Inputs and Custom Components" type="warn">
+
+When rendering File inputs and custom components, binding the `field` object may not be a good idea in these cases as generally you need to pick the suitable attributes that you should bind. In the case of `input[type="file"]` you could do something like this:
+
+```vue
+<Field name="file" v-slot="{ handleChange, handleBlur }">
+  <input type="file" @change="handleChange" @blur="handleBlur" />
+</Field>
+```
+
+This is because the file input doesn't work with two-way binding since you cannot really force pick a file from a user's device. Custom components may emit different events and may have additional requirements for two-way binding to work. You can check the [UI Libraries](/examples/ui-libraries) section for a few examples on how to do that.
+
+</doc-tip>
 
 When using `v-slot` on the `Field` component you no longer have to provide an `as` prop and then it will become a renderless component.
 
