@@ -1,8 +1,9 @@
-import { defineComponent, toRef } from 'vue';
+import { defineComponent, toRef, UnwrapRef, VNode } from 'vue';
+import { FieldArrayContext } from './types';
 import { useFieldArray } from './useFieldArray';
 import { normalizeChildren } from './utils';
 
-export const FieldArray = defineComponent({
+const FieldArrayImpl = defineComponent({
   name: 'FieldArray',
   inheritAttrs: false,
   props: {
@@ -44,3 +45,11 @@ export const FieldArray = defineComponent({
     };
   },
 });
+
+export const FieldArray = FieldArrayImpl as typeof FieldArrayImpl & {
+  new (): {
+    $slots: {
+      default: (arg: UnwrapRef<FieldArrayContext>) => VNode[];
+    };
+  };
+};

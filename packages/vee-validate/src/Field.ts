@@ -1,9 +1,21 @@
-import { h, defineComponent, toRef, SetupContext, resolveDynamicComponent, computed, watch, PropType } from 'vue';
+import {
+  h,
+  defineComponent,
+  toRef,
+  SetupContext,
+  resolveDynamicComponent,
+  computed,
+  watch,
+  PropType,
+  VNode,
+} from 'vue';
 import { getConfig } from './config';
 import { RuleExpression, useField } from './useField';
 import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent, normalizeEventValue } from './utils';
 import { toNumber } from '../../shared';
 import { IS_ABSENT } from './symbols';
+import { FieldMeta } from './types';
+import { FieldContext } from '.';
 
 interface ValidationTriggersProps {
   validateOnMount: boolean;
@@ -13,7 +25,30 @@ interface ValidationTriggersProps {
   validateOnModelUpdate: boolean;
 }
 
-export const Field = defineComponent({
+interface FieldBindingObject<TValue = unknown> {
+  name: string;
+  onBlur: (e: Event) => unknown;
+  onInput: (e: Event) => unknown;
+  onChange: (e: Event) => unknown;
+  'onUpdate:modelValue'?: ((e: TValue) => unknown) | undefined;
+  value?: unknown;
+  checked?: boolean;
+}
+
+interface FieldSlotProps<TValue = unknown>
+  extends Pick<
+    FieldContext,
+    'validate' | 'resetField' | 'handleChange' | 'handleReset' | 'handleBlur' | 'setTouched' | 'setErrors'
+  > {
+  field: FieldBindingObject<TValue>;
+  value: TValue;
+  meta: FieldMeta<TValue>;
+  errors: string[];
+  errorMessage: string | undefined;
+  handleInput: FieldContext['handleChange'];
+}
+
+const FieldImpl = defineComponent({
   name: 'Field',
   inheritAttrs: false,
   props: {
@@ -135,11 +170,15 @@ export const Field = defineComponent({
     const fieldProps = computed(() => {
       const { validateOnInput, validateOnChange, validateOnBlur, validateOnModelUpdate } =
         resolveValidationTriggers(props);
-      const baseOnBlur = [handleBlur, ctx.attrs.onBlur, validateOnBlur ? validateField : undefined].filter(Boolean);
-      const baseOnInput = [(e: unknown) => onChangeHandler(e, validateOnInput), ctx.attrs.onInput].filter(Boolean);
-      const baseOnChange = [(e: unknown) => onChangeHandler(e, validateOnChange), ctx.attrs.onChange].filter(Boolean);
+      const baseOnBlur: any = [handleBlur, ctx.attrs.onBlur, validateOnBlur ? validateField : undefined].filter(
+        Boolean
+      );
+      const baseOnInput: any = [(e: unknown) => onChangeHandler(e, validateOnInput), ctx.attrs.onInput].filter(Boolean);
+      const baseOnChange: any = [(e: unknown) => onChangeHandler(e, validateOnChange), ctx.attrs.onChange].filter(
+        Boolean
+      );
 
-      const attrs: Record<string, any> = {
+      const attrs: FieldBindingObject<unknown> = {
         name: props.name,
         onBlur: baseOnBlur,
         onInput: baseOnInput,
@@ -147,7 +186,7 @@ export const Field = defineComponent({
       };
 
       if (validateOnModelUpdate) {
-        attrs['onUpdate:modelValue'] = [onChangeHandler];
+        attrs['onUpdate:modelValue'] = [onChangeHandler] as any;
       }
 
       if (hasCheckedAttr(ctx.attrs.type) && checked) {
@@ -177,7 +216,7 @@ export const Field = defineComponent({
       }
     });
 
-    function slotProps() {
+    function slotProps(): FieldSlotProps {
       return {
         field: fieldProps.value,
         value: value.value,
@@ -205,7 +244,7 @@ export const Field = defineComponent({
 
     return () => {
       const tag = resolveDynamicComponent(resolveTag(props, ctx)) as string;
-      const children = normalizeChildren(tag, ctx, slotProps);
+      const children = normalizeChildren(tag, ctx, slotProps as any);
 
       if (tag) {
         return h(
@@ -261,3 +300,11 @@ function resolveInitialValue(props: Record<string, unknown>, ctx: SetupContext<a
 
   return isPropPresent(props, 'modelValue') ? props.modelValue : undefined;
 }
+
+export const Field = FieldImpl as typeof FieldImpl & {
+  new (): {
+    $slots: {
+      default: (arg: FieldSlotProps<unknown>) => VNode[];
+    };
+  };
+};
