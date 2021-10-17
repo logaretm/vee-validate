@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.5.3](https://github.com/logaretm/vee-validate/compare/v4.5.2...v4.5.3) (2021-10-17)
+
+
+### Features
+
+* added slot typings for components closes [#3534](https://github.com/logaretm/vee-validate/issues/3534) ([#3537](https://github.com/logaretm/vee-validate/issues/3537)) ([52a2a38](https://github.com/logaretm/vee-validate/commit/52a2a385ec6e65c7eaaed0a67615c45aba07de64))
+
+
+
+
+
 ## [4.5.2](https://github.com/logaretm/vee-validate/compare/v4.5.1...v4.5.2) (2021-09-30)
 
 
