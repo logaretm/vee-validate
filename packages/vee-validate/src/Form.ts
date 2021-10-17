@@ -1,9 +1,34 @@
-import { h, defineComponent, toRef, resolveDynamicComponent, PropType } from 'vue';
+import { h, defineComponent, toRef, resolveDynamicComponent, PropType, VNode, UnwrapRef } from 'vue';
 import { useForm } from './useForm';
 import { SubmissionHandler, InvalidSubmissionHandler } from './types';
 import { isEvent, normalizeChildren } from './utils';
+import { FormContext } from '.';
 
-export const Form = defineComponent({
+type FormSlotProps = UnwrapRef<
+  Pick<
+    FormContext,
+    | 'meta'
+    | 'errors'
+    | 'values'
+    | 'isSubmitting'
+    | 'submitCount'
+    | 'validate'
+    | 'validateField'
+    | 'handleReset'
+    | 'submitForm'
+    | 'setErrors'
+    | 'setFieldError'
+    | 'setFieldValue'
+    | 'setValues'
+    | 'setFieldTouched'
+    | 'setTouched'
+    | 'resetForm'
+  >
+> & {
+  handleSubmit: (evt: Event | SubmissionHandler, onSubmit?: SubmissionHandler) => Promise<unknown>;
+};
+
+const FormImpl = defineComponent({
   name: 'Form',
   inheritAttrs: false,
   props: {
@@ -89,7 +114,7 @@ export const Form = defineComponent({
       return handleSubmit(onSuccess as SubmissionHandler<Record<string, unknown>>, props.onInvalidSubmit)(evt as Event);
     }
 
-    function slotProps() {
+    function slotProps(): FormSlotProps {
       return {
         meta: meta.value,
         errors: errors.value,
@@ -127,7 +152,7 @@ export const Form = defineComponent({
     return function renderForm() {
       // avoid resolving the form component as itself
       const tag = props.as === 'form' ? props.as : (resolveDynamicComponent(props.as) as string);
-      const children = normalizeChildren(tag, ctx, slotProps);
+      const children = normalizeChildren(tag, ctx, slotProps as any);
 
       if (!props.as) {
         return children;
@@ -155,3 +180,11 @@ export const Form = defineComponent({
     };
   },
 });
+
+export const Form = FormImpl as typeof FormImpl & {
+  new (): {
+    $slots: {
+      default: (arg: FormSlotProps) => VNode[];
+    };
+  };
+};

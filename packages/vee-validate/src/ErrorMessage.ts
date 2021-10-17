@@ -1,8 +1,12 @@
-import { inject, h, defineComponent, computed, resolveDynamicComponent } from 'vue';
+import { inject, h, defineComponent, computed, resolveDynamicComponent, VNode } from 'vue';
 import { FormContextKey } from './symbols';
 import { normalizeChildren } from './utils';
 
-export const ErrorMessage = defineComponent({
+interface ErrorMessageSlotProps {
+  message: string | undefined;
+}
+
+const ErrorMessageImpl = defineComponent({
   name: 'ErrorMessage',
   props: {
     as: {
@@ -20,7 +24,7 @@ export const ErrorMessage = defineComponent({
       return form?.errors.value[props.name];
     });
 
-    function slotProps() {
+    function slotProps(): ErrorMessageSlotProps {
       return {
         message: message.value,
       };
@@ -33,7 +37,7 @@ export const ErrorMessage = defineComponent({
       }
 
       const tag = (props.as ? resolveDynamicComponent(props.as) : props.as) as string;
-      const children = normalizeChildren(tag, ctx, slotProps);
+      const children = normalizeChildren(tag, ctx, slotProps as any);
 
       const attrs = {
         role: 'alert',
@@ -56,3 +60,11 @@ export const ErrorMessage = defineComponent({
     };
   },
 });
+
+export const ErrorMessage = ErrorMessageImpl as typeof ErrorMessageImpl & {
+  new (): {
+    $slots: {
+      default: (arg: ErrorMessageSlotProps) => VNode[];
+    };
+  };
+};
