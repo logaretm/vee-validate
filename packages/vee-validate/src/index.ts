@@ -15,8 +15,13 @@ export {
   FormValidationResult,
   FormContext,
   FieldContext,
+  FieldEntry,
+  FieldArrayContext,
   SubmissionContext,
   SubmissionHandler,
+  FieldMeta,
+  FormMeta,
+  InvalidSubmissionContext,
 } from './types';
 export { useResetForm } from './useResetForm';
 export { useIsFieldDirty } from './useIsFieldDirty';
