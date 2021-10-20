@@ -117,7 +117,7 @@ The default slot gives you access to the following props:
 
 <code-title level="4">
 
-errors: Record<string, string>`
+`errors: Record<string, string>`
 
 </code-title>
 
