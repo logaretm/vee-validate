@@ -53,6 +53,10 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 ): FormContext<TValues> {
   const formId = FORM_COUNTER++;
 
+  // Prevents fields from double resetting their values, which causes checkboxes to toggle their initial value
+  // TODO: This won't be needed if we centralize all the state inside the `form` for form inputs
+  let RESET_LOCK = false;
+
   // A lookup containing fields or field groups
   const fieldsByPath: Ref<FieldPathLookup<TValues>> = ref({} as any);
 
@@ -210,8 +214,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       return;
     }
 
-    // Multiple checkboxes, and only one of them got updated
     if (isFieldGroup(fieldInstance) && fieldInstance[0]?.type === 'checkbox' && !Array.isArray(value)) {
+      // Multiple checkboxes, and only one of them got updated
       const newValue = deepCopy(
         resolveNextCheckboxValue(getFromPath(formValues, field as string) || [], value, undefined)
       );
@@ -222,7 +226,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
     let newValue = value;
     // Single Checkbox: toggles the field value unless the field is being reset then force it
-    if (!isFieldGroup(fieldInstance) && fieldInstance.type === 'checkbox' && !force) {
+    if (!isFieldGroup(fieldInstance) && fieldInstance.type === 'checkbox' && !force && !RESET_LOCK) {
       newValue = deepCopy(
         resolveNextCheckboxValue<TValues[T]>(
           getFromPath<TValues[T]>(formValues, field as string) as TValues[T],
@@ -277,6 +281,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
    * Resets all fields
    */
   function resetForm(state?: Partial<FormState<TValues>>) {
+    RESET_LOCK = true;
     // set initial values if provided
     if (state?.values) {
       setInitialValues(state.values);
@@ -293,6 +298,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
         return;
       }
 
+      // avoid resetting the field values, because they should've been reset already.
       applyFieldMutation(field, f => f.resetField());
     });
 
@@ -302,6 +308,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
     setErrors(state?.errors || {});
     submitCount.value = state?.submitCount || 0;
+    nextTick(() => {
+      RESET_LOCK = false;
+    });
   }
 
   function insertFieldAtPath(field: PrivateFieldContext, path: string) {

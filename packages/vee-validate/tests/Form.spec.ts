@@ -2231,4 +2231,56 @@ describe('<Form />', () => {
     } as InvalidSubmissionContext);
     expect(validSpy).not.toHaveBeenCalled();
   });
+
+  // #3551
+  test('resets checkboxes according to initial values', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        return {
+          values: {
+            terms: true,
+            termsUnslotted: true,
+            array: ['coffee', 'tea'],
+          },
+        };
+      },
+      template: `
+      <VForm as="form" v-slot="{  resetForm }" :initial-values="values">
+        <Field v-slot="{ field }" name="terms" type="checkbox" :value="true" :unchecked-value="false">
+          <label>
+            <input type="checkbox" name="terms" v-bind="field" :value="true" :unchecked-value="false" />
+          </label>
+        </Field>
+
+        <Field name="termsUnslotted" type="checkbox" :value="true" :unchecked-value="false"></Field>
+
+        <Field name="array" type="checkbox" value="coffee"></Field>
+        <Field name="array" type="checkbox" value="tea"></Field>
+
+        <button id="reset1" type="button" @click="resetForm()">Reset</button>
+        <button id="reset2" type="button" @click="resetForm({ values: { terms: false, termsUnslotted: true, array: ['coffee'] } })">Reset</button>
+      </VForm>
+    `,
+    });
+
+    const inputAt = (idx: number) => wrapper.$el.querySelectorAll('input')[idx] as HTMLInputElement;
+    expect(inputAt(0).checked).toBe(true);
+    expect(inputAt(1).checked).toBe(true);
+    expect(inputAt(2).checked).toBe(true);
+    expect(inputAt(3).checked).toBe(true);
+
+    dispatchEvent('#reset1', 'click');
+    await flushPromises();
+    expect(inputAt(0).checked).toBe(true);
+    expect(inputAt(1).checked).toBe(true);
+    expect(inputAt(2).checked).toBe(true);
+    expect(inputAt(3).checked).toBe(true);
+
+    dispatchEvent('#reset2', 'click');
+    await flushPromises();
+    expect(inputAt(0).checked).toBe(false);
+    expect(inputAt(1).checked).toBe(true);
+    expect(inputAt(2).checked).toBe(true);
+    expect(inputAt(3).checked).toBe(false);
+  });
 });
