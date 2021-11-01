@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.5.5](https://github.com/logaretm/vee-validate/compare/v4.5.4...v4.5.5) (2021-11-01)
+
+
+### Bug Fixes
+
+* prevent toggle checkboxes when form resets closes [#3551](https://github.com/logaretm/vee-validate/issues/3551) ([cad12ba](https://github.com/logaretm/vee-validate/commit/cad12ba7502af7268029930a9176d8e160efeef6))
+
+
+
+
+
 ## [4.5.4](https://github.com/logaretm/vee-validate/compare/v4.5.3...v4.5.4) (2021-10-20)
 
 **Note:** Version bump only for package vee-validate
