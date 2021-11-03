@@ -47,10 +47,11 @@ test('it validates', async () => {
 });
 ```
 
-To wait for the validation to execute and render the error message, you can use the `flush-promises` npm package to wait for all promises to fulfill.
+To wait for the validation to execute and render the error message, you can use the `flush-promises` npm package to wait for all promises to fulfill and also coupled with `wait-for-expect`.
 
 ```js
 import flushPromises from 'flush-promises';
+import waitForExpect from 'wait-for-expect';
 
 test('it validates', async () => {
   // assuming you have a mounting helper
@@ -59,28 +60,16 @@ test('it validates', async () => {
   input.value = '';
   input.dispatchEvent(new Event('change'));
 
-  // wait for the promises to fulfill
-  await flushPromises();
   // ✅ Now passes
-  expect(document.querySelector('span').textContent).toBe('Field is required');
+  await waitForExpect(async () => {
+    // wait for the promises to fulfill
+    await flushPromises();
+    expect(document.querySelector('span').textContent).toBe('Field is required');
+  });
 });
 ```
 
-If you are using the official [Vue testing utils](https://next.vue-test-utils.vuejs.org/) which comes with the `flush-promises` exposed. You will need to flush promises after setting the input value:
-
-```js
-import { mount, flushPromises } from '@vue/test-utils';
-
-test('it validates', async () => {
-  const wrapper await mount(SomeComponent);
-  await wrapper.get('input').setValue('');
-
-  // wait for the promises to fulfill
-  await flushPromises();
-  // ✅  passes
-  expect(wrapper.get('span').text()).toBe('Field is required');
-});
-```
+vee-validate may run validation in batches to improve performance which isn't always detected by `flush-promises`, so using both is recommended here.
 
 ## Testing error messages
 
