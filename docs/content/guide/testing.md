@@ -60,10 +60,10 @@ test('it validates', async () => {
   input.value = '';
   input.dispatchEvent(new Event('change'));
 
-  // ✅ Now passes
-  await waitForExpect(async () => {
-    // wait for the promises to fulfill
-    await flushPromises();
+  // wait for the promises to fulfill
+  await flushPromises();
+  await waitForExpect(() => {
+    // ✅ Now passes
     expect(document.querySelector('span').textContent).toBe('Field is required');
   });
 });
