@@ -85,7 +85,7 @@ export interface PrivateFieldContext<TValue = unknown> {
   checkedValue?: MaybeRef<TValue>;
   uncheckedValue?: MaybeRef<TValue>;
   checked?: Ref<boolean>;
-  resetField(state?: FieldState<TValue>): void;
+  resetField(state?: Partial<FieldState<TValue>>): void;
   handleReset(): void;
   validate(opts?: Partial<ValidationOptions>): Promise<ValidationResult>;
   handleChange(e: Event | unknown, shouldValidate?: boolean): void;
