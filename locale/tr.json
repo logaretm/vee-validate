@@ -13,6 +13,8 @@
     "excluded": "{_field_} alanına geçerli bir değer giriniz",
     "ext": "{_field_} alanı geçerli bir dosya olmalıdır",
     "image": "{_field_} alanı resim dosyası olmalıdır",
+    "integer": "{_field_} alanı geçerli bir tamsayı olmalıdır.",
+    "length": "{_field_} alanı {length} karakter uzunluğunda olmalıdır.",
     "oneOf": "{_field_} alanına geçerli bir değer giriniz",
     "max": "{_field_} alanı {length} karakterden fazla olmamalıdır",
     "max_value": "{_field_} alanı {max} ya da daha az bir değer olmalıdır",
