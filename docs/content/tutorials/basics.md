@@ -46,11 +46,11 @@ vue create vee-validate-tutorial
 2. Add `vee-validate` to your project
 
 ```sh
-yarn add vee-validate
+yarn add vee-validate@next
 
 # or
 
-npm install vee-validate
+npm install vee-validate@next --save
 ```
 
 3. Cleanup the contents of `App.vue`, it should look like the following:
