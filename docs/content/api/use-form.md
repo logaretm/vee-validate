@@ -99,7 +99,6 @@ interface FormOptions {
   validationSchema?: any; // A yup schema, or a Record<string, any> containing valid rules as `useField`
   initialValues?: Record<string, any>;
   initialErrors?: Record<string, string>; // a map of the form's initial error messages
-  initialDirty?: Record<string, boolean>; // a map of the form's initial dirty fields
   initialTouched?: Record<string, boolean>; // a map of the form's initial touched fields
   validateOnMount?: boolean;
 }
@@ -165,23 +164,6 @@ const { ... } = useForm({
   initialErrors: {
     email: 'This email is invalid',
     password: 'Password too short',
-  }
-});
-```
-
-<code-title level="4">
-
-`initialDirty?: Record<string, any>`
-
-</code-title>
-
-The initial dirty status for the form fields, applied on mounted.
-
-```js
-const { ... } = useForm({
-  initialDirty: {
-    email: true, // dirty
-    password: false, // non-dirty
   }
 });
 ```
