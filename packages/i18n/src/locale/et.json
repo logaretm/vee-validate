@@ -1,6 +1,7 @@
 {
   "code": "et",
   "messages": {
+    "_default": "{field} on sobimatu",
     "alpha": "{field} võib sisaldada ainult tähti",
     "alpha_num": "{field} võib sisaldada ainult tähti ja numbreid",
     "alpha_dash": "{field} võib sisaldada ainult tähti, numbreid, kriipse ja alakriipse",
@@ -13,7 +14,11 @@
     "excluded": "{field} ei oma sobivat väärtust",
     "ext": "{field} peab olema sobiv fail",
     "image": "{field} peab olema pilt",
-    "max_value": "{field} peab olema 0:{max} või väisem",
+    "integer": "{field} peab olema täisarv",
+    "is": "{field} peab olema 0:{other}",
+    "is_not": "{field} ei tohi olla 0:{other}",
+    "length": "{field} peab olema 0:{length} ühikut pikk",
+    "max_value": "{field} peab olema 0:{max} või väiksem",
     "max": "{field} ei tohi olla pikem kui 0:{length} tähemärki",
     "mimes": "{field} peab olema sobivat tüüpi fail",
     "min_value": "{field} peab olema 0:{min} või suurem",
@@ -23,6 +28,7 @@
     "regex": "{field} pole sobival kujul",
     "required": "{field} on nõutud väli",
     "required_if": "{field} on nõutud väli",
-    "size": "{field} peab olema väiksem kui 0:{size}KB"
+    "size": "{field} peab olema väiksem kui 0:{size}KB",
+    "url": "{field} pole sobiv URL"
   }
 }
