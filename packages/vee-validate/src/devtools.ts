@@ -1,11 +1,11 @@
-import { App, getCurrentInstance, nextTick, onUnmounted, unref } from 'vue';
+import { ComponentInternalInstance, getCurrentInstance, nextTick, onUnmounted, unref } from 'vue';
 import {
+  App,
   setupDevtoolsPlugin,
   DevtoolsPluginApi,
   CustomInspectorNode,
   CustomInspectorState,
   InspectorNodeTag,
-  ComponentInstance,
 } from '@vue/devtools-api';
 import { PrivateFieldContext, PrivateFormContext } from './types';
 import { keysOf, normalizeField, setInPath, throttle } from './utils';
@@ -27,8 +27,8 @@ function installDevtoolsPlugin(app: App) {
   }
 }
 
-const DEVTOOLS_FORMS: Record<string, PrivateFormContext & { _vm?: ComponentInstance | null }> = {};
-const DEVTOOLS_FIELDS: Record<string, PrivateFieldContext & { _vm?: ComponentInstance | null }> = {};
+const DEVTOOLS_FORMS: Record<string, PrivateFormContext & { _vm?: ComponentInternalInstance | null }> = {};
+const DEVTOOLS_FIELDS: Record<string, PrivateFieldContext & { _vm?: ComponentInternalInstance | null }> = {};
 
 let API: DevtoolsPluginApi<Record<string, any>> | undefined;
 
@@ -48,7 +48,7 @@ export function registerFormWithDevTools(form: PrivateFormContext) {
       return;
     }
 
-    installDevtoolsPlugin(app);
+    installDevtoolsPlugin(app as unknown as App);
   }
 
   DEVTOOLS_FORMS[form.formId] = { ...form };
@@ -69,7 +69,7 @@ export function registerSingleFieldWithDevtools(field: PrivateFieldContext) {
       return;
     }
 
-    installDevtoolsPlugin(app);
+    installDevtoolsPlugin(app as unknown as App);
   }
 
   DEVTOOLS_FIELDS[field.id] = { ...field };
@@ -96,7 +96,8 @@ const COLORS = {
   gray: 0xbbbfca,
 };
 
-let SELECTED_NODE: ((PrivateFormContext | PrivateFieldContext) & { _vm?: ComponentInstance | null }) | null = null;
+let SELECTED_NODE: ((PrivateFormContext | PrivateFieldContext) & { _vm?: ComponentInternalInstance | null }) | null =
+  null;
 
 function setupApiHooks(api: DevtoolsPluginApi<Record<string, any>>) {
   API = api;
@@ -323,8 +324,8 @@ function encodeNodeId(form?: PrivateFormContext, field?: PrivateFieldContext, en
 }
 
 function decodeNodeId(nodeId: string): {
-  field?: PrivateFieldContext & { _vm?: ComponentInstance | null };
-  form?: PrivateFormContext & { _vm?: ComponentInstance | null };
+  field?: PrivateFieldContext & { _vm?: ComponentInternalInstance | null };
+  form?: PrivateFormContext & { _vm?: ComponentInternalInstance | null };
   type?: 'form' | 'field';
 } {
   try {
