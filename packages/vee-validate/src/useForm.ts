@@ -1,4 +1,18 @@
-import { computed, ref, Ref, provide, reactive, onMounted, isRef, watch, unref, nextTick, warn, markRaw } from 'vue';
+import {
+  computed,
+  ref,
+  Ref,
+  provide,
+  reactive,
+  onMounted,
+  isRef,
+  watch,
+  unref,
+  nextTick,
+  warn,
+  markRaw,
+  watchEffect,
+} from 'vue';
 import isEqual from 'fast-deep-equal/es6';
 import type { SchemaOf } from 'yup';
 import { klona as deepCopy } from 'klona/full';
@@ -722,7 +736,7 @@ function useFormMeta<TValues extends Record<string, unknown>>(
     return !isEqual(currentValues, unref(initialValues));
   });
 
-  const flags = computed(() => {
+  function calculateFlags() {
     const fields = Object.values(fieldsByPath.value).flat(1).filter(Boolean) as PrivateFieldContext[];
 
     return keysOf(MERGE_STRATEGIES).reduce((acc, flag) => {
@@ -731,13 +745,21 @@ function useFormMeta<TValues extends Record<string, unknown>>(
 
       return acc;
     }, {} as Record<keyof Omit<FieldMeta<unknown>, 'initialValue'>, boolean>);
+  }
+
+  const flags = reactive(calculateFlags());
+  watchEffect(() => {
+    const value = calculateFlags();
+    flags.touched = value.touched;
+    flags.valid = value.valid;
+    flags.pending = value.pending;
   });
 
   return computed(() => {
     return {
       initialValues: unref(initialValues) as TValues,
-      ...flags.value,
-      valid: flags.value.valid && !keysOf(errors.value as any).length,
+      ...flags,
+      valid: flags.valid && !keysOf(errors.value as any).length,
       dirty: isDirty.value,
     };
   });
