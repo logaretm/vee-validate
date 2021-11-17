@@ -131,7 +131,7 @@ Field arrays are a special type of nested array fields, they are often used to c
 
 When dealing with those fields it is better to use `<FieldArray />` component which gives you a few helpers you can use to manage the array fields.
 
-Here is a small example that shows how easy it is to create a repeatable group of fields:
+Here is a small example that shows how easy it is to create a repeatable `URL` field:
 
 ```vue
 <template>
@@ -143,7 +143,7 @@ Here is a small example that shows how easy it is to create a repeatable group o
         <button type="button" @click="remove(idx)">Remove</button>
       </div>
 
-      <button type="button" @click="push({ id: Date.now(), name: '', url: '' })">Add</button>
+      <button type="button" @click="push('')">Add</button>
     </FieldArray>
 
     <button>Submit</button>
