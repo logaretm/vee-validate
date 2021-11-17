@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.5.6](https://github.com/logaretm/vee-validate/compare/v4.5.5...v4.5.6) (2021-11-17)
+
+
+### Bug Fixes
+
+* improved et locale ([#3584](https://github.com/logaretm/vee-validate/issues/3584)) ([60e6f30](https://github.com/logaretm/vee-validate/commit/60e6f307a4039e84721741e31f0148e5b0628696))
+
+
+
+
+
 ## [4.5.5](https://github.com/logaretm/vee-validate/compare/v4.5.4...v4.5.5) (2021-11-01)
 
 **Note:** Version bump only for package @vee-validate/i18n

@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.5.6](https://github.com/logaretm/vee-validate/compare/v4.5.5...v4.5.6) (2021-11-17)
+
+
+### Bug Fixes
+
+* corrected the typing for the resetField function closes [#3568](https://github.com/logaretm/vee-validate/issues/3568) ([4e9460e](https://github.com/logaretm/vee-validate/commit/4e9460e3a4f51f4a78ddcdf17f7c3073f899404f))
+* new devtools typings ([f288ca5](https://github.com/logaretm/vee-validate/commit/f288ca5a59d36f23ba7f6bdd210493588f744940))
+* use watchEffect to compute form meta closes [#3580](https://github.com/logaretm/vee-validate/issues/3580) ([e8729dc](https://github.com/logaretm/vee-validate/commit/e8729dc72d2a027a666515360c9537a62a8d46ad))
+
+
+
+
+
 ## [4.5.5](https://github.com/logaretm/vee-validate/compare/v4.5.4...v4.5.5) (2021-11-01)
 
 
