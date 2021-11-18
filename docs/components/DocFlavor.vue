@@ -27,7 +27,7 @@
 
       <nuxt-link :to="`/guide/composition-api/${next}`" class="bg-gray-600 hover:bg-accent-900 p-6 rounded-lg relative">
         <p class="text-xl font-semibold font-display">Composition API</p>
-        <p class="mt-8">Low level, intutative composition API functions.</p>
+        <p class="mt-8">Low level, intuitive composition API functions.</p>
         <p class="mt-4">Great for building complex UI form components and general purpose data validation.</p>
         <svg
           class="w-20 h-20 absolute top-0 right-0 mt-4 mr-4 text-gray-900 opacity-10"
