@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import docsearch from '@docsearch/js';
+
 function isSpecialClick(event) {
   return event.button === 1 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 }
@@ -26,71 +28,66 @@ export default {
 
       return this.stripTrailingSlash(url);
     },
-    initialize(userOptions, lang) {
-      Promise.all([
-        import(/* webpackChunkName: "docsearch" */ '@docsearch/js'),
-        import(/* webpackChunkName: "docsearch" */ '@docsearch/css'),
-      ]).then(([docsearch]) => {
-        docsearch = docsearch.default;
-        const { algoliaOptions = {} } = userOptions;
-        docsearch(
-          Object.assign({}, userOptions, {
-            container: '#docsearch',
-            debug: process.env.NODE_ENV !== 'production',
-            navigator: {
-              navigate: ({ suggestionUrl }) => {
-                const { pathname: hitPathname } = new URL(window.location.origin + suggestionUrl);
-                // Vue Router doesn't handle same-page navigation so we use
-                // the native browser location API for anchor navigation.
-                if (this.$router.history.current.path === hitPathname) {
-                  window.location.assign(window.location.origin + suggestionUrl);
-                } else {
-                  this.$router.push(suggestionUrl);
-                }
-              },
-            },
-            transformItems: items => {
-              return items.map(item => {
-                return Object.assign({}, item, {
-                  url: this.getRelativePath(item.url),
-                });
-              });
-            },
-            hitComponent: ({ hit, children }) => {
-              return {
-                type: 'a',
-                ref: undefined,
-                constructor: undefined,
-                key: undefined,
-                props: {
-                  href: hit.url,
-                  onClick: event => {
-                    if (isSpecialClick(event)) {
-                      return;
-                    }
-                    // We rely on the native link scrolling when user is
-                    // already on the right anchor because Vue Router doesn't
-                    // support duplicated history entries.
-                    if (this.$router.history.current.fullPath === hit.url) {
-                      return;
-                    }
+    initialize(userOptions) {
+      docsearch({
+        ...userOptions,
+        container: '#docsearch',
+        debug: process.env.NODE_ENV !== 'production',
+        navigator: {
+          navigate: ({ suggestionUrl }) => {
+            const { pathname: hitPathname } = new URL(window.location.origin + suggestionUrl);
+            // Vue Router doesn't handle same-page navigation so we use
+            // the native browser location API for anchor navigation.
+            if (this.$router.history.current.path === hitPathname) {
+              window.location.assign(window.location.origin + suggestionUrl);
+              return;
+            }
 
-                    const { pathname, hash } = new URL(window.location.origin + hit.url);
-                    // If the hits goes to another page, we prevent the native link behavior
-                    // to leverage the Vue Router loading feature.
-                    if (this.$router.history.current.path !== pathname) {
-                      event.preventDefault();
-                    }
-                    // makes sure to remove base path to prevent duplicate base paths
-                    const url = pathname.replace('/v4/', '/') + hash;
-                    this.$router.push(url);
-                  },
-                  children,
-                },
-              };
+            this.$router.push(suggestionUrl);
+          },
+        },
+        transformItems: items => {
+          return items.map(item => {
+            return {
+              ...item,
+              url: this.getRelativePath(item.url),
+            };
+          });
+        },
+        hitComponent: ({ hit, children }) => {
+          return {
+            type: 'a',
+            ref: undefined,
+            constructor: undefined,
+            key: undefined,
+            props: {
+              href: hit.url,
+              onClick: event => {
+                if (isSpecialClick(event)) {
+                  return;
+                }
+                // We rely on the native link scrolling when user is
+                // already on the right anchor because Vue Router doesn't
+                // support duplicated history entries.
+                if (this.$router.history.current.fullPath === hit.url) {
+                  return;
+                }
+
+                const { pathname, hash } = new URL(window.location.origin + hit.url);
+                // If the hits goes to another page, we prevent the native link behavior
+                // to leverage the Vue Router loading feature.
+                if (this.$router.history.current.path !== pathname) {
+                  event.preventDefault();
+                }
+                // makes sure to remove base path to prevent duplicate base paths
+                const url = pathname.replace('/v4/', '/') + hash;
+                this.$router.push(url);
+              },
+              children,
             },
-          })
-        );
+            __v: null,
+          };
+        },
       });
     },
     update(options, lang) {
@@ -110,6 +107,8 @@ export default {
 </script>
 
 <style lang="postcss">
+@import '@docsearch/css';
+
 .DocSearch {
   font-family: Arial, Helvetica, sans-serif;
   --docsearch-primary-color: var(--accent);

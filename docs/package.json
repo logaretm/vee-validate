@@ -8,8 +8,8 @@
     "export": "nuxt export"
   },
   "dependencies": {
-    "@docsearch/css": "^1.0.0-alpha.28",
-    "@docsearch/js": "^1.0.0-alpha.28",
+    "@docsearch/css": "^3.0.0-alpha.41",
+    "@docsearch/js": "^3.0.0-alpha.41",
     "@nuxt/content": "^1.13.1",
     "@nuxtjs/pwa": "^3.3.5",
     "@nuxtjs/tailwindcss": "^4.2.1",
