@@ -579,7 +579,7 @@ The field under validation must match the specified regular expression.
 
 | Param Name | Required? | Default | Description                                               |
 | ---------- | --------- | ------- | --------------------------------------------------------- |
-| `pattern`  | **yes**   |         | A regular expression instance or string representing one. |
+| `regex`    | **yes**   |         | A regular expression instance or string representing one. |
 
 :::warning Heads up!
 You should not use the pipe '|' or commas ',' within your regular expression when using the string rules format as it will cause a conflict with how validators parsing works. You should use the object format of the rules instead.
