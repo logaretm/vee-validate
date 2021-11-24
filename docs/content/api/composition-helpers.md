@@ -6,7 +6,7 @@ order: 9
 
 # Composition Helpers
 
-The composition helpers are various functions that you can use to craft specialized form components components, like a submission indicator component, or a custom error messages component.
+The composition helpers are various functions that you can use to craft specialized form components, like a submission indicator component or a custom error messages component.
 
 These functions expose validation state to child components, most of these functions expose 2 variants of each state. On a form level and a field level.
 

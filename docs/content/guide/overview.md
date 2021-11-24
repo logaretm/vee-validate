@@ -6,9 +6,9 @@ order: 1
 
 # Overview
 
-Form validation is a difficult subject in frontend, not only do you have to deal with ensuring correct values are submitted, but you also should provide a pleasant UX for your users.
+Form validation is a difficult subject in frontend development. Not only do you have to deal with ensuring that correct values are submitted, but you should also provide a pleasant UX for your users.
 
-Doing form validation by hand is a lot of work and you won't probably cover all your needs if you decide to build your own.
+Doing form validation by hand is a lot of work and you probably won't cover all your needs if you decide to build your own.
 
 **The time you spend working on a custom form validation solution is better spent building your application logic**.
 
@@ -29,11 +29,11 @@ By only handling the complex stuff, vee-validate gets out of your way of buildin
 
 vee-validate makes use of two flavors to add validation to your forms.
 
-The first approach is using higher-order components (HOC) to validate your fields, in the next examples, you will find `Field`, `Form`, and `ErrorMessage` components being used.
+The first approach is using higher-order components (HOC) to validate your fields. In the next examples you will find the `Field`, `Form`, and `ErrorMessage` components being used.
 
-The second flavor is using the composition API to add the validation logic into your existing components, You will be using `useField` and `useForm` to validation your fields/data.
+The second flavor is using the composition API to add validation logic into your existing components. You will be using `useField` and `useForm` to validate your fields and data.
 
-Whichever approach you prefer to use, both flavors can be used interchangeably so you can mix and match between the two approaches when suitable.
+Whichever approach you prefer to use, both flavors can be used interchangeably. So you can mix and match between the two approaches as needed.
 
 ### Using NPM
 
@@ -53,4 +53,4 @@ You can use vee-validate with a script tag and a CDN, import the library like th
 <script src="https://unpkg.com/vee-validate@next"></script>
 ```
 
-This will inject a `VeeValidate` global object, which you will use to access the various components, functions exposed by vee-validate.
+This will inject a `VeeValidate` global object, which you will use to access the various components and functions exposed by vee-validate.
