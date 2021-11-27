@@ -1,7 +1,7 @@
 ---
 title: Popular UI Libraries
 description: Validating popular Vue.js UI libraries with examples
-order: 8
+order: 9
 ---
 
 # Validating UI Libraries Examples
