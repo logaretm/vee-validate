@@ -185,9 +185,7 @@ const FieldImpl = defineComponent({
         onChange: baseOnChange,
       };
 
-      if (validateOnModelUpdate) {
-        attrs['onUpdate:modelValue'] = [onChangeHandler] as any;
-      }
+      attrs['onUpdate:modelValue'] = e => onChangeHandler(e, validateOnModelUpdate);
 
       if (hasCheckedAttr(ctx.attrs.type) && checked) {
         attrs.checked = checked.value;
