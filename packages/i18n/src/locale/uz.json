@@ -1,0 +1,31 @@
+{
+  "code": "uz",
+  "messages": {
+    "alpha": "{_field_} maydonida faqat harflar bo'lishi lozim",
+    "alpha_dash": "{_field_} maydonida faqat harflar, raqamlar va tire (-) bo'lishi lozim",
+    "alpha_num": "{_field_} maydonida faqat harflar va raqamlar bo'lishi lozim",
+    "alpha_spaces": "{_field_} maydonida faqat harflar va bo'shliq (space) bo'lishi lozim",
+    "between": "{_field_} maydoni uzunligi {min} va {max} oralig'ida bo'lishi lozim",
+    "confirmed": "{_field_} maydoni {target} bilan farq qilayapti",
+    "digits": "{_field_} maydoni raqam bo'lishi va uning uzunligi {length} ta bo'lishi lozim",
+    "dimensions": "{_field_} maydoni {width} pikselga {height} piksel bo'lishi lozim",
+    "email": "{_field_} maydoni haqiqiy elektron pochta bo'lishi lozim",
+    "excluded": "{_field_} maydonida ruhsat etilgan belgi bo'lishi lozim",
+    "ext": "{_field_} maydonida haqiqiy fayl bo'lishi lozim. ({args})",
+    "image": "{_field_} maydonida rasm bo'lishi lozim",
+    "oneOf": "{_field_} maydonida ruhsat etilgan belgi bo'lishi lozim",
+    "integer": "{_field_} maydonida butun son bo'lishi lozim'",
+    "length": "{_field_} maydonining uzunligi {length} ta bo'lishi lozim",
+    "max": "{_field_} maydoni {length} ta belgidan ko'p bo'lishi mumkin emas",
+    "max_value": "{_field_} maydonining uzunligi {max} ta yoki undan oz bo'lishi lozim",
+    "mimes": "{_field_} maydonida ruxsat etilgan fayl turi bo'lishi lozim. ({args})",
+    "min": "{_field_} maydoni uzunligi {length} ta belgidan kam bo'lmasligi lozim",
+    "min_value": "{_field_} maydonining uzunligi {min} ta yoki undan ko'p bo'lishi lozim",
+    "numeric": "{_field_} maydonida faqat raqam bo'lishi lozim'",
+    "regex": "{_field_} maydonida xotolik bor",
+    "required": "{_field_} maydoni majburiy, to'ldirishingiz lozim",
+    "required_if": "{_field_} maydoni majburiy to'ldirilishi lozim",
+    "size": "{_field_} maydoni {size}KB dan kam bo'lishi lozim",
+    "double": "{_field_} maydoni ruhsat etilgan o'nlik son bo'lishi lozim"
+  }
+}
