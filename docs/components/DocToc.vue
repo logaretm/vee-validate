@@ -20,7 +20,7 @@ export default {
         return [];
       }
 
-      return this.$store.state.doc.toc;
+      return this.$store.state.doc.toc || [];
     },
   },
 };
