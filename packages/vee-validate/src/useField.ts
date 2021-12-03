@@ -51,6 +51,7 @@ interface FieldOptions<TValue = unknown> {
   uncheckedValue?: MaybeRef<TValue>;
   label?: MaybeRef<string | undefined>;
   standalone?: boolean;
+  unregisterBeforeUnmount?: boolean;
 }
 
 export type RuleExpression<TValue> =
@@ -91,6 +92,7 @@ function _useField<TValue = unknown>(
     validateOnValueUpdate,
     uncheckedValue,
     standalone,
+    unregisterBeforeUnmount,
   } = normalizeOptions(unref(name), opts);
 
   const form = !standalone ? injectWithSelf(FormContextKey) : undefined;
@@ -289,7 +291,9 @@ function _useField<TValue = unknown>(
   form.register(field);
 
   onBeforeUnmount(() => {
-    form.unregister(field);
+    if (unregisterBeforeUnmount) {
+      form.unregister(field);
+    }
   });
 
   // extract cross-field dependencies in a computed prop
@@ -347,6 +351,7 @@ function normalizeOptions<TValue>(name: string, opts: Partial<FieldOptions<TValu
     label: name,
     validateOnValueUpdate: true,
     standalone: false,
+    unregisterBeforeUnmount: true,
   });
 
   if (!opts) {
