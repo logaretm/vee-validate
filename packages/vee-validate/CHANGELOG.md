@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.5.7](https://github.com/logaretm/vee-validate/compare/v4.5.6...v4.5.7) (2021-12-07)
+
+
+### Bug Fixes
+
+* always attach model update event closes [#3583](https://github.com/logaretm/vee-validate/issues/3583) ([6a53e80](https://github.com/logaretm/vee-validate/commit/6a53e80525a9c38ce8851407b832bc8409c3f334))
+
+
+
+
+
 ## [4.5.6](https://github.com/logaretm/vee-validate/compare/v4.5.5...v4.5.6) (2021-11-17)
 
 
