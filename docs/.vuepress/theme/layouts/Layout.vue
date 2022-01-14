@@ -136,7 +136,7 @@ export default {
   margin-top: 50px
 
 .theme-default-content.content__default
-  padding-top: calc(2rem + 50px)
+  padding-top: calc(2rem + 50px) !important
 
 .sidebar
   padding-top: 50px
