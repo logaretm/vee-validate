@@ -520,3 +520,57 @@ test('adds items to the start of the array with prepend()', async () => {
     expect.anything()
   );
 });
+
+// #3664
+test('clears old errors path when item is removed when no form schema is present', async () => {
+  const onSubmit = jest.fn();
+  mountWithHoc({
+    setup() {
+      const initialValues = {
+        users: [{ name: '' }, { name: '' }, { name: '' }],
+      };
+
+      const schema = yup.string().required();
+
+      return {
+        onSubmit,
+        schema,
+        initialValues,
+      };
+    },
+    template: `
+      <VForm @submit="onSubmit" :initial-values="initialValues" v-slot="{ errors }">
+        <FieldArray name="users" v-slot="{ remove, push, fields }">
+          <fieldset v-for="(field, idx) in fields" :key="field.key">
+            <legend>User #{{ idx }}</legend>
+            <label :for="'name_' + idx">Name</label>
+            <Field :id="'name_' + idx" :name="'users[' + idx + '].name'" :rules="schema" />
+            <ErrorMessage :name="'users[' + idx + '].name'" />
+
+            <button class="remove" type="button" @click="remove(idx)">X</button>
+          </fieldset>  
+        </FieldArray>
+
+
+        <ul class="errors">
+          <li v-for="error in errors">{{ error }}</li>
+        </ul>
+
+        <button class="submit" type="submit">Submit</button>
+      </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const submitBtn = document.querySelector('.submit') as HTMLButtonElement;
+  const errorList = document.querySelector('ul') as HTMLUListElement;
+  const removeBtnAt = (idx: number) => document.querySelectorAll('.remove')[idx] as HTMLButtonElement; // remove the second item
+
+  submitBtn.click();
+  await flushPromises();
+  expect(errorList.children).toHaveLength(3);
+  removeBtnAt(1).click();
+  await flushPromises();
+
+  expect(errorList.children).toHaveLength(2);
+});

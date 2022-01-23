@@ -393,6 +393,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
         // re-validate if either path had errors before
         if (errors.value[oldPath] || errors.value[newPath]) {
+          // clear up both paths errors
+          setFieldError(oldPath, undefined);
           validateField(newPath);
         }
 
