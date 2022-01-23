@@ -107,7 +107,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
   function swap(indexA: number, indexB: number) {
     const pathName = unref(arrayPath);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
-    if (!Array.isArray(pathValue) || !pathValue[indexA] || !pathValue[indexB]) {
+    if (!Array.isArray(pathValue) || !(indexA in pathValue) || !(indexB in pathValue)) {
       return;
     }
 
