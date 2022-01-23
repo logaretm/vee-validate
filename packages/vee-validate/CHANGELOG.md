@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.5.8](https://github.com/logaretm/vee-validate/compare/v4.5.7...v4.5.8) (2022-01-23)
+
+
+### Bug Fixes
+
+* clear old error path error when changing field name closes [#3664](https://github.com/logaretm/vee-validate/issues/3664) ([f736e62](https://github.com/logaretm/vee-validate/commit/f736e62b1bb82f940d14d74a6d505c913c1c3dde))
+* field array swap not working when falsy values are present at paths ([40afbd9](https://github.com/logaretm/vee-validate/commit/40afbd9cc3fb3de71de3f6ebb0a1b2774d9018ff))
+
+
+
+
+
 ## [4.5.7](https://github.com/logaretm/vee-validate/compare/v4.5.6...v4.5.7) (2021-12-07)
 
 
