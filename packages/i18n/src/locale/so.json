@@ -1,0 +1,30 @@
+{
+  "code": "so",
+  "messages": {
+    "alpha": "Dhulka {field} dhulku wuxuu lahaan karaa oo keliya xarfaha alifbeetada",
+    "alpha_num": "Dhulka {field} dhulku wuxuu lahaan karaa oo keliya xarfaha alfa-tirada ah",
+    "alpha_dash": "Dhismaha {field} waxaa ku jiri kara jilayaasha alfa tiro ahaan ah iyo sidoo kale burburin iyo hoosta",
+    "alpha_spaces": "The {field} field may only contain alphabetic characters as well as spaces",
+    "between": "Meesha {field} waa inay u dhexeysa {min} iyo {max}",
+    "confirmed": "Xaqiijinta garoonka {field} ma lahan",
+    "digits": "Booska {field} waa inuu ahaadaa lambar",
+    "dimensions": "Booska {field} waa inuu ahaadaa {width} pixels illaa {height} pixels",
+    "email": "Booska {field} waa inuu ahaadaa emayl ansax ah",
+    "excluded": "Booska {field} ma ahan qiime sax ah",
+    "ext": "Booska {field} ma ahan fayl sax ah",
+    "image": "Meesha {field} waa inay ahaato muuqaal",
+    "integer": "Booska {field} waa inuu ahaadaa mid isku dhafan",
+    "length": "Booska {field} waa inuu ahaadaa {length} dherer",
+    "max_value": "Booska {field} waa inuu ahaadaa {max} ama kayar",
+    "max": "Booska {field} dhulku kama badnaan karo xarfaha {length}",
+    "mimes": "Meesha {field} waa inay lahaato nooc fayl oo sax ah",
+    "min_value": "Booska {field} waa inuu ahaadaa {min} ama in kabadan",
+    "min": "Booska {field} waa inuu ahaadaa ugu yaraan {max} xarfaha",
+    "numeric": "Booska {field} waxaa kujiri kara oo keliya xarfaha tirooyinka ah",
+    "oneOf": "Booska {field} ma ahan qiime sax ah",
+    "regex": "Qaabka garoonka {field} waa ansax",
+    "required_if": "Booska {field} waa loo baahan yahay",
+    "required": "Booska {field} waa loo baahan yahay",
+    "size": "Baaxadda garoonka {field} waa inay ka yaraato {size}KB"
+  }
+}
