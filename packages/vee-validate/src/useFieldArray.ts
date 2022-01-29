@@ -1,4 +1,4 @@
-import { Ref, unref, ref, readonly, computed, onBeforeUnmount } from 'vue';
+import { Ref, unref, ref, computed, onBeforeUnmount } from 'vue';
 import { isNullOrUndefined } from '../../shared';
 import { FormContextKey } from './symbols';
 import { FieldArrayContext, FieldEntry, MaybeRef } from './types';
@@ -13,7 +13,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const noOp = () => {};
   const noOpApi: FieldArrayContext<TValue> = {
-    fields: readonly(fields),
+    fields,
     remove: noOp,
     push: noOp,
     swap: noOp,
@@ -60,11 +60,22 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
 
     const entry: FieldEntry<TValue> = {
       key,
-      value: computed<TValue>(() => {
-        const currentValues = getFromPath<TValue[]>(form?.values, unref(arrayPath), []);
-        const idx = fields.value.findIndex(e => e.key === key);
+      value: computed<TValue>({
+        get() {
+          const currentValues = getFromPath<TValue[]>(form?.values, unref(arrayPath), []);
+          const idx = fields.value.findIndex(e => e.key === key);
 
-        return idx === -1 ? value : currentValues[idx];
+          return idx === -1 ? value : currentValues[idx];
+        },
+        set(value: TValue) {
+          const idx = fields.value.findIndex(e => e.key === key);
+          if (idx === -1) {
+            warn(`Attempting to update a non-existent array item`);
+            return;
+          }
+
+          update(idx, value);
+        },
       }) as any, // will be auto unwrapped
       isFirst: false,
       isLast: false,
@@ -184,7 +195,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
   });
 
   return {
-    fields: readonly(fields),
+    fields,
     remove,
     push,
     swap,

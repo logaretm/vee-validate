@@ -467,6 +467,58 @@ test('can update an item value at a given array index', async () => {
   expect(getValue(inputAt(1))).toBe('updated');
 });
 
+test('can update an item value directly with .value setter', async () => {
+  const onSubmit = jest.fn();
+  mountWithHoc({
+    setup() {
+      const initial = {
+        users: [
+          {
+            name: 'first',
+          },
+        ],
+      };
+
+      return {
+        initial,
+        onSubmit,
+      };
+    },
+    template: `
+    <VForm :initial-values="initial" @submit="onSubmit">
+      <FieldArray name="users" v-slot="{ fields }">
+          <div v-for="(field, idx) in fields" :key="field.key">
+            <input v-model="fields[idx].value.name" />
+          </div>
+      </FieldArray>
+
+      <button>Submit</button>
+    </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const inputAt = (idx: number) => (document.querySelectorAll('input') || [])[idx] as HTMLInputElement;
+
+  expect(getValue(inputAt(0))).toBe('first');
+  setValue(inputAt(0), 'updated');
+  await flushPromises();
+  expect(getValue(inputAt(0))).toBe('updated');
+  document.querySelector('button')?.click();
+  await flushPromises();
+
+  expect(onSubmit).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      users: [
+        {
+          name: 'updated',
+        },
+      ],
+    }),
+    expect.anything()
+  );
+});
+
 test('adds items to the start of the array with prepend()', async () => {
   const onSubmit = jest.fn();
   mountWithHoc({
