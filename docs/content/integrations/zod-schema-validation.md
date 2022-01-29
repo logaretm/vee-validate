@@ -197,6 +197,7 @@ export default {
       email,
       password,
       errors,
+      onSubmit,
     };
   },
 };
