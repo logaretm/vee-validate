@@ -123,6 +123,7 @@ You can pass the converted schema to the `validation-schema` prop present on the
 <script>
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import { toFormValidator } from '@vee-validate/zod';
+import * as zod from 'zod';
 
 export default {
   components: {
@@ -169,6 +170,7 @@ Alternatively, if you prefer to use the composition API, you can pass the conver
 <script>
 import { useField, useForm } from 'vee-validate';
 import { toFormValidator } from '@vee-validate/zod';
+import * as zod from 'zod';
 
 export default {
   setup() {
