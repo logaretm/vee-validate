@@ -27,13 +27,13 @@ Most validation libraries will save you a lot of time, but `vee-validate` tackle
 #### yarn
 
 ```bash
-yarn add vee-validate
+yarn add vee-validate@3
 ```
 
 #### npm
 
 ```bash
-npm install vee-validate --save
+npm install vee-validate@3 --save
 ```
 
 #### CDN

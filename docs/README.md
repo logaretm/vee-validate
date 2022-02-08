@@ -35,10 +35,10 @@ VeeValidate is a form validation framework for Vue.js.
 
 ```bash
 # install with npm
-npm install vee-validate --save
+npm install vee-validate@3 --save
 
 # install with yarn
-yarn add vee-validate
+yarn add vee-validate@3
 ```
 
 ## Usage
