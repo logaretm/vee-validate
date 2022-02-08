@@ -40,9 +40,9 @@ Whichever approach you prefer to use, both flavors can be used interchangeably. 
 For a more modern workflow with a bundler, you can install vee-validate using a package manager like `yarn` or `npm`:
 
 ```sh
-yarn add vee-validate@next
+yarn add vee-validate
 # or
-npm i vee-validate@next --save
+npm i vee-validate --save
 ```
 
 ### Using a script tag
@@ -50,7 +50,7 @@ npm i vee-validate@next --save
 You can use vee-validate with a script tag and a CDN, import the library like this:
 
 ```html
-<script src="https://unpkg.com/vee-validate@next"></script>
+<script src="https://unpkg.com/vee-validate"></script>
 ```
 
 This will inject a `VeeValidate` global object, which you will use to access the various components and functions exposed by vee-validate.

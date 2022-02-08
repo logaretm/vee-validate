@@ -31,16 +31,16 @@ features:
 
 ```sh
 # install with yarn
-yarn add vee-validate@next
+yarn add vee-validate
 
 # install with npm
-npm install vee-validate@next --save
+npm install vee-validate --save
 ```
 
 Or use a CDN
 
 ```html
-<script src="https://unpkg.com/vee-validate@next"></script>
+<script src="https://unpkg.com/vee-validate"></script>
 ```
 
 ### Usage
