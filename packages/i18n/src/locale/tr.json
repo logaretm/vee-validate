@@ -13,6 +13,8 @@
     "excluded": "{field} alanına geçerli bir değer giriniz",
     "ext": "{field} alanı geçerli bir dosya olmalıdır",
     "image": "{field} alanı resim dosyası olmalıdır",
+    "integer": "{field} alanı bir tamsayı olmalıdır",
+    "length": "{field} alanı 0:{length} uzunluğunda olmalıdır",
     "one_of": "{field} alanına geçerli bir değer giriniz",
     "max": "{field} alanı 0:{length} karakterden fazla olmamalıdır",
     "max_value": "{field} alanı 0:{max} ya da daha az bir değer olmalıdır",
@@ -23,6 +25,7 @@
     "regex": "{field} formatı geçersiz",
     "required": "{field} alanı gereklidir",
     "required_if": "{field} alanı gereklidir",
-    "size": "{field} alanı 0:{size}KB'dan daha az olmalıdır"
+    "size": "{field} alanı 0:{size}KB'dan daha az olmalıdır",
+    "url": "{field} geçerli bir URL değil"
   }
 }
