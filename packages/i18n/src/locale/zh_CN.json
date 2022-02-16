@@ -1,6 +1,7 @@
 {
   "code": "zh_CN",
   "messages": {
+    "_default": "{field}不是一个有效值",
     "alpha": "{field}只能包含字母字符",
     "alpha_dash": "{field}能够包含字母数字字符、破折号和下划线",
     "alpha_num": "{field}只能包含字母数字字符",
@@ -25,6 +26,7 @@
     "regex": "{field}格式无效",
     "required": "{field}是必须的",
     "required_if": "{field}是必须的",
-    "size": "{field}必须小于0:{size}KB"
+    "size": "{field}必须小于0:{size}KB",
+    "url": "{field}不是一个有效的URL"
   }
 }
