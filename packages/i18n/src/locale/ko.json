@@ -1,6 +1,7 @@
 {
   "code": "ko",
   "messages": {
+    "_default": "{field} 항목의 값이 유효하지 않습니다",
     "alpha": "{field} 항목에는 영문자만 사용할 수 있습니다",
     "alpha_dash": "{field} 항목에는 영문자, 숫자, 대시(-)와 언더스코어(_)만 사용할 수 있습니다",
     "alpha_num": "{field} 항목에는 영문자와 숫자만 사용할 수 있습니다",
@@ -25,6 +26,7 @@
     "regex": "{field} 항목은 형식에 맞지 않습니다",
     "required": "{field} 항목은 필수 입력 항목입니다",
     "required_if": "{field} 항목은 필수 입력 항목입니다",
-    "size": "{field} 항목의 크기는 0:{size}KB보다 작아야 합니다"
+    "size": "{field} 항목의 크기는 0:{size}KB보다 작아야 합니다",
+    "url": "{field} 항목은 유효한 URL이 아닙니다"
   }
 }
