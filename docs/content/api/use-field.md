@@ -119,7 +119,6 @@ type useField = (
   validate: () => Promise<ValidationResult>; // validates and updates the errors and field meta
   handleChange: (e: Event, shouldValidate?: boolean) => void; // updates the value and triggers validation
   handleBlur: (e: Event) => void; // updates the field meta associated with blur event
-  setValidationState: (v: ValidationResult) => ValidationResult; // updates the field state
   checked: ComputedRef<boolean> | undefined; // Present if input type is checkbox
 };
 ```
@@ -246,17 +245,56 @@ errorMessage.value; // 'field is not valid' or undefined
 
 </code-title>
 
-Resets the field's validation state, reverts all `meta` object to their default values and clears out the error messages. It also updates the field value to its initial value without validating them.
+Resets the field's validation state, by default it reverts all `meta` object to their default values and clears out the error messages. It also updates the field value to its initial value without validating them.
 
 ```js
 const { resetField } = useField('field', value => !!value);
 
-// reset the field validation state and its initial value
+// reset the field meta and its initial value and clears errors
 resetField();
-// reset the field validation state and updates its value
+
+// reset the meta state, clears errors and updates the field value and its initial value
 resetField({
   value: 'new value',
 });
+
+// resets the meta state, resets the field to its initial value and sets the errors
+resetField({
+  errors: ['bad field'],
+});
+
+// Marks the field as touched, while resetting its value and errors.
+resetField({
+  touched: true,
+});
+
+// Changes the meta, initial and current values and sets the errors for the field
+resetField({
+  value: 'new value',
+  touched: true,
+  errors: ['bad field'],
+});
+```
+
+<code-title level="4">
+
+`setErrors: (errors: string | string[]) => void`
+
+</code-title>
+
+Sets then field errors, you can pass a single message string or an array of errors.
+
+```js
+const { setErrors } = useField('field', value => !!value);
+
+// Sets a the errors to a single error message
+setErrors('field is required');
+
+// sets the errors to multiple error messages
+setErrors(['field is required', 'field must be valid']);
+
+// clears the errors
+setErrors([]);
 ```
 
 Note that it is unsafe to use this function as an event handler directly, check the following snippet:
@@ -356,24 +394,6 @@ export default {
   },
 };
 </script>
-```
-
-<code-title level="4">
-
-`setValidationState: (state: { errors: string[] }) => void`
-
-</code-title>
-
-Sets the errors array for the fields and updates all the associated meta tags like `valid` and `invalid`, if the array is empty it is considered as marking the field valid.
-
-```js
-const { setValidationState } = useField('field', value => !!value);
-
-// set the field as invalid and update errors
-setValidationState({ errors: ['something is not right'] });
-
-// set the field as valid and clears errors
-setValidationState({ errors: [] });
 ```
 
 <code-title level="4">
