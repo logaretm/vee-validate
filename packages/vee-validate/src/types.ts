@@ -1,5 +1,4 @@
 import { ComputedRef, Ref } from 'vue';
-import { SchemaOf, AnySchema, AnyObjectSchema } from 'yup';
 import { FieldValidationMetaInfo } from '../../shared';
 
 export type GenericFormValues = Record<string, unknown>;
@@ -9,7 +8,14 @@ export interface ValidationResult {
   valid: boolean;
 }
 
-export type YupValidator = AnySchema | AnyObjectSchema;
+export type YupValidator<TValue = any> = { validate(value: TValue, options: Record<string, any>): Promise<TValue> };
+
+export interface YupValidationError extends Error {
+  value: any;
+  path?: string;
+  errors: string[];
+  inner: YupValidationError[];
+}
 
 export type Locator = { __locatorRef: string } & ((values: GenericFormValues) => unknown);
 
@@ -178,7 +184,7 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
   fieldsByPath: Ref<FieldPathLookup>;
   fieldArrays: PrivateFieldArrayContext[];
   submitCount: Ref<number>;
-  schema?: MaybeRef<RawFormSchema<TValues> | SchemaOf<TValues> | undefined>;
+  schema?: MaybeRef<RawFormSchema<TValues> | YupValidator<TValues> | undefined>;
   errorBag: Ref<FormErrorBag<TValues>>;
   errors: ComputedRef<FormErrors<TValues>>;
   meta: ComputedRef<FormMeta<TValues>>;

@@ -1,8 +1,14 @@
-import type { SchemaOf, ValidationError } from 'yup';
 import { resolveRule } from './defineRule';
 import { isLocator, normalizeRules, isYupValidator, keysOf, getFromPath } from './utils';
 import { getConfig } from './config';
-import { ValidationResult, GenericValidateFunction, YupValidator, FormValidationResult, RawFormSchema } from './types';
+import {
+  ValidationResult,
+  GenericValidateFunction,
+  YupValidator,
+  FormValidationResult,
+  RawFormSchema,
+  YupValidationError,
+} from './types';
 import { isCallable, FieldValidationMetaInfo } from '../../shared';
 
 /**
@@ -137,7 +143,7 @@ async function validateFieldWithYup(value: unknown, validator: YupValidator, opt
       abortEarly: opts.bails ?? true,
     })
     .then(() => [])
-    .catch((err: ValidationError) => {
+    .catch((err: YupValidationError) => {
       // Yup errors have a name prop one them.
       // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
       if (err.name === 'ValidationError') {
@@ -223,13 +229,13 @@ function fillTargetValues(params: unknown[] | Record<string, unknown>, crossTabl
 }
 
 export async function validateYupSchema<TValues>(
-  schema: SchemaOf<TValues>,
+  schema: YupValidator<TValues>,
   values: TValues
 ): Promise<FormValidationResult<TValues>> {
-  const errorObjects: ValidationError[] = await (schema as YupValidator)
+  const errorObjects: YupValidationError[] = await (schema as YupValidator)
     .validate(values, { abortEarly: false })
     .then(() => [])
-    .catch((err: ValidationError) => {
+    .catch((err: YupValidationError) => {
       // Yup errors have a name prop one them.
       // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
       if (err.name !== 'ValidationError') {
