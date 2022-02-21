@@ -42,6 +42,12 @@ This example is originally forked from another example created by [Aaron Saunder
 
 <code-sandbox id="vee-validate-ionic-example-yynyp" title="vee-validate ionic example"></code-sandbox>
 
+## Ant Design
+
+> [Ant Design](https://next.antdv.com/): Ant Design provides plenty of UI components to enrich your web applications, and we will improve components experience consistently.
+
+<code-sandbox id="vee-validate-v4-with-antdesign-qjlbks" title="vee-validate Ant Design example"></code-sandbox>
+
 ## Request a UI library
 
 Can't find your favorite UI library here? You can request adding an example for it by creating an [issue here](https://github.com/logaretm/vee-validate/issues/new/choose) and we will consider adding it here.
