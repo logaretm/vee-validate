@@ -1,6 +1,7 @@
 {
   "code": "ja",
   "messages": {
+    "_default": "{field}は有効な値ではありません",
     "alpha": "{field}はアルファベットのみ使用できます",
     "alpha_num": "{field}は英数字のみ使用できます",
     "alpha_dash": "{field}は英数字とハイフン、アンダースコアのみ使用できます",
@@ -26,6 +27,7 @@
     "regex": "{field}のフォーマットが正しくありません",
     "required": "{field}は必須項目です",
     "required_if": "{field}は必須項目です",
-    "size": "{field}は 0:{size}KB 以内でなければなりません"
+    "size": "{field}は 0:{size}KB 以内でなければなりません",
+    "url": "{field}は有効なURLではありません"
   }
 }
