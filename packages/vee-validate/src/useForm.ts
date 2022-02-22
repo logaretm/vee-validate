@@ -198,6 +198,17 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     return mutation(fieldOrGroup);
   }
 
+  function mutateAllFields(mutation: (f: PrivateFieldContext) => unknown) {
+    Object.values(fieldsByPath.value).forEach(field => {
+      if (!field) {
+        return;
+      }
+
+      // avoid resetting the field values, because they should've been reset already.
+      applyFieldMutation(field, mutation);
+    });
+  }
+
   /**
    * Manually sets an error message on a specific field
    */
@@ -307,14 +318,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       setValues(originalInitialValues.value);
     }
 
-    Object.values(fieldsByPath.value).forEach(field => {
-      if (!field) {
-        return;
-      }
-
-      // avoid resetting the field values, because they should've been reset already.
-      applyFieldMutation(field, f => f.resetField());
-    });
+    // avoid resetting the field values, because they should've been reset already.
+    mutateAllFields(f => f.resetField());
 
     if (state?.touched) {
       setTouched(state.touched);
@@ -435,6 +440,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   }
 
   async function validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>> {
+    mutateAllFields(f => (f.meta.validated = true));
     if (formCtx.validateSchema) {
       return formCtx.validateSchema(opts?.mode || 'force');
     }
