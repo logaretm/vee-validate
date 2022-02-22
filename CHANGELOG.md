@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.5.9](https://github.com/logaretm/vee-validate/compare/v4.5.8...v4.5.9) (2022-02-22)
+
+
+### Bug Fixes
+
+* mark fields validated via form validate as validated ([ad9fa9d](https://github.com/logaretm/vee-validate/commit/ad9fa9d853a8cabb26cdde04c20c07d4f2673aa4))
+
+
+
+
+
 ## [4.5.8](https://github.com/logaretm/vee-validate/compare/v4.5.7...v4.5.8) (2022-01-23)
 
 
