@@ -268,12 +268,12 @@ meta.value; // { valid: false, invalid: true, dirty: true, .... }
 
 </code-title>
 
-A computed property that contains the current form values
+A reactive property that contains the current form values, you should not try to mutate it directly.
 
 ```js
 const { values } = useForm();
 
-values.value; // { email: 'something@gmail.com', .... }
+values; // { email: 'something@gmail.com', .... }
 ```
 
 <code-title level="4">
