@@ -26,7 +26,7 @@
     "regex": "{field} skal have et gyldigt format",
     "required_if": "{field} skal udfyldes",
     "required": "{field} skal udfyldes",
-    "size": "{field} må maksimalt have en størrelse på 0:{size}KB"
+    "size": "{field} må maksimalt have en størrelse på 0:{size}KB",
     "url": "{field} er ikke en gyldig URL"
   }
 }
