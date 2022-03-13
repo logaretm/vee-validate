@@ -10,7 +10,7 @@ import { isCallable, FieldValidationMetaInfo } from '../../shared';
  */
 interface FieldValidationContext {
   name: string;
-  rules: GenericValidateFunction | YupValidator | string | Record<string, unknown>;
+  rules: GenericValidateFunction | GenericValidateFunction[] | YupValidator | string | Record<string, unknown>;
   bails: boolean;
   formData: Record<string, unknown>;
 }
@@ -26,7 +26,12 @@ interface ValidationOptions {
  */
 export async function validate(
   value: unknown,
-  rules: string | Record<string, unknown | unknown[]> | GenericValidateFunction | YupValidator,
+  rules:
+    | string
+    | Record<string, unknown | unknown[]>
+    | GenericValidateFunction
+    | GenericValidateFunction[]
+    | YupValidator,
   options: ValidationOptions = {}
 ): Promise<ValidationResult> {
   const shouldBail = options?.bails;
@@ -68,6 +73,35 @@ async function _validate(field: FieldValidationContext, value: unknown) {
 
     return {
       errors: !isValid ? [message] : [],
+    };
+  }
+
+  // chain of generic functions
+  if (Array.isArray(field.rules)) {
+    const ctx = {
+      field: field.name,
+      form: field.formData,
+      value: value,
+    };
+    const length = field.rules.length;
+    const errors: ReturnType<typeof _generateFieldError>[] = [];
+    for (let i = 0; i < length; i++) {
+      const rule = field.rules[i];
+      const result = await rule(value, ctx);
+      const isValid = typeof result !== 'string' && result;
+      const message = typeof result === 'string' ? result : _generateFieldError(ctx);
+      if (!isValid) {
+        if (field.bails) {
+          return {
+            errors: [message],
+          };
+        } else {
+          errors.push(message);
+        }
+      }
+    }
+    return {
+      errors,
     };
   }
 
