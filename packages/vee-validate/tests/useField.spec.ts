@@ -267,4 +267,223 @@ describe('useField()', () => {
       expect(error?.textContent).toBe(REQUIRED_MESSAGE);
     });
   });
+
+  describe('generic function chains', () => {
+    test('when bails is true', async () => {
+      mountWithHoc({
+        setup() {
+          const {
+            value: value1,
+            meta: meta1,
+            errors: errors1,
+            resetField: reset1,
+          } = useField('field', [
+            val => (val ? true : REQUIRED_MESSAGE),
+            val => ((val as string)?.length >= 3 ? true : MIN_MESSAGE),
+          ]);
+          const {
+            value: value2,
+            meta: meta2,
+            errors: errors2,
+            resetField: reset2,
+          } = useField('field', [
+            val => ((val as string)?.length >= 3 ? true : MIN_MESSAGE),
+            val => (val ? true : REQUIRED_MESSAGE),
+          ]);
+
+          return {
+            value1,
+            value2,
+            meta1,
+            meta2,
+            errors1,
+            errors2,
+            reset1,
+            reset2,
+          };
+        },
+        template: `
+        <input id="input1" name="field" v-model="value1" />
+        <span id="meta1">{{ meta1.valid ? 'valid' : 'invalid' }}</span>
+        <span id="errors1">{{ errors1.length }}</span>
+        <span v-for="(e, idx) in errors1" :id="'errormessage1' + idx">{{ e }}</span>
+        <button id="r1" @click="reset1()">Reset</button>
+        <input id="input2" name="field" v-model="value2" />
+        <span id="meta2">{{ meta2.valid ? 'valid' : 'invalid' }}</span>
+        <span id="errors2">{{ errors2.length }}</span>
+        <span v-for="(e, idx) in errors2" :id="'errormessage2' + idx">{{ e }}</span>
+        <button id="r2" @click="reset2()">Reset</button>
+      `,
+      });
+
+      const input1 = document.querySelector('#input1') as HTMLInputElement;
+      const meta1 = document.querySelector('#meta1');
+      const errors1 = document.querySelector('#errors1');
+      const input2 = document.querySelector('#input2') as HTMLInputElement;
+      const meta2 = document.querySelector('#meta2');
+      const errors2 = document.querySelector('#errors2');
+
+      await flushPromises();
+
+      expect(meta1?.textContent).toBe('invalid');
+      expect(meta2?.textContent).toBe('invalid');
+      setValue(input1, '');
+      setValue(input2, '');
+
+      await flushPromises();
+
+      let errorMessage10 = document.querySelector('#errormessage10');
+      let errorMessage20 = document.querySelector('#errormessage20');
+
+      expect(meta1?.textContent).toBe('invalid');
+      expect(meta2?.textContent).toBe('invalid');
+      expect(errors1?.textContent).toBe('1');
+      expect(errors2?.textContent).toBe('1');
+      expect(errorMessage10?.textContent).toBe(REQUIRED_MESSAGE);
+      expect(errorMessage20?.textContent).toBe(MIN_MESSAGE);
+
+      setValue(input1, '12');
+      setValue(input2, '12');
+
+      await flushPromises();
+
+      errorMessage10 = document.querySelector('#errormessage10');
+      errorMessage20 = document.querySelector('#errormessage20');
+
+      expect(meta1?.textContent).toBe('invalid');
+      expect(meta2?.textContent).toBe('invalid');
+      expect(errors1?.textContent).toBe('1');
+      expect(errors2?.textContent).toBe('1');
+      expect(errorMessage10?.textContent).toBe(MIN_MESSAGE);
+      expect(errorMessage20?.textContent).toBe(MIN_MESSAGE);
+
+      setValue(input1, '123');
+      setValue(input2, '123');
+
+      await flushPromises();
+
+      expect(meta1?.textContent).toBe('valid');
+      expect(meta2?.textContent).toBe('valid');
+      expect(errors1?.textContent).toBe('0');
+      expect(errors2?.textContent).toBe('0');
+
+      // trigger reset
+      (document.querySelector('#r1') as HTMLButtonElement).click();
+      (document.querySelector('#r2') as HTMLButtonElement).click();
+      await flushPromises();
+      expect(meta1?.textContent).toBe('invalid');
+      expect(meta2?.textContent).toBe('invalid');
+    });
+    test('when bails is false', async () => {
+      mountWithHoc({
+        setup() {
+          const {
+            value: value1,
+            meta: meta1,
+            errors: errors1,
+            resetField: reset1,
+          } = useField(
+            'field',
+            [val => (val ? true : REQUIRED_MESSAGE), val => ((val as string)?.length >= 3 ? true : MIN_MESSAGE)],
+            { bails: false }
+          );
+          const {
+            value: value2,
+            meta: meta2,
+            errors: errors2,
+            resetField: reset2,
+          } = useField(
+            'field',
+            [val => ((val as string)?.length >= 3 ? true : MIN_MESSAGE), val => (val ? true : REQUIRED_MESSAGE)],
+            { bails: false }
+          );
+
+          return {
+            value1,
+            value2,
+            meta1,
+            meta2,
+            errors1,
+            errors2,
+            reset1,
+            reset2,
+          };
+        },
+        template: `
+        <input id="input1" name="field" v-model="value1" />
+        <span id="meta1">{{ meta1.valid ? 'valid' : 'invalid' }}</span>
+        <span id="errors1">{{ errors1.length }}</span>
+        <span v-for="(e, idx) in errors1" :id="'errormessage1' + idx">{{ e }}</span>
+        <button id="r1" @click="reset1()">Reset</button>
+        <input id="input2" name="field" v-model="value2" />
+        <span id="meta2">{{ meta2.valid ? 'valid' : 'invalid' }}</span>
+        <span id="errors2">{{ errors2.length }}</span>
+        <span v-for="(e, idx) in errors2" :id="'errormessage2' + idx">{{ e }}</span>
+        <button id="r2" @click="reset2()">Reset</button>
+      `,
+      });
+
+      const input1 = document.querySelector('#input1') as HTMLInputElement;
+      const meta1 = document.querySelector('#meta1');
+      const errors1 = document.querySelector('#errors1');
+      const input2 = document.querySelector('#input2') as HTMLInputElement;
+      const meta2 = document.querySelector('#meta2');
+      const errors2 = document.querySelector('#errors2');
+
+      await flushPromises();
+
+      expect(meta1?.textContent).toBe('invalid');
+      expect(meta2?.textContent).toBe('invalid');
+      setValue(input1, '');
+      setValue(input2, '');
+
+      await flushPromises();
+
+      let errorMessage10 = document.querySelector('#errormessage10');
+      const errorMessage11 = document.querySelector('#errormessage11');
+      let errorMessage20 = document.querySelector('#errormessage20');
+      const errorMessage21 = document.querySelector('#errormessage21');
+
+      expect(meta1?.textContent).toBe('invalid');
+      expect(meta2?.textContent).toBe('invalid');
+      expect(errors1?.textContent).toBe('2');
+      expect(errors2?.textContent).toBe('2');
+      expect(errorMessage10?.textContent).toBe(REQUIRED_MESSAGE);
+      expect(errorMessage11?.textContent).toBe(MIN_MESSAGE);
+      expect(errorMessage20?.textContent).toBe(MIN_MESSAGE);
+      expect(errorMessage21?.textContent).toBe(REQUIRED_MESSAGE);
+
+      setValue(input1, '12');
+      setValue(input2, '12');
+
+      await flushPromises();
+
+      errorMessage10 = document.querySelector('#errormessage10');
+      errorMessage20 = document.querySelector('#errormessage20');
+
+      expect(meta1?.textContent).toBe('invalid');
+      expect(meta2?.textContent).toBe('invalid');
+      expect(errors1?.textContent).toBe('1');
+      expect(errors2?.textContent).toBe('1');
+      expect(errorMessage10?.textContent).toBe(MIN_MESSAGE);
+      expect(errorMessage20?.textContent).toBe(MIN_MESSAGE);
+
+      setValue(input1, '123');
+      setValue(input2, '123');
+
+      await flushPromises();
+
+      expect(meta1?.textContent).toBe('valid');
+      expect(meta2?.textContent).toBe('valid');
+      expect(errors1?.textContent).toBe('0');
+      expect(errors2?.textContent).toBe('0');
+
+      // trigger reset
+      (document.querySelector('#r1') as HTMLButtonElement).click();
+      (document.querySelector('#r2') as HTMLButtonElement).click();
+      await flushPromises();
+      expect(meta1?.textContent).toBe('invalid');
+      expect(meta2?.textContent).toBe('invalid');
+    });
+  });
 });

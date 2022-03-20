@@ -57,6 +57,7 @@ export type RuleExpression<TValue> =
   | string
   | Record<string, unknown>
   | GenericValidateFunction
+  | GenericValidateFunction[]
   | YupValidator
   | BaseSchema<TValue>
   | undefined;
@@ -114,7 +115,7 @@ function _useField<TValue = unknown>(
       rulesValue = extractRuleFromSchema<TValue>(schema, unref(name)) || rulesValue;
     }
 
-    if (isYupValidator(rulesValue) || isCallable(rulesValue)) {
+    if (isYupValidator(rulesValue) || isCallable(rulesValue) || Array.isArray(rulesValue)) {
       return rulesValue;
     }
 
@@ -296,7 +297,7 @@ function _useField<TValue = unknown>(
   const dependencies = computed(() => {
     const rulesVal = normalizedRules.value;
     // is falsy, a function schema or a yup schema
-    if (!rulesVal || isCallable(rulesVal) || isYupValidator(rulesVal)) {
+    if (!rulesVal || isCallable(rulesVal) || isYupValidator(rulesVal) || Array.isArray(rulesVal)) {
       return {};
     }
 
