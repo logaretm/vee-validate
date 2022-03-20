@@ -374,6 +374,7 @@ describe('useField()', () => {
       expect(meta1?.textContent).toBe('invalid');
       expect(meta2?.textContent).toBe('invalid');
     });
+
     test('when bails is false', async () => {
       mountWithHoc({
         setup() {

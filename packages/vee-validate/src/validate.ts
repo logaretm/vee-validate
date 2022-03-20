@@ -59,47 +59,37 @@ async function _validate(field: FieldValidationContext, value: unknown) {
     return validateFieldWithYup(value, field.rules, { bails: field.bails });
   }
 
-  // if a generic function, use it as the pipeline.
-  if (isCallable(field.rules)) {
+  // if a generic function or chain of generic functions
+  if (isCallable(field.rules) || Array.isArray(field.rules)) {
     const ctx = {
       field: field.name,
       form: field.formData,
       value: value,
     };
 
-    const result = await field.rules(value, ctx);
-    const isValid = typeof result !== 'string' && result;
-    const message = typeof result === 'string' ? result : _generateFieldError(ctx);
-
-    return {
-      errors: !isValid ? [message] : [],
-    };
-  }
-
-  // chain of generic functions
-  if (Array.isArray(field.rules)) {
-    const ctx = {
-      field: field.name,
-      form: field.formData,
-      value: value,
-    };
-    const length = field.rules.length;
+    // Normalize the pipeline
+    const pipeline = Array.isArray(field.rules) ? field.rules : [field.rules];
+    const length = pipeline.length;
     const errors: ReturnType<typeof _generateFieldError>[] = [];
+
     for (let i = 0; i < length; i++) {
-      const rule = field.rules[i];
+      const rule = pipeline[i];
       const result = await rule(value, ctx);
       const isValid = typeof result !== 'string' && result;
+      if (isValid) {
+        continue;
+      }
+
       const message = typeof result === 'string' ? result : _generateFieldError(ctx);
-      if (!isValid) {
-        if (field.bails) {
-          return {
-            errors: [message],
-          };
-        } else {
-          errors.push(message);
-        }
+      errors.push(message);
+
+      if (field.bails) {
+        return {
+          errors,
+        };
       }
     }
+
     return {
       errors,
     };
