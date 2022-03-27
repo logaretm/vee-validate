@@ -23,6 +23,7 @@ With all of that in mind, vee-validate offers simple abstractions for checkboxes
 Because `useField` isn't aware of what kind of input will be composed with it, you will need to specify that the input is of type `checkbox` and pass a `checkedValue` as well which represents that single field's value. By doing so, you gain access to `checked` prop which tells you if the checkbox should be selected.
 
 ```js
+import { toRef } from 'vue';
 import { useField } from 'vee-validate';
 
 export default {
@@ -44,7 +45,8 @@ export default {
     },
   },
   setup(props) {
-    const { checked, handleChange } = useField(props.name, props.rules, {
+    // Must use `toRef` to make the checkboxes names reactive
+    const { checked, handleChange } = useField(toRef(props.name), props.rules, {
       // 👇 These are important
       type: 'checkbox',
       checkedValue: props.value,
