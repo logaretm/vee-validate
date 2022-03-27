@@ -46,8 +46,15 @@
 
               <ExpandTransition>
                 <ul v-show="page.expanded" class="mt-3 space-y-2">
-                  <li v-for="childPage in page.pages" :key="childPage.title" class="pl-7">
+                  <li v-for="childPage in page.pages" :key="childPage.title" class="pl-7 flex items-center">
                     <nuxt-link :to="childPage.path">{{ childPage.menuTitle || childPage.title }}</nuxt-link>
+
+                    <svg v-if="childPage.new" class="ml-2 w-4 h-4 text-error" viewBox="0 0 24 24">
+                      <path
+                        fill="currentColor"
+                        d="M21 13H14.4L19.1 17.7L17.7 19.1L13 14.4V21H11V14.3L6.3 19L4.9 17.6L9.4 13H3V11H9.6L4.9 6.3L6.3 4.9L11 9.6V3H13V9.4L17.6 4.8L19 6.3L14.3 11H21V13Z"
+                      />
+                    </svg>
                   </li>
                 </ul>
               </ExpandTransition>

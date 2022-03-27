@@ -2,7 +2,8 @@
 title: Composition API Review
 description: Using `useField` and `useForm` to compose validation into your inputs
 order: 5
-next: guide/global-validators
+next: guide/composition-api/caveats
+menuTitle: Review
 ---
 
 # Composition API Review

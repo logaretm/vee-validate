@@ -19,7 +19,7 @@ export default {
   }
 
   h1 {
-    @apply text-4xl mb-8;
+    @apply text-4xl mb-8 leading-none;
   }
 
   h2 {
