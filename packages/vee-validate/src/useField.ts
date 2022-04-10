@@ -96,6 +96,8 @@ function _useField<TValue = unknown>(
 
   const form = !standalone ? injectWithSelf(FormContextKey) : undefined;
 
+  // a flag indicating if the field is about to be removed/unmounted.
+  let markedForRemoval = false;
   const { id, value, initialValue, meta, setState, errors, errorMessage } = useFieldState(name, {
     modelValue,
     standalone,
@@ -138,6 +140,11 @@ function _useField<TValue = unknown>(
     meta.pending = true;
     meta.validated = true;
     const result = await validateCurrentValue('validated-only');
+    if (markedForRemoval) {
+      result.valid = true;
+      result.errors = [];
+    }
+
     setState({ errors: result.errors });
     meta.pending = false;
 
@@ -146,6 +153,10 @@ function _useField<TValue = unknown>(
 
   async function validateValidStateOnly(): Promise<ValidationResult> {
     const result = await validateCurrentValue('silent');
+    if (markedForRemoval) {
+      result.valid = true;
+    }
+
     meta.valid = result.valid;
 
     return result;
@@ -290,6 +301,7 @@ function _useField<TValue = unknown>(
   form.register(field);
 
   onBeforeUnmount(() => {
+    markedForRemoval = true;
     form.unregister(field);
   });
 

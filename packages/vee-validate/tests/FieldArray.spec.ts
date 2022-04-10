@@ -1,3 +1,6 @@
+import { defineRule, useField } from '@/vee-validate';
+import { defineComponent } from '@vue/runtime-core';
+import { toRef } from 'vue';
 import * as yup from 'yup';
 import { mountWithHoc, setValue, getValue, dispatchEvent, flushPromises } from './helpers';
 
@@ -573,4 +576,93 @@ test('clears old errors path when item is removed when no form schema is present
   await flushPromises();
 
   expect(errorList.children).toHaveLength(2);
+});
+
+// #3748
+test('clears old errors path when last item is removed and value update validation is on', async () => {
+  const onSubmit = jest.fn();
+  defineRule('required', (v: any) => (v ? true : REQUIRED_MESSAGE));
+  const InputField = defineComponent({
+    props: {
+      rules: {
+        type: String,
+        required: true,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      label: String,
+      type: { type: String, default: 'text' },
+    },
+    setup(props) {
+      const { value, handleChange, errors } = useField(toRef(props, 'name'), props.rules, {
+        label: props.label,
+        type: props.type,
+      });
+
+      return {
+        value,
+        errors,
+        handleChange,
+      };
+    },
+    template: `
+      <label :for="name">{{ label }}</label>
+      <input :type="type" :name="name" :value="value" @input="handleChange" />
+      <span>{{ errors[0] }}</span>
+      `,
+  });
+
+  mountWithHoc({
+    components: {
+      InputField,
+    },
+    setup() {
+      const initialValues = {
+        users: ['first', 'second', 'third'],
+      };
+
+      const schema = yup.string().required();
+
+      return {
+        onSubmit,
+        schema,
+        initialValues,
+      };
+    },
+    template: `
+      <VForm @submit="onSubmit" :initial-values="initialValues" v-slot="{ errors }">
+        <FieldArray name="users" v-slot="{ remove, push, fields }">
+          <fieldset v-for="(field, idx) in fields" :key="field.key">
+            <legend>User #{{ idx }}</legend>
+            <label :for="'name_' + idx">Name</label>
+            <InputField :name="'users[' + idx + ']'" rules="required" />
+
+            <button class="remove" type="button" @click="remove(idx)">X</button>
+          </fieldset>  
+        </FieldArray>
+
+
+        <ul class="errors">
+          <li v-for="error in errors">{{ error }}</li>
+        </ul>
+
+        <button class="submit" type="submit">Submit</button>
+      </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const submitBtn = document.querySelector('.submit') as HTMLButtonElement;
+  const errorList = document.querySelector('ul') as HTMLUListElement;
+  const removeBtnAt = (idx: number) => document.querySelectorAll('.remove')[idx] as HTMLButtonElement; // remove the second item
+
+  submitBtn.click();
+  await flushPromises();
+  expect(errorList.children).toHaveLength(0);
+  removeBtnAt(2).click();
+  await flushPromises();
+
+  expect(errorList.children).toHaveLength(0);
 });
