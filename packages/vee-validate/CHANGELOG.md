@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.5.11](https://github.com/logaretm/vee-validate/compare/v4.5.10...v4.5.11) (2022-04-10)
+
+
+### Bug Fixes
+
+* ignore validation of removed array elements closes [#3748](https://github.com/logaretm/vee-validate/issues/3748) ([3d49faa](https://github.com/logaretm/vee-validate/commit/3d49faa4101902c2e77aee0a2d43cd29b69f7b4e))
+
+
+### Features
+
+* chain of GenericValidateFunction in useField ([#3725](https://github.com/logaretm/vee-validate/issues/3725)) ([#3726](https://github.com/logaretm/vee-validate/issues/3726)) ([8db4077](https://github.com/logaretm/vee-validate/commit/8db407785c5611c10c221eabd747c3f31770145b))
+
+
+
+
+
 ## [4.5.10](https://github.com/logaretm/vee-validate/compare/v4.5.9...v4.5.10) (2022-03-08)
 
 **Note:** Version bump only for package vee-validate
