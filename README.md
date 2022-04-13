@@ -1,24 +1,46 @@
 <p align="center">
   <a href="https://vee-validate.logaretm.com" target="_blank">
-    <img src="https://raw.githubusercontent.com/logaretm/vee-validate/main/logo.png" width="200" "Go to website">
+    <img src="https://raw.githubusercontent.com/logaretm/vee-validate/main/logo.png" width="200" title="Go to website">
   </a>
 </p>
 
 <p align="center">
 
-[![CodeCoverage](https://codecov.io/gh/logaretm/vee-validate/branch/main/graph/badge.svg)](https://codecov.io/gh/logaretm/vee-validate 'Go to CodeCoverage')
-[![CircleCI](https://circleci.com/gh/logaretm/vee-validate.svg?style=svg)](https://circleci.com/gh/logaretm/vee-validate 'Go to CircleCI')
-[![CDNJS](https://img.shields.io/cdnjs/v/vee-validate.svg)](https://cdnjs.com/libraries/vee-validate/ 'Download using CDNJS')
 [![npm downloads](https://img.shields.io/npm/dm/vee-validate.svg)](https://npm-stat.com/charts.html?package=vee-validate 'Go to NPM stats')
+[![CDNJS](https://img.shields.io/cdnjs/v/vee-validate.svg)](https://cdnjs.com/libraries/vee-validate/ 'Download using CDNJS')
 [![npm version](https://img.shields.io/npm/v/vee-validate.svg)](https://www.npmjs.com/package/vee-validate 'Go to package on NPM')
-[![Bundle size](https://badgen.net/bundlephobia/minzip/vee-validate)](https://bundlephobia.com/result?p=vee-validate 'Go to BundlePhobia')
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/logaretm/vee-validate.svg)](http://isitmaintained.com/project/logaretm/vee-validate 'Average time to resolve an issue')
-[![Percentage of issues still open](https://isitmaintained.com/badge/open/logaretm/vee-validate.svg)](https://isitmaintained.com/project/logaretm/vee-validate 'Percentage of issues still open')
 
 </p>
+
 <br>
 
 vee-validate is a form validation library for [Vue.js](https://vuejs.org/) that allows you to validate inputs and build better form UIs in a familiar declarative style or using composition functions.
+
+## Sponsors
+
+Thanks for the following companies and individuals who are supporting vee-validate
+
+<br>
+
+<p align="center">
+  <a href="https://getform.io" target="_blank">
+    <img src="https://raw.githubusercontent.com/logaretm/vee-validate/main/docs/assets/img/sponsors/getform.svg" width="150" title="Go to getform.io">
+  </a>
+</p>
+
+<br>
+
+You can also help this this project and my other projects by donating one time or by sponsoring via the following link
+
+<br>
+
+<p align="center">
+  <a href="https://www.buymeacoffee.com/logaretm" target="_blank">
+      <img src="https://cdn.buymeacoffee.com/buttons/v2/default-red.png" alt="Buy Me A Coffee" width="180" title="Go to Buy Me A Coffee site">
+  </a>
+</p>
+
+<br>
 
 ## Features
 
@@ -119,14 +141,6 @@ Then in your template, use `v-model` to bind the `value` to your input and displ
 ## 📚 Documentation
 
 Read the [documentation and demos](https://vee-validate.logaretm.com/v4).
-
-## Sponsorship
-
-You can help this this project by donating one time or by sponsoring via the following link
-
-<a href="https://www.buymeacoffee.com/logaretm" target="_blank">
-    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-red.png" alt="Buy Me A Coffee" height="60" width="217" "Go to Buy Me A Coffee site">
-</a>
 
 ## Contributing
 
