@@ -14,6 +14,18 @@ Integrating vee-validate can be different for each UI library, it mostly depends
 
 In the next few examples you will find examples on how to do that in various ways with the most popular Vue.js libraries in no particular order.
 
+## Vuetify
+
+> [Vuetify](https://next.vuetifyjs.com/en/) is a Vue UI Library with beautifully handcrafted Material Components. No design skills required — everything you need to create amazing applications is at your fingertips.
+
+<iframe
+  src="https://stackblitz.com/edit/vitejs-vite-y8svqn?embed=1&file=src/App.vue"
+  style="width: 100%; height: 500px; border: 0; border-radius: 4px; overflow: hidden"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+  loading="lazy"
+></iframe>
+
 ## Quasar
 
 [Quasar framework](https://next.quasar.dev/) aims to:
