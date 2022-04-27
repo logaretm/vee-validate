@@ -3,7 +3,7 @@
   "messages": {
     "_default": "{field} 的值無效",
     "alpha": "{field} 須以英文組成",
-    "alpha_dash": "{field} 須以英數、斜線及底線組成",
+    "alpha_dash": "{field} 須以英數、破折號及底線組成",
     "alpha_num": "{field} 須以英數組成",
     "alpha_spaces": "{field} 須以英文及空格組成",
     "between": "{field} 須介於 0:{min} 至 1:{max}之間",
