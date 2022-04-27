@@ -301,6 +301,11 @@ function resolveInitialValue(props: Record<string, unknown>, ctx: SetupContext<a
 
 export const Field = FieldImpl as typeof FieldImpl & {
   new (): {
+    setErrors: FieldContext['setErrors'];
+    setTouched: FieldContext['setTouched'];
+    reset: FieldContext['resetField'];
+    validate: FieldContext['validate'];
+    handleChange: FieldContext['handleChange'];
     $slots: {
       default: (arg: FieldSlotProps<unknown>) => VNode[];
     };

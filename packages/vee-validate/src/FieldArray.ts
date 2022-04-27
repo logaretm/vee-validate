@@ -48,6 +48,13 @@ const FieldArrayImpl = defineComponent({
 
 export const FieldArray = FieldArrayImpl as typeof FieldArrayImpl & {
   new (): {
+    push: FieldArrayContext['push'];
+    remove: FieldArrayContext['remove'];
+    swap: FieldArrayContext['swap'];
+    insert: FieldArrayContext['insert'];
+    update: FieldArrayContext['update'];
+    replace: FieldArrayContext['replace'];
+    prepend: FieldArrayContext['prepend'];
     $slots: {
       default: (arg: UnwrapRef<FieldArrayContext>) => VNode[];
     };

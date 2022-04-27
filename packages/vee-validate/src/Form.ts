@@ -183,6 +183,15 @@ const FormImpl = defineComponent({
 
 export const Form = FormImpl as typeof FormImpl & {
   new (): {
+    setFieldError: FormContext['setFieldError'];
+    setErrors: FormContext['setErrors'];
+    setFieldValue: FormContext['setFieldValue'];
+    setValues: FormContext['setValues'];
+    setFieldTouched: FormContext['setFieldTouched'];
+    setTouched: FormContext['setTouched'];
+    resetForm: FormContext['resetForm'];
+    validate: FormContext['validate'];
+    validateField: FormContext['validateField'];
     $slots: {
       default: (arg: FormSlotProps) => VNode[];
     };
