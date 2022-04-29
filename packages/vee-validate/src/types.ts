@@ -1,4 +1,4 @@
-import { ComputedRef, DeepReadonly, Ref } from 'vue';
+import { ComputedRef, Ref } from 'vue';
 import { SchemaOf, AnySchema, AnyObjectSchema } from 'yup';
 import { FieldValidationMetaInfo } from '../../shared';
 
@@ -58,7 +58,7 @@ export interface FieldEntry<TValue = unknown> {
 }
 
 export interface FieldArrayContext<TValue = unknown> {
-  fields: DeepReadonly<Ref<FieldEntry<TValue>[]>>;
+  fields: Ref<FieldEntry<TValue>[]>;
   remove(idx: number): void;
   replace(newArray: TValue[]): void;
   update(idx: number, value: TValue): void;
