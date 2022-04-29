@@ -59,7 +59,7 @@ export function dispatchEvent(node: ComponentPublicInstance | HTMLElement | stri
     return;
   }
 
-  if (HTML_TAGS.includes((node as any).tagName)) {
+  if ('tagName' in node) {
     const input = node as HTMLElement;
     input.dispatchEvent(new window.Event(eventName));
     return;

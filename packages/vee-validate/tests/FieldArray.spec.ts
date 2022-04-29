@@ -666,3 +666,59 @@ test('clears old errors path when last item is removed and value update validati
 
   expect(errorList.children).toHaveLength(0);
 });
+
+test('moves items around the array with move()', async () => {
+  const onSubmit = jest.fn();
+  mountWithHoc({
+    setup() {
+      const initialValues = {
+        users: [{ name: '1' }, { name: '2' }, { name: '3' }, { name: '4' }],
+      };
+
+      return {
+        onSubmit,
+        initialValues,
+      };
+    },
+    template: `
+      <VForm @submit="onSubmit" :initial-values="initialValues">
+        <FieldArray name="users" v-slot="{ move, fields }">
+          <fieldset v-for="(field, idx) in fields" :key="field.key">
+            <legend>User #{{ idx }}</legend>
+            <label :for="'name_' + idx">Name</label>
+            <Field :id="'name_' + idx" :name="'users[' + idx + '].name'" />
+            <ErrorMessage :name="'users[' + idx + '].name'" />
+
+            <button class="move" type="button" @click="move(idx, 0)">Move</button>
+          </fieldset>  
+        </FieldArray>
+
+        <button class="submit" type="submit">Submit</button>
+      </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const submitBtn = document.querySelector('.submit') as HTMLButtonElement;
+  const inputAt = (idx: number) => (document.querySelectorAll('input') || [])[idx] as HTMLInputElement;
+  const moveElAt = (idx: number) => (document.querySelectorAll('.move') || [])[idx] as HTMLInputElement;
+
+  expect(getValue(inputAt(0))).toBe('1');
+  expect(getValue(inputAt(1))).toBe('2');
+  expect(getValue(inputAt(2))).toBe('3');
+  expect(getValue(inputAt(3))).toBe('4');
+  dispatchEvent(moveElAt(3), 'click');
+  await flushPromises();
+  expect(getValue(inputAt(0))).toBe('4');
+  expect(getValue(inputAt(1))).toBe('1');
+  expect(getValue(inputAt(2))).toBe('2');
+  expect(getValue(inputAt(3))).toBe('3');
+  (submitBtn as HTMLButtonElement).click();
+  await flushPromises();
+  expect(onSubmit).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      users: [{ name: '4' }, { name: '1' }, { name: '2' }, { name: '3' }],
+    }),
+    expect.anything()
+  );
+});

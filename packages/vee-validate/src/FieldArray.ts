@@ -13,7 +13,7 @@ const FieldArrayImpl = defineComponent({
     },
   },
   setup(props, ctx) {
-    const { push, remove, swap, insert, replace, update, prepend, fields } = useFieldArray(toRef(props, 'name'));
+    const { push, remove, swap, insert, replace, update, prepend, move, fields } = useFieldArray(toRef(props, 'name'));
 
     function slotProps() {
       return {
@@ -25,6 +25,7 @@ const FieldArrayImpl = defineComponent({
         update,
         replace,
         prepend,
+        move,
       };
     }
 
@@ -36,6 +37,7 @@ const FieldArrayImpl = defineComponent({
       update,
       replace,
       prepend,
+      move,
     });
 
     return () => {
@@ -55,6 +57,7 @@ export const FieldArray = FieldArrayImpl as typeof FieldArrayImpl & {
     update: FieldArrayContext['update'];
     replace: FieldArrayContext['replace'];
     prepend: FieldArrayContext['prepend'];
+    move: FieldArrayContext['move'];
     $slots: {
       default: (arg: UnwrapRef<FieldArrayContext>) => VNode[];
     };

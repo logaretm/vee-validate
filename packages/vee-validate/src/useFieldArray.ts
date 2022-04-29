@@ -21,6 +21,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     update: noOp,
     replace: noOp,
     prepend: noOp,
+    move: noOp,
   };
 
   if (!form) {
@@ -175,6 +176,30 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     updateEntryFlags();
   }
 
+  function move(oldIdx: number, newIdx: number) {
+    const pathName = unref(arrayPath);
+    const pathValue = getFromPath<TValue[]>(form?.values, pathName);
+    const newValue = isNullOrUndefined(pathValue) ? [] : [...pathValue];
+
+    if (!Array.isArray(pathValue) || !(oldIdx in pathValue) || !(newIdx in pathValue)) {
+      return;
+    }
+
+    const newFields = [...fields.value];
+
+    const movedItem = newFields[oldIdx];
+    newFields.splice(oldIdx, 1);
+    newFields.splice(newIdx, 0, movedItem);
+
+    const movedValue = newValue[oldIdx];
+    newValue.splice(oldIdx, 1);
+    newValue.splice(newIdx, 0, movedValue);
+
+    form?.setFieldValue(pathName, newValue);
+    fields.value = newFields;
+    updateEntryFlags();
+  }
+
   form.fieldArraysLookup[id] = {
     reset: initFields,
   };
@@ -192,5 +217,6 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     update,
     replace,
     prepend,
+    move,
   };
 }
