@@ -1,5 +1,5 @@
 import { defineRule, configure } from '@/vee-validate';
-import { mountWithHoc, setValue, dispatchEvent, setChecked, flushPromises } from './helpers';
+import { mountWithHoc, setValue, dispatchEvent, setChecked, flushPromises, dispatchFileEvent } from './helpers';
 import * as yup from 'yup';
 import { computed, reactive, ref, Ref } from 'vue';
 
@@ -365,6 +365,44 @@ describe('<Field />', () => {
 
     const error = wrapper.$el.querySelector('#error');
     expect(error.textContent).toBeTruthy();
+  });
+
+  test('file values are normalized depending', async () => {
+    const onSubmit = jest.fn();
+
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm @submit="onSubmit">
+        <Field name="single" type="file" />
+        <Field name="multiple" type="file" multiple />
+
+        <button>submit</button>
+      </VForm>
+    `,
+      setup() {
+        return {
+          onSubmit,
+        };
+      },
+    });
+
+    await flushPromises();
+    const getInput = (name: string) => wrapper.$el.querySelector(`input[name="${name}"]`) as HTMLInputElement;
+    const button = wrapper.$el.querySelector(`button`) as HTMLElement;
+
+    await dispatchFileEvent(getInput('single'), 'test.jpg');
+    await dispatchFileEvent(getInput('multiple'), ['one.jpg', 'two.jpg']);
+
+    button.click();
+    await flushPromises();
+
+    expect(onSubmit).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        single: expect.any(File),
+        multiple: expect.arrayContaining([expect.any(File), expect.any(File)]),
+      }),
+      expect.anything()
+    );
   });
 
   test('setting bails prop to false disables exit on first error', async () => {

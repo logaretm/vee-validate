@@ -76,3 +76,24 @@ export async function flushPromises() {
   jest.advanceTimersByTime(5);
   await flushP();
 }
+
+export async function dispatchFileEvent(input: HTMLInputElement, name: string | string[]) {
+  const createFile = (filename: string) =>
+    new File([new ArrayBuffer(2e5)], filename, { lastModified: 0, type: 'image/jpeg' });
+
+  const files = Array.isArray(name) ? name.map(createFile) : [createFile(name)];
+  const event = new Event('change');
+
+  Object.defineProperty(event, 'target', {
+    get() {
+      return {
+        type: 'file',
+        multiple: input.multiple,
+        files,
+      };
+    },
+  });
+
+  input.dispatchEvent(event);
+  await flushPromises();
+}

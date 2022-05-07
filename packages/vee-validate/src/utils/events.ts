@@ -14,7 +14,9 @@ export function normalizeEventValue(value: Event | unknown): unknown {
   }
 
   if (input.type === 'file' && input.files) {
-    return Array.from(input.files);
+    const files = Array.from(input.files);
+
+    return input.multiple ? files : files[0];
   }
 
   if (isNativeMultiSelect(input)) {
