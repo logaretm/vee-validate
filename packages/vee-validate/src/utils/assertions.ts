@@ -83,7 +83,7 @@ export function isNativeMultiSelectNode(tag: string, attrs: Record<string, unkno
  * For multi-selects because the value binding will reset the value
  */
 export function shouldHaveValueBinding(tag: string, attrs: Record<string, unknown>) {
-  return isNativeMultiSelectNode(tag, attrs) || isFileInputNode(tag, attrs);
+  return !isNativeMultiSelectNode(tag, attrs) && attrs.type !== 'file' && !hasCheckedAttr(attrs.type);
 }
 
 export function isFormSubmitEvent(evt: unknown): evt is Event & { target: HTMLFormElement } {

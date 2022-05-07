@@ -1165,4 +1165,47 @@ describe('<Field />', () => {
     expect(error.textContent).toBe('');
     expect(input.value).toBe('');
   });
+
+  test('should have correct field object binding properties based on file type', async () => {
+    const textualType = jest.fn();
+    const fileType = jest.fn();
+    const checkboxType = jest.fn();
+    const radioType = jest.fn();
+
+    mountWithHoc({
+      template: `
+      <div>
+        <Field name="text" v-slot="{ field }">
+          {{ textualType(field) }}
+        </Field>
+        <Field name="file" type="file" v-slot="{ field }">
+          {{ fileType(field) }}
+        </Field>
+        <Field name="checkbox" type="checkbox" v-slot="{ field }">
+          {{ checkboxType(field) }}
+        </Field>
+        <Field name="radio" type="radio" v-slot="{ field }">
+          {{ radioType(field) }}
+        </Field>
+      </div>
+    `,
+      setup() {
+        return {
+          textualType,
+          fileType,
+          checkboxType,
+          radioType,
+        };
+      },
+    });
+
+    await flushPromises();
+    const lastCallOf = (fn: ReturnType<typeof jest.fn>) => fn.mock.calls[fn.mock.calls.length - 1][0];
+    expect(lastCallOf(textualType)).toHaveProperty('value');
+    expect(lastCallOf(fileType)).not.toHaveProperty('value');
+    expect(lastCallOf(checkboxType)).toHaveProperty('checked');
+    expect(lastCallOf(checkboxType)).not.toHaveProperty('value');
+    expect(lastCallOf(radioType)).toHaveProperty('checked');
+    expect(lastCallOf(radioType)).not.toHaveProperty('value');
+  });
 });

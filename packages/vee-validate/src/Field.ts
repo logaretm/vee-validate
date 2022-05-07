@@ -189,13 +189,11 @@ const FieldImpl = defineComponent({
 
       if (hasCheckedAttr(ctx.attrs.type) && checked) {
         attrs.checked = checked.value;
-      } else {
-        attrs.value = value.value;
       }
 
       const tag = resolveTag(props, ctx);
       if (shouldHaveValueBinding(tag, ctx.attrs)) {
-        delete attrs.value;
+        attrs.value = value.value;
       }
 
       return attrs;
