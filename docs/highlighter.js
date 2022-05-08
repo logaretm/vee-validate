@@ -7,7 +7,7 @@ async function highlighter() {
   const highlighter = await shiki.getHighlighter({
     // Complete themes: https://github.com/shikijs/shiki/tree/master/packages/themes
     theme: require('./theme.json'),
-    langs: ['js', 'ts', 'vue', 'css', 'sh', 'html', 'json', 'diff'],
+    langs: ['js', 'ts', 'vue', 'css', 'sh', 'html', 'json', 'diff', 'vue-html'],
   });
 
   return (rawCode, lang, { fileName, lineHighlights }) => {
