@@ -129,7 +129,7 @@ All the following props are optional.
 | rules          | `string`                  | `undefined`           | The validation rules.                                                                               |
 | skipIfEmpty    | `boolean`                 | `true`                | If true, the validation will be skipped if the value is empty).                                     |
 | tag            | `string`                  | `span`                | The default tag to [render](#rendering).                                                            |
-| vid            | `string`                  | auto increment number | Identifier used for target/cross-field based rules.                                                 |
+| vid            | `string`                  | auto increment number | Identifier used for target/cross-field based rules. Must be unique across single ValidationObserver instance.                                                |
 
 ## Methods
 
