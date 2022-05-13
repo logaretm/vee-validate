@@ -73,3 +73,87 @@ const { value, errorMessage } = useField(name);
 const name = computed(() => props.name);
 const { value, errorMessage } = useField(name);
 ```
+
+## Destructing composable
+
+The composition API examples in the docs have always used the left-hand side destructing syntax when assigning component data with any of the composable functions vee-validate offers. To quickly refresh your memory:
+
+```js
+const { value } = useField('field');
+const { handleChange } = useForm();
+const { fields } = useFieldArray('users');
+```
+
+This is required by default, because each of these functions assumes you might never need the entire features each one provides and such each state/function is exposed independently as a `Ref` or a `Function`.
+
+This means if you try the following, it won't work as expected when used in your template:
+
+```vue
+<script setup>
+import { useField, useForm, useFieldArray } from 'vee-validate';
+
+export default {
+  setup() {
+    const form = useForm();
+    const field = useField('field');
+    const fieldArray = useFieldArray('users');
+
+    return {
+      form,
+      field,
+      fieldArray,
+    };
+  },
+};
+</script>
+
+<template>
+  <!-- ❌ Doesn't work -->
+  <input v-model="field.value" />
+
+  <!-- ❌ Doesn't work -->
+  <pre>{{ form.meta.valid }}</pre>
+
+  <!-- ❌ Doesn't work -->
+  <div v-for="item in fieldArray.fields"></div>
+</template>
+```
+
+This is because the `setup` function doesn't recursively expose the refs inside of these objects. If you prefer to use the composition API like shown above, then you can fix most of the issues by wrapping the function calls with `reactive()`.
+
+```vue
+<script>
+import { reactive } from 'vue';
+import { useField, useForm, useFieldArray } from 'vee-validate';
+
+export default {
+  setup() {
+    const form = reactive(useForm());
+    const field = reactive(useField('field'));
+    const fieldArray = reactive(useFieldArray('users'));
+
+    return {
+      form,
+      field,
+      fieldArray,
+    };
+  },
+};
+</script>
+
+<template>
+  <!-- ❌  Still Doesn't work because it is a writeable computed ref -->
+  <input v-model="field.value" />
+
+  <!-- ✅  Works if unwrapped manually -->
+  <input v-model="field.value.value" />
+
+  <!-- ✅  Works -->
+  <pre>{{ form.meta.valid }}</pre>
+
+  <!-- ✅  Works -->
+  <div v-for="item in fieldArray.fields"></div>
+</template>
+```
+
+You can read more on that behavior in [Vue.js docs](https://vuejs.org/guide/reusability/composables.html#conventions-and-best-practices). Note that once you wrap the composable calls with `reactive` you no longer can destruct them and preserve the reactivity.
