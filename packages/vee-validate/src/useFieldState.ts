@@ -4,11 +4,11 @@ import { FormContextKey } from './symbols';
 import { FieldMeta, FieldState, MaybeRef } from './types';
 import { getFromPath, injectWithSelf } from './utils';
 
-interface StateSetterInit<TValue = unknown> extends FieldState<TValue> {
+export interface StateSetterInit<TValue = unknown> extends FieldState<TValue> {
   initialValue: TValue;
 }
 
-interface FieldStateComposable<TValue = unknown> {
+export interface FieldStateComposable<TValue = unknown> {
   id: number;
   path: MaybeRef<string>;
   meta: FieldMeta<TValue>;
@@ -19,7 +19,7 @@ interface FieldStateComposable<TValue = unknown> {
   setState(state: Partial<StateSetterInit<TValue>>): void;
 }
 
-interface StateInit<TValue = unknown> {
+export interface StateInit<TValue = unknown> {
   modelValue: MaybeRef<TValue>;
   standalone: boolean;
 }
@@ -74,12 +74,12 @@ interface FieldValueComposable<TValue = unknown> {
 /**
  * Creates the field value and resolves the initial value
  */
-function _useFieldValue<TValue = unknown>(
+export function _useFieldValue<TValue = unknown>(
   path: MaybeRef<string>,
-  modelValue: MaybeRef<TValue> | undefined,
-  shouldInjectForm: boolean
+  modelValue?: MaybeRef<TValue>,
+  shouldInjectForm = true
 ): FieldValueComposable<TValue> {
-  const form = shouldInjectForm ? injectWithSelf(FormContextKey, undefined) : undefined;
+  const form = shouldInjectForm === true ? injectWithSelf(FormContextKey, undefined) : undefined;
   const modelRef = ref(unref(modelValue)) as Ref<TValue>;
 
   function resolveInitialValue() {

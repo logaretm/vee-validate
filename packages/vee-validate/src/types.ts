@@ -15,6 +15,8 @@ export type Locator = { __locatorRef: string } & ((values: GenericFormValues) =>
 
 export type MaybeRef<T> = Ref<T> | T;
 
+export type MaybeArray<T> = T | T[];
+
 export interface FieldMeta<TValue> {
   touched: boolean;
   dirty: boolean;
@@ -159,6 +161,14 @@ export type FieldPathLookup<TValues extends Record<string, any> = Record<string,
   Record<keyof TValues, PrivateFieldContext | PrivateFieldContext[]>
 >;
 
+export type MapValues<T, TValues extends Record<string, any>> = {
+  [K in keyof T]: T[K] extends MaybeRef<infer TKey>
+    ? TKey extends keyof TValues
+      ? Ref<TValues[TKey]>
+      : Ref<unknown>
+    : Ref<unknown>;
+};
+
 export interface PrivateFormContext<TValues extends Record<string, any> = Record<string, any>>
   extends FormActions<TValues> {
   formId: number;
@@ -184,6 +194,8 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
     onSubmitValidationErrorCb?: InvalidSubmissionHandler<TValues>
   ): (e?: Event) => Promise<TReturn | undefined>;
   setFieldInitialValue(path: string, value: unknown): void;
+  useFieldModel<TPath extends keyof TValues>(path: MaybeRef<TPath>): Ref<TValues[TPath]>;
+  useFieldModel<TPath extends keyof TValues>(paths: [...MaybeRef<TPath>[]]): MapValues<typeof paths, TValues>;
 }
 
 export interface FormContext<TValues extends Record<string, any> = Record<string, any>>

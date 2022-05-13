@@ -97,3 +97,14 @@ export async function dispatchFileEvent(input: HTMLInputElement, name: string | 
   input.dispatchEvent(event);
   await flushPromises();
 }
+
+export async function runInSetup(cb: () => any) {
+  mountWithHoc({
+    setup() {
+      cb();
+    },
+    template: `
+        <div></div>
+    `,
+  });
+}

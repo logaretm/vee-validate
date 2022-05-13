@@ -35,6 +35,8 @@ import {
   FieldPathLookup,
   PrivateFieldArrayContext,
   InvalidSubmissionHandler,
+  MaybeArray,
+  MapValues,
 } from './types';
 import {
   getFromPath,
@@ -49,6 +51,7 @@ import {
 import { FormContextKey } from './symbols';
 import { validateYupSchema, validateObjectSchema } from './validate';
 import { refreshInspector, registerFormWithDevTools } from './devtools';
+import { _useFieldValue } from './useFieldState';
 
 interface FormOptions<TValues extends Record<string, any>> {
   validationSchema?: MaybeRef<
@@ -179,6 +182,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     stageInitialValue,
     unsetInitialValue,
     setFieldInitialValue,
+    useFieldModel,
   };
 
   function isFieldGroup(
@@ -280,6 +284,23 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
     // regenerate the arrays when the form values change
     Object.values(fieldArraysLookup).forEach(f => f && f.reset());
+  }
+
+  function createModel<TPath extends keyof TValues>(path: MaybeRef<TPath>) {
+    const { value } = _useFieldValue<TValues[TPath]>(path as string);
+    watch(value, () => validate({ mode: 'validated-only' }));
+
+    return value;
+  }
+
+  function useFieldModel<TPath extends keyof TValues>(path: MaybeRef<TPath>): Ref<TValues[TPath]>;
+  function useFieldModel<TPath extends keyof TValues>(paths: [...TPath[]]): MapValues<typeof paths, TValues>;
+  function useFieldModel<TPath extends keyof TValues>(path: MaybeRef<TPath> | [...MaybeRef<TPath>[]]) {
+    if (!Array.isArray(path)) {
+      return createModel<TPath>(path);
+    }
+
+    return path.map(createModel) as MapValues<typeof path, TValues>;
   }
 
   /**
@@ -722,6 +743,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     setValues,
     setFieldTouched,
     setTouched,
+    useFieldModel,
   };
 }
 

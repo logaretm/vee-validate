@@ -1,5 +1,5 @@
 import { FormContext, useField, useForm } from '@/vee-validate';
-import { mountWithHoc, setValue, flushPromises } from './helpers';
+import { mountWithHoc, setValue, flushPromises, runInSetup } from './helpers';
 import * as yup from 'yup';
 import { Ref } from 'vue';
 
@@ -410,5 +410,63 @@ describe('useForm()', () => {
     expect(meta[0]?.textContent).toBe('false');
     expect(meta[1]?.textContent).toBe('false');
     expect(meta[2]?.textContent).toBe('false');
+  });
+
+  test('Creates a writeable model for a field path', async () => {
+    await runInSetup(() => {
+      const { values, useFieldModel } = useForm({
+        initialValues: {
+          greet: 'hey',
+          age: 1,
+        },
+      });
+      const greet = useFieldModel('greet');
+      const age = useFieldModel('age');
+
+      expect(values.greet).toBe('hey');
+      expect(values.age).toBe(1);
+      greet.value = 'hello';
+      age.value = 2;
+      expect(values.greet).toBe('hello');
+      expect(values.age).toBe(2);
+    });
+  });
+
+  test('Creates multiple writeable models for given field paths', async () => {
+    await runInSetup(() => {
+      const { values, useFieldModel } = useForm({
+        initialValues: {
+          greet: 'hey',
+          age: 1,
+        },
+      });
+
+      const [age, greet] = useFieldModel(['age', 'greet']);
+
+      expect(values.greet).toBe('hey');
+      expect(values.age).toBe(1);
+      greet.value = 'hello';
+      age.value = 2;
+      expect(values.greet).toBe('hello');
+      expect(values.age).toBe(2);
+    });
+  });
+
+  test('Validates the field model immediately and when it changes', async () => {
+    await runInSetup(async () => {
+      const { errors, useFieldModel } = useForm();
+      const model = useFieldModel('test');
+
+      await flushPromises();
+      expect(errors.value.test).toBe(REQUIRED_MESSAGE);
+
+      model.value = 'hello';
+      await flushPromises();
+      expect(errors.value.test).toBe('');
+
+      model.value = '';
+      await flushPromises();
+      expect(errors.value.test).toBe(REQUIRED_MESSAGE);
+    });
   });
 });
