@@ -35,7 +35,6 @@ import {
   FieldPathLookup,
   PrivateFieldArrayContext,
   InvalidSubmissionHandler,
-  MaybeArray,
   MapValues,
 } from './types';
 import {
