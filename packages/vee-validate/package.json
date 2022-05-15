@@ -31,6 +31,6 @@
     "vue": "^3.0.0"
   },
   "dependencies": {
-    "@vue/devtools-api": "^6.0.0-beta.15"
+    "@vue/devtools-api": "^6.1.4"
   }
 }
