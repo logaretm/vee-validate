@@ -101,7 +101,7 @@ defineRule('minLength', (value, [limit]) => {
 And then you can use it on the `Field` component like this:
 
 ```vue
-<Field name="password" type="password" rules="required|min:8" />
+<Field name="password" type="password" rules="required|minLength:8" />
 ```
 
 Note that to pass arguments to rules, you need to place a colon `:` character to signify the beginning of rules. You can pass multiple arguments as a comma-separated list. Here is an example for a `minMax` rule:
@@ -109,7 +109,7 @@ Note that to pass arguments to rules, you need to place a colon `:` character to
 ```js
 import { defineRule } from 'vee-validate';
 
-defineRule('minLength', (value, [min, max]) => {
+defineRule('minMax', (value, [min, max]) => {
   // The field is empty so it should pass
   if (!value || !value.length) {
     return true;
