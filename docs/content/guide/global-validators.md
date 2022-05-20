@@ -163,7 +163,7 @@ export default {
   data() {
     const schema = {
       email: 'required|email',
-      password: 'required|min:8',
+      password: 'required|minLength:8',
     };
 
     return {
