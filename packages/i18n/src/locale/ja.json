@@ -8,7 +8,7 @@
     "alpha_spaces": "{field}はアルファベットと空白のみ使用できます",
     "between": "{field}は 0:{min} から 1:{max} の間でなければなりません",
     "confirmed": "{field}が一致しません",
-    "digits": "{field}は{length}桁の数字でなければなりません",
+    "digits": "{field}は 0:{length}桁の数字でなければなりません",
     "dimensions": "{field}は幅 0:{width}px、高さ 1:{height}px 以内でなければなりません",
     "email": "{field}は有効なメールアドレスではありません",
     "excluded": "{field}は不正な値です",
