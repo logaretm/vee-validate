@@ -617,11 +617,13 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
   /**
    * Batches validation runs in 5ms batches
+   * Must have two distinct batch queues to make sure they don't override each other settings #3783
    */
-  const debouncedSchemaValidation = debounceAsync(_validateSchema, 5);
+  const debouncedSilentValidation = debounceAsync(_validateSchema, 5);
+  const debouncedValidation = debounceAsync(_validateSchema, 5);
 
   async function validateSchema(mode: SchemaValidationMode): Promise<FormValidationResult<TValues>> {
-    const formResult = await debouncedSchemaValidation();
+    const formResult = await (mode === 'silent' ? debouncedSilentValidation() : debouncedValidation());
 
     // fields by id lookup
     const fieldsById = formCtx.fieldsByPath.value || {};
