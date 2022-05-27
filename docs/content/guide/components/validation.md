@@ -374,7 +374,7 @@ An example of that could be `input[type="file"]` inputs, because you cannot bind
 For custom components, it is recommended that you listen to the proper events when using `v-bind` with custom components, the following sample uses `modelValue` events.
 
 ```vue
-<Field v-slot="{ handleChange, value }">
+<Field name="custom" v-slot="{ handleChange, value }">
   <CustomInput :modelValue="value" @update:modelValue="handleChange" />
 </Field>
 ```
