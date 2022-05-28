@@ -117,7 +117,7 @@ export function _useFieldValue<TValue = unknown>(
   // prioritize model value over form values
   // #3429
   const currentValue = modelValue ? unref(modelValue) : getFromPath(form.values, unref(path), unref(initialValue));
-  form.stageInitialValue(unref(path), currentValue);
+  form.stageInitialValue(unref(path), currentValue, true);
   // otherwise use a computed setter that triggers the `setFieldValue`
   const value = computed<TValue>({
     get() {

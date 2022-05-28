@@ -774,3 +774,45 @@ test('moves items around the array with move()', async () => {
     expect.anything()
   );
 });
+
+// #3782
+test('removing an item marks the form as dirty', async () => {
+  const onSubmit = jest.fn();
+  mountWithHoc({
+    setup() {
+      const initialValues = {
+        users: [{ name: '1' }, { name: '2' }, { name: '3' }],
+      };
+
+      return {
+        onSubmit,
+        initialValues,
+      };
+    },
+    template: `
+      <VForm @submit="onSubmit" :initial-values="initialValues" v-slot="{ meta }">
+        <FieldArray name="users" v-slot="{ remove, fields }">
+          <fieldset v-for="(field, idx) in fields" :key="field.key">
+            <legend>User #{{ idx }}</legend>
+            <label :for="'name_' + idx">Name</label>
+            <Field :id="'name_' + idx" :name="'users[' + idx + '].name'" />
+
+            <button class="remove" type="button" @click="remove(idx)">X</button>
+          </fieldset>  
+        </FieldArray>
+
+        <pre>{{ meta.dirty }}</pre>
+      </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const getDirtyPre = () => document.querySelector('pre') as HTMLElement;
+  const removeBtnAt = (idx: number) => (document.querySelectorAll('.remove') || [])[idx] as HTMLInputElement;
+
+  await expect(getDirtyPre().textContent).toBe('false');
+  dispatchEvent(removeBtnAt(2), 'click');
+  await flushPromises();
+
+  await expect(getDirtyPre().textContent).toBe('true');
+});

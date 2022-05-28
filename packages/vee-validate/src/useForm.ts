@@ -150,7 +150,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   );
 
   // form meta aggregations
-  const meta = useFormMeta(fieldsByPath, formValues, initialValues, errors);
+  const meta = useFormMeta(fieldsByPath, formValues, originalInitialValues, errors);
 
   const schema = opts?.validationSchema;
   const formCtx: PrivateFormContext<TValues> = {
@@ -594,9 +594,12 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   /**
    * Sneaky function to set initial field values
    */
-  function stageInitialValue(path: string, value: unknown) {
+  function stageInitialValue(path: string, value: unknown, updateOriginal = false) {
     setInPath(formValues, path, value);
     setFieldInitialValue(path, value);
+    if (updateOriginal) {
+      setInPath(originalInitialValues.value, path, deepCopy(value));
+    }
   }
 
   async function _validateSchema(): Promise<FormValidationResult<TValues>> {

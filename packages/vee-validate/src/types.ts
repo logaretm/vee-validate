@@ -185,7 +185,7 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
   validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>>;
   validateField(field: keyof TValues): Promise<ValidationResult>;
   setFieldErrorBag(field: string, messages: string | string[]): void;
-  stageInitialValue(path: string, value: unknown): void;
+  stageInitialValue(path: string, value: unknown, updateOriginal?: boolean): void;
   unsetInitialValue(path: string): void;
   register(field: PrivateFieldContext): void;
   unregister(field: PrivateFieldContext): void;
