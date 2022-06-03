@@ -34,16 +34,18 @@ export default {
         container: '#docsearch',
         debug: process.env.NODE_ENV !== 'production',
         navigator: {
-          navigate: ({ suggestionUrl }) => {
-            const { pathname: hitPathname } = new URL(window.location.origin + suggestionUrl);
+          navigate: evt => {
+            const { itemUrl } = evt;
+            const { pathname: hitPathname } = new URL(window.location.origin + itemUrl);
+
             // Vue Router doesn't handle same-page navigation so we use
             // the native browser location API for anchor navigation.
             if (this.$router.history.current.path === hitPathname) {
-              window.location.assign(window.location.origin + suggestionUrl);
+              window.location.assign(window.location.origin + itemUrl);
               return;
             }
 
-            this.$router.push(suggestionUrl);
+            this.$router.push(itemUrl.replace('/v4', '/'));
           },
         },
         transformItems: items => {
