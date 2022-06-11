@@ -92,35 +92,102 @@ It will error out because `age` is not defined in the `LoginForm` type you defin
 
 ## API Reference
 
+### TypeScript Definition
+
 The full signature of the `useForm` function looks like this:
 
 ```ts
-interface FormOptions {
+interface FormOptions<TValues extends Record<string, any>> {
   validationSchema?: any; // A yup schema, or a Record<string, any> containing valid rules as `useField`
-  initialValues?: Record<string, any>;
-  initialErrors?: Record<string, string>; // a map of the form's initial error messages
-  initialTouched?: Record<string, boolean>; // a map of the form's initial touched fields
+  initialValues?: MaybeRef<TValues>;
+  initialErrors?: Record<keyof TValues, string | undefined>; // a map of the form's initial error messages
+  initialTouched?: Record<keyof TValues, boolean>; // a map of the form's initial touched fields
   validateOnMount?: boolean;
 }
 
-type useForm = (
-  opts?: FormOptions
-) => {
-  errors: Record<string, string>; // first error message for each field
-  isSubmitting: boolean; // if the form submission function is being run
-  submitCount: number; // the number of submission attempts
-  meta: FormMeta; // aggregate of the field's meta information
-  values: Record<string, any>; // current form values
-  setFieldError: (field: string, errorMessage: string) => void; // Sets an error message for a field
-  setErrors: (fields: Record<string, string>) => void; // Sets error messages for fields
-  setFieldValue: (field: string, value: any) => void; // Sets a field value
-  setValues: (fields: Record<string, any>) => void; // Sets multiple fields values
-  validate: () => Promise<{ errors: Record<string, string>; valid: boolean; }>; // validates the form fields and returns the overall result
-  validateField: (field: string) => Promise<{ errors: string[]; valid: boolean; }>; // validates the form fields and returns the overall result
-  handleSubmit: (cb: (values: Record<string, any>, ctx: SubmissionContext)) => () => void; // Creates a submission handler that calls the cb only after successful validation with the form values
+/**
+ * validated-only: only mutate the previously validated fields
+ * silent: do not mutate any field
+ * force: validate all fields and mutate their state
+ */
+type SchemaValidationMode = 'validated-only' | 'silent' | 'force';
+
+interface ValidationOptions {
+  mode: SchemaValidationMode;
+}
+
+type MapValues<T, TValues extends Record<string, any>> = {
+  [K in keyof T]: T[K] extends MaybeRef<infer TKey>
+    ? TKey extends keyof TValues
+      ? Ref<TValues[TKey]>
+      : Ref<unknown>
+    : Ref<unknown>;
+};
+
+interface FormActions<TValues = Record<string, any>> {
+  setFieldValue<T extends keyof TValues>(field: T, value: TValues[T], opts?: Partial<SetFieldValueOptions>): void;
+  setFieldError: (field: keyof TValues, message: string | string[] | undefined) => void;
+  setErrors: (fields: FormErrors<TValues>) => void;
+  setValues<T extends keyof TValues>(fields: Partial<Record<T, TValues[T]>>): void;
+  setFieldTouched: (field: keyof TValues, isTouched: boolean) => void;
+  setTouched: (fields: Partial<Record<keyof TValues, boolean>>) => void;
+  resetForm: (state?: Partial<FormState<TValues>>) => void;
+}
+
+interface SubmissionContext<TValues extends Record<string, any>> extends FormActions<TValues> {
+  evt?: Event;
+}
+
+type SubmissionHandler<TValues extends Record<string, any>, TReturn = unknown> = (
+  values: TValues,
+  ctx: SubmissionContext<TValues>
+) => TReturn;
+
+interface InvalidSubmissionContext<TValues extends Record<string, any>> {
+  values: TValues;
+  evt?: Event;
+  errors: Partial<Record<keyof TValues, string>>;
+  results: Partial<Record<keyof TValues, ValidationResult>>;
+}
+
+interface FormValidationResult<TValues> {
+  valid: boolean;
+  results: Partial<Record<keyof TValues, ValidationResult>>;
+  errors: Partial<Record<keyof TValues, string>>;
+}
+
+interface FormMeta<TValues extends Record<string, any>> {
+  touched: boolean;
+  dirty: boolean;
+  valid: boolean;
+  validated: boolean;
+  pending: boolean;
+  initialValues?: TValues;
+}
+
+type useForm = (opts?: FormOptions) => {
+  values: TValues; // current form values
+  submitCount: Ref<number>; // the number of submission attempts
+  errors: ComputedRef<FormErrors<TValues>>; // first error message for each field
+  meta: ComputedRef<FormMeta<TValues>>; // aggregate of the field's meta information
+  isSubmitting: Ref<boolean>; // if the form submission function is being run
+  setFieldValue<T extends keyof TValues>(field: T, value: TValues[T]): void; // Sets a field value
+  setFieldError: (field: keyof TValues, message: string | string[] | undefined) => void; // Sets an error message for a field
+  setErrors: (fields: FormErrors<TValues>) => void; // Sets error messages for fields
+  setValues<T extends keyof TValues>(fields: Partial<Record<T, TValues[T]>>): void; // Sets multiple fields values
+  setFieldTouched: (field: keyof TValues, isTouched: boolean) => void; // Sets a field's touched state
+  setTouched: (fields: Partial<Record<keyof TValues, boolean>>) => void; // Sets multiple fields touched state
+  resetForm: (state?: Partial<FormState<TValues>>) => void; // resets form state to the initial state or the given one
+  handleReset: () => void; // Resets all fields' errors and meta and their values to their initial state
   submitForm: (e: Event) => void; // Forces submission of a form after successful validation (calls e.target.submit())
-  handleReset: () => void; // Resets all fields' errors and meta and their values
-  resetForm: (state?: Partial<FormState>) => void; // Resets all fields' errors and meta and their values to their initial state or the specified state
+  validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>>;
+  validateField(field: keyof TValues): Promise<ValidationResult>;
+  useFieldModel<TPath extends keyof TValues>(path: MaybeRef<TPath>): Ref<TValues[TPath]>;
+  useFieldModel<TPath extends keyof TValues>(paths: [...MaybeRef<TPath>[]]): MapValues<typeof paths, TValues>;
+  handleSubmit<TReturn = unknown>(
+    cb: SubmissionHandler<TValues, TReturn>,
+    onSubmitValidationErrorCb?: InvalidSubmissionHandler<TValues>
+  ): (e?: Event) => Promise<TReturn | undefined>;
 };
 ```
 
@@ -128,7 +195,7 @@ type useForm = (
 
 <code-title level="4">
 
-`validationSchema?: Record<string, string | Function> | Yup.ShapeOf<T>`
+`validationSchema?: any`
 
 </code-title>
 
@@ -136,7 +203,7 @@ Enables form-level validation, uses the specified schema to validate the fields.
 
 <code-title level="4">
 
-`initialValues?: Record<string, any>`
+`initialValues?: MaybeRef<Record<string, any>>`
 
 </code-title>
 

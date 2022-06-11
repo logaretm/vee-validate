@@ -69,13 +69,15 @@ interface FieldEntry<TValue = unknown> {
 }
 
 interface FieldArrayContext<TValue = unknown> {
-  fields: DeepReadonly<Ref<FieldEntry[]>>;
-  remove(idx: number): TValue | undefined;
+  fields: Ref<FieldEntry<TValue>[]>;
+  remove(idx: number): void;
+  replace(newArray: TValue[]): void;
+  update(idx: number, value: TValue): void;
   push(value: TValue): void;
   swap(indexA: number, indexB: number): void;
   insert(idx: number, value: TValue): void;
-  update(idx: number, value: TValue): void;
-  replace(value: TValue[]): void;
+  prepend(value: TValue): void;
+  move(oldIdx: number, newIdx: number): void;
 }
 
 function useFieldArray: (arrayPath: string): FieldArrayContext;
