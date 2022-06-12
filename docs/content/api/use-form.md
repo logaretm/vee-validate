@@ -665,3 +665,36 @@ export default {
 };
 </script>
 ```
+
+<code-title level="4">
+
+`useFieldModel` <DocBadge title="v4.6" />
+
+</code-title>
+
+This creates a bindable two-way model value for the specified fields, there are a couple of signatures for `useFieldModel`. Must be called in the `setup` function.
+
+`useFieldModel` accepts either a single field path or multiple via an array. You can use either root field paths or nested paths like `some.user.path` with dot notation.
+
+```vue
+<template>
+  <input name="email" v-model="email" />
+  <span>{{ errors.email }}</span>
+
+  <input name="password" v-model="password" type="password" />
+  <span>{{ errors.password }}</span>
+</template>
+
+<script setup>
+import { useForm } from 'vee-validate';
+import MyTextInput from '@/components/MyTextInput.vue';
+
+const { errors, useFieldModel } = useForm();
+
+const email = useFieldModel('email');
+const password = useFieldModel('password');
+
+// or multiple models at once
+const [email, password] = useFieldModel(['email', 'password']);
+</script>
+```
