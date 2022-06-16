@@ -9,6 +9,8 @@ import {
   provide,
   nextTick,
   getCurrentInstance,
+  Ref,
+  ComponentInternalInstance,
 } from 'vue';
 import { BaseSchema } from 'yup';
 import { klona as deepCopy } from 'klona/full';
@@ -34,6 +36,7 @@ import {
   injectWithSelf,
   resolveNextCheckboxValue,
   isYupValidator,
+  applyModelModifiers,
 } from './utils';
 import { isCallable } from '../../shared';
 import { FieldContextKey, FormContextKey } from './symbols';
@@ -52,6 +55,8 @@ interface FieldOptions<TValue = unknown> {
   label?: MaybeRef<string | undefined>;
   standalone?: boolean;
   keepValueOnUnmount?: boolean;
+  modelPropName?: string;
+  syncVModel?: boolean;
 }
 
 export type RuleExpression<TValue> =
@@ -94,6 +99,8 @@ function _useField<TValue = unknown>(
     uncheckedValue,
     standalone,
     keepValueOnUnmount,
+    modelPropName,
+    syncVModel,
   } = normalizeOptions(unref(name), opts);
 
   const form = !standalone ? injectWithSelf(FormContextKey) : undefined;
@@ -104,6 +111,10 @@ function _useField<TValue = unknown>(
     modelValue,
     standalone,
   });
+
+  if (syncVModel) {
+    useVModel(value, { prop: modelPropName });
+  }
 
   /**
    * Handles common onBlur meta update
@@ -375,6 +386,8 @@ function normalizeOptions<TValue>(name: string, opts: Partial<FieldOptions<TValu
     validateOnValueUpdate: true,
     standalone: false,
     keepValueOnUnmount: undefined,
+    modelPropName: 'modelValue',
+    syncVModel: true,
   });
 
   if (!opts) {
@@ -460,4 +473,46 @@ function useCheckboxField<TValue = unknown>(
   }
 
   return patchCheckboxApi(_useField<TValue>(name, rules, opts));
+}
+
+interface ModelOpts {
+  prop?: string;
+}
+
+function useVModel<TValue = unknown>(value: Ref<TValue>, opts?: ModelOpts) {
+  const vm = getCurrentInstance();
+  if (!vm) {
+    if (__DEV__) {
+      console.warn('Failed to setup model events because `useField` was not called in setup.');
+    }
+    return;
+  }
+
+  const propName = opts?.prop || 'modelValue';
+  const emitName = `update:${propName}`;
+
+  watch(value, newValue => {
+    if (isEqual(newValue, getCurrentModelValue(vm, propName))) {
+      return;
+    }
+
+    vm.emit(emitName, newValue);
+  });
+
+  if (propName in vm.props) {
+    watch(
+      () => getCurrentModelValue<TValue>(vm, propName),
+      propValue => {
+        if (isEqual(propValue, applyModelModifiers(value.value, vm.props.modelModifiers))) {
+          return;
+        }
+
+        value.value = propValue;
+      }
+    );
+  }
+}
+
+function getCurrentModelValue<TValue = unknown>(vm: ComponentInternalInstance, propName: string) {
+  return vm.props[propName] as TValue;
 }

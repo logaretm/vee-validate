@@ -1,4 +1,4 @@
-import { isIndex, isNullOrUndefined, isObject } from '../../../shared';
+import { isIndex, isNullOrUndefined, isObject, toNumber } from '../../../shared';
 import { getCurrentInstance, inject, InjectionKey, warn as vueWarning } from 'vue';
 import { isContainerValue, isEmptyContainer, isNotNestedPath } from './assertions';
 import { PrivateFieldContext } from '../types';
@@ -229,4 +229,16 @@ export function debounceAsync<TFunction extends (...args: any) => Promise<any>, 
 
     return new Promise<TResult>(resolve => resolves.push(resolve));
   };
+}
+
+export function applyModelModifiers(value: unknown, modifiers: unknown) {
+  if (!isObject(modifiers)) {
+    return;
+  }
+
+  if (modifiers.number) {
+    return toNumber(value as string);
+  }
+
+  return value;
 }
