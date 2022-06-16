@@ -116,8 +116,8 @@ export default {
       email(value) {
         // validate email value and return messages...
       },
-      name(value) {
-        // validate name value and return messages...
+      password(value) {
+        // validate password value and return messages...
       },
     };
 
