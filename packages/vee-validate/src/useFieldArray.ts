@@ -40,7 +40,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
 
   let entryCounter = 0;
   function initFields() {
-    const currentValues = getFromPath<TValue[]>(form?.values, unref(arrayPath), []);
+    const currentValues = getFromPath<TValue[]>(form?.values, unref(arrayPath), []) || [];
     fields.value = currentValues.map(createEntry);
     updateEntryFlags();
   }
@@ -63,7 +63,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
       key,
       value: computed<TValue>({
         get() {
-          const currentValues = getFromPath<TValue[]>(form?.values, unref(arrayPath), []);
+          const currentValues = getFromPath<TValue[]>(form?.values, unref(arrayPath), []) || [];
           const idx = fields.value.findIndex(e => e.key === key);
 
           return idx === -1 ? value : currentValues[idx];
