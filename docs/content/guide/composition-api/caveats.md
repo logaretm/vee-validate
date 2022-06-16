@@ -122,23 +122,13 @@ export default {
 This is because the `setup` function doesn't recursively expose the refs inside of these objects. If you prefer to use the composition API like shown above, then you can fix most of the issues by wrapping the function calls with `reactive()`.
 
 ```vue
-<script>
+<script setup>
 import { reactive } from 'vue';
 import { useField, useForm, useFieldArray } from 'vee-validate';
 
-export default {
-  setup() {
-    const form = reactive(useForm());
-    const field = reactive(useField('field'));
-    const fieldArray = reactive(useFieldArray('users'));
-
-    return {
-      form,
-      field,
-      fieldArray,
-    };
-  },
-};
+const form = reactive(useForm());
+const field = reactive(useField('field'));
+const fieldArray = reactive(useFieldArray('users'));
 </script>
 
 <template>

@@ -495,24 +495,16 @@ It accepts a function which runs after validating the form and if all fields are
   <form @submit="onSubmit"></form>
 </template>
 
-<script>
+<script setup>
 import { useForm } from 'vee-validate';
 
-export default {
-  setup() {
-    const { handleSubmit } = useForm();
+const { handleSubmit } = useForm();
 
-    // use `onSubmit` as an event handler for your forms
-    const onSubmit = handleSubmit(values => {
-      // pretty print the values object
-      alert(JSON.stringify(values, null, 2));
-    });
-
-    return {
-      onSubmit,
-    };
-  },
-};
+// use `onSubmit` as an event handler for your forms
+const onSubmit = handleSubmit(values => {
+  // pretty print the values object
+  alert(JSON.stringify(values, null, 2));
+});
 </script>
 ```
 
@@ -562,18 +554,10 @@ This is useful if you plan to handle form submissions using a backend API like L
   </form>
 </template>
 
-<script>
+<script setup>
 import { useForm } from 'vee-validate';
 
-export default {
-  setup() {
-    const { submitForm } = useForm();
-
-    return {
-      submitForm,
-    };
-  },
-};
+const { submitForm } = useForm();
 </script>
 ```
 
@@ -647,22 +631,13 @@ Clears error messages, resets the meta state for all fields and reverts their va
   </form>
 </template>
 
-<script>
+<script setup>
 import { useForm } from 'vee-validate';
 
-export default {
-  setup() {
-    const { handleReset } = useForm();
+const { handleReset } = useForm();
 
-    // you can use it in your code
-    handleReset();
-
-    // or pass it to be used in the template
-    return {
-      handleReset,
-    };
-  },
-};
+// you can use it in your code
+handleReset();
 </script>
 ```
 

@@ -19,20 +19,11 @@ The most basic usage looks like this:
   </div>
 </template>
 
-<script>
+<script setup>
 import { useField } from 'vee-validate';
 
-export default {
-  setup() {
-    // a simple `name` field with basic required validator
-    const { value, errorMessage } = useField('name', inputValue => !!inputValue);
-
-    return {
-      value,
-      errorMessage,
-    };
-  },
-};
+// a simple `name` field with basic required validator
+const { value, errorMessage } = useField('name', inputValue => !!inputValue);
 </script>
 ```
 
@@ -40,20 +31,13 @@ Whenever the `value` ref is updated it will be validated and the `errorMessage` 
 
 Additionally you can use `yup` as a validator:
 
-```js
+```vue
+<script setup>
 import { useField } from 'vee-validate';
 import * as yup from 'yup';
 
-export default {
-  setup() {
-    const { value, errorMessage } = useField('email', yup.string().email().required());
-
-    return {
-      value,
-      errorMessage,
-    };
-  },
-};
+const { value, errorMessage } = useField('email', yup.string().email().required());
+</script>
 ```
 
 You are responsible for when the field validates, blurs or when its value changes. This gives you greater control over the `Field` component which may include or implement sensible defaults for most common use cases.
@@ -388,19 +372,11 @@ It sets the `dirty` meta flag to `true`
   <input @change="handleChange" type="text" />
 </template>
 
-<script>
-export default {
-  setup() {
-    const { handleChange } = useField('field');
+<script setup>
+const { handleChange } = useField('field');
 
-    handleChange('new value'); // update field value and validate it
-    handleChange('new value 2', false); // update field value without validating it (you have to turn off validateOnValueUpdate)
-
-    return {
-      handleChange,
-    };
-  },
-};
+handleChange('new value'); // update field value and validate it
+handleChange('new value 2', false); // update field value without validating it (you have to turn off validateOnValueUpdate)
 </script>
 ```
 
@@ -417,16 +393,8 @@ Sets the `touched` meta flag to `true`
   <input @blur="handleBlur" type="text" />
 </template>
 
-<script>
-export default {
-  setup() {
-    const { handleBlur } = useField('field');
-
-    return {
-      handleBlur,
-    };
-  },
-};
+<script setup>
+const { handleBlur } = useField('field');
 </script>
 ```
 

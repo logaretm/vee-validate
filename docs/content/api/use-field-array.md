@@ -26,33 +26,19 @@ Basic usage:
   </form>
 </template>
 
-<script>
+<script setup>
 import { Field, useForm, useFieldArray } from 'vee-validate';
 
-export default {
-  components: {
-    Field,
+const { handleSubmit } = useForm({
+  initialValues: {
+    links: [{ id: 1, url: 'https://github.com/logaretm' }],
   },
-  setup() {
-    const { handleSubmit } = useForm({
-      initialValues: {
-        links: [{ id: 1, url: 'https://github.com/logaretm' }],
-      },
-    });
+});
 
-    const { remove, push, fields } = useFieldArray('links');
-    const onSubmit = handleSubmit(values => {
-      console.log(JSON.stringify(values, null, 2));
-    });
-
-    return {
-      fields,
-      push,
-      remove,
-      onSubmit,
-    };
-  },
-};
+const { remove, push, fields } = useFieldArray('links');
+const onSubmit = handleSubmit(values => {
+  console.log(JSON.stringify(values, null, 2));
+});
 </script>
 ```
 
