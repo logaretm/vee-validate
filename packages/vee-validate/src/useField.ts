@@ -203,9 +203,20 @@ function _useField<TValue = unknown>(
 
   let unwatchValue: WatchStopHandle;
   function watchValue() {
-    unwatchValue = watch(value, validateOnValueUpdate ? validateWithStateMutation : validateValidStateOnly, {
-      deep: true,
-    });
+    unwatchValue = watch(
+      value,
+      (val, oldVal) => {
+        if (isEqual(val, oldVal)) {
+          return;
+        }
+
+        const validateFn = validateOnValueUpdate ? validateWithStateMutation : validateValidStateOnly;
+        validateFn();
+      },
+      {
+        deep: true,
+      }
+    );
   }
 
   watchValue();
