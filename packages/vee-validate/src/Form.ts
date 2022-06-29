@@ -64,6 +64,10 @@ const FormImpl = defineComponent({
       type: Function as PropType<InvalidSubmissionHandler>,
       default: undefined,
     },
+    unsetValuesOnUnmount: {
+      type: Boolean,
+      default: true,
+    },
   },
   setup(props, ctx) {
     const initialValues = toRef(props, 'initialValues');
@@ -93,6 +97,7 @@ const FormImpl = defineComponent({
       initialErrors: props.initialErrors,
       initialTouched: props.initialTouched,
       validateOnMount: props.validateOnMount,
+      unsetValuesOnUnmount: props.unsetValuesOnUnmount,
     });
 
     const onSubmit = props.onSubmit ? handleSubmit(props.onSubmit, props.onInvalidSubmit) : submitForm;

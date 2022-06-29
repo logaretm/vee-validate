@@ -60,6 +60,7 @@ interface FormOptions<TValues extends Record<string, any>> {
   initialErrors?: Record<keyof TValues, string | undefined>;
   initialTouched?: Record<keyof TValues, boolean>;
   validateOnMount?: boolean;
+  unsetValuesOnUnmount?: boolean;
 }
 
 let FORM_COUNTER = 0;
@@ -142,6 +143,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   // we need this to process initial errors then unset them
   const initialErrors = { ...(opts?.initialErrors || {}) };
 
+  const unsetValuesOnUnmount = opts?.unsetValuesOnUnmount ?? true;
+
   // initial form values
   const { initialValues, originalInitialValues, setInitialValues } = useFormInitialValues<TValues>(
     fieldsByPath,
@@ -164,6 +167,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     meta,
     isSubmitting,
     fieldArraysLookup,
+    unsetValuesOnUnmount,
     validateSchema: unref(schema) ? validateSchema : undefined,
     validate,
     register: registerField,
@@ -458,7 +462,13 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       // #3384
       if (!fieldExists(fieldName)) {
         setFieldError(fieldName, undefined);
-        unsetPath(formValues, fieldName);
+
+        // Checks if the field was configured to be unset during unmount or not
+        const shouldUnsetFieldValue = field.unsetValueOnUnmount ?? true;
+        // Checks both the form-level config and field-level one
+        if (unsetValuesOnUnmount && shouldUnsetFieldValue) {
+          unsetPath(formValues, fieldName);
+        }
       }
     });
   }
