@@ -46,6 +46,7 @@ import {
   unsetPath,
   isFormSubmitEvent,
   debounceAsync,
+  isEmptyContainer,
 } from './utils';
 import { FormContextKey } from './symbols';
 import { validateYupSchema, validateObjectSchema } from './validate';
@@ -60,7 +61,7 @@ interface FormOptions<TValues extends Record<string, any>> {
   initialErrors?: Record<keyof TValues, string | undefined>;
   initialTouched?: Record<keyof TValues, boolean>;
   validateOnMount?: boolean;
-  unsetValuesOnUnmount?: boolean;
+  keepValuesOnUnmount?: boolean;
 }
 
 let FORM_COUNTER = 0;
@@ -143,7 +144,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   // we need this to process initial errors then unset them
   const initialErrors = { ...(opts?.initialErrors || {}) };
 
-  const unsetValuesOnUnmount = opts?.unsetValuesOnUnmount ?? true;
+  const keepValuesOnUnmount = opts?.keepValuesOnUnmount ?? false;
 
   // initial form values
   const { initialValues, originalInitialValues, setInitialValues } = useFormInitialValues<TValues>(
@@ -167,7 +168,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     meta,
     isSubmitting,
     fieldArraysLookup,
-    unsetValuesOnUnmount,
+    keepValuesOnUnmount,
     validateSchema: unref(schema) ? validateSchema : undefined,
     validate,
     register: registerField,
@@ -454,6 +455,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
   function unregisterField(field: PrivateFieldContext<unknown>) {
     const fieldName = unref(field.name);
+    const fieldInstance = fieldsByPath.value[fieldName];
+    const isGroup = !!fieldInstance && isFieldGroup(fieldInstance);
     removeFieldFromPath(field, fieldName);
 
     nextTick(() => {
@@ -464,11 +467,18 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
         setFieldError(fieldName, undefined);
 
         // Checks if the field was configured to be unset during unmount or not
-        const shouldUnsetFieldValue = field.unsetValueOnUnmount ?? true;
         // Checks both the form-level config and field-level one
-        if (unsetValuesOnUnmount && shouldUnsetFieldValue) {
-          unsetPath(formValues, fieldName);
+        // Field has the priority if it is set, otherwise it goes to the form settings
+        const shouldKeepValue = field.keepValueOnUnmount ?? keepValuesOnUnmount;
+        if (shouldKeepValue) {
+          return;
         }
+
+        if (isGroup && !isEmptyContainer(getFromPath(formValues, fieldName))) {
+          return;
+        }
+
+        unsetPath(formValues, fieldName);
       }
     });
   }

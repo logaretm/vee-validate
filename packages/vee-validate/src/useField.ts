@@ -51,7 +51,7 @@ interface FieldOptions<TValue = unknown> {
   uncheckedValue?: MaybeRef<TValue>;
   label?: MaybeRef<string | undefined>;
   standalone?: boolean;
-  unsetValueOnUnmount?: boolean;
+  keepValueOnUnmount?: boolean;
 }
 
 export type RuleExpression<TValue> =
@@ -93,7 +93,7 @@ function _useField<TValue = unknown>(
     validateOnValueUpdate,
     uncheckedValue,
     standalone,
-    unsetValueOnUnmount,
+    keepValueOnUnmount,
   } = normalizeOptions(unref(name), opts);
 
   const form = !standalone ? injectWithSelf(FormContextKey) : undefined;
@@ -265,7 +265,7 @@ function _useField<TValue = unknown>(
     checkedValue,
     uncheckedValue,
     bails,
-    unsetValueOnUnmount,
+    keepValueOnUnmount,
     resetField,
     handleReset: () => resetField(),
     validate,
@@ -374,7 +374,7 @@ function normalizeOptions<TValue>(name: string, opts: Partial<FieldOptions<TValu
     label: name,
     validateOnValueUpdate: true,
     standalone: false,
-    unsetValueOnUnmount: true,
+    keepValueOnUnmount: undefined,
   });
 
   if (!opts) {
@@ -443,8 +443,9 @@ function useCheckboxField<TValue = unknown>(
     }
 
     onBeforeUnmount(() => {
+      const shouldKeepValue = field.keepValueOnUnmount ?? form?.keepValuesOnUnmount ?? false;
       // toggles the checkbox value if it was checked and the unset behavior is set
-      if (checked.value && field.unsetValueOnUnmount && form?.unsetValuesOnUnmount) {
+      if (checked.value && !shouldKeepValue) {
         handleCheckboxChange(unref(checkedValue), false);
       }
     });
