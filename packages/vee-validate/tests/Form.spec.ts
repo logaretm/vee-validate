@@ -849,7 +849,7 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm as="form" :validationSchema="schema" v-slot="{ errors, values }" :unsetValuesOnUnmount="false">
+      <VForm as="form" :validationSchema="schema" v-slot="{ errors, values }" keep-values>
         <template v-if="showFields">
           <Field name="field" as="input" />
           <Field name="nested.field" />
@@ -911,7 +911,7 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm @submit="onSubmit" as="form" v-slot="{ errors }" :unsetValuesOnUnmount="false">
+      <VForm @submit="onSubmit" as="form" v-slot="{ errors }" keep-values>
         <template v-if="showFields">
           <Field name="field" as="input" rules="required" />
           <Field name="nested.field" rules="required" />
@@ -978,10 +978,10 @@ describe('<Form />', () => {
       <VForm as="form" :validationSchema="schema" v-slot="{ errors, values }">
         <template v-if="showFields">
           <Field name="field" as="input" />
-          <Field name="nested.field" :unsetValueOnUnmount="false" />
-          <Field name="[non-nested.field]" :unsetValueOnUnmount="false" />
+          <Field name="nested.field" keep-value />
+          <Field name="[non-nested.field]" keep-value />
           <Field name="drink" as="input" type="checkbox" value="" /> Coffee
-          <Field name="drink" as="input" type="checkbox" value="Tea" :unsetValueOnUnmount="false" /> Tea
+          <Field name="drink" as="input" type="checkbox" value="Tea" keep-value /> Tea
         </template>
         <Field name="drink" as="input" type="checkbox" value="Coke" /> Coke
 
@@ -1043,10 +1043,10 @@ describe('<Form />', () => {
       <VForm @submit="onSubmit" as="form" v-slot="{ errors }">
         <template v-if="showFields">
           <Field name="field" as="input" rules="required" />
-          <Field name="nested.field" rules="required" :unsetValueOnUnmount="false" />
-          <Field name="[non-nested.field]" rules="required" :unsetValueOnUnmount="false" />
+          <Field name="nested.field" rules="required" keep-value />
+          <Field name="[non-nested.field]" rules="required" keep-value />
           <Field name="drink" as="input" type="checkbox" value="" rules="required" /> Coffee
-          <Field name="drink" as="input" type="checkbox" value="Tea" rules="required" :unsetValueOnUnmount="false" /> Tea
+          <Field name="drink" as="input" type="checkbox" value="Tea" rules="required" keep-value /> Tea
         </template>
         <Field name="drink" as="input" type="checkbox" value="Coke" rules="required" /> Coke
 
@@ -1089,6 +1089,70 @@ describe('<Form />', () => {
       drink: ['Tea', 'Coke'],
       'non-nested.field': '12',
       nested: { field: '12' },
+    });
+  });
+
+  test('can specify which fields get their value kept with field setting priority', async () => {
+    const showFields = ref(true);
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = computed(() => ({
+          field: showFields.value ? 'required' : '',
+          drink: 'required',
+        }));
+
+        return {
+          schema,
+          showFields,
+        };
+      },
+      template: `
+      <VForm as="form" :validationSchema="schema" v-slot="{ errors, values }" keep-values>
+        <template v-if="showFields">
+          <Field name="field" as="input" />
+          <Field name="nested.field" :keep-value="false" />
+          <Field name="[non-nested.field]" :keep-value="false" />
+          <Field name="drink" as="input" type="checkbox" value="" /> Coffee
+          <Field name="drink" as="input" type="checkbox" value="Tea" :keep-value="false" /> Tea
+          <Field name="drink" as="input" type="checkbox" value="Coke" /> Coke
+        </template>
+
+        <span id="errors">{{ errors }}</span>
+        <span id="values">{{ values }}</span>
+
+        <button>Validate</button>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const errors = wrapper.$el.querySelector('#errors');
+    const values = wrapper.$el.querySelector('#values');
+    const inputs = wrapper.$el.querySelectorAll('input');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(errors.textContent).toBeTruthy();
+    setChecked(inputs[4]);
+    setChecked(inputs[5]);
+    setValue(inputs[0], 'test');
+    setValue(inputs[1], '12');
+    setValue(inputs[2], '12');
+    await flushPromises();
+    expect(JSON.parse(values.textContent)).toEqual({
+      drink: ['Tea', 'Coke'],
+      field: 'test',
+      'non-nested.field': '12',
+      nested: { field: '12' },
+    });
+
+    showFields.value = false;
+    await flushPromises();
+    // errors were cleared
+    expect(errors.textContent).toBe('{}');
+    expect(JSON.parse(values.textContent)).toEqual({
+      drink: ['Coke'],
+      field: 'test',
     });
   });
 
