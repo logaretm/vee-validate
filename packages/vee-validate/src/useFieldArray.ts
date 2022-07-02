@@ -1,12 +1,10 @@
 import { Ref, unref, ref, computed, onBeforeUnmount } from 'vue';
 import { isNullOrUndefined } from '../../shared';
 import { FormContextKey } from './symbols';
-import { FieldArrayContext, FieldEntry, MaybeRef } from './types';
+import { FieldArrayContext, FieldEntry, MaybeRef, PrivateFieldArrayContext } from './types';
 import { getFromPath, injectWithSelf, warn } from './utils';
 
-let FIELD_ARRAY_COUNTER = 0;
 export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): FieldArrayContext<TValue> {
-  const id = FIELD_ARRAY_COUNTER++;
   const form = injectWithSelf(FormContextKey, undefined);
   const fields: Ref<FieldEntry<TValue>[]> = ref([]);
 
@@ -36,6 +34,11 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     warn('FieldArray requires a field path to be provided, did you forget to pass the `name` prop?');
 
     return noOpApi;
+  }
+
+  const alreadyExists = form.fieldArrays.find(a => unref(a.path) === unref(arrayPath));
+  if (alreadyExists) {
+    return alreadyExists as PrivateFieldArrayContext<TValue>;
   }
 
   let entryCounter = 0;
@@ -211,15 +214,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     updateEntryFlags();
   }
 
-  form.fieldArraysLookup[id] = {
-    reset: initFields,
-  };
-
-  onBeforeUnmount(() => {
-    delete form.fieldArraysLookup[id];
-  });
-
-  return {
+  const fieldArrayCtx: FieldArrayContext<TValue> = {
     fields,
     remove,
     push,
@@ -230,4 +225,19 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     prepend,
     move,
   };
+
+  form.fieldArrays.push({
+    path: arrayPath,
+    reset: initFields,
+    ...fieldArrayCtx,
+  });
+
+  onBeforeUnmount(() => {
+    const idx = form.fieldArrays.findIndex(i => unref(i.path) === unref(arrayPath));
+    if (idx >= 0) {
+      form.fieldArrays.splice(idx, 1);
+    }
+  });
+
+  return fieldArrayCtx;
 }

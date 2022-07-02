@@ -84,8 +84,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   // The number of times the user tried to submit the form
   const submitCount = ref(0);
 
-  // dictionary for field arrays to receive various signals like reset
-  const fieldArraysLookup: Record<string, PrivateFieldArrayContext> = {};
+  // field arrays managed by this form
+  const fieldArrays: PrivateFieldArrayContext[] = [];
 
   // a private ref for all form values
   const formValues = reactive(deepCopy(unref(opts?.initialValues) || {})) as TValues;
@@ -167,7 +167,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     submitCount,
     meta,
     isSubmitting,
-    fieldArraysLookup,
+    fieldArrays,
     keepValuesOnUnmount,
     validateSchema: unref(schema) ? validateSchema : undefined,
     validate,
@@ -287,7 +287,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     });
 
     // regenerate the arrays when the form values change
-    Object.values(fieldArraysLookup).forEach(f => f && f.reset());
+    fieldArrays.forEach(f => f && f.reset());
   }
 
   function createModel<TPath extends keyof TValues>(path: MaybeRef<TPath>) {
