@@ -57,3 +57,42 @@ test('warns when updating a no-longer existing item', async () => {
   expect(spy).toHaveBeenCalled();
   spy.mockRestore();
 });
+
+test('duplicate calls yields the same instance', async () => {
+  let removeFn!: (idx: number) => void;
+  mountWithHoc({
+    setup() {
+      useForm({
+        initialValues: {
+          users: ['one'],
+        },
+      });
+
+      const { fields, push } = useFieldArray('users');
+      const { fields: fields2, remove } = useFieldArray('users');
+
+      removeFn = remove;
+
+      onMounted(() => {
+        push('two');
+      });
+
+      return {
+        fields,
+        fields2,
+      };
+    },
+    template: `
+      <p id="arr1">{{ fields.map(f => f.value).join(', ') }}</p>
+      <p id="arr2">{{ fields2.map(f => f.value).join(', ') }}</p>
+    `,
+  });
+
+  await flushPromises();
+  expect(document.querySelector('#arr1')?.innerHTML).toBe('one, two');
+  expect(document.querySelector('#arr2')?.innerHTML).toBe('one, two');
+  removeFn(0);
+  await flushPromises();
+  expect(document.querySelector('#arr1')?.innerHTML).toBe('two');
+  expect(document.querySelector('#arr2')?.innerHTML).toBe('two');
+});
