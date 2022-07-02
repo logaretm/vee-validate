@@ -112,6 +112,10 @@ const FieldImpl = defineComponent({
       type: Boolean,
       default: false,
     },
+    keepValue: {
+      type: Boolean,
+      default: undefined,
+    },
   },
   setup(props, ctx) {
     const rules = toRef(props, 'rules');
@@ -144,6 +148,7 @@ const FieldImpl = defineComponent({
       uncheckedValue,
       label,
       validateOnValueUpdate: false,
+      keepValueOnUnmount: props.keepValue,
     });
 
     // If there is a v-model applied on the component we need to emit the `update:modelValue` whenever the value binding changes

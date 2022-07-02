@@ -85,6 +85,7 @@ export interface PrivateFieldContext<TValue = unknown> {
   label?: MaybeRef<string | undefined>;
   type?: string;
   bails?: boolean;
+  keepValueOnUnmount?: boolean;
   checkedValue?: MaybeRef<TValue>;
   uncheckedValue?: MaybeRef<TValue>;
   checked?: Ref<boolean>;
@@ -181,6 +182,7 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
   errors: ComputedRef<FormErrors<TValues>>;
   meta: ComputedRef<FormMeta<TValues>>;
   isSubmitting: Ref<boolean>;
+  keepValuesOnUnmount: boolean;
   validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues>>;
   validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>>;
   validateField(field: keyof TValues): Promise<ValidationResult>;
@@ -213,6 +215,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
     | 'setFieldInitialValue'
     | 'unsetInitialValue'
     | 'fieldArraysLookup'
+    | 'keepValuesOnUnmount'
   > {
   handleReset: () => void;
   submitForm: (e?: unknown) => Promise<void>;
