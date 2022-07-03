@@ -831,7 +831,7 @@ test('clean up form registration on unmount', async () => {
       };
     },
     template: `
-      <VForm @submit="onSubmit" :initial-values="initialValues">
+      <VForm :initial-values="initialValues">
         <FieldArray v-if="shown" name="users" v-slot="{ remove, fields }">
           <fieldset v-for="(field, idx) in fields" :key="field.key">
             <legend>User #{{ idx }}</legend>
