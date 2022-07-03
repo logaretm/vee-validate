@@ -14,7 +14,6 @@ import {
   watchEffect,
 } from 'vue';
 import isEqual from 'fast-deep-equal/es6';
-import type { SchemaOf } from 'yup';
 import { klona as deepCopy } from 'klona/full';
 import {
   FieldMeta,
@@ -55,7 +54,7 @@ import { _useFieldValue } from './useFieldState';
 
 interface FormOptions<TValues extends Record<string, any>> {
   validationSchema?: MaybeRef<
-    Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | SchemaOf<TValues> | undefined
+    Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | any | undefined
   >;
   initialValues?: MaybeRef<TValues>;
   initialErrors?: Record<keyof TValues, string | undefined>;

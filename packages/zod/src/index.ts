@@ -1,5 +1,4 @@
 import type { ZodObject, ZodType, ZodTypeDef, TypeOf as ZodTypeOf, ZodRawShape, ZodEffects } from 'zod';
-import type { BaseSchema, SchemaOf } from 'yup';
 import { isIndex } from '../../shared';
 
 /**
@@ -7,7 +6,7 @@ import { isIndex } from '../../shared';
  */
 export function toFieldValidator<TValue = unknown, TDef extends ZodTypeDef = ZodTypeDef, TInput = TValue>(
   zodSchema: ZodType<TValue, TDef, TInput> | ZodEffects<ZodType<TValue, TDef, TInput>>
-): BaseSchema<TValue> {
+): any {
   return {
     async validate(value: TValue) {
       const result = await zodSchema.safeParseAsync(value);
@@ -21,7 +20,7 @@ export function toFieldValidator<TValue = unknown, TDef extends ZodTypeDef = Zod
 
       throw error;
     },
-  } as BaseSchema<TValue>;
+  } as any;
 }
 
 interface AggregatedZodError {
@@ -39,7 +38,7 @@ type ToBaseTypes<TShape extends ZodRawShape> = {
 export function toFormValidator<
   TShape extends ZodRawShape,
   TValues extends Record<string, unknown> = ToBaseTypes<TShape>
->(zodSchema: ZodObject<TShape> | ZodEffects<ZodObject<TShape>>): SchemaOf<TValues> {
+>(zodSchema: ZodObject<TShape> | ZodEffects<ZodObject<TShape>>) {
   return {
     async validate(value: TValues) {
       const result = await zodSchema.safeParseAsync(value);
@@ -57,7 +56,7 @@ export function toFormValidator<
 
       throw error;
     },
-  } as SchemaOf<TValues>;
+  } as any;
 }
 
 /**

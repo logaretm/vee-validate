@@ -10,7 +10,6 @@ import {
   nextTick,
   getCurrentInstance,
 } from 'vue';
-import { BaseSchema } from 'yup';
 import { klona as deepCopy } from 'klona/full';
 import isEqual from 'fast-deep-equal/es6';
 import { validate as validateValue } from './validate';
@@ -59,8 +58,7 @@ export type RuleExpression<TValue> =
   | Record<string, unknown>
   | GenericValidateFunction
   | GenericValidateFunction[]
-  | YupValidator
-  | BaseSchema<TValue>
+  | YupValidator<TValue>
   | undefined;
 
 /**
