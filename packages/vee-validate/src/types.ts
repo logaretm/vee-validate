@@ -71,8 +71,9 @@ export interface FieldArrayContext<TValue = unknown> {
   move(oldIdx: number, newIdx: number): void;
 }
 
-export interface PrivateFieldArrayContext {
+export interface PrivateFieldArrayContext<TValue = unknown> extends FieldArrayContext<TValue> {
   reset(): void;
+  path: MaybeRef<string>;
 }
 
 export interface PrivateFieldContext<TValue = unknown> {
@@ -175,7 +176,7 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
   formId: number;
   values: TValues;
   fieldsByPath: Ref<FieldPathLookup>;
-  fieldArraysLookup: Record<string, PrivateFieldArrayContext>;
+  fieldArrays: PrivateFieldArrayContext[];
   submitCount: Ref<number>;
   schema?: MaybeRef<RawFormSchema<TValues> | SchemaOf<TValues> | undefined>;
   errorBag: Ref<FormErrorBag<TValues>>;
@@ -214,7 +215,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
     | 'stageInitialValue'
     | 'setFieldInitialValue'
     | 'unsetInitialValue'
-    | 'fieldArraysLookup'
+    | 'fieldArrays'
     | 'keepValuesOnUnmount'
   > {
   handleReset: () => void;
