@@ -1,6 +1,6 @@
 import { defineRule, useField } from '@/vee-validate';
 import { defineComponent } from '@vue/runtime-core';
-import { toRef } from 'vue';
+import { toRef, ref } from 'vue';
 import * as yup from 'yup';
 import { mountWithHoc, setValue, getValue, dispatchEvent, flushPromises } from './helpers';
 
@@ -815,4 +815,37 @@ test('removing an item marks the form as dirty', async () => {
   await flushPromises();
 
   await expect(getDirtyPre().textContent).toBe('true');
+});
+
+test('clean up form registration on unmount', async () => {
+  const shown = ref(true);
+  mountWithHoc({
+    setup() {
+      const initialValues = {
+        users: [{ name: '1' }, { name: '2' }, { name: '3' }],
+      };
+
+      return {
+        initialValues,
+        shown,
+      };
+    },
+    template: `
+      <VForm @submit="onSubmit" :initial-values="initialValues">
+        <FieldArray v-if="shown" name="users" v-slot="{ remove, fields }">
+          <fieldset v-for="(field, idx) in fields" :key="field.key">
+            <legend>User #{{ idx }}</legend>
+            <label :for="'name_' + idx">Name</label>
+            <Field :id="'name_' + idx" :name="'users[' + idx + '].name'" />
+
+          </fieldset>  
+        </FieldArray>
+      </VForm>
+    `,
+  });
+
+  await flushPromises();
+  shown.value = false;
+  await flushPromises();
+  expect(1).toBe(1);
 });
