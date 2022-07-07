@@ -481,6 +481,7 @@ interface ModelOpts {
 
 function useVModel<TValue = unknown>(value: Ref<TValue>, opts?: ModelOpts) {
   const vm = getCurrentInstance();
+  /* istanbul ignore next */
   if (!vm) {
     if (__DEV__) {
       console.warn('Failed to setup model events because `useField` was not called in setup.');
