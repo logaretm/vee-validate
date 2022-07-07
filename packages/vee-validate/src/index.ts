@@ -22,6 +22,7 @@ export {
   FieldMeta,
   FormMeta,
   InvalidSubmissionContext,
+  ValidationOptions,
 } from './types';
 export { useResetForm } from './useResetForm';
 export { useIsFieldDirty } from './useIsFieldDirty';
