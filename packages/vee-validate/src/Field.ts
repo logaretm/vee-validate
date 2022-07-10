@@ -1,25 +1,7 @@
-import {
-  h,
-  defineComponent,
-  toRef,
-  SetupContext,
-  resolveDynamicComponent,
-  computed,
-  watch,
-  PropType,
-  VNode,
-} from 'vue';
+import { h, defineComponent, toRef, SetupContext, resolveDynamicComponent, computed, PropType, VNode } from 'vue';
 import { getConfig } from './config';
 import { RuleExpression, useField } from './useField';
-import {
-  normalizeChildren,
-  hasCheckedAttr,
-  shouldHaveValueBinding,
-  isPropPresent,
-  normalizeEventValue,
-  applyModelModifiers,
-} from './utils';
-import { toNumber } from '../../shared';
+import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent, normalizeEventValue } from './utils';
 import { IS_ABSENT } from './symbols';
 import { FieldMeta } from './types';
 import { FieldContext } from '.';
@@ -155,7 +137,6 @@ const FieldImpl = defineComponent({
       label,
       validateOnValueUpdate: false,
       keepValueOnUnmount: props.keepValue,
-      syncVModel: false,
     });
 
     // If there is a v-model applied on the component we need to emit the `update:modelValue` whenever the value binding changes
@@ -205,19 +186,6 @@ const FieldImpl = defineComponent({
       }
 
       return attrs;
-    });
-
-    const modelValue = toRef(props, 'modelValue');
-    watch(modelValue, newModelValue => {
-      // Don't attempt to sync absent values
-      if ((newModelValue as any) === IS_ABSENT && value.value === undefined) {
-        return;
-      }
-
-      if (newModelValue !== applyModelModifiers(value.value, props.modelModifiers)) {
-        value.value = (newModelValue as any) === IS_ABSENT ? undefined : newModelValue;
-        validateField();
-      }
     });
 
     function slotProps(): FieldSlotProps {

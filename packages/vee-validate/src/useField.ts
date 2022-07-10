@@ -26,6 +26,7 @@ import {
   PrivateFieldContext,
   SchemaValidationMode,
   ValidationOptions,
+  FieldMeta,
 } from './types';
 import {
   normalizeRules,
@@ -37,9 +38,10 @@ import {
   resolveNextCheckboxValue,
   isYupValidator,
   applyModelModifiers,
+  isPropPresent,
 } from './utils';
 import { isCallable } from '../../shared';
-import { FieldContextKey, FormContextKey } from './symbols';
+import { FieldContextKey, FormContextKey, IS_ABSENT } from './symbols';
 import { useFieldState } from './useFieldState';
 import { refreshInspector, registerSingleFieldWithDevtools } from './devtools';
 
@@ -113,7 +115,7 @@ function _useField<TValue = unknown>(
   });
 
   if (syncVModel) {
-    useVModel(value, { prop: modelPropName });
+    useVModel({ value, prop: modelPropName, handleChange });
   }
 
   /**
@@ -188,14 +190,14 @@ function _useField<TValue = unknown>(
   }
 
   // Common input/change event handler
-  const handleChange = (e: unknown, shouldValidate = true) => {
+  function handleChange(e: unknown, shouldValidate = true) {
     const newValue = normalizeEventValue(e) as TValue;
 
     value.value = newValue;
     if (!validateOnValueUpdate && shouldValidate) {
       validateWithStateMutation();
     }
-  };
+  }
 
   // Runs the initial validation
   onMounted(() => {
@@ -475,11 +477,13 @@ function useCheckboxField<TValue = unknown>(
   return patchCheckboxApi(_useField<TValue>(name, rules, opts));
 }
 
-interface ModelOpts {
+interface ModelOpts<TValue> {
   prop?: string;
+  value: Ref<TValue>;
+  handleChange: FieldContext['handleChange'];
 }
 
-function useVModel<TValue = unknown>(value: Ref<TValue>, opts?: ModelOpts) {
+function useVModel<TValue = unknown>({ prop, value, handleChange }: ModelOpts<TValue>) {
   const vm = getCurrentInstance();
   /* istanbul ignore next */
   if (!vm) {
@@ -489,7 +493,7 @@ function useVModel<TValue = unknown>(value: Ref<TValue>, opts?: ModelOpts) {
     return;
   }
 
-  const propName = opts?.prop || 'modelValue';
+  const propName = prop || 'modelValue';
   const emitName = `update:${propName}`;
 
   watch(value, newValue => {
@@ -500,18 +504,21 @@ function useVModel<TValue = unknown>(value: Ref<TValue>, opts?: ModelOpts) {
     vm.emit(emitName, newValue);
   });
 
-  if (propName in vm.props) {
-    watch(
-      () => getCurrentModelValue<TValue>(vm, propName),
-      propValue => {
-        if (isEqual(propValue, applyModelModifiers(value.value, vm.props.modelModifiers))) {
-          return;
-        }
-
-        value.value = propValue;
+  watch(
+    () => getCurrentModelValue<TValue>(vm, propName),
+    propValue => {
+      if ((propValue as any) === IS_ABSENT && value.value === undefined) {
+        return;
       }
-    );
-  }
+
+      const newValue = (propValue as any) === IS_ABSENT ? undefined : propValue;
+      if (isEqual(newValue, applyModelModifiers(value.value, vm.props.modelModifiers))) {
+        return;
+      }
+
+      handleChange(newValue);
+    }
+  );
 }
 
 function getCurrentModelValue<TValue = unknown>(vm: ComponentInternalInstance, propName: string) {
