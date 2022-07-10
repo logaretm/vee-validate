@@ -496,6 +496,11 @@ function useVModel<TValue = unknown>({ prop, value, handleChange }: ModelOpts<TV
   const propName = prop || 'modelValue';
   const emitName = `update:${propName}`;
 
+  // Component doesn't have a model prop setup (must be defined on the props)
+  if (!(propName in vm.props)) {
+    return;
+  }
+
   watch(value, newValue => {
     if (isEqual(newValue, getCurrentModelValue(vm, propName))) {
       return;
