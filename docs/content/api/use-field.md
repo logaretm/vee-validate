@@ -105,6 +105,10 @@ interface FieldOptions<TValue = unknown> {
   // Both of these are only used if `type="checkbox"`. They are ignored otherwise
   checkedValue?: MaybeRef<TValue>; // If a checkbox this will be used as the new field value when it is checked.
   uncheckedValue?: MaybeRef<TValue>; // If a single checkbox this will be used as the field value when it is unchecked.
+
+  keepValueOnUnmount?: boolean; // if the form value should be kept when the field is unmounted, default is `false`
+  modelPropName?: string; // the model prop name, default is `modelValue`
+  syncVModel?: boolean; // If the model prop should be synced with value changes for `v-model` support, default is `true`
 }
 
 interface ValidationResult {
