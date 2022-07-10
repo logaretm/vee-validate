@@ -9,6 +9,8 @@ import {
   provide,
   nextTick,
   getCurrentInstance,
+  Ref,
+  ComponentInternalInstance,
 } from 'vue';
 import { klona as deepCopy } from 'klona/full';
 import isEqual from 'fast-deep-equal/es6';
@@ -23,6 +25,7 @@ import {
   PrivateFieldContext,
   SchemaValidationMode,
   ValidationOptions,
+  FieldMeta,
 } from './types';
 import {
   normalizeRules,
@@ -33,9 +36,11 @@ import {
   injectWithSelf,
   resolveNextCheckboxValue,
   isYupValidator,
+  applyModelModifiers,
+  isPropPresent,
 } from './utils';
 import { isCallable } from '../../shared';
-import { FieldContextKey, FormContextKey } from './symbols';
+import { FieldContextKey, FormContextKey, IS_ABSENT } from './symbols';
 import { useFieldState } from './useFieldState';
 import { refreshInspector, registerSingleFieldWithDevtools } from './devtools';
 
@@ -51,6 +56,8 @@ interface FieldOptions<TValue = unknown> {
   label?: MaybeRef<string | undefined>;
   standalone?: boolean;
   keepValueOnUnmount?: boolean;
+  modelPropName?: string;
+  syncVModel?: boolean;
 }
 
 export type RuleExpression<TValue> =
@@ -92,6 +99,8 @@ function _useField<TValue = unknown>(
     uncheckedValue,
     standalone,
     keepValueOnUnmount,
+    modelPropName,
+    syncVModel,
   } = normalizeOptions(unref(name), opts);
 
   const form = !standalone ? injectWithSelf(FormContextKey) : undefined;
@@ -102,6 +111,10 @@ function _useField<TValue = unknown>(
     modelValue,
     standalone,
   });
+
+  if (syncVModel) {
+    useVModel({ value, prop: modelPropName, handleChange });
+  }
 
   /**
    * Handles common onBlur meta update
@@ -175,14 +188,14 @@ function _useField<TValue = unknown>(
   }
 
   // Common input/change event handler
-  const handleChange = (e: unknown, shouldValidate = true) => {
+  function handleChange(e: unknown, shouldValidate = true) {
     const newValue = normalizeEventValue(e) as TValue;
 
     value.value = newValue;
     if (!validateOnValueUpdate && shouldValidate) {
       validateWithStateMutation();
     }
-  };
+  }
 
   // Runs the initial validation
   onMounted(() => {
@@ -373,6 +386,8 @@ function normalizeOptions<TValue>(name: string, opts: Partial<FieldOptions<TValu
     validateOnValueUpdate: true,
     standalone: false,
     keepValueOnUnmount: undefined,
+    modelPropName: 'modelValue',
+    syncVModel: true,
   });
 
   if (!opts) {
@@ -458,4 +473,57 @@ function useCheckboxField<TValue = unknown>(
   }
 
   return patchCheckboxApi(_useField<TValue>(name, rules, opts));
+}
+
+interface ModelOpts<TValue> {
+  prop?: string;
+  value: Ref<TValue>;
+  handleChange: FieldContext['handleChange'];
+}
+
+function useVModel<TValue = unknown>({ prop, value, handleChange }: ModelOpts<TValue>) {
+  const vm = getCurrentInstance();
+  /* istanbul ignore next */
+  if (!vm) {
+    if (__DEV__) {
+      console.warn('Failed to setup model events because `useField` was not called in setup.');
+    }
+    return;
+  }
+
+  const propName = prop || 'modelValue';
+  const emitName = `update:${propName}`;
+
+  // Component doesn't have a model prop setup (must be defined on the props)
+  if (!(propName in vm.props)) {
+    return;
+  }
+
+  watch(value, newValue => {
+    if (isEqual(newValue, getCurrentModelValue(vm, propName))) {
+      return;
+    }
+
+    vm.emit(emitName, newValue);
+  });
+
+  watch(
+    () => getCurrentModelValue<TValue>(vm, propName),
+    propValue => {
+      if ((propValue as any) === IS_ABSENT && value.value === undefined) {
+        return;
+      }
+
+      const newValue = (propValue as any) === IS_ABSENT ? undefined : propValue;
+      if (isEqual(newValue, applyModelModifiers(value.value, vm.props.modelModifiers))) {
+        return;
+      }
+
+      handleChange(newValue);
+    }
+  );
+}
+
+function getCurrentModelValue<TValue = unknown>(vm: ComponentInternalInstance, propName: string) {
+  return vm.props[propName] as TValue;
 }

@@ -1,18 +1,7 @@
-import {
-  h,
-  defineComponent,
-  toRef,
-  SetupContext,
-  resolveDynamicComponent,
-  computed,
-  watch,
-  PropType,
-  VNode,
-} from 'vue';
+import { h, defineComponent, toRef, SetupContext, resolveDynamicComponent, computed, PropType, VNode } from 'vue';
 import { getConfig } from './config';
 import { RuleExpression, useField } from './useField';
 import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent, normalizeEventValue } from './utils';
-import { toNumber } from '../../shared';
 import { IS_ABSENT } from './symbols';
 import { FieldMeta } from './types';
 import { FieldContext } from '.';
@@ -122,7 +111,6 @@ const FieldImpl = defineComponent({
     const name = toRef(props, 'name');
     const label = toRef(props, 'label');
     const uncheckedValue = toRef(props, 'uncheckedValue');
-    const hasModelEvents = isPropPresent(props, 'onUpdate:modelValue');
 
     const {
       errors,
@@ -152,12 +140,10 @@ const FieldImpl = defineComponent({
     });
 
     // If there is a v-model applied on the component we need to emit the `update:modelValue` whenever the value binding changes
-    const onChangeHandler = hasModelEvents
-      ? function handleChangeWithModel(e: unknown, shouldValidate = true) {
-          handleChange(e, shouldValidate);
-          ctx.emit('update:modelValue', value.value);
-        }
-      : handleChange;
+    const onChangeHandler = function handleChangeWithModel(e: unknown, shouldValidate = true) {
+      handleChange(e, shouldValidate);
+      ctx.emit('update:modelValue', value.value);
+    };
 
     const handleInput = (e: any) => {
       if (!hasCheckedAttr(ctx.attrs.type)) {
@@ -165,12 +151,10 @@ const FieldImpl = defineComponent({
       }
     };
 
-    const onInputHandler = hasModelEvents
-      ? function handleInputWithModel(e: any) {
-          handleInput(e);
-          ctx.emit('update:modelValue', value.value);
-        }
-      : handleInput;
+    const onInputHandler = function handleInputWithModel(e: any) {
+      handleInput(e);
+      ctx.emit('update:modelValue', value.value);
+    };
 
     const fieldProps = computed(() => {
       const { validateOnInput, validateOnChange, validateOnBlur, validateOnModelUpdate } =
@@ -202,19 +186,6 @@ const FieldImpl = defineComponent({
       }
 
       return attrs;
-    });
-
-    const modelValue = toRef(props, 'modelValue');
-    watch(modelValue, newModelValue => {
-      // Don't attempt to sync absent values
-      if ((newModelValue as any) === IS_ABSENT && value.value === undefined) {
-        return;
-      }
-
-      if (newModelValue !== applyModifiers(value.value, props.modelModifiers)) {
-        value.value = (newModelValue as any) === IS_ABSENT ? undefined : newModelValue;
-        validateField();
-      }
     });
 
     function slotProps(): FieldSlotProps {
@@ -282,14 +253,6 @@ function resolveValidationTriggers(props: Partial<ValidationTriggersProps>) {
     validateOnBlur: props.validateOnBlur ?? validateOnBlur,
     validateOnModelUpdate: props.validateOnModelUpdate ?? validateOnModelUpdate,
   };
-}
-
-function applyModifiers(value: unknown, modifiers: Record<string, boolean>) {
-  if (modifiers.number) {
-    return toNumber(value as string);
-  }
-
-  return value;
 }
 
 function resolveInitialValue(props: Record<string, unknown>, ctx: SetupContext<any>) {

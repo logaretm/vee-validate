@@ -1,5 +1,5 @@
 import { useField } from '@/vee-validate';
-import { onMounted } from '@vue/runtime-core';
+import { defineComponent, onMounted, ref } from 'vue';
 import { mountWithHoc, setValue, flushPromises } from './helpers';
 
 describe('useField()', () => {
@@ -486,5 +486,138 @@ describe('useField()', () => {
       expect(meta1?.textContent).toBe('invalid');
       expect(meta2?.textContent).toBe('invalid');
     });
+  });
+
+  test('emits model events for v-model support and syncing', async () => {
+    const model = ref('');
+    const InputComponent = defineComponent({
+      props: {
+        modelValue: String,
+      },
+      setup() {
+        const { value, errorMessage } = useField('field');
+
+        return {
+          value,
+          errorMessage,
+        };
+      },
+      template: `
+        <input v-model="value" />
+      `,
+    });
+
+    mountWithHoc({
+      components: {
+        InputComponent,
+      },
+      setup() {
+        return {
+          model,
+        };
+      },
+      template: `
+      <InputComponent v-model="model" />
+    `,
+    });
+
+    const input = document.querySelector('input');
+
+    setValue(input as any, '123');
+    await flushPromises();
+    expect(model.value).toBe('123');
+    model.value = '321';
+    await flushPromises();
+    expect(input?.value).toBe('321');
+  });
+
+  test('can disable model events', async () => {
+    const model = ref('');
+    const InputComponent = defineComponent({
+      props: {
+        modelValue: String,
+      },
+      setup() {
+        const { value, errorMessage } = useField('field', undefined, {
+          syncVModel: false,
+        });
+
+        return {
+          value,
+          errorMessage,
+        };
+      },
+      template: `
+        <input v-model="value" />
+      `,
+    });
+
+    mountWithHoc({
+      components: {
+        InputComponent,
+      },
+      setup() {
+        return {
+          model,
+        };
+      },
+      template: `
+      <InputComponent v-model="model" />
+    `,
+    });
+
+    const input = document.querySelector('input');
+
+    setValue(input as any, '123');
+    await flushPromises();
+    expect(model.value).toBe('');
+    model.value = '321';
+    await flushPromises();
+    expect(input?.value).toBe('123');
+  });
+
+  test('emits model events for custom models support and syncing', async () => {
+    const model = ref('');
+    const InputComponent = defineComponent({
+      props: {
+        textVal: String,
+      },
+      setup() {
+        const { value, errorMessage } = useField('field', undefined, {
+          modelPropName: 'textVal',
+        });
+
+        return {
+          value,
+          errorMessage,
+        };
+      },
+      template: `
+        <input v-model="value" />
+      `,
+    });
+
+    mountWithHoc({
+      components: {
+        InputComponent,
+      },
+      setup() {
+        return {
+          model,
+        };
+      },
+      template: `
+      <InputComponent v-model:textVal="model" />
+    `,
+    });
+
+    const input = document.querySelector('input');
+
+    setValue(input as any, '123');
+    await flushPromises();
+    expect(model.value).toBe('123');
+    model.value = '321';
+    await flushPromises();
+    expect(input?.value).toBe('321');
   });
 });
