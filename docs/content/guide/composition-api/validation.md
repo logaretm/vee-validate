@@ -589,7 +589,65 @@ function submit() {
 </script>
 ```
 
-### Binding `v-model` to Form Values <DocBadge title="v4.6" />
+### `useField` Model Events <DocBadge title="v4.6" />
+
+Quite often you will setup your component to [support `v-model` directive](https://vuejs.org/guide/components/events.html#usage-with-v-model) by adding a `modelValue` prop and emitting a `update:modelValue` event whenever the value changes.
+
+If you use `useField` in your input component you don't have to manage that yourself, it is automatically done for you. Whenever the `useField` value changes it will emit the `update:modelValue` event and whenever the `modelValue` prop changes the `useField` value will be synced and validated automatically.
+
+The only requirement is you need to define your model prop on your component explicitly.
+
+```vue
+<script setup>
+import { useField } from 'vee-validate';
+
+defineProps({
+  // Must be defined
+  modelValue: {
+    type: String,
+    default: '',
+  },
+});
+
+const { value } = useField('field', undefined);
+</script>
+```
+
+You can change the default model prop name by passing `modelPropName` option to `useField`:
+
+```vue
+<script setup>
+import { useField } from 'vee-validate';
+
+defineProps({
+  // Must be defined
+  custom: {
+    type: String,
+    default: '',
+  },
+});
+
+// component will now emit `update:custom` and sync `custom` prop value with the `value` returned from `useField`.
+const { value } = useField('field', undefined, {
+  modelPropName: 'custom',
+});
+</script>
+```
+
+You can also disable this behavior completely and manage those events yourself by passing `syncVModel` option to `useField`:
+
+```vue
+<script setup>
+import { useField } from 'vee-validate';
+
+// Now it won't emit anything and won't sync anything
+const { value } = useField('field', undefined, {
+  syncVModel: false,
+});
+</script>
+```
+
+### Binding `v-model` directly to Form Values <DocBadge title="v4.6" />
 
 If you want to skip using `useField` due to its verbosity or thinking that creating a custom input component is an overkill for your needs, there is a simpler alternative. You can use `useFieldModel` returned from `useForm` to bind your input elements directly and validate them.
 
@@ -629,4 +687,4 @@ const [email, password] = useFieldModel(['email', 'password']);
 </script>
 ```
 
-The downside of using `useFieldModel` instead of `useField` is you lose a few field-specific features like validation trigger handling and field-level meta information.
+The downside of using `useFieldModel` instead of `useField` is you lose a few field-specific features like validation trigger handling and field-level meta information. This means all errors for these models will be generated whenever the value changes.
