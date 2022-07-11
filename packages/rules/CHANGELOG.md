@@ -3,101 +3,57 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [4.5.11](https://github.com/logaretm/vee-validate/compare/v4.5.10...v4.5.11) (2022-04-10)
+# [4.6.0](https://github.com/logaretm/vee-validate/compare/v4.5.11...v4.6.0) (2022-07-11)
 
 **Note:** Version bump only for package @vee-validate/rules
 
+## [4.5.11](https://github.com/logaretm/vee-validate/compare/v4.5.10...v4.5.11) (2022-04-10)
 
-
-
+**Note:** Version bump only for package @vee-validate/rules
 
 ## [4.5.10](https://github.com/logaretm/vee-validate/compare/v4.5.9...v4.5.10) (2022-03-08)
 
 **Note:** Version bump only for package @vee-validate/rules
 
-
-
-
-
 ## [4.5.9](https://github.com/logaretm/vee-validate/compare/v4.5.8...v4.5.9) (2022-02-22)
 
 **Note:** Version bump only for package @vee-validate/rules
-
-
-
-
 
 ## [4.5.8](https://github.com/logaretm/vee-validate/compare/v4.5.7...v4.5.8) (2022-01-23)
 
 **Note:** Version bump only for package @vee-validate/rules
 
-
-
-
-
 ## [4.5.7](https://github.com/logaretm/vee-validate/compare/v4.5.6...v4.5.7) (2021-12-07)
 
 **Note:** Version bump only for package @vee-validate/rules
-
-
-
-
 
 ## [4.5.6](https://github.com/logaretm/vee-validate/compare/v4.5.5...v4.5.6) (2021-11-17)
 
 **Note:** Version bump only for package @vee-validate/rules
 
-
-
-
-
 ## [4.5.5](https://github.com/logaretm/vee-validate/compare/v4.5.4...v4.5.5) (2021-11-01)
 
 **Note:** Version bump only for package @vee-validate/rules
-
-
-
-
 
 ## [4.5.4](https://github.com/logaretm/vee-validate/compare/v4.5.3...v4.5.4) (2021-10-20)
 
 **Note:** Version bump only for package @vee-validate/rules
 
-
-
-
-
 ## [4.5.3](https://github.com/logaretm/vee-validate/compare/v4.5.2...v4.5.3) (2021-10-17)
 
 **Note:** Version bump only for package @vee-validate/rules
-
-
-
-
 
 ## [4.5.2](https://github.com/logaretm/vee-validate/compare/v4.5.1...v4.5.2) (2021-09-30)
 
 **Note:** Version bump only for package @vee-validate/rules
 
-
-
-
-
 ## [4.5.1](https://github.com/logaretm/vee-validate/compare/v4.5.0...v4.5.1) (2021-09-29)
 
 **Note:** Version bump only for package @vee-validate/rules
 
-
-
-
-
 # [4.5.0](https://github.com/logaretm/vee-validate/compare/v4.4.11...v4.5.0) (2021-09-26)
 
 **Note:** Version bump only for package @vee-validate/rules
-
-
-
-
 
 ## [4.4.11](https://github.com/logaretm/vee-validate/compare/v4.4.10...v4.4.11) (2021-09-11)
 

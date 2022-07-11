@@ -3,110 +3,70 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.6.0](https://github.com/logaretm/vee-validate/compare/v4.5.11...v4.6.0) (2022-07-11)
+
+### Bug Fixes
+
+* added argument order for digits rule in ja.json closes [#3780](https://github.com/logaretm/vee-validate/issues/3780) ([9385457](https://github.com/logaretm/vee-validate/commit/938545765c825eead8182202faebfafdebd400c8))
+* sk interpolation for min and digits rules closes [#3788](https://github.com/logaretm/vee-validate/issues/3788) ([778c52e](https://github.com/logaretm/vee-validate/commit/778c52e90afa7b89c6ede07214264b92dec0112a))
+
+### Features
+
+* **locale:** add km (khmer) locale ([#3812](https://github.com/logaretm/vee-validate/issues/3812)) ([b1ee664](https://github.com/logaretm/vee-validate/commit/b1ee664a21db211089a96f76966a6db21c9c7920))
+
 ## [4.5.11](https://github.com/logaretm/vee-validate/compare/v4.5.10...v4.5.11) (2022-04-10)
 
 **Note:** Version bump only for package @vee-validate/i18n
-
-
-
-
 
 ## [4.5.10](https://github.com/logaretm/vee-validate/compare/v4.5.9...v4.5.10) (2022-03-08)
 
 **Note:** Version bump only for package @vee-validate/i18n
 
-
-
-
-
 ## [4.5.9](https://github.com/logaretm/vee-validate/compare/v4.5.8...v4.5.9) (2022-02-22)
 
 **Note:** Version bump only for package @vee-validate/i18n
-
-
-
-
 
 ## [4.5.8](https://github.com/logaretm/vee-validate/compare/v4.5.7...v4.5.8) (2022-01-23)
 
 **Note:** Version bump only for package @vee-validate/i18n
 
-
-
-
-
 ## [4.5.7](https://github.com/logaretm/vee-validate/compare/v4.5.6...v4.5.7) (2021-12-07)
 
 **Note:** Version bump only for package @vee-validate/i18n
 
-
-
-
-
 ## [4.5.6](https://github.com/logaretm/vee-validate/compare/v4.5.5...v4.5.6) (2021-11-17)
-
 
 ### Bug Fixes
 
 * improved et locale ([#3584](https://github.com/logaretm/vee-validate/issues/3584)) ([60e6f30](https://github.com/logaretm/vee-validate/commit/60e6f307a4039e84721741e31f0148e5b0628696))
 
-
-
-
-
 ## [4.5.5](https://github.com/logaretm/vee-validate/compare/v4.5.4...v4.5.5) (2021-11-01)
 
 **Note:** Version bump only for package @vee-validate/i18n
-
-
-
-
 
 ## [4.5.4](https://github.com/logaretm/vee-validate/compare/v4.5.3...v4.5.4) (2021-10-20)
 
 **Note:** Version bump only for package @vee-validate/i18n
 
-
-
-
-
 ## [4.5.3](https://github.com/logaretm/vee-validate/compare/v4.5.2...v4.5.3) (2021-10-17)
 
 **Note:** Version bump only for package @vee-validate/i18n
-
-
-
-
 
 ## [4.5.2](https://github.com/logaretm/vee-validate/compare/v4.5.1...v4.5.2) (2021-09-30)
 
 **Note:** Version bump only for package @vee-validate/i18n
 
-
-
-
-
 ## [4.5.1](https://github.com/logaretm/vee-validate/compare/v4.5.0...v4.5.1) (2021-09-29)
-
 
 ### Bug Fixes
 
 * **i18n:** field name in default error message ([#3506](https://github.com/logaretm/vee-validate/issues/3506)) ([f1f5127](https://github.com/logaretm/vee-validate/commit/f1f51279d7cc343e7d3226fda025259e59945cfa))
 
-
-
-
-
 # [4.5.0](https://github.com/logaretm/vee-validate/compare/v4.4.11...v4.5.0) (2021-09-26)
-
 
 ### Features
 
 * added language specific default ([#3501](https://github.com/logaretm/vee-validate/issues/3501)) ([debdee0](https://github.com/logaretm/vee-validate/commit/debdee032030a3209af8df34f710361150c924c2))
-
-
-
-
 
 ## [4.4.11](https://github.com/logaretm/vee-validate/compare/v4.4.10...v4.4.11) (2021-09-11)
 

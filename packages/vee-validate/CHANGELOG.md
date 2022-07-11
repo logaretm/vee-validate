@@ -3,66 +3,64 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [4.5.11](https://github.com/logaretm/vee-validate/compare/v4.5.10...v4.5.11) (2022-04-10)
+# [4.6.0](https://github.com/logaretm/vee-validate/compare/v4.5.11...v4.6.0) (2022-07-11)
 
+### Bug Fixes
+
+* added existing undefined path fallback closes [#3801](https://github.com/logaretm/vee-validate/issues/3801) ([fd0500c](https://github.com/logaretm/vee-validate/commit/fd0500c9cb4448b232eddb4cd5d8d081e5d48d08))
+* avoid inserting value binding for file type inputs closes [#3760](https://github.com/logaretm/vee-validate/issues/3760) ([3c76bb2](https://github.com/logaretm/vee-validate/commit/3c76bb2ebcbafaf46047b8e41bcc053e41cf27bf))
+* avoid validating when field instance exists ([3759df2](https://github.com/logaretm/vee-validate/commit/3759df20f5ba48a43d5dea4bb6d94e875f15c331))
+* compare form meta.dirty based on original values than staged initials closes [#3782](https://github.com/logaretm/vee-validate/issues/3782) ([f3ffd3c](https://github.com/logaretm/vee-validate/commit/f3ffd3c00ac1f2b73b6a3039cb997d08cf8e452b))
+* expose ValidationOptions type closes [#3825](https://github.com/logaretm/vee-validate/issues/3825) ([9854865](https://github.com/logaretm/vee-validate/commit/9854865ae60431256e6fb9c921d1eabc9093b5e4))
+* exposed component APIs to their TS defs with refs closes [#3292](https://github.com/logaretm/vee-validate/issues/3292) ([ae59d0f](https://github.com/logaretm/vee-validate/commit/ae59d0f6f3728a2a95732517d11fdf970127fe9c))
+* fast equal before deciding value was changed closes [#3808](https://github.com/logaretm/vee-validate/issues/3808) ([3d582ec](https://github.com/logaretm/vee-validate/commit/3d582ec6c884467199cc7fb86ffe0e571d85c4fb))
+* use multiple batch queues for both validation modes closes [#3783](https://github.com/logaretm/vee-validate/issues/3783) ([6156603](https://github.com/logaretm/vee-validate/commit/6156603f537fb46030017fb3a4d003b6bec0d4e8))
+
+### Features
+
+* **4.6:** Allow mutating field array iterable's value property ([#3618](https://github.com/logaretm/vee-validate/issues/3618)) ([#3759](https://github.com/logaretm/vee-validate/issues/3759)) ([c3c40e5](https://github.com/logaretm/vee-validate/commit/c3c40e50b68cbf8aee3356416561fdf5d23ac6d2))
+* add move to FieldArray ([a52f133](https://github.com/logaretm/vee-validate/commit/a52f13356c44616d699e02f9a243dd08c7bcc38e))
+* added unsetValueOnUnmount config ([#3815](https://github.com/logaretm/vee-validate/issues/3815)) ([e6e1c1d](https://github.com/logaretm/vee-validate/commit/e6e1c1d66bfd4c453ac21c00b3faa2d6470040a8))
+* added useFieldModel to useForm API ([26c828e](https://github.com/logaretm/vee-validate/commit/26c828e21495c485d489ea1319575d9b5c271801))
+* allow keep values config to be reactive ([5009bd8](https://github.com/logaretm/vee-validate/commit/5009bd88c09f7a8c753fc52dd5bf8d4d5234567b))
+* better normalization for native input file events ([2751552](https://github.com/logaretm/vee-validate/commit/2751552a42b4eaa57d22ea24c38cd31cfd5b9955))
+* Remove yup type dependency ([#3704](https://github.com/logaretm/vee-validate/issues/3704)) ([e772f9a](https://github.com/logaretm/vee-validate/commit/e772f9a7b9f0e45680a65dfae249ee2092ca850e))
+* Sync useField with component v-model ([#3806](https://github.com/logaretm/vee-validate/issues/3806)) ([0ef7582](https://github.com/logaretm/vee-validate/commit/0ef75823d1b90e1213f8a31014c2cf347d386ec1))
+
+## [4.5.11](https://github.com/logaretm/vee-validate/compare/v4.5.10...v4.5.11) (2022-04-10)
 
 ### Bug Fixes
 
 * ignore validation of removed array elements closes [#3748](https://github.com/logaretm/vee-validate/issues/3748) ([3d49faa](https://github.com/logaretm/vee-validate/commit/3d49faa4101902c2e77aee0a2d43cd29b69f7b4e))
 
-
 ### Features
 
 * chain of GenericValidateFunction in useField ([#3725](https://github.com/logaretm/vee-validate/issues/3725)) ([#3726](https://github.com/logaretm/vee-validate/issues/3726)) ([8db4077](https://github.com/logaretm/vee-validate/commit/8db407785c5611c10c221eabd747c3f31770145b))
-
-
-
-
 
 ## [4.5.10](https://github.com/logaretm/vee-validate/compare/v4.5.9...v4.5.10) (2022-03-08)
 
 **Note:** Version bump only for package vee-validate
 
-
-
-
-
 ## [4.5.9](https://github.com/logaretm/vee-validate/compare/v4.5.8...v4.5.9) (2022-02-22)
-
 
 ### Bug Fixes
 
 * mark fields validated via form validate as validated ([ad9fa9d](https://github.com/logaretm/vee-validate/commit/ad9fa9d853a8cabb26cdde04c20c07d4f2673aa4))
 
-
-
-
-
 ## [4.5.8](https://github.com/logaretm/vee-validate/compare/v4.5.7...v4.5.8) (2022-01-23)
-
 
 ### Bug Fixes
 
 * clear old error path error when changing field name closes [#3664](https://github.com/logaretm/vee-validate/issues/3664) ([f736e62](https://github.com/logaretm/vee-validate/commit/f736e62b1bb82f940d14d74a6d505c913c1c3dde))
 * field array swap not working when falsy values are present at paths ([40afbd9](https://github.com/logaretm/vee-validate/commit/40afbd9cc3fb3de71de3f6ebb0a1b2774d9018ff))
 
-
-
-
-
 ## [4.5.7](https://github.com/logaretm/vee-validate/compare/v4.5.6...v4.5.7) (2021-12-07)
-
 
 ### Bug Fixes
 
 * always attach model update event closes [#3583](https://github.com/logaretm/vee-validate/issues/3583) ([6a53e80](https://github.com/logaretm/vee-validate/commit/6a53e80525a9c38ce8851407b832bc8409c3f334))
 
-
-
-
-
 ## [4.5.6](https://github.com/logaretm/vee-validate/compare/v4.5.5...v4.5.6) (2021-11-17)
-
 
 ### Bug Fixes
 
@@ -70,66 +68,35 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * new devtools typings ([f288ca5](https://github.com/logaretm/vee-validate/commit/f288ca5a59d36f23ba7f6bdd210493588f744940))
 * use watchEffect to compute form meta closes [#3580](https://github.com/logaretm/vee-validate/issues/3580) ([e8729dc](https://github.com/logaretm/vee-validate/commit/e8729dc72d2a027a666515360c9537a62a8d46ad))
 
-
-
-
-
 ## [4.5.5](https://github.com/logaretm/vee-validate/compare/v4.5.4...v4.5.5) (2021-11-01)
-
 
 ### Bug Fixes
 
 * prevent toggle checkboxes when form resets closes [#3551](https://github.com/logaretm/vee-validate/issues/3551) ([cad12ba](https://github.com/logaretm/vee-validate/commit/cad12ba7502af7268029930a9176d8e160efeef6))
 
-
-
-
-
 ## [4.5.4](https://github.com/logaretm/vee-validate/compare/v4.5.3...v4.5.4) (2021-10-20)
 
 **Note:** Version bump only for package vee-validate
 
-
-
-
-
 ## [4.5.3](https://github.com/logaretm/vee-validate/compare/v4.5.2...v4.5.3) (2021-10-17)
-
 
 ### Features
 
 * added slot typings for components closes [#3534](https://github.com/logaretm/vee-validate/issues/3534) ([#3537](https://github.com/logaretm/vee-validate/issues/3537)) ([52a2a38](https://github.com/logaretm/vee-validate/commit/52a2a385ec6e65c7eaaed0a67615c45aba07de64))
 
-
-
-
-
 ## [4.5.2](https://github.com/logaretm/vee-validate/compare/v4.5.1...v4.5.2) (2021-09-30)
-
 
 ### Bug Fixes
 
 * use klona/full mode to handle luxon values closes [#3508](https://github.com/logaretm/vee-validate/issues/3508) ([048c9c0](https://github.com/logaretm/vee-validate/commit/048c9c03d38ffd871ee4b3504daf1c83d42e9516))
 
-
-
-
-
 ## [4.5.1](https://github.com/logaretm/vee-validate/compare/v4.5.0...v4.5.1) (2021-09-29)
 
 **Note:** Version bump only for package vee-validate
 
-
-
-
-
 # [4.5.0](https://github.com/logaretm/vee-validate/compare/v4.4.11...v4.5.0) (2021-09-26)
 
 **Note:** Version bump only for package vee-validate
-
-
-
-
 
 ## [4.4.11](https://github.com/logaretm/vee-validate/compare/v4.4.10...v4.4.11) (2021-09-11)
 
