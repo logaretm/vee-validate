@@ -60,7 +60,7 @@ interface FormOptions<TValues extends Record<string, any>> {
   initialErrors?: Record<keyof TValues, string | undefined>;
   initialTouched?: Record<keyof TValues, boolean>;
   validateOnMount?: boolean;
-  keepValuesOnUnmount?: boolean;
+  keepValuesOnUnmount?: MaybeRef<boolean>;
 }
 
 let FORM_COUNTER = 0;
@@ -468,7 +468,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
         // Checks if the field was configured to be unset during unmount or not
         // Checks both the form-level config and field-level one
         // Field has the priority if it is set, otherwise it goes to the form settings
-        const shouldKeepValue = field.keepValueOnUnmount ?? keepValuesOnUnmount;
+        const shouldKeepValue = unref(field.keepValueOnUnmount) ?? unref(keepValuesOnUnmount);
         if (shouldKeepValue) {
           return;
         }

@@ -92,7 +92,7 @@ export interface PrivateFieldContext<TValue = unknown> {
   label?: MaybeRef<string | undefined>;
   type?: string;
   bails?: boolean;
-  keepValueOnUnmount?: boolean;
+  keepValueOnUnmount?: MaybeRef<boolean | undefined>;
   checkedValue?: MaybeRef<TValue>;
   uncheckedValue?: MaybeRef<TValue>;
   checked?: Ref<boolean>;
@@ -189,7 +189,7 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
   errors: ComputedRef<FormErrors<TValues>>;
   meta: ComputedRef<FormMeta<TValues>>;
   isSubmitting: Ref<boolean>;
-  keepValuesOnUnmount: boolean;
+  keepValuesOnUnmount: MaybeRef<boolean>;
   validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues>>;
   validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>>;
   validateField(field: keyof TValues): Promise<ValidationResult>;
