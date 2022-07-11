@@ -256,6 +256,36 @@ vee-validate creates the paths inside the form data automatically but lazily, so
 
 When fields get unmounted like in the case of conditional rendered fields with `v-if` or `v-for`, their path will be destroyed just as it was created if they are the last field in that path. So you need to be careful while accessing the nested field in `values` inside your submission handler or the `Form` component `values` slot prop.
 
+Path destruction can be annoying when dealing with multi-step forms or tabbed forms where you want all the values to be available even when the fields are unmounted. You can control this behavior by passing `keepValue` prop to the `<Field />` component or you can do it for all the fields by passing `keepValues` to the `<Form />` component.
+
+Note that the priority of this configuration follows the field config first then it fallbacks to the form's config.
+
+```vue
+<template>
+  <!-- All fields values will be kept -->
+  <Form keep-values v-slot="{ values }">
+    <!-- This field value will be kept -->
+    <Field v-if="showFields" name="email" />
+
+    <!-- This field value will be removed -->
+    <Field v-if="showFields" name="name" :keep-value="false" />
+
+    <button @click="showFields = !showFields" type="button">Show/Hide fields</button>
+    <button>Submit</button>
+
+    <pre>{{ values }}</pre>
+  </Form>
+</template>
+
+<script>
+export default {
+  data: () => ({
+    showFields: true,
+  }),
+};
+</script>
+```
+
 ### Referencing Errors
 
 When referencing errors using `errors` object on the `Form` slot props or the `ErrorMessage` component, make sure to reference the field name in the same way you set it on the `name` prop for that field. So even if you avoid nesting you should always include the square brackets. In other words `errors` do not get nested, they are always flat.

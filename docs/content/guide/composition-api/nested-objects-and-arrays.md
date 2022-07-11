@@ -242,6 +242,28 @@ vee-validate creates the paths inside the form data automatically but lazily, so
 
 When fields get unmounted like in the case of conditional rendered fields with `v-if` or `v-for`, their path will be destroyed just as it was created if they are the last field in that path. So you need to be careful while accessing the nested field in `values` inside your submission handler.
 
+Path destruction can be annoying when dealing with multi-step forms or tabbed forms where you want all the values to be available even when the fields are unmounted. You can control this behavior by passing `keepValueOnUnmount` prop to the `useField` function or you can do it for all the fields by passing `keepValuesOnUnmount` to the `useForm` function.
+
+Note that the priority of this configuration follows the field config first then it fallbacks to the form's config.
+
+```js
+import { useForm } from 'vee-validate';
+
+// keep all values when their fields get unmounted
+const { values } = useForm({
+  keepValueOnUnmount: true,
+});
+```
+
+```js
+import { useField } from 'vee-validate';
+
+// this field value will be removed
+const field = useField('field', undefined, {
+  keepValueOnUnmount: false,
+});
+```
+
 ### Referencing Errors
 
 When referencing errors using `errors` object returned from the `useForm` function. Make sure to reference the field name in the same way you set it on the `name` argument for that field. So even if you avoid nesting you should always include the square brackets. In other words `errors` do not get nested, they are always flat.

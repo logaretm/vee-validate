@@ -103,6 +103,7 @@ interface FormOptions<TValues extends Record<string, any>> {
   initialErrors?: Record<keyof TValues, string | undefined>; // a map of the form's initial error messages
   initialTouched?: Record<keyof TValues, boolean>; // a map of the form's initial touched fields
   validateOnMount?: boolean;
+  keepValuesOnUnmount?: boolean; // if it should remove the fields that get unmounted value from the form values object, default is `false`
 }
 
 /**
