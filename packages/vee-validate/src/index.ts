@@ -40,4 +40,4 @@ export { useFormValues } from './useFormValues';
 export { useFormErrors } from './useFormErrors';
 export { useFieldError } from './useFieldError';
 export { useSubmitForm } from './useSubmitForm';
-export { FormContextKey, FieldContextKey } from './symbols';
+export { FormContextKey, FieldContextKey, IS_ABSENT } from './symbols';
