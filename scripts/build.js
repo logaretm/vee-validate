@@ -19,8 +19,7 @@ async function buildLocales() {
     const input = path.join(__dirname, '../packages/i18n/src/locale', file);
     const out = path.join(__dirname, '../packages/i18n/dist/locale', file);
     fs.copySync(input, out);
-    process.stdout.clearLine();
-    process.stdout.cursorTo(0);
+    console.log('/n');
   }
 }
 
