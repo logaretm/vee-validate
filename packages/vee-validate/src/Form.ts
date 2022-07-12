@@ -1,7 +1,7 @@
 import { h, defineComponent, toRef, resolveDynamicComponent, PropType, VNode, UnwrapRef } from 'vue';
 import { useForm } from './useForm';
 import { SubmissionHandler, InvalidSubmissionHandler } from './types';
-import { isEvent, normalizeChildren } from './utils';
+import { isEvent, isFormSubmitEvent, normalizeChildren } from './utils';
 import { FormContext } from '.';
 
 type FormSlotProps = UnwrapRef<
@@ -15,7 +15,6 @@ type FormSlotProps = UnwrapRef<
     | 'validate'
     | 'validateField'
     | 'handleReset'
-    | 'submitForm'
     | 'setErrors'
     | 'setFieldError'
     | 'setFieldValue'
@@ -26,6 +25,7 @@ type FormSlotProps = UnwrapRef<
   >
 > & {
   handleSubmit: (evt: Event | SubmissionHandler, onSubmit?: SubmissionHandler) => Promise<unknown>;
+  submitForm(evt?: Event): void;
 };
 
 const FormImpl = defineComponent({
@@ -85,7 +85,6 @@ const FormImpl = defineComponent({
       handleReset,
       resetForm,
       handleSubmit,
-      submitForm,
       setErrors,
       setFieldError,
       setFieldValue,
@@ -100,6 +99,12 @@ const FormImpl = defineComponent({
       validateOnMount: props.validateOnMount,
       keepValuesOnUnmount: keepValues,
     });
+
+    const submitForm = handleSubmit((_, { evt }) => {
+      if (isFormSubmitEvent(evt)) {
+        evt.target.submit();
+      }
+    }, props.onInvalidSubmit);
 
     const onSubmit = props.onSubmit ? handleSubmit(props.onSubmit, props.onInvalidSubmit) : submitForm;
     function handleFormReset(e?: Event) {
