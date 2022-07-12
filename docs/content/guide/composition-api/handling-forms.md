@@ -36,22 +36,14 @@ Mainly you will be using the `handleSubmit` function to create submission handle
   </form>
 </template>
 
-<script>
+<script setup>
 import { useForm } from 'vee-validate';
 
-export default {
-  setup() {
-    const { handleSubmit } = useForm();
+const { handleSubmit } = useForm();
 
-    const onSubmit = handleSubmit(values => {
-      alert(JSON.stringify(values, null, 2));
-    });
-
-    return {
-      onSubmit,
-    };
-  },
-};
+const onSubmit = handleSubmit(values => {
+  alert(JSON.stringify(values, null, 2));
+});
 </script>
 ```
 
@@ -72,18 +64,10 @@ For non-ajax submissions that trigger a full page reload, you can use the `submi
   </form>
 </template>
 
-<script>
+<script setup>
 import { useForm } from 'vee-validate';
 
-export default {
-  setup() {
-    const { submitForm } = useForm();
-
-    return {
-      submitForm,
-    };
-  },
-};
+const { submitForm } = useForm();
 </script>
 ```
 
@@ -100,11 +84,10 @@ In case you want to perform some logic after a form fails to submit due to valid
   </form>
 </template>
 
-<script>
+<script setup>
 import { useForm } from 'vee-validate';
 
-export default {
-  setup() {
+
     const { handleSubmit } = useForm();
 
     function onInvalidSubmit({ values, errors, results }) {
@@ -117,11 +100,8 @@ export default {
       alert(JSON.stringify(values, null, 2));
     }, onInvalidSubmit);
 
-    return {
-      onSubmit,
-    };
-  },
-};
+
+
 </script>
 ```
 
@@ -140,23 +120,14 @@ The `isSubmitting` state will be set to `true` once the validation of the form s
   </form>
 </template>
 
-<script>
+<script setup>
 import { useForm } from 'vee-validate';
 
-export default {
-  setup() {
-    const { handleSubmit, isSubmitting } = useForm();
+const { handleSubmit, isSubmitting } = useForm();
 
-    const onSubmit = handleSubmit(() => {
-      // Send stuff to the API
-    });
-
-    return {
-      onSubmit,
-      isSubmitting,
-    };
-  },
-};
+const onSubmit = handleSubmit(() => {
+  // Send stuff to the API
+});
 </script>
 ```
 
@@ -175,29 +146,20 @@ The `useForm` function also exposes a `submitCount` ref that you can use to trac
   <p v-else>Sorry but you have attempted to submit too many times</p>
 </template>
 
-<script>
+<script setup>
 import { computed } from 'vue';
 import { useForm } from 'vee-validate';
 
-export default {
-  setup() {
-    const { handleSubmit, submitCount } = useForm();
+const { handleSubmit, submitCount } = useForm();
 
-    const onSubmit = handleSubmit(() => {
-      // Send stuff to the API
-    });
+const onSubmit = handleSubmit(() => {
+  // Send stuff to the API
+});
 
-    // too many attempts
-    const isTooManyAttempts = computed(() => {
-      return submitCount.value >= 10;
-    });
-
-    return {
-      onSubmit,
-      isTooManyAttempts,
-    };
-  },
-};
+// too many attempts
+const isTooManyAttempts = computed(() => {
+  return submitCount.value >= 10;
+});
 </script>
 ```
 
@@ -214,23 +176,19 @@ Using the `initialValues` option you can send an object that contains the field 
   </form>
 </template>
 
-<script>
+<script setup>
 import { useForm } from 'vee-validate';
 
-export default {
-  setup() {
-    // Initial values
-    const formValues = {
-      email: 'example@example.com',
-      name: 'John Smith',
-      password: 'P@$$w0Rd',
-    };
-
-    useForm({
-      initialValues: formValues,
-    });
-  },
+// Initial values
+const formValues = {
+  email: 'example@example.com',
+  name: 'John Smith',
+  password: 'P@$$w0Rd',
 };
+
+useForm({
+  initialValues: formValues,
+});
 </script>
 ```
 
@@ -253,19 +211,15 @@ You can set any field's value on the form-level component using either `setField
   </form>
 </template>
 
-<script>
+<script setup>
 import { useForm } from 'vee-validate';
 
-export default {
-  setup() {
-    const { setFieldValue, setValues } = useForm();
+const { setFieldValue, setValues } = useForm();
 
-    setFieldValue('fieldName', 'newValue');
-    setValues({
-      fieldName: 'newValue',
-    });
-  },
-};
+setFieldValue('fieldName', 'newValue');
+setValues({
+  fieldName: 'newValue',
+});
 </script>
 ```
 
@@ -309,20 +263,11 @@ To reset forms you can use the `resetForm` function returned by `useForm`.
   </div>
 </template>
 
-<script>
+<script setup>
 import { useForm, useField } from 'vee-validate';
 
-export default {
-  setup() {
-    const { resetForm } = useForm();
-    const { value } = useField('email');
-
-    return {
-      resetForm,
-      value,
-    };
-  },
-};
+const { resetForm } = useForm();
+const { value } = useField('email');
 </script>
 ```
 
@@ -377,24 +322,16 @@ This is an example of using the form actions object to reset the form:
   </form>
 </template>
 
-<script>
+<script setup>
 import { useForm } from 'vee-validate';
 
-export default {
-  setup() {
-    const { handleSubmit } = useForm();
+const { handleSubmit } = useForm();
 
-    const onSubmit = handleSubmit((values, { resetForm }) => {
-      console.log(values); // send data to API
-      // reset the form and the field values to their initial values
-      resetForm();
-    });
-
-    return {
-      onSubmit,
-    };
-  },
-};
+const onSubmit = handleSubmit((values, { resetForm }) => {
+  console.log(values); // send data to API
+  // reset the form and the field values to their initial values
+  resetForm();
+});
 </script>
 ```
 
@@ -412,27 +349,18 @@ The `initialErrors` option accepts an object containing the field names as keys 
   </form>
 </template>
 
-<script>
+<script setup>
 import { useForm, useField } from 'vee-validate';
 
-export default {
-  setup() {
-    useForm({
-      initialErrors: {
-        email: 'This email is already taken',
-        password: 'The password is too short',
-      },
-    });
-
-    const { value, errorMessage } = useField('email');
-    // add more fields if needed
-
-    return {
-      value,
-      errorMessage,
-    };
+useForm({
+  initialErrors: {
+    email: 'This email is already taken',
+    password: 'The password is too short',
   },
-};
+});
+
+const { value, errorMessage } = useField('email');
+// add more fields if needed
 </script>
 ```
 
@@ -457,37 +385,29 @@ Both functions are available as a return value from `useForm`. In the following 
   </form>
 </template>
 
-<script>
+<script setup>
 import { useForm } from 'vee-validate';
 
-export default {
-  setup() {
-    const { handleSubmit, setFieldError, setErrors } = useForm();
+const { handleSubmit, setFieldError, setErrors } = useForm();
 
-    const onSubmit = handleSubmit(async values => {
-      // Send data to the API
-      const response = await client.post('/users/');
+const onSubmit = handleSubmit(async values => {
+  // Send data to the API
+  const response = await client.post('/users/');
 
-      // all good
-      if (!response.errors) {
-        return;
-      }
+  // all good
+  if (!response.errors) {
+    return;
+  }
 
-      // set single field error
-      if (response.errors.email) {
-        setFieldError('email', response.errors.email);
-      }
+  // set single field error
+  if (response.errors.email) {
+    setFieldError('email', response.errors.email);
+  }
 
-      // set multiple errors, assuming the keys are the names of the fields
-      // and the values are the error message(s)
-      setErrors(response.errors);
-    });
-
-    return {
-      onSubmit,
-    };
-  },
-};
+  // set multiple errors, assuming the keys are the names of the fields
+  // and the values are the error message(s)
+  setErrors(response.errors);
+});
 </script>
 ```
 

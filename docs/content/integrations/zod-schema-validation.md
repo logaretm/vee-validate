@@ -77,23 +77,15 @@ If you prefer to use the Composition API, then you can pass the converted schema
   <span>{{ errorMessage }}</span>
 </template>
 
-<script>
+<script setup>
 import { useField } from 'vee-validate';
 import { toFieldValidator } from '@vee-validate/zod';
 import * as zod from 'zod';
 
-export default {
-  setup() {
-    const fieldSchema = toFieldValidator(
-      zod.string().nonempty('Field is required').email({ message: 'Must be a valid email' })
-    );
-    const { value, errorMessage } = useField('email', fieldSchema);
-
-    return {
-      rules,
-    };
-  },
-};
+const fieldSchema = toFieldValidator(
+  zod.string().nonempty('Field is required').email({ message: 'Must be a valid email' })
+);
+const { value, errorMessage } = useField('email', fieldSchema);
 </script>
 ```
 
@@ -167,40 +159,28 @@ Alternatively, if you prefer to use the composition API, you can pass the conver
   </form>
 </template>
 
-<script>
+<script setup>
 import { useField, useForm } from 'vee-validate';
 import { toFormValidator } from '@vee-validate/zod';
 import * as zod from 'zod';
 
-export default {
-  setup() {
-    const validationSchema = toFormValidator(
-      zod.object({
-        email: zod.string().nonempty('This is required').email({ message: 'Must be a valid email' }),
-        password: zod.string().nonempty('This is required').min(8, { message: 'Too short' }),
-      })
-    );
+const validationSchema = toFormValidator(
+  zod.object({
+    email: zod.string().nonempty('This is required').email({ message: 'Must be a valid email' }),
+    password: zod.string().nonempty('This is required').min(8, { message: 'Too short' }),
+  })
+);
 
-    const { handleSubmit, errors } = useForm({
-      validationSchema,
-    });
+const { handleSubmit, errors } = useForm({
+  validationSchema,
+});
 
-    const { value: email } = useField('email');
-    const { value: password } = useField('password');
+const { value: email } = useField('email');
+const { value: password } = useField('password');
 
-    const onSubmit = handleSubmit(values => {
-      alert(JSON.stringify(values, null, 2));
-    });
-
-    return {
-      validationSchema,
-      email,
-      password,
-      errors,
-      onSubmit,
-    };
-  },
-};
+const onSubmit = handleSubmit(values => {
+  alert(JSON.stringify(values, null, 2));
+});
 </script>
 ```
 

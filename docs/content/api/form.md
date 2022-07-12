@@ -107,6 +107,7 @@ While not recommended, you can make the `Form` component a renderless component 
 | initialErrors    | `Record<string, string>`             | `undefined` | Initial form errors to fill the fields with, the errors will be added when the form component is mounted     |
 | initialTouched   | `Record<string, boolean>`            | `undefined` | Initial touched fields, the status will be applied when the form component is mounted                        |
 | validateOnMount  | `boolean`                            | `false`     | If true, the fields currently present in the form will be validated when the `<Form />` component is mounted |
+| keepValues       | `boolean`                            | `false`     | If the fields values should be deleted when they get unmounted, default is false                             |
 
 ### Slots
 

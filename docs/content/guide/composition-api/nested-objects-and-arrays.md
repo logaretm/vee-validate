@@ -23,26 +23,16 @@ You can specify a field to be nested in an object using dot paths, like what you
   </form>
 </template>
 
-<script>
+<script setup>
 import { useField, useForm } from 'vee-validate';
 
-export default {
-  setup() {
-    const { handleSubmit } = useForm();
-    const onSubmit = handleSubmit(values => {
-      alert(JSON.stringify(values, null, 2));
-    });
+const { handleSubmit } = useForm();
+const onSubmit = handleSubmit(values => {
+  alert(JSON.stringify(values, null, 2));
+});
 
-    const { value: twitter } = useField('links.twitter');
-    const { value: github } = useField('links.github');
-
-    return {
-      twitter,
-      github,
-      onSubmit,
-    };
-  },
-};
+const { value: twitter } = useField('links.twitter');
+const { value: github } = useField('links.github');
 </script>
 ```
 
@@ -75,26 +65,16 @@ Here is the same example as above but in array format:
   </form>
 </template>
 
-<script>
+<script setup>
 import { useField, useForm } from 'vee-validate';
 
-export default {
-  setup() {
-    const { handleSubmit } = useForm();
-    const onSubmit = handleSubmit(values => {
-      alert(JSON.stringify(values, null, 2));
-    });
+const { handleSubmit } = useForm();
+const onSubmit = handleSubmit(values => {
+  alert(JSON.stringify(values, null, 2));
+});
 
-    const { value: twitter } = useField('links[0]');
-    const { value: github } = useField('links[1]');
-
-    return {
-      twitter,
-      github,
-      onSubmit,
-    };
-  },
-};
+const { value: twitter } = useField('links[0]');
+const { value: github } = useField('links[1]');
 </script>
 ```
 
@@ -129,26 +109,16 @@ If your fields' names are using the dot notation and you want to avoid the nesti
   </form>
 </template>
 
-<script>
+<script setup>
 import { useField, useForm } from 'vee-validate';
 
-export default {
-  setup() {
-    const { handleSubmit } = useForm();
-    const onSubmit = handleSubmit(values => {
-      alert(JSON.stringify(values, null, 2));
-    });
+const { handleSubmit } = useForm();
+const onSubmit = handleSubmit(values => {
+  alert(JSON.stringify(values, null, 2));
+});
 
-    const { value: twitter } = useField('[links.twitter]');
-    const { value: github } = useField('[links.github]');
-
-    return {
-      twitter,
-      github,
-      onSubmit,
-    };
-  },
-};
+const { value: twitter } = useField('[links.twitter]');
+const { value: github } = useField('[links.github]');
 </script>
 ```
 
@@ -186,34 +156,20 @@ To set up a repeatable field, you can use `useFieldArray` to help you manage the
   </form>
 </template>
 
-<script>
+<script setup>
 import { Field, useForm, useFieldArray } from 'vee-validate';
 
-export default {
-  components: {
-    Field,
+const { handleSubmit } = useForm({
+  initialValues: {
+    links: ['https://github.com/logaretm'],
   },
-  setup() {
-    const { handleSubmit } = useForm({
-      initialValues: {
-        links: ['https://github.com/logaretm'],
-      },
-    });
+});
 
-    const { remove, push, fields } = useFieldArray('links');
+const { remove, push, fields } = useFieldArray('links');
 
-    const onSubmit = handleSubmit(values => {
-      console.log(JSON.stringify(values, null, 2));
-    });
-
-    return {
-      fields,
-      push,
-      remove,
-      onSubmit,
-    };
-  },
-};
+const onSubmit = handleSubmit(values => {
+  console.log(JSON.stringify(values, null, 2));
+});
 </script>
 ```
 
@@ -248,27 +204,16 @@ The `FieldArrayEntry` item exposes a `key` property, this property is unique and
   </form>
 </template>
 
-<script>
+<script setup>
 import { Field, useForm, useFieldArray } from 'vee-validate';
 
-export default {
-  components: {
-    Field,
+const { handleSubmit } = useForm({
+  initialValues: {
+    links: ['https://github.com/logaretm'],
   },
-  setup() {
-    const { handleSubmit } = useForm({
-      initialValues: {
-        links: ['https://github.com/logaretm'],
-      },
-    });
+});
 
-    const { fields } = useFieldArray('links');
-
-    return {
-      fields,
-    };
-  },
-};
+const { fields } = useFieldArray('links');
 </script>
 ```
 
@@ -297,6 +242,28 @@ vee-validate creates the paths inside the form data automatically but lazily, so
 
 When fields get unmounted like in the case of conditional rendered fields with `v-if` or `v-for`, their path will be destroyed just as it was created if they are the last field in that path. So you need to be careful while accessing the nested field in `values` inside your submission handler.
 
+Path destruction can be annoying when dealing with multi-step forms or tabbed forms where you want all the values to be available even when the fields are unmounted. You can control this behavior by passing `keepValueOnUnmount` prop to the `useField` function or you can do it for all the fields by passing `keepValuesOnUnmount` to the `useForm` function.
+
+Note that the priority of this configuration follows the field config first then it fallbacks to the form's config.
+
+```js
+import { useForm } from 'vee-validate';
+
+// keep all values when their fields get unmounted
+const { values } = useForm({
+  keepValueOnUnmount: true,
+});
+```
+
+```js
+import { useField } from 'vee-validate';
+
+// this field value will be removed
+const field = useField('field', undefined, {
+  keepValueOnUnmount: false,
+});
+```
+
 ### Referencing Errors
 
 When referencing errors using `errors` object returned from the `useForm` function. Make sure to reference the field name in the same way you set it on the `name` argument for that field. So even if you avoid nesting you should always include the square brackets. In other words `errors` do not get nested, they are always flat.
@@ -319,36 +286,25 @@ If you are using yup, you can utilize the nested `yup.object` or `yup.array` sch
   </form>
 </template>
 
-<script>
+<script setup>
 import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
 
-export default {
-  setup() {
-    const { handleSubmit, errors } = useForm({
-      validationSchema: yup.object({
-        user: yup.object({
-          name: yup.string().required(),
-          addresses: yup.array().of(yup.string().required()),
-        }),
-      }),
-    });
+const { handleSubmit, errors } = useForm({
+  validationSchema: yup.object({
+    user: yup.object({
+      name: yup.string().required(),
+      addresses: yup.array().of(yup.string().required()),
+    }),
+  }),
+});
 
-    const { value: name } = useField('user.name');
-    const { value: address } = useField('user.addresses[0]');
+const { value: name } = useField('user.name');
+const { value: address } = useField('user.addresses[0]');
 
-    const onSubmit = handleSubmit(values => {
-      alert(JSON.stringify(values, null, 2));
-    });
-
-    return {
-      name,
-      address,
-      onSubmit,
-      errors,
-    };
-  },
-};
+const onSubmit = handleSubmit(values => {
+  alert(JSON.stringify(values, null, 2));
+});
 </script>
 ```
 

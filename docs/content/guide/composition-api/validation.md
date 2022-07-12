@@ -14,7 +14,7 @@ You will be using the following composition functions to validate your forms:
 - `useField`: Creates a form field with its validation state, you will use this inside your custom input components.
 - `useForm`: Creates a vee-validate's form context and associates any fields created with `useField` inside the same component or its children with it automatically, which you will use to create custom form components and to manage your fields in general.
 
-There are tons of other composition API functions, check them out in the [API reference](/api/composition-helpers).
+There are other composition API functions, check them out in the [API reference](/api/composition-helpers).
 
 This is the most basic example with the composition API, you can create a simple field and validate it in a couple of lines:
 
@@ -22,7 +22,7 @@ This is the most basic example with the composition API, you can create a simple
 
 ## Field-level Validation
 
-You can define validation rules for your fields using the `useField` composition API function, your rules can be as simple as a function that accepts the current value and returns an error message.
+You can define validation rules for your fields using the `useField` composition API function, your rules can be as simple as a function that accepts the current value and returns an error message. Here is an example where you can use `useField` to create a custom input component called `MyTextInput`.
 
 ```vue
 <template>
@@ -32,27 +32,26 @@ You can define validation rules for your fields using the `useField` composition
   </div>
 </template>
 
-<script>
+<script setup>
 import { useField } from 'vee-validate';
+import { defineProps, toRef } from 'vue';
 
-export default {
-  setup() {
-    function isRequired(value) {
-      if (value && value.trim()) {
-        return true;
-      }
+const props = defineProps<{
+  name: string;
+}>();
 
-      return 'This is required';
-    }
+function isRequired(value) {
+  if (value && value.trim()) {
+    return true;
+  }
 
-    const { errorMessage, value } = useField('fieldName', isRequired);
+  return 'This is required';
+}
 
-    return {
-      errorMessage,
-      value,
-    };
-  },
-};
+// make sure to convert the name prop to a ref to maintain its reactivity
+// this way vee-validate can react to the field name changing
+const nameRef = toRef(props, 'name');
+const { errorMessage, value } = useField(nameRef, isRequired);
 </script>
 ```
 
@@ -70,20 +69,19 @@ yup is a very popular, simple and powerful data validation library for JavaScrip
   </div>
 </template>
 
-<script>
+<script setup>
+import { defineProps, toRef } from 'vue';
 import { useField } from 'vee-validate';
 import * as yup from 'yup';
 
-export default {
-  setup() {
-    const { errorMessage, value } = useField('fieldName', yup.string().required().min(8));
+const props = defineProps<{
+  name: string;
+}>();
 
-    return {
-      value,
-      errorMessage,
-    };
-  },
-};
+// make sure to convert the name prop to a ref to maintain its reactivity
+// this way vee-validate can react to the field name changing
+const nameRef = toRef(props, 'name');
+const { errorMessage, value } = useField(nameRef, yup.string().required().min(8));
 </script>
 ```
 
@@ -98,48 +96,34 @@ A simple validation schema can be an object containing field names as keys and v
 ```vue
 <template>
   <div>
-    <input name="email" v-model="email" />
-    <span>{{ emailError }}</span>
+    <MyTextInput name="email" />
 
-    <input name="password" v-model="password" type="password" />
-    <span>{{ passwordError }}</span>
+    <MyTextInput name="password" />
   </div>
 </template>
 
-<script>
-import { useForm, useField } from 'vee-validate';
+<script setup>
+import { useForm } from 'vee-validate';
+import MyTextInput from '@/components/MyTextInput.vue';
 
-export default {
-  setup() {
-    // Define a validation schema
-    const simpleSchema = {
-      email(value) {
-        // validate email value and return messages...
-      },
-      password(value) {
-        // validate password value and return messages...
-      },
-    };
-
-    // Create a form context with the validation schema
-    useForm({
-      validationSchema: simpleSchema,
-    });
-
-    // No need to define rules for fields
-    const { value: email, errorMessage: emailError } = useField('email');
-    const { value: password, errorMessage: passwordError } = useField('password');
-
-    return {
-      email,
-      emailError,
-      password,
-      passwordError,
-    };
+// Define a validation schema
+const simpleSchema = {
+  email(value) {
+    // validate email value and return messages...
+  },
+  password(value) {
+    // validate password value and return messages...
   },
 };
+
+// Create a form context with the validation schema
+useForm({
+  validationSchema: simpleSchema,
+});
 </script>
 ```
+
+Note that `MyTextInput` is the component we created earlier except it doesn't provide any rules to `useField` because `useForm` will automatically figure it out.
 
 ### Validation schemas with yup
 
@@ -158,43 +142,27 @@ vee-validate has built-in support for yup schemas, You can pass your schemas to 
 ```vue
 <template>
   <div>
-    <input name="email" v-model="email" />
-    <span>{{ emailError }}</span>
+    <MyTextInput name="email" />
 
-    <input name="password" v-model="password" type="password" />
-    <span>{{ passwordError }}</span>
+    <MyTextInput name="password" />
   </div>
 </template>
 
-<script>
+<script setup>
 import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
+import MyTextInput from '@/components/MyTextInput.vue';
 
-export default {
-  setup() {
-    // Define a validation schema
-    const schema = yup.object({
-      email: yup.string().required().email(),
-      password: yup.string().required().min(8),
-    });
+// Define a validation schema
+const schema = yup.object({
+  email: yup.string().required().email(),
+  password: yup.string().required().min(8),
+});
 
-    // Create a form context with the validation schema
-    useForm({
-      validationSchema: schema,
-    });
-
-    // No need to define rules for fields
-    const { value: email, errorMessage: emailError } = useField('email');
-    const { value: password, errorMessage: passwordError } = useField('password');
-
-    return {
-      email,
-      emailError,
-      password,
-      passwordError,
-    };
-  },
-};
+// Create a form context with the validation schema
+useForm({
+  validationSchema: schema,
+});
 </script>
 ```
 
@@ -218,37 +186,28 @@ You can have reactive form schemas using `computed` if you are looking to create
 
 ```vue
 <template>
-  <input name="password" v-model="password" type="password" />
-  <span>{{ passwordError }}</span>
+  <div>
+    <MyTextInput name="password" />
+  </div>
 </template>
 
-<script>
+<script setup>
 import { computed, ref } from 'vue';
 import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
+import MyTextInput from '@/components/MyTextInput.vue';
 
-export default {
-  setup() {
-    const min = ref(0);
-    const schema = computed(() => {
-      return yup.object({
-        password: yup.string().min(min.value),
-      });
-    });
+const min = ref(0);
+const schema = computed(() => {
+  return yup.object({
+    password: yup.string().min(min.value),
+  });
+});
 
-    // Create a form context with the validation schema
-    useForm({
-      validationSchema: schema,
-    });
-
-    const { value: password, errorMessage: passwordError } = useField('password');
-
-    return {
-      password,
-      passwordError,
-    };
-  },
-};
+// Create a form context with the validation schema
+useForm({
+  validationSchema: schema,
+});
 </script>
 ```
 
@@ -305,24 +264,14 @@ In this example we are validating on `input` event (when the user types), which 
   </div>
 </template>
 
-<script>
+<script setup>
 import { useField } from 'vee-validate';
 
-export default {
-  setup() {
-    function isRequired(value) {
-      // ...
-    }
+function isRequired(value) {
+  // ...
+}
 
-    const { errorMessage, value, handleChange } = useField('fieldName', isRequired);
-
-    return {
-      errorMessage,
-      value,
-      handleChange,
-    };
-  },
-};
+const { errorMessage, value, handleChange } = useField('fieldName', isRequired);
 </script>
 ```
 
@@ -362,47 +311,37 @@ Implementing this requires some knowledge about how the `v-on` (we can bind obje
   </div>
 </template>
 
-<script>
+<script setup>
 import { computed } from 'vue';
 import { useField } from 'vee-validate';
 
-export default {
-  setup() {
-    function isRequired(value) {
-      // ...
-    }
+function isRequired(value) {
+  // ...
+}
 
-    const { errorMessage, value, handleChange } = useField('fieldName', isRequired, {
-      validateOnValueUpdate: false,
-    });
+const { errorMessage, value, handleChange } = useField('fieldName', isRequired, {
+  validateOnValueUpdate: false,
+});
 
-    const validationListeners = computed(() => {
-      // If the field is valid or have not been validated yet
-      // lazy
-      if (!errorMessage.value) {
-        return {
-          blur: handleChange,
-          change: handleChange,
-          // disable `shouldValidate` to avoid validating on input
-          input: e => handleChange(e, false),
-        };
-      }
-
-      // Aggressive
-      return {
-        blur: handleChange,
-        change: handleChange,
-        input: handleChange, // only switched this
-      };
-    });
-
+const validationListeners = computed(() => {
+  // If the field is valid or have not been validated yet
+  // lazy
+  if (!errorMessage.value) {
     return {
-      errorMessage,
-      value,
-      validationListeners,
+      blur: handleChange,
+      change: handleChange,
+      // disable `shouldValidate` to avoid validating on input
+      input: e => handleChange(e, false),
     };
-  },
-};
+  }
+
+  // Aggressive
+  return {
+    blur: handleChange,
+    change: handleChange,
+    input: handleChange, // only switched this
+  };
+});
 </script>
 ```
 
@@ -426,23 +365,14 @@ You've already seen how to display errors with `useField`, by using the `errorMe
   </div>
 </template>
 
-<script>
+<script setup>
 import { useField } from 'vee-validate';
 
-export default {
-  setup() {
-    function isRequired(value) {
-      // ...
-    }
+function isRequired(value) {
+  // ...
+}
 
-    const { errorMessage, value } = useField('fieldName', isRequired);
-
-    return {
-      errorMessage,
-      value,
-    };
-  },
-};
+const { errorMessage, value } = useField('fieldName', isRequired);
 </script>
 ```
 
@@ -462,69 +392,47 @@ In addition to this, you can get all errors for the field using the `errors` ref
   </div>
 </template>
 
-<script>
+<script setup>
 import { useField } from 'vee-validate';
 
-export default {
-  setup() {
-    function isRequired(value) {
-      // ...
-    }
+function isRequired(value) {
+  // ...
+}
 
-    const { errors, value } = useField('fieldName', isRequired);
-
-    return {
-      errors,
-      value,
-    };
-  },
-};
+const { errors, value } = useField('fieldName', isRequired);
 </script>
 ```
 
 ### Displaying Errors with useForm
 
-If you have multiple fields, it can be cumbersome to rename each `errorMessage` ref so they don't conflict with each other. Instead, you can use the `errors` returned by `useForm` to display messages for all fields.
+You can use the `errors` returned by `useForm` to display messages for all fields.
 
 ```vue
 <template>
   <div>
-    <input name="email" v-model="email" />
-    <span>{{ errors.email }}</span>
+    <MyTextInput name="email" />
 
-    <input name="password" v-model="password" type="password" />
-    <span>{{ errors.password }}</span>
+    <MyTextInput name="password" />
+
+    <pre>{{ errors }}</pre>
   </div>
 </template>
 
-<script>
+<script setup>
 import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
+import MyTextInput from '@/components/MyTextInput.vue';
 
-export default {
-  setup() {
-    // Define a validation schema
-    const schema = yup.object({
-      email: yup.string().required().email(),
-      password: yup.string().required().min(8),
-    });
+// Define a validation schema
+const schema = yup.object({
+  email: yup.string().required().email(),
+  password: yup.string().required().min(8),
+});
 
-    // Create a form context with the validation schema
-    const { errors } = useForm({
-      validationSchema: schema,
-    });
-
-    // No need to define rules for fields
-    const { value: email } = useField('email');
-    const { value: password } = useField('password');
-
-    return {
-      errors,
-      email,
-      password,
-    };
-  },
-};
+// Create a form context with the validation schema
+const { errors } = useForm({
+  validationSchema: schema,
+});
 </script>
 ```
 
@@ -604,23 +512,13 @@ In the following example, we use the `meta.dirty` flag to check if the field val
   <button :disabled="!meta.dirty">Submit</button>
 </template>
 
-<script>
+<script setup>
 import { useField } from 'vee-validate';
 
-export default {
-  setup() {
-    // Provide initial value to make `meta.dirty` accurate
-    const { value, meta } = useField('fieldName', undefined, {
-      initialValue: '',
-    });
-
-    return {
-      errorMessage,
-      value,
-      meta,
-    };
-  },
-};
+// Provide initial value to make `meta.dirty` accurate
+const { value, meta } = useField('fieldName', undefined, {
+  initialValue: '',
+});
 </script>
 ```
 
@@ -673,30 +571,120 @@ Here is a similar example where we disable the form's submit button if no value 
   </form>
 </template>
 
-<script>
+<script setup>
 import { useField, useForm } from 'vee-validate';
 
-export default {
-  setup() {
-    const { meta, values } = useForm({
-      initialValues: {
-        email: '',
-      },
-    });
-
-    // create some fields with useField
-    const { value } = useField('email');
-
-    function submit() {
-      // send stuff to api
-    }
-
-    return {
-      value,
-      meta,
-      submit,
-    };
+const { meta, values } = useForm({
+  initialValues: {
+    email: '',
   },
-};
+});
+
+// create some fields with useField
+const { value } = useField('email');
+
+function submit() {
+  // send stuff to api
+}
 </script>
 ```
+
+### `useField` Model Events <DocBadge title="v4.6" />
+
+Quite often you will setup your component to [support `v-model` directive](https://vuejs.org/guide/components/events.html#usage-with-v-model) by adding a `modelValue` prop and emitting a `update:modelValue` event whenever the value changes.
+
+If you use `useField` in your input component you don't have to manage that yourself, it is automatically done for you. Whenever the `useField` value changes it will emit the `update:modelValue` event and whenever the `modelValue` prop changes the `useField` value will be synced and validated automatically.
+
+The only requirement is you need to define your model prop on your component explicitly.
+
+```vue
+<script setup>
+import { useField } from 'vee-validate';
+
+defineProps({
+  // Must be defined
+  modelValue: {
+    type: String,
+    default: '',
+  },
+});
+
+const { value } = useField('field', undefined);
+</script>
+```
+
+You can change the default model prop name by passing `modelPropName` option to `useField`:
+
+```vue
+<script setup>
+import { useField } from 'vee-validate';
+
+defineProps({
+  // Must be defined
+  custom: {
+    type: String,
+    default: '',
+  },
+});
+
+// component will now emit `update:custom` and sync `custom` prop value with the `value` returned from `useField`.
+const { value } = useField('field', undefined, {
+  modelPropName: 'custom',
+});
+</script>
+```
+
+You can also disable this behavior completely and manage those events yourself by passing `syncVModel` option to `useField`:
+
+```vue
+<script setup>
+import { useField } from 'vee-validate';
+
+// Now it won't emit anything and won't sync anything
+const { value } = useField('field', undefined, {
+  syncVModel: false,
+});
+</script>
+```
+
+### Binding `v-model` directly to Form Values <DocBadge title="v4.6" />
+
+If you want to skip using `useField` due to its verbosity or thinking that creating a custom input component is an overkill for your needs, there is a simpler alternative. You can use `useFieldModel` returned from `useForm` to bind your input elements directly and validate them.
+
+```vue
+<template>
+  <input name="email" v-model="email" />
+  <span>{{ errors.email }}</span>
+
+  <input name="password" v-model="password" type="password" />
+  <span>{{ errors.password }}</span>
+</template>
+
+<script setup>
+import { useForm } from 'vee-validate';
+import MyTextInput from '@/components/MyTextInput.vue';
+
+// Define a validation schema
+const simpleSchema = {
+  email(value) {
+    // validate email value and return messages...
+  },
+  name(value) {
+    // validate name value and return messages...
+  },
+};
+
+// Create a form context with the validation schema
+const { errors, useFieldModel } = useForm({
+  validationSchema: simpleSchema,
+});
+
+const email = useFieldModel('email');
+const password = useFieldModel('password');
+
+// or multiple models at once
+const [email, password] = useFieldModel(['email', 'password']);
+</script>
+```
+
+The downside of using `useFieldModel` instead of `useField` is you lose a few field-specific features like validation trigger handling and field-level meta information. This means all errors for these models will be generated whenever the value changes.

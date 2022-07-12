@@ -19,20 +19,11 @@ The most basic usage looks like this:
   </div>
 </template>
 
-<script>
+<script setup>
 import { useField } from 'vee-validate';
 
-export default {
-  setup() {
-    // a simple `name` field with basic required validator
-    const { value, errorMessage } = useField('name', inputValue => !!inputValue);
-
-    return {
-      value,
-      errorMessage,
-    };
-  },
-};
+// a simple `name` field with basic required validator
+const { value, errorMessage } = useField('name', inputValue => !!inputValue);
 </script>
 ```
 
@@ -40,20 +31,13 @@ Whenever the `value` ref is updated it will be validated and the `errorMessage` 
 
 Additionally you can use `yup` as a validator:
 
-```js
+```vue
+<script setup>
 import { useField } from 'vee-validate';
 import * as yup from 'yup';
 
-export default {
-  setup() {
-    const { value, errorMessage } = useField('email', yup.string().email().required());
-
-    return {
-      value,
-      errorMessage,
-    };
-  },
-};
+const { value, errorMessage } = useField('email', yup.string().email().required());
+</script>
 ```
 
 You are responsible for when the field validates, blurs or when its value changes. This gives you greater control over the `Field` component which may include or implement sensible defaults for most common use cases.
@@ -74,53 +58,6 @@ resetField({
 resetField({
   value: 'test@example.com', // ✅
 });
-```
-
-## API Reference
-
-The full signature of the `useField` function looks like this:
-
-```ts
-interface FieldOptions {
-  initialValue?: any; // the initial value, cannot be a ref
-  validateOnMount?: boolean; // if the field should be validated when the component is mounted
-  validateOnValueUpdate?: boolean; // if the field should be validated when the value changes (default is true)
-  bails?: boolean; // if the field validation should run all validations
-  label?: string; // A friendly name to be used in `generateMessage` config instead of the field name
-  type?: string; // The input type, can be any string. Toggles specific toggle mode for `checkbox`
-  checkedValue?: string; // Used the input type is `checkbox` or `radio` otherwise ignored
-  uncheckedValue?: string; // Used the input type is `checkbox` otherwise ignored
-  standalone?: boolean; // Excludes the field from participating in any `Form` or `useForm` contexts, useful for creating inputs that do contribute to the `values`, In other words, the form won't pick up or validate fields marked as standalone
-}
-
-interface ValidationResult {
-  errors: string[];
-  valid: boolean;
-}
-
-interface FieldState {
-  value: any;
-  dirty: boolean;
-  touched: boolean;
-  errors: string[];
-}
-
-type useField = (
-  fieldName: MaybeRef<string>,
-  rules: RuleExpression,
-  opts?: FieldOptions
-) => {
-  name: string; // The field name
-  value: Ref<any>; // the field's current value
-  meta: FieldMeta;
-  errors: Ref<string[]>; // all error messages
-  errorMessage: Ref<string | undefined>; // the first error message
-  resetField: (state?: Partial<FieldState>) => void; // resets errors and field meta, updates the current value to its initial value
-  validate: () => Promise<ValidationResult>; // validates and updates the errors and field meta
-  handleChange: (e: Event, shouldValidate?: boolean) => void; // updates the value and triggers validation
-  handleBlur: (e: Event) => void; // updates the field meta associated with blur event
-  checked: ComputedRef<boolean> | undefined; // Present if input type is checkbox
-};
 ```
 
 The validation rules can be either a string, object, function or a yup schema:
@@ -149,6 +86,91 @@ useField('password', value => {
 useField('password', yup.string().required().min(8));
 ```
 
+## API Reference
+
+### TypeScript Definition
+
+The full signature of the `useField` function looks like this:
+
+```ts
+interface FieldOptions<TValue = unknown> {
+  validateOnValueUpdate?: boolean;   // if the field should be validated when the value changes (default is true)
+  initialValue?: MaybeRef<TValue>;
+  validateOnMount?: boolean; ; // if the field should be validated when the component is mounted
+  bails?: boolean; // if the field validation should run all validations
+  label?: MaybeRef<string | undefined>; // A friendly name to be used in `generateMessage` config instead of the field name, has no effect with yup rules
+  standalone?: boolean; //  // Excludes the field from participating in any `Form` or `useForm` contexts, useful for creating inputs that do contribute to the `values`, In other words, the form won't pick up or validate fields marked as standalone
+  type?: string;  // can be either `checkbox` or `radio` or `file` any other types doesn't have an effect.
+
+  // Both of these are only used if `type="checkbox"`. They are ignored otherwise
+  checkedValue?: MaybeRef<TValue>; // If a checkbox this will be used as the new field value when it is checked.
+  uncheckedValue?: MaybeRef<TValue>; // If a single checkbox this will be used as the field value when it is unchecked.
+
+  keepValueOnUnmount?: boolean; // if the form value should be kept when the field is unmounted, default is `false`
+  modelPropName?: string; // the model prop name, default is `modelValue`
+  syncVModel?: boolean; // If the model prop should be synced with value changes for `v-model` support, default is `true`
+}
+
+interface ValidationResult {
+  errors: string[];
+  valid: boolean;
+}
+
+interface FieldState<TValue = unknown> {
+  value: TValue;
+  dirty: boolean;
+  touched: boolean;
+  errors: string[];
+}
+
+export interface FieldMeta<TValue> {
+  touched: boolean; // field was blurred or attempted submit
+  dirty: boolean; // field value was changed
+  valid: boolean; // field passed all validations
+  validated: boolean; // field was validated via user input
+  pending: boolean; // field is pending validation
+  initialValue: TValue | undefined; // initial field value
+}
+
+/**
+ * validated-only: only mutate the previously validated fields
+ * silent: do not mutate any field
+ * force: validate all fields and mutate their state
+ */
+export type SchemaValidationMode = 'validated-only' | 'silent' | 'force';
+
+export interface ValidationOptions {
+  mode: SchemaValidationMode;
+}
+
+function useField<TValue = unknown>(
+  fieldName: MaybeRef<string>,
+  rules: RuleExpression,
+  opts?: FieldOptions
+): {
+  name: MaybeRef<string>;  // The field name
+  value: Ref<TValue>; // the field's current value
+  meta: FieldMeta<TValue>;
+  errors: Ref<string[]>; // all error messages
+  errorMessage: Ref<string | undefined>; // the first error message
+  label?: MaybeRef<string | undefined>;
+  type?: string;
+  bails?: boolean;
+  checkedValue?: MaybeRef<TValue>;
+  uncheckedValue?: MaybeRef<TValue>;
+  checked?: Ref<boolean>; // Present if input type is checkbox
+  resetField(state?: Partial<FieldState<TValue>>): void; // resets errors and field meta, updates the current value to its initial value
+  handleReset(): void;
+  validate(opts?: Partial<ValidationOptions>): Promise<ValidationResult>; // validates and updates the errors and field meta
+  handleChange(e: Event | unknown, shouldValidate?: boolean): void;  // updates the value and triggers validation
+  handleBlur(e?: Event): void; // updates the field meta associated with blur event
+  setState(state: Partial<FieldState<TValue>>): void;
+  setTouched(isTouched: boolean): void;
+  setErrors(message: string | string[]): void;
+  setValue(value: TValue): void;
+};
+```
+
 ### Composable API
 
 The following sections documents each available property on the `useField` composable.
@@ -163,7 +185,7 @@ The field name, this is a static string and cannot be changed.
 
 <code-title level="4">
 
-`value: Ref<any>`
+`value: Ref<TValue = unknown>`
 
 </code-title>
 
@@ -179,7 +201,7 @@ You can also bind it with `v-model` to get two-way value binding with validation
 
 <code-title level="4">
 
-`meta: FieldMeta`
+`meta: FieldMeta<TValue = unknown>`
 
 </code-title>
 
@@ -354,19 +376,11 @@ It sets the `dirty` meta flag to `true`
   <input @change="handleChange" type="text" />
 </template>
 
-<script>
-export default {
-  setup() {
-    const { handleChange } = useField('field');
+<script setup>
+const { handleChange } = useField('field');
 
-    handleChange('new value'); // update field value and validate it
-    handleChange('new value 2', false); // update field value without validating it (you have to turn off validateOnValueUpdate)
-
-    return {
-      handleChange,
-    };
-  },
-};
+handleChange('new value'); // update field value and validate it
+handleChange('new value 2', false); // update field value without validating it (you have to turn off validateOnValueUpdate)
 </script>
 ```
 
@@ -383,16 +397,8 @@ Sets the `touched` meta flag to `true`
   <input @blur="handleBlur" type="text" />
 </template>
 
-<script>
-export default {
-  setup() {
-    const { handleBlur } = useField('field');
-
-    return {
-      handleBlur,
-    };
-  },
-};
+<script setup>
+const { handleBlur } = useField('field');
 </script>
 ```
 

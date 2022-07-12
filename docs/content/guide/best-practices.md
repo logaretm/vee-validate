@@ -12,7 +12,7 @@ vee-validate may choose to display form errors if they already existed before th
 
 For example it could a good idea to display the message if the field is `touched`:
 
-```vue{4-6}
+```vue
 <template>
   <div>
     <input name="fieldName" v-model="value" />
@@ -22,20 +22,10 @@ For example it could a good idea to display the message if the field is `touched
   </div>
 </template>
 
-<script>
+<script setup>
 import { useField } from 'vee-validate';
 
-export default {
-  setup() {
-    const { errorMessage, meta, value } = useField('fieldName');
-
-    return {
-      errorMessage,
-      meta,
-      value
-    };  
-  }
-};
+const { errorMessage, meta, value } = useField('fieldName');
 </script>
 ```
 

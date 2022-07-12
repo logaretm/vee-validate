@@ -153,6 +153,7 @@ Note that you no longer should use `v-model` on your input as `v-bind="field"` w
 | type                  | `string`                       | `undefined`      | The field type, must be provided if you want your field to behave as a `checkbox` or a `radio` input.                                                                                                                           |
 | unchecked-value       | `any`                          | `undefined`      | Only useful when the `type="checkbox"` and the field is a single checkbox field (not bound to an array value). Controls the input's value when it's unchecked.                                                                  |
 | standalone            | `boolean`                      | `false`          | Excludes the field from participating in any `Form` or `useForm` contexts, useful for creating inputs that do contribute to the `values` object. In other words, the form won't pick up or validate fields marked as standalone |
+| keepValue             | `boolean`                      | `undefined`      | If the field value should be kept in the form when it gets unmounted, default follows the form's configuration                                                                                                                  |
 
 ### Slots
 
