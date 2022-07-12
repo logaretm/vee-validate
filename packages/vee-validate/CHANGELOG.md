@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.1](https://github.com/logaretm/vee-validate/compare/v4.6.0...v4.6.1) (2022-07-12)
+
+### Bug Fixes
+
+* pass onInvalidSubmit prop to submitForm closes [#3841](https://github.com/logaretm/vee-validate/issues/3841) ([b6cf543](https://github.com/logaretm/vee-validate/commit/b6cf543b600246942fc7f6802a0cc6ea1038603a))
+
 # [4.6.0](https://github.com/logaretm/vee-validate/compare/v4.5.11...v4.6.0) (2022-07-11)
 
 ### Bug Fixes
