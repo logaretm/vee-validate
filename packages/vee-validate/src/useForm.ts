@@ -400,11 +400,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
       fieldAtPath.splice(idx, 1);
 
-      if (fieldAtPath.length === 1) {
-        fieldsByPath.value[fieldPath] = fieldAtPath[0];
-        return;
-      }
-
       if (!fieldAtPath.length) {
         delete fieldsByPath.value[fieldPath];
       }
@@ -458,9 +453,32 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     const isGroup = !!fieldInstance && isFieldGroup(fieldInstance);
     removeFieldFromPath(field, fieldName);
 
+    // clears a field error on unmounted
+    // we wait till next tick to make sure if the field is completely removed and doesn't have any siblings like checkboxes
     nextTick(() => {
-      // clears a field error on unmounted
-      // we wait till next tick to make sure if the field is completely removed and doesn't have any siblings like checkboxes
+      const shouldKeepValue = unref(field.keepValueOnUnmount) ?? unref(keepValuesOnUnmount);
+      const currentGroupValue = getFromPath(formValues, fieldName);
+      // The boolean here is we check if the field still belongs to the same control group with that name
+      // if another group claimed the name, we should avoid handling it since it is no longer the same group
+      // this happens with `v-for` over some checkboxes and field arrays.
+      // also if the group no longer exist we can assume this group was the last one that controlled it
+      const isSameGroup =
+        isGroup && (fieldInstance === fieldsByPath.value[fieldName] || !fieldsByPath.value[fieldName]);
+
+      // group field that still has a dangling value, the field may exist or not after it was removed.
+      // This used to be handled in the useField composable but the form has better context on when it should/not happen.
+      // if it does belong to it that means the group still exists
+      // #3844
+      if (isSameGroup && Array.isArray(currentGroupValue) && !shouldKeepValue) {
+        const valueIdx = currentGroupValue.findIndex(i => isEqual(i, unref(field.checkedValue)));
+        if (valueIdx > -1) {
+          const newVal = [...currentGroupValue];
+          newVal.splice(valueIdx, 1);
+          setFieldValue(fieldName, newVal as any, { force: true });
+        }
+      }
+
+      // Field was removed entirely, we should unset its path
       // #3384
       if (!fieldExists(fieldName)) {
         setFieldError(fieldName, undefined);
@@ -468,7 +486,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
         // Checks if the field was configured to be unset during unmount or not
         // Checks both the form-level config and field-level one
         // Field has the priority if it is set, otherwise it goes to the form settings
-        const shouldKeepValue = unref(field.keepValueOnUnmount) ?? unref(keepValuesOnUnmount);
         if (shouldKeepValue) {
           return;
         }

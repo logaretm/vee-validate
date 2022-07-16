@@ -453,14 +453,6 @@ function useCheckboxField<TValue = unknown>(
       handleChange(newValue, shouldValidate);
     }
 
-    onBeforeUnmount(() => {
-      const shouldKeepValue = unref(field.keepValueOnUnmount) ?? unref(form?.keepValuesOnUnmount) ?? false;
-      // toggles the checkbox value if it was checked and the unset behavior is set
-      if (checked.value && !shouldKeepValue) {
-        handleCheckboxChange(unref(checkedValue), false);
-      }
-    });
-
     return {
       ...field,
       checked,
