@@ -42,7 +42,7 @@ import { FieldContextKey, FormContextKey, IS_ABSENT } from './symbols';
 import { useFieldState } from './useFieldState';
 import { refreshInspector, registerSingleFieldWithDevtools } from './devtools';
 
-interface FieldOptions<TValue = unknown> {
+export interface FieldOptions<TValue = unknown> {
   initialValue?: MaybeRef<TValue>;
   validateOnValueUpdate: boolean;
   validateOnMount?: boolean;

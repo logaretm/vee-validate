@@ -52,7 +52,7 @@ import { validateYupSchema, validateObjectSchema } from './validate';
 import { refreshInspector, registerFormWithDevTools } from './devtools';
 import { _useFieldValue } from './useFieldState';
 
-interface FormOptions<TValues extends Record<string, any>> {
+export interface FormOptions<TValues extends Record<string, any>> {
   validationSchema?: MaybeRef<
     Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | any | undefined
   >;
