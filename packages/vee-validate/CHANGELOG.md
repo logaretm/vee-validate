@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.2](https://github.com/logaretm/vee-validate/compare/v4.6.1...v4.6.2) (2022-07-17)
+
+### Bug Fixes
+
+* avoid toggling field array checkboxes values closes [#3844](https://github.com/logaretm/vee-validate/issues/3844) ([fffad4b](https://github.com/logaretm/vee-validate/commit/fffad4bea68cc949d0bce440b5daf43901aaca7f))
+
+### Features
+
+* expose field and form options closes [#3843](https://github.com/logaretm/vee-validate/issues/3843) ([7437612](https://github.com/logaretm/vee-validate/commit/7437612ab554f8f65b445f7b065725b570a9a14a))
+
 ## [4.6.1](https://github.com/logaretm/vee-validate/compare/v4.6.0...v4.6.1) (2022-07-12)
 
 ### Bug Fixes
