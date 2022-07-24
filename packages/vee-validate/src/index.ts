@@ -22,6 +22,8 @@ export {
   FieldMeta,
   FormMeta,
   InvalidSubmissionContext,
+  InvalidSubmissionHandler,
+  GenericValidateFunction,
   ValidationOptions,
 } from './types';
 export { useResetForm } from './useResetForm';
