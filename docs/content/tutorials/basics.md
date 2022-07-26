@@ -402,4 +402,4 @@ There is a lot more you can do with vee-validate, there are other ways and featu
 - Component-less validation with the composition API
 - Generating localized messages
 
-You can visit the [guide section](/guide) to begin learning more about vee-validate.
+You can visit the [guide section](/guide/overview) to begin learning more about vee-validate.
