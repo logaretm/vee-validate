@@ -18,7 +18,7 @@ Let's quickly recap what you will be building, the component we will be building
 
 - Accept a form schema specifying the fields
 - Render the given schema
-- Use [yup](https://github.com/jquense/yup) to validate our form
+- <div>Use <a href="https://github.com/jquense/yup">yup</a> to validate our form</div>
 - Show error messages
 
 </div>
