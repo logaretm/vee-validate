@@ -471,7 +471,7 @@ const schema = Yup.object({
 
 Here is a live example:
 
-<code-sandbox id="vee-validate-v4-custom-field-labels-with-yup-qikju" title="Custom Labels with yup"></code-sandbox>
+<live-example id="vee-validate-v4-friendly-labels-with-yup"></live-example>
 
 If you are interested in how to do the same for global validators check the [i18n guide](/guide/i18n#custom-labels)
 

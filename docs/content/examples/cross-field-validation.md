@@ -8,4 +8,4 @@ order: 4
 
 This example shows how to create a password-confirmation-like rules using either `yup` or global validators.
 
-<code-sandbox id="vee-validate-cross-field-validation-rsw8t" title="vee-validate cross-field validation"></code-sandbox>
+<live-example id="vee-validate-v4-cross-field-validation"></live-example>

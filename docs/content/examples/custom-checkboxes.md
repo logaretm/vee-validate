@@ -67,7 +67,7 @@ vee-validate handles some of the complexities of the checkbox inputs nature, by 
 
 Here is a live example of a custom checkbox input:
 
-<code-sandbox id="vee-validate-custom-checkboxes-v0rnv" title="vee-validate custom checkboxes"></code-sandbox>
+<live-example id="vee-validate-v4-custom-checkboxes"></live-example>
 
 <doc-tip>
 

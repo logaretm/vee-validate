@@ -18,7 +18,7 @@ There are other composition API functions, check them out in the [API reference]
 
 This is the most basic example with the composition API, you can create a simple field and validate it in a couple of lines:
 
-<code-sandbox id="basic-example-composition-api-whocv" title="Basic Example - Composition API"> </code-sandbox>
+<live-example id="vee-validate-v4-starter-composition-example"></live-example>
 
 ## Field-level Validation
 
@@ -347,7 +347,7 @@ const validationListeners = computed(() => {
 
 Check the working example here:
 
-<code-sandbox id="cool-monad-7uy17" title="Implementing Eager Validation with VeeValidate"></code-sandbox>
+<live-example id="vee-validate-v4-eager-validation-with-composition-api"></live-example>
 
 ## Displaying Error Messages
 
@@ -462,10 +462,6 @@ const schema = Yup.object({
   acc_pazzword: Yup.string().min(5).required().label('Your Password'),
 });
 ```
-
-Here is a live example:
-
-<code-sandbox id="vee-validate-v4-custom-field-labels-with-yup-qikju" title="Custom Labels with yup"></code-sandbox>
 
 If you are interested in how to do the same for global validators check the [i18n guide](/guide/i18n#custom-labels)
 

@@ -29,4 +29,4 @@ The main key to getting this right is to sync the value in multiple formats, the
 
 Ideally, vee-validate should be synced with the non-formatted one, you can do this by updating the value manually using `setValue` or `handleChange`.
 
-<code-sandbox id="veevalidate-value-masking-currency-7187o" title="vee-validate mask example"></code-sandbox>
+<live-example id="vee-validate-v4-input-masks"></live-example>

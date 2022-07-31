@@ -231,7 +231,7 @@ This allows you to create more concise rules, you can reference any number of fi
 There is another way to use global validators which is more expressive by using JavaScript objects to describe the validation for your fields. For example this:
 
 ```js
-"required|between:0,10"
+'required|between:0,10';
 ```
 
 Could be rewritten as an object like this
@@ -322,7 +322,7 @@ Object.keys(AllRules).forEach(rule => {
 
 Here is a live demo where you can view and test all the global validators live
 
-<code-sandbox id="global-rules-playground-hd5r8" title="Global Rules Playground" view="preview"></code-sandbox>
+<live-example id="vee-validate-v4-global-rules" preview-only></live-example>
 
 #### alpha
 

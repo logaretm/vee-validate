@@ -10,4 +10,4 @@ In previous versions of vee-validate you could configure what events trigger the
 
 This example should help you figure out how to migrate this feature from older vee-validate versions.
 
-<code-sandbox id="vee-validate-v4-dynamic-validation-triggers-1ippwt" title="Dynamic validation triggers"></code-sandbox>
+<live-example id="vee-validate-v4-dynamic-validation-triggers"></live-example>

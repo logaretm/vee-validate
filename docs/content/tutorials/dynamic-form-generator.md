@@ -471,7 +471,7 @@ And that's it, you should have validation working now 🎉
 
 You can check a live sample of what we did here.
 
-<code-sandbox id="dynamic-form-generator-example-1jvdl" title="dynamic form generator example"></code-sandbox>
+<live-example id="vee-validate-v4-form-generator"></live-example>
 
 ## Conclusion
 

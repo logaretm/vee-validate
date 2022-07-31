@@ -391,7 +391,7 @@ Now you have successfully created a simple form and implemented validation and s
 
 You can check out the finished code in action:
 
-<code-sandbox id="vee-validate-basic-example-nc7eh" title="vee-validate basic validation example"></code-sandbox>
+<live-example id="vee-validate-v4-basic-example"></live-example>
 
 There is a lot more you can do with vee-validate, there are other ways and features you can use to clean up your form validation logic. Here are a few things that you can do with vee-validate:
 

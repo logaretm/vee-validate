@@ -13,6 +13,7 @@
     "@nuxt/content": "^1.13.1",
     "@nuxtjs/pwa": "^3.3.5",
     "@nuxtjs/tailwindcss": "^4.2.1",
+    "@stackblitz/sdk": "^1.8.0",
     "autoprefixer": "^10.3.4",
     "nuxt": "^2.15.8"
   },

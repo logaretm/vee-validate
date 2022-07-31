@@ -10,12 +10,12 @@ These examples showcases a simple multi-step form (form wizard), with `next` and
 
 ## Higher Order Components
 
-This example uses the higher-order components only, and uses the `v-model` to assign initial values to the steps during `next/previous` cycle.
+This example uses the higher-order components only.
 
-<code-sandbox id="vee-validate-multi-step-form-52l9n" title="vee-validate multi-step form wizard"></code-sandbox>
+<live-example id="vee-validate-v4-hoc-multi-step-form"></live-example>
 
 ## Composition API
 
-This example uses the composition API for the form itself, and thus doesn't need to use `v-model` to persist the steps values.
+This example uses the composition API to construct a system of `<FormStep>` and `<FormWizard>` components to make building form steps easier.
 
-<code-sandbox id="smoosh-bush-184bd" title="vee-validate multi-step form wizard"></code-sandbox>
+<live-example id="vee-validate-v4-multi-step-form-composition"></live-example>
