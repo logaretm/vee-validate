@@ -9,7 +9,7 @@
         <div class="mt-20 pt-2 border-t dark:border-gray-600 border-gray-200 flex items-center">
           <EditPage class="" />
 
-          <Sponsorship />
+          <SponsorButton />
         </div>
       </main>
 
@@ -69,11 +69,7 @@ export default {};
 }
 
 .main {
-  @apply py-12 px-6 min-w-0;
-
-  @screen lg {
-    @apply px-0;
-  }
+  @apply py-12 px-6 min-w-0 lg:px-0;
 }
 
 .fade-enter-active,

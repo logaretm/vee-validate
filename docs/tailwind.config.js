@@ -6,6 +6,7 @@
  */
 module.exports = {
   darkMode: 'class',
+  mode: 'jit',
   purge: {
     content: [
       'components/**/*.vue',

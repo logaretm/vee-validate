@@ -44,9 +44,7 @@ You can also help this this project and my other projects by donating one time o
 <br>
 
 <div class="flex justify-center items-center">
-  <a href="https://www.buymeacoffee.com/logaretm" target="_blank">
-      <img src="https://cdn.buymeacoffee.com/buttons/v2/default-red.png" alt="Buy Me A Coffee" width="180" title="Go to Buy Me A Coffee site">
-  </a>
+  <sponsor-button></sponsor-button>
 </div>
 
 <br>
@@ -94,7 +92,7 @@ export default {
 
 Then use the `Form` and `Field` components to render your form:
 
-```vue
+```vue-html
 <Form v-slot="{ errors }">
   <Field name="field" :rules="isRequired" />
 

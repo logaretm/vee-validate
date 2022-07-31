@@ -41,11 +41,7 @@ export default {};
 }
 
 .main {
-  @apply py-12 px-6 min-w-0;
-
-  @screen lg {
-    @apply px-0;
-  }
+  @apply py-12 px-6 min-w-0 lg:px-0;
 }
 
 .fade-enter-active,
