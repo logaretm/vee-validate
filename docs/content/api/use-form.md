@@ -401,7 +401,7 @@ const { setFieldValue } = useForm();
 setFieldValue('email', 'example@gmail.com');
 ```
 
-If ou try to set a value for a field that doesn't exist, it will be added to the form's values object and will stay there until the next `resetForm` is called.
+If you try to set a value for a field that doesn't exist, it will be added to the form's values object and will stay there until the next `resetForm` is called.
 
 <code-title level="4">
 
