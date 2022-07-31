@@ -83,7 +83,7 @@ export default {
 }
 @screen lg {
   #ad {
-    @apply fixed rounded ml-0;
+    @apply fixed rounded-md ml-0;
     width: 160px;
     z-index: 19;
     bottom: 2rem;
