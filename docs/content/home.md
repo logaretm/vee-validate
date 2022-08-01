@@ -29,13 +29,9 @@ Thanks for the following companies and individuals who are supporting vee-valida
 
 <br>
 
-<div class="flex justify-center items-center flex-wrap gap-4">
-  <a href="https://getform.io" target="_blank" class="border-2 border-transparent dark:border-gray-600 rounded-xl">
-    <img src="https://raw.githubusercontent.com/logaretm/vee-validate/main/docs/assets/img/sponsors/getform.svg" width="240" title="Go to getform.io">
-  </a>
-</div>
-
-<br>
+<a href="https://github.com/sponsors/logaretm">
+  <img src='https://sponsors.logaretm.com/sponsors.svg'>
+</a>
 
 <br>
 

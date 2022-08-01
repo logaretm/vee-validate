@@ -16,27 +16,9 @@
 
 vee-validate is a form validation library for [Vue.js](https://vuejs.org/) that allows you to validate inputs and build better form UIs in a familiar declarative style or using composition functions.
 
-## Sponsors
-
-Thanks for the following companies and individuals who are supporting vee-validate
-
-<br>
-
 <p align="center">
-  <a href="https://getform.io" target="_blank">
-    <img src="https://raw.githubusercontent.com/logaretm/vee-validate/main/docs/assets/img/sponsors/getform.svg" width="230" title="Go to getform.io">
-  </a>
-</p>
-
-<br>
-
-You can also help this this project and my other projects by donating one time or by sponsoring via the following link
-
-<br>
-
-<p align="center">
-  <a href="https://www.buymeacoffee.com/logaretm" target="_blank">
-      <img src="https://cdn.buymeacoffee.com/buttons/v2/default-red.png" alt="Buy Me A Coffee" width="180" title="Go to Buy Me A Coffee site">
+  <a href="https://github.com/sponsors/logaretm">
+    <img src='https://sponsors.logaretm.com/sponsors.svg'>
   </a>
 </p>
 

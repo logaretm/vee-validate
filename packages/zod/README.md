@@ -12,6 +12,12 @@
 
 > Official vee-validate integration with Zod schema validation
 
+<p align="center">
+  <a href="https://github.com/sponsors/logaretm">
+    <img src='https://sponsors.logaretm.com/sponsors.svg'>
+  </a>
+</p>
+
 ## Getting Started
 
 This official vee-validate plugin allows you to use zod schemas as a drop-in replacement for [yup](https://github.com/jquense/yup).

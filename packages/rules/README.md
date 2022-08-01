@@ -8,6 +8,12 @@
 
 > Common Laravel-Like rules module for vee-validate
 
+<p align="center">
+  <a href="https://github.com/sponsors/logaretm">
+    <img src='https://sponsors.logaretm.com/sponsors.svg'>
+  </a>
+</p>
+
 ## What's this
 
 VeeValidate v4 breaks up the parts that made it a popular solution for form validation into it isolated parts. The core `vee-validate` package no longer includes the rules that came by default in previous releases, the built-in rules were rebranded as **global validators**,
