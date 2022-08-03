@@ -5,6 +5,10 @@
 </p>
 
 <p align="center">
+Painless Vue forms with declarative and composition toolkit
+</p>
+
+<p align="center">
 
 <a target="_blank" href="https://www.npmjs.com/package/vee-validate">
   <img src="https://img.shields.io/npm/v/vee-validate.svg?label=&color=05bda8">
@@ -26,8 +30,6 @@
 </p>
 
 <br>
-
-vee-validate is a form validation library for [Vue.js](https://vuejs.org/) that allows you to validate inputs and build better form UIs in a familiar declarative style or using composition functions.
 
 <p align="center">
   <a href="https://github.com/sponsors/logaretm">
