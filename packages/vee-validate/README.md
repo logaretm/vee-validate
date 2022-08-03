@@ -6,9 +6,22 @@
 
 <p align="center">
 
-[![npm downloads](https://img.shields.io/npm/dm/vee-validate.svg)](https://npm-stat.com/charts.html?package=vee-validate 'Go to NPM stats')
-[![CDNJS](https://img.shields.io/cdnjs/v/vee-validate.svg)](https://cdnjs.com/libraries/vee-validate/ 'Download using CDNJS')
-[![npm version](https://img.shields.io/npm/v/vee-validate.svg)](https://www.npmjs.com/package/vee-validate 'Go to package on NPM')
+<a target="_blank" href="https://www.npmjs.com/package/vee-validate">
+  <img src="https://img.shields.io/npm/v/vee-validate.svg?label=&color=05bda8">
+</a>
+
+<a target="_blank" href="https://npm-stat.com/charts.html?package=vee-validate">
+  <img src="https://img.shields.io/npm/dm/vee-validate.svg?color=05bd6d&label=">
+</a>
+
+<a href="https://vee-validate.logaretm.com/v4/" target="_blank">
+  <img src="https://img.shields.io/badge/-docs%20and%20demos-009f53">
+</a>
+
+<a href="https://github.com/sponsors/logaretm">
+  <img src="https://img.shields.io/badge/-%E2%99%A5%20Sponsors-ec5cc6">
+
+</a>
 
 </p>
 
