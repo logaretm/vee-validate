@@ -12,7 +12,7 @@ Some inputs may have a mask applied to them, that is their value is displayed in
 For example, a currency input could insert a thousand separator to make it easier for the user to enter and read large numbers.
 
 ```sh
-# hard to reed
+# hard to read
 10000000
 
 # Much easier
