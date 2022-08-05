@@ -849,3 +849,47 @@ test('clean up form registration on unmount', async () => {
   await flushPromises();
   expect(1).toBe(1);
 });
+
+// #3874
+test('adding or removing fields should update form dirty correctly', async () => {
+  mountWithHoc({
+    setup() {
+      const initialValues = {
+        users: [''],
+      };
+
+      return {
+        initialValues,
+      };
+    },
+    template: `
+      <VForm v-slot="{ meta }" :initial-values="initialValues">
+        <FieldArray name="users" v-slot="{ remove, fields, push }">
+          <fieldset v-for="(field, idx) in fields" :key="field.key">
+            <legend>User #{{ idx }}</legend>
+            <label :for="'name_' + idx">Name</label>
+            <Field :id="'name_' + idx" :name="'users[' + idx + ']'" />
+
+            </fieldset>  
+            <button id="push" type="button" @click="push('')"></button> 
+            <button id="remove"  type="button"  @click="remove(1)"></button> 
+        </FieldArray>
+
+        <pre id="dirty">{{ meta.dirty }}</pre>
+      </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const pushBtn = document.querySelector('#push') as HTMLElement;
+  const removeBtn = document.querySelector('#remove') as HTMLElement;
+  const dirty = document.querySelector('#dirty') as HTMLElement;
+
+  expect(dirty?.textContent).toBe('false');
+  pushBtn.click();
+  await flushPromises();
+  expect(dirty.textContent).toBe('true');
+  removeBtn.click();
+  await flushPromises();
+  expect(dirty.textContent).toBe('false');
+});
