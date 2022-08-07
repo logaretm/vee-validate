@@ -36,13 +36,13 @@ In the next few examples you will find examples on how to do that in various way
 
 ## Headless UI
 
-> [Headless UI](https://headlessui.dev/): Completely unstyled, fully accessible UI components, designed to integrate beautifully with Tailwind CSS.
+> [Headless UI](https://headlessui.dev/), a completely unstyled, fully accessible UI components, designed to integrate beautifully with Tailwind CSS.
 
 <live-example id="vee-validate-v4-headless-ui" click-to-load preview-only></live-example>
 
 ## Ionic Framework
 
-> [Ionic Framework](https://ionicframework.com/): An open source mobile toolkit for building high quality, cross-platform native and web app experiences.
+> [Ionic Framework](https://ionicframework.com/), An open source mobile toolkit for building high quality, cross-platform native and web app experiences.
 
 This example is originally forked from another example created by [Aaron Saunders](https://twitter.com/aaronksaunders).
 
@@ -50,9 +50,15 @@ This example is originally forked from another example created by [Aaron Saunder
 
 ## Ant Design
 
-> [Ant Design](https://next.antdv.com/): Ant Design provides plenty of UI components to enrich your web applications, and we will improve components experience consistently.
+> [Ant Design](https://next.antdv.com/) provides plenty of UI components to enrich your web applications, and we will improve components experience consistently.
 
 <live-example id="vee-validate-v4-ant-design" click-to-load preview-only></live-example>
+
+## PrimeVue
+
+> [PrimeVue](https://www.primefaces.org/primevue/) is a rich set of open source native components for Vue.
+
+<live-example id="vee-validate-v4-prime-vue" click-to-load preview-only></live-example>
 
 ## Request a UI library
 
