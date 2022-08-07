@@ -4,4 +4,3 @@ const path = require('path');
 const fs = require('fs');
 
 fs.copyFileSync(path.join(__dirname, '../_redirects'), path.join(__dirname, '../dist/_redirects'));
-fs.copyFileSync(path.join(__dirname, '../_headers'), path.join(__dirname, '../dist/_headers'));
