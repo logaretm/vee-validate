@@ -19,6 +19,6 @@ The example integrates a form state into the store by utilizing a setup function
 
 Notice the errors are displayed immediately, this is because when using `useFieldModel` vee-validate can no longer detect the field touched state. If you want to control the validation behavior in this case, then you need to implement a custom component with `useField` or `<Field>`.
 
-</doc-tip
+</doc-tip>
 
 <live-example id="vee-validate-v4-pinia"></live-example>
