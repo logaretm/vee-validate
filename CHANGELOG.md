@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.3](https://github.com/logaretm/vee-validate/compare/v4.6.2...v4.6.3) (2022-08-07)
+
+### Features
+
+* Expose InvalidSubmissionHandler and GenericValidateFunction types ([#3853](https://github.com/logaretm/vee-validate/issues/3853)) ([3ccf27d](https://github.com/logaretm/vee-validate/commit/3ccf27d5b9c1fe9cf655b89533eb1802cb5717d4))
+
+### Reverts
+
+* Revert "chore: added headers to netlify docs" ([13fc8be](https://github.com/logaretm/vee-validate/commit/13fc8be0d4dd5d003aded34743b3fad4bfa8d0a5))
+
 ## [4.6.2](https://github.com/logaretm/vee-validate/compare/v4.6.1...v4.6.2) (2022-07-17)
 
 ### Bug Fixes
