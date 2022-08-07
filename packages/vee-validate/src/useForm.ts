@@ -633,7 +633,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   function stageInitialValue(path: string, value: unknown, updateOriginal = false) {
     setInPath(formValues, path, value);
     setFieldInitialValue(path, value);
-    if (updateOriginal) {
+    if (updateOriginal && !opts?.initialValues) {
       setInPath(originalInitialValues.value, path, deepCopy(value));
     }
   }
