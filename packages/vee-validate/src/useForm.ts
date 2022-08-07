@@ -291,11 +291,17 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
   function createModel<TPath extends keyof TValues>(path: MaybeRef<TPath>) {
     const { value } = _useFieldValue<TValues[TPath]>(path as string);
-    watch(value, () => {
-      if (!fieldExists(unref(path as string))) {
-        validate({ mode: 'validated-only' });
+    watch(
+      value,
+      () => {
+        if (!fieldExists(unref(path as string))) {
+          validate({ mode: 'validated-only' });
+        }
+      },
+      {
+        deep: true,
       }
-    });
+    );
 
     return value;
   }
