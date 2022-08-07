@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.4](https://github.com/logaretm/vee-validate/compare/v4.6.3...v4.6.4) (2022-08-07)
+
+### Bug Fixes
+
+* make sure to deep watch created models by useFieldModel ([fbe273c](https://github.com/logaretm/vee-validate/commit/fbe273c6f2c5d30a1996777561eda2268d8a02e0))
+
 ## [4.6.3](https://github.com/logaretm/vee-validate/compare/v4.6.2...v4.6.3) (2022-08-07)
 
 ### Features
