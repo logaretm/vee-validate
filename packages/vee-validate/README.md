@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-Painless Vue forms with declarative and composition toolkit
+Painless Vue forms
 </p>
 
 <p align="center">
