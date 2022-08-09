@@ -1,5 +1,6 @@
-import { isIndex, isNullOrUndefined, isObject, toNumber } from '../../../shared';
 import { getCurrentInstance, inject, InjectionKey, warn as vueWarning } from 'vue';
+import isEqual from 'fast-deep-equal';
+import { isIndex, isNullOrUndefined, isObject, toNumber } from '../../../shared';
 import { isContainerValue, isEmptyContainer, isNotNestedPath } from './assertions';
 import { PrivateFieldContext } from '../types';
 
@@ -169,13 +170,14 @@ export function resolveNextCheckboxValue<T>(currentValue: T[], checkedValue: T, 
 export function resolveNextCheckboxValue<T>(currentValue: T | T[], checkedValue: T, uncheckedValue: T) {
   if (Array.isArray(currentValue)) {
     const newVal = [...currentValue];
-    const idx = newVal.indexOf(checkedValue);
+    // Use isEqual since checked object values can possibly fail the equality check #3883
+    const idx = newVal.findIndex(v => isEqual(v, checkedValue));
     idx >= 0 ? newVal.splice(idx, 1) : newVal.push(checkedValue);
 
     return newVal;
   }
 
-  return currentValue === checkedValue ? uncheckedValue : checkedValue;
+  return isEqual(currentValue, checkedValue) ? uncheckedValue : checkedValue;
 }
 
 // https://github.com/bameyrick/throttle-typescript

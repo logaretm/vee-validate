@@ -436,7 +436,9 @@ function useCheckboxField<TValue = unknown>(
       const currentValue = unref(field.value);
       const checkedVal = unref(checkedValue);
 
-      return Array.isArray(currentValue) ? currentValue.includes(checkedVal) : checkedVal === currentValue;
+      return Array.isArray(currentValue)
+        ? currentValue.findIndex(v => isEqual(v, checkedVal)) >= 0
+        : isEqual(checkedVal, currentValue);
     });
 
     function handleCheckboxChange(e: unknown, shouldValidate = true) {
