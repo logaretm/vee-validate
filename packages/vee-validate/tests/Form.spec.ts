@@ -1207,6 +1207,57 @@ describe('<Form />', () => {
     expect(values.textContent).toBe(['Coke', ''].toString());
   });
 
+  test('checkboxes with object values', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        const schema = yup.object({
+          drink: yup.array().required().min(1),
+        });
+
+        return {
+          schema,
+        };
+      },
+      template: `
+      <VForm :validation-schema="schema" v-slot="{ errors, values }">
+        <Field name="drink" as="input" type="checkbox" :value="{ id: '' }" /> Coffee
+        <Field name="drink" as="input" type="checkbox" :value="{ id: 'tea' }" /> Tea
+        <Field name="drink" as="input" type="checkbox" :value="{ id: 'coke' }" /> Coke
+
+        <span id="err">{{ errors.drink }}</span>
+        <span id="values">{{ JSON.stringify(values.drink) }}</span>
+
+        <button>Submit</button>
+      </VForm>
+    `,
+    });
+
+    const err = wrapper.$el.querySelector('#err');
+    const values = wrapper.$el.querySelector('#values');
+    const inputs = wrapper.$el.querySelectorAll('input');
+
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(err.textContent).toBe('drink is a required field');
+    setChecked(inputs[2]);
+    await flushPromises();
+    expect(err.textContent).toBe('');
+
+    setChecked(inputs[0]);
+    await flushPromises();
+    expect(err.textContent).toBe('');
+
+    setChecked(inputs[1]);
+    await flushPromises();
+    expect(err.textContent).toBe('');
+
+    expect(values.textContent).toBe(JSON.stringify([{ id: 'coke' }, { id: '' }, { id: 'tea' }]));
+
+    setChecked(inputs[1], false);
+    await flushPromises();
+    expect(values.textContent).toBe(JSON.stringify([{ id: 'coke' }, { id: '' }]));
+  });
+
   test('checkboxes v-model value syncing', async () => {
     const drinks = ref<string[]>([]);
     const wrapper = mountWithHoc({
