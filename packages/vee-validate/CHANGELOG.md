@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.5](https://github.com/logaretm/vee-validate/compare/v4.6.4...v4.6.5) (2022-08-11)
+
+### Bug Fixes
+
+* reset the original value when resetField is called [#3891](https://github.com/logaretm/vee-validate/issues/3891) ([#3892](https://github.com/logaretm/vee-validate/issues/3892)) ([7113dcc](https://github.com/logaretm/vee-validate/commit/7113dccdeb962d8efa064ff0ebd171b2aa2f4c4d))
+
 ## [4.6.4](https://github.com/logaretm/vee-validate/compare/v4.6.3...v4.6.4) (2022-08-07)
 
 ### Bug Fixes
