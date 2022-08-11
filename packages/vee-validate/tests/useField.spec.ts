@@ -1,4 +1,4 @@
-import { useField } from '@/vee-validate';
+import { useField, useForm } from '@/vee-validate';
 import { defineComponent, onMounted, ref } from 'vue';
 import { mountWithHoc, setValue, flushPromises } from './helpers';
 
@@ -156,6 +156,42 @@ describe('useField()', () => {
   test('dirty flag is false after reset with a new value', async () => {
     mountWithHoc({
       setup() {
+        const { value, meta, resetField } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
+
+        return {
+          value,
+          meta,
+          resetField,
+        };
+      },
+      template: `
+      <input name="field" v-model="value" />
+      <span id="meta">{{ meta.dirty ? 'dirty' : 'clean' }}</span>
+      <button @click="resetField({ value: '12' })">Reset</button>
+    `,
+    });
+
+    const input = document.querySelector('input') as HTMLInputElement;
+    const meta = document.querySelector('#meta');
+
+    await flushPromises();
+    expect(meta?.textContent).toBe('clean');
+
+    setValue(input, '');
+    await flushPromises();
+    expect(meta?.textContent).toBe('dirty');
+
+    // trigger reset
+    document.querySelector('button')?.click();
+    await flushPromises();
+    expect(meta?.textContent).toBe('clean');
+  });
+
+  // #3891
+  test('dirty flag is false after reset with a new value when a form is present', async () => {
+    mountWithHoc({
+      setup() {
+        useForm();
         const { value, meta, resetField } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
 
         return {
