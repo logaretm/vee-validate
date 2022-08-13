@@ -235,7 +235,7 @@ export function debounceAsync<TFunction extends (...args: any) => Promise<any>, 
 
 export function applyModelModifiers(value: unknown, modifiers: unknown) {
   if (!isObject(modifiers)) {
-    return;
+    return value;
   }
 
   if (modifiers.number) {

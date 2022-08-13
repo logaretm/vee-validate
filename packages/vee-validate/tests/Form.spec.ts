@@ -1,7 +1,7 @@
-import { defineRule } from '@/vee-validate';
+import { defineRule, useField } from '@/vee-validate';
 import { mountWithHoc, setValue, setChecked, dispatchEvent, flushPromises } from './helpers';
 import * as yup from 'yup';
-import { computed, onErrorCaptured, reactive, ref, Ref } from 'vue';
+import { computed, defineComponent, onErrorCaptured, reactive, ref, Ref } from 'vue';
 import { InvalidSubmissionContext } from '../src/types';
 
 describe('<Form />', () => {
@@ -2715,5 +2715,48 @@ describe('<Form />', () => {
     expect(inputAt(1).checked).toBe(true);
     expect(inputAt(2).checked).toBe(true);
     expect(inputAt(3).checked).toBe(false);
+  });
+
+  // #3895 #3894
+  test('single checkbox component with v-model in a form', async () => {
+    const value = ref(false);
+    const Checkbox = defineComponent({
+      props: { value: Boolean, modelValue: Boolean },
+      template: `<input type="checkbox" @change="handleChange" :checked="checked" :value="true" />`,
+      setup() {
+        const { handleChange, checked } = useField('field', undefined, {
+          type: 'checkbox',
+          uncheckedValue: false,
+          checkedValue: true,
+        });
+
+        return {
+          handleChange,
+          checked,
+        };
+      },
+    });
+    const wrapper = mountWithHoc({
+      components: {
+        Checkbox,
+      },
+      setup() {
+        return {
+          value,
+        };
+      },
+      template: `
+      <VForm>
+        <Checkbox v-model="value" />
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const inputAt = (idx: number) => wrapper.$el.querySelectorAll('input')[idx] as HTMLInputElement;
+    expect(value.value).toBe(false);
+    setChecked(inputAt(0), true);
+    await flushPromises();
+    expect(value.value).toBe(true);
   });
 });
