@@ -2,33 +2,25 @@
   <div id="ad"></div>
 </template>
 
-<script>
-export default {
-  name: 'SidebarAd',
-  watch: {
-    $route(to, from) {
-      if (
-        to.path !== from.path &&
-        // Fix duplicated ads.
-        this.$el.querySelector('#carbonads')
-      ) {
-        this.$el.innerHTML = '';
-        this.load();
-      }
-    },
-  },
-  mounted() {
-    this.load();
-  },
-  methods: {
-    load() {
-      const script = document.createElement('script');
-      script.src = '//cdn.carbonads.com/carbon.js?serve=CE7DKKQ7&placement=logaretmgithubio';
-      script.id = '_carbonads_js';
-      this.$el.appendChild(script);
-    },
-  },
-};
+<script setup lang="ts">
+const route = useRoute();
+
+watch(route, to => {
+  const adEl = document.querySelector('#ad');
+  adEl.innerHTML = '';
+  loadAd();
+});
+
+function loadAd() {
+  const adEl = document.querySelector('#ad');
+
+  const script = document.createElement('script');
+  script.src = '//cdn.carbonads.com/carbon.js?serve=CE7DKKQ7&placement=logaretmgithubio';
+  script.id = '_carbonads_js';
+  adEl.appendChild(script);
+}
+
+onMounted(loadAd);
 </script>
 
 <style lang="postcss">

@@ -62,7 +62,7 @@ export function generateSocialImage({
   return validParts.join('/');
 }
 
-export function generateMetaTags({ title, description, image, url, keywords }) {
+export function generateMetaTags({ title, description, image, url, keywords }: any) {
   return [
     {
       name: 'description',
@@ -149,4 +149,8 @@ export function generateLinks({ url }) {
       href: url,
     },
   ];
+}
+
+export function normalizeCatchAllPath(path: string | string[]) {
+  return Array.isArray(path) ? path.join('/') : path;
 }

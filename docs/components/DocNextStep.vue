@@ -20,15 +20,12 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'DocNextStep',
-  props: {
-    title: String,
-    description: String,
-    path: String,
-  },
-};
+<script lang="ts" setup>
+defineProps({
+  title: String,
+  description: String,
+  path: String,
+});
 </script>
 
 <style lang="postcss" scoped>

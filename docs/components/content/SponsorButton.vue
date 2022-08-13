@@ -23,8 +23,4 @@
   </a>
 </template>
 
-<script>
-export default {
-  name: 'SponsorButton',
-};
-</script>
+<script setup lang="ts"></script>

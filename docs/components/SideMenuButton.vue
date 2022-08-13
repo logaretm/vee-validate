@@ -1,19 +1,20 @@
 <template>
-  <button @click="$emit('input', !value)" class="burger burger-squeeze" :class="{ open: value }">
+  <button @click="isOpen = false" class="burger burger-squeeze" :class="{ open: modelValue }">
     <div class="burger-lines"></div>
   </button>
 </template>
 
-<script>
-export default {
-  name: 'MenuButton',
-  props: {
-    value: {
-      type: Boolean,
-      required: true,
-    },
+<script setup lang="ts">
+import { useVModel } from '@vueuse/core';
+
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true,
   },
-};
+});
+
+const isOpen = useVModel(props, 'modelValue');
 </script>
 
 <style lang="postcss" scoped>

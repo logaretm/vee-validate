@@ -48,13 +48,10 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'DocFlavor',
-  props: {
-    next: String,
-  },
-};
+<script setup lang="ts">
+defineProps({
+  next: String,
+});
 </script>
 
 <style lang="postcss" scoped>

@@ -6,24 +6,14 @@
  */
 module.exports = {
   darkMode: 'class',
-  mode: 'jit',
-  purge: {
-    content: [
-      'components/**/*.vue',
-      'layouts/**/*.vue',
-      'pages/**/*.vue',
-      'plugins/**/*.js',
-      'nuxt.config.js',
-      'content/**/*.md',
-    ],
-    options: {
-      whitelistPatterns: [
-        /-(leave|enter|appear)(|-(to|from|active))$/,
-        /^(?!(|.*?:)cursor-move).+-move$/,
-        /^nuxt-link(|-exact)-active$/,
-      ],
-    },
-  },
+  content: [
+    'components/**/*.vue',
+    'layouts/**/*.vue',
+    'pages/**/*.vue',
+    'plugins/**/*.js',
+    // 'nuxt.config.js',
+    'content/**/*.md',
+  ],
   theme: {
     fontFamily: {
       display: ['Montserrat', 'sans-serif'],

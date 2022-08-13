@@ -56,7 +56,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts" setup>
 const GROUPS = [
   {
     name: 'tutorials',
@@ -125,44 +125,40 @@ const GROUPS = [
   },
 ];
 
-export default {
-  name: 'DocMenu',
-  async fetch() {
-    const categories = [];
-    for (const group of GROUPS) {
-      const pages = await this.$content(group.contentPath).only(['title', 'path', 'order', 'menuTitle', 'new']).fetch();
-      let children = [];
+const route = useRoute();
 
-      if (group.children) {
-        for (const child of group.children) {
-          const childPages = await this.$content(child.contentPath)
-            .only(['title', 'path', 'order', 'menuTitle', 'new'])
-            .fetch();
+const { data: categories } = await useAsyncData('doc-menu', async () => {
+  const categories = [];
+  for (const group of GROUPS) {
+    const pages = await queryContent(group.contentPath).only(['title', 'path', 'order', 'menuTitle', 'new']).find();
+    let children = [];
 
-          children.push({
-            title: child.name,
-            icon: child.icon,
-            expanded: this.$route.path.indexOf(child.contentPath) >= 0,
-            pages: Array.isArray(childPages) ? childPages.sort((a, b) => a.order - b.order) : [childPages],
-            order: childPages[0].order,
-          });
-        }
+    if (group.children) {
+      for (const child of group.children) {
+        const childPages = await queryContent(child.contentPath)
+          .only(['title', 'path', 'order', 'menuTitle', 'new'])
+          .find();
 
-        pages.push(...children);
+        children.push({
+          title: child.name,
+          icon: child.icon,
+          expanded: route.path.indexOf(child.contentPath) >= 0,
+          pages: Array.isArray(childPages) ? childPages.sort((a, b) => a.order - b.order) : [childPages],
+          order: childPages[0].order,
+        });
       }
 
-      categories.push({
-        title: group.name,
-        pages: Array.isArray(pages) ? pages.sort((a, b) => a.order - b.order) : [pages],
-      });
+      pages.push(...children);
     }
 
-    this.categories = categories;
-  },
-  data: () => ({
-    categories: [],
-  }),
-};
+    categories.push({
+      title: group.name,
+      pages: Array.isArray(pages) ? pages.sort((a, b) => a.order - b.order) : [pages],
+    });
+  }
+
+  return categories;
+});
 </script>
 
 <style lang="postcss" scoped>

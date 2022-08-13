@@ -4,7 +4,7 @@
     <div class="App">
       <main class="main">
         <Ad />
-        <Nuxt />
+        <slot />
 
         <div class="mt-20 pt-2 border-t dark:border-gray-600 border-gray-200 flex items-center">
           <EditPage class="" />
@@ -18,14 +18,30 @@
       </div>
 
       <div class="rside hidden xl:block">
-        <DocToc class="sticky top-0" />
+        <DocToc :toc="[]" class="sticky top-0" />
       </div>
     </div>
   </div>
 </template>
 
-<script>
-export default {};
+<script setup lang="ts">
+import { generateLinks } from '~/utils/seo';
+
+const config = useRuntimeConfig();
+const route = useRoute();
+
+const url = `${config.public.appURL}${route.path}`;
+
+const theme = useAppTheme();
+
+useHead(() => ({
+  bodyAttrs: {
+    class: theme.value,
+  },
+  link: generateLinks({
+    url,
+  }),
+}));
 </script>
 
 <style lang="postcss" scoped>

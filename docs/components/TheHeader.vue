@@ -57,23 +57,18 @@
   </header>
 </template>
 
-<script>
-export default {
-  name: 'TheHeader',
-  data: () => ({
-    isMenuOpen: false,
-    displayWarning: false,
-  }),
-  mounted() {
-    this.displayWarning = !localStorage.getItem('hide_version_warning');
-  },
-  methods: {
-    hideWarning() {
-      this.displayWarning = false;
-      localStorage.setItem('hide_version_warning', '1');
-    },
-  },
-};
+<script setup lang="ts">
+const isMenuOpen = ref(false);
+const displayWarning = ref(false);
+
+onMounted(() => {
+  displayWarning.value = !localStorage.getItem('hide_version_warning');
+});
+
+function hideWarning() {
+  displayWarning.value = false;
+  localStorage.setItem('hide_version_warning', '1');
+}
 </script>
 
 <style lang="postcss" scoped>

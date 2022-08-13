@@ -18,11 +18,11 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-h4 >>> code:not([class]) {
+h4:deep(code:not([class])) {
   @apply text-lg;
 }
 
-h5 >>> code:not([class]) {
+h5:deep(code:not([class])) {
   @apply text-base;
 }
 </style>

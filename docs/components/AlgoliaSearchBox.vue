@@ -2,110 +2,96 @@
   <div id="docsearch" class="lg:w-full mx-5" />
 </template>
 
-<script>
+<script lang="ts" setup>
 import docsearch from '@docsearch/js';
 
 function isSpecialClick(event) {
   return event.button === 1 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 }
 
-export default {
-  data() {
-    return {
-      placeholder: undefined,
-    };
-  },
-  mounted() {
-    this.initialize(this.$config.algolia, 'en');
-  },
-  methods: {
-    stripTrailingSlash(url) {
-      return url.replace(/\/$|\/(?=\?)|\/(?=#)/g, '');
-    },
-    getRelativePath(absoluteUrl) {
-      const { pathname, hash } = new URL(absoluteUrl);
-      const url = pathname + hash;
+const router = useRouter();
+const route = useRoute();
+const config = useRuntimeConfig();
 
-      return this.stripTrailingSlash(url);
-    },
-    initialize(userOptions) {
-      docsearch({
-        ...userOptions,
-        container: '#docsearch',
-        debug: process.env.NODE_ENV !== 'production',
-        navigator: {
-          navigate: evt => {
-            const { itemUrl } = evt;
-            const { pathname: hitPathname } = new URL(window.location.origin + itemUrl);
+function stripTrailingSlash(url: string) {
+  return url.replace(/\/$|\/(?=\?)|\/(?=#)/g, '');
+}
 
-            // Vue Router doesn't handle same-page navigation so we use
-            // the native browser location API for anchor navigation.
-            if (this.$router.history.current.path === hitPathname) {
-              window.location.assign(window.location.origin + itemUrl);
+function getRelativePath(absoluteUrl: string) {
+  const { pathname, hash } = new URL(absoluteUrl);
+  const url = pathname + hash;
+
+  return stripTrailingSlash(url);
+}
+
+function initialize(userOptions) {
+  docsearch({
+    ...userOptions,
+    container: '#docsearch',
+    debug: process.env.NODE_ENV !== 'production',
+    navigator: {
+      navigate: evt => {
+        const { itemUrl } = evt;
+        const { pathname: hitPathname } = new URL(window.location.origin + itemUrl);
+
+        // Vue Router doesn't handle same-page navigation so we use
+        // the native browser location API for anchor navigation.
+        if (route.path === hitPathname) {
+          window.location.assign(window.location.origin + itemUrl);
+          return;
+        }
+
+        router.push(itemUrl.replace('/v4', '/'));
+      },
+    },
+    transformItems: items => {
+      return items.map(item => {
+        return {
+          ...item,
+          url: getRelativePath(item.url),
+        };
+      });
+    },
+    hitComponent: ({ hit, children }) => {
+      return {
+        type: 'a',
+        ref: undefined,
+        constructor: undefined,
+        key: undefined,
+        props: {
+          href: hit.url,
+          onClick: event => {
+            if (isSpecialClick(event)) {
+              return;
+            }
+            // We rely on the native link scrolling when user is
+            // already on the right anchor because Vue Router doesn't
+            // support duplicated history entries.
+            if (route.fullPath === hit.url) {
               return;
             }
 
-            this.$router.push(itemUrl.replace('/v4', '/'));
+            const { pathname, hash } = new URL(window.location.origin + hit.url);
+            // If the hits goes to another page, we prevent the native link behavior
+            // to leverage the Vue Router loading feature.
+            if (route.path !== pathname) {
+              event.preventDefault();
+            }
+            // makes sure to remove base path to prevent duplicate base paths
+            const url = pathname.replace('/v4/', '/') + hash;
+            router.push(url);
           },
+          children,
         },
-        transformItems: items => {
-          return items.map(item => {
-            return {
-              ...item,
-              url: this.getRelativePath(item.url),
-            };
-          });
-        },
-        hitComponent: ({ hit, children }) => {
-          return {
-            type: 'a',
-            ref: undefined,
-            constructor: undefined,
-            key: undefined,
-            props: {
-              href: hit.url,
-              onClick: event => {
-                if (isSpecialClick(event)) {
-                  return;
-                }
-                // We rely on the native link scrolling when user is
-                // already on the right anchor because Vue Router doesn't
-                // support duplicated history entries.
-                if (this.$router.history.current.fullPath === hit.url) {
-                  return;
-                }
+        __v: null,
+      };
+    },
+  });
+}
 
-                const { pathname, hash } = new URL(window.location.origin + hit.url);
-                // If the hits goes to another page, we prevent the native link behavior
-                // to leverage the Vue Router loading feature.
-                if (this.$router.history.current.path !== pathname) {
-                  event.preventDefault();
-                }
-                // makes sure to remove base path to prevent duplicate base paths
-                const url = pathname.replace('/v4/', '/') + hash;
-                this.$router.push(url);
-              },
-              children,
-            },
-            __v: null,
-          };
-        },
-      });
-    },
-    update(options, lang) {
-      this.$el.innerHTML = '<input id="algolia-search-input" class="search-query">';
-      this.initialize(options, lang);
-    },
-  },
-  watch: {
-    $lang(newValue) {
-      this.update(this.options, newValue);
-    },
-    options(newValue) {
-      this.update(newValue, this.$lang);
-    },
-  },
-};
+onMounted(() => {
+  initialize(config.public.algolia);
+});
 </script>
 
 <style lang="postcss">

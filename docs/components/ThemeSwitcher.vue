@@ -1,8 +1,8 @@
 <template>
-  <button @click="isDark = !isDark" class="opacity-50 transition-opacity duration-200 hover:opacity-100i">
+  <button @click="onThemeToggle" class="opacity-50 transition-opacity duration-200 hover:opacity-100i">
     <transition name="popup" mode="out-in">
       <svg
-        v-if="isDark"
+        v-if="theme === 'dark'"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
         version="1.1"
@@ -37,22 +37,14 @@
   </button>
 </template>
 
-<script>
-export default {
-  name: 'ThemeSwitcher',
-  computed: {
-    isDark: {
-      get() {
-        return this.$store.state.theme === 'dark';
-      },
-      set(value) {
-        this.$store.commit('SET_THEME', value ? 'dark' : 'light');
-        localStorage.setItem('theme', this.$store.state.theme);
-        document.body.classList.toggle('dark', value);
-      },
-    },
-  },
-};
+<script setup lang="ts">
+const theme = useAppTheme();
+
+function onThemeToggle() {
+  theme.value = theme.value === 'light' ? 'dark' : 'light';
+  localStorage.setItem('theme', theme.value);
+  document.documentElement.classList.toggle('dark', theme.value === 'dark');
+}
 </script>
 
 <style lang="postcss" scoped>

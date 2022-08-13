@@ -1,46 +1,41 @@
 <template>
   <transition name="slide">
-    <div class="SideMenu lg:hidden" v-show="isOpen">
+    <div class="SideMenu lg:hidden" v-show="modelValue">
       <DocMenu />
     </div>
   </transition>
 </template>
 
-<script>
+<script lang="ts" setup>
 // import Switcher from './Switcher';
 
-export default {
-  name: 'SideMenu',
-  components: {
-    // Switcher,
+const route = useRoute();
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false,
   },
-  props: {
-    isOpen: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  model: {
-    prop: 'isOpen',
-  },
-  data: vm => ({}),
-  watch: {
-    $route() {
-      this.closeMenu();
-    },
-    isOpen(val) {
-      document.body.classList.toggle('overflow-hidden', val);
-    },
-  },
-  beforeDestroy() {
-    document.body.classList.remove('overflow-hidden');
-  },
-  methods: {
-    closeMenu() {
-      this.$emit('input', false);
-    },
-  },
-};
+});
+
+const emit = defineEmits<{
+  (e: 'update:isOpen', value: boolean): void;
+}>();
+
+function closeMenu() {
+  emit('update:isOpen', false);
+}
+
+watch(route, closeMenu);
+watch(
+  () => props.modelValue,
+  val => {
+    document.body.classList.toggle('overflow-hidden', val);
+  }
+);
+
+onBeforeUnmount(() => {
+  document.body.classList.remove('overflow-hidden');
+});
 </script>
 
 <style lang="postcss" scoped>

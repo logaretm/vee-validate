@@ -1,9 +1,9 @@
 <template>
   <aside class="font-ui">
-    <nav class="pt-24" v-show="headings.length">
+    <nav class="pt-24" v-show="toc.length">
       <p class="font-bold text-xs uppercase text-gray-400">On this page</p>
       <ul class="mt-4 space-y-1 text-sm">
-        <li v-for="heading in headings" :key="heading.id" :class="{ 'ml-4': heading.depth === 3 }">
+        <li v-for="heading in toc" :key="heading.id" :class="{ 'ml-4': heading.depth === 3 }">
           <nuxt-link class="inline-block py-1" :to="`${$route.path}#${heading.id}`">{{ heading.text }}</nuxt-link>
         </li>
       </ul>
@@ -11,19 +11,10 @@
   </aside>
 </template>
 
-<script>
-export default {
-  name: 'DocToc',
-  computed: {
-    headings() {
-      if (!this.$store.state.doc) {
-        return [];
-      }
-
-      return this.$store.state.doc.toc || [];
-    },
-  },
-};
+<script setup lang="ts">
+defineProps<{
+  toc: any[];
+}>();
 </script>
 
 <style lang="postcss" scoped>

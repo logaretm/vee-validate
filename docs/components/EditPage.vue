@@ -19,15 +19,11 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'EditPage',
-  computed: {
-    pageLink() {
-      const path = this.$route.path.replace(/\/$/g, '');
+<script setup lang="ts">
+const route = useRoute();
+const pageLink = computed(() => {
+  const path = route.path.replace(/\/$/g, '');
 
-      return `https://github.com/logaretm/vee-validate/edit/main/docs/content${path}.md`;
-    },
-  },
-};
+  return `https://github.com/logaretm/vee-validate/edit/main/docs/content${path}.md`;
+});
 </script>

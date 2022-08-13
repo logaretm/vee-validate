@@ -35,22 +35,16 @@
   </div>
 </template>
 
-<script>
-export default {
+<script setup lang="ts">
+definePageMeta({
   layout: 'home',
-  async asyncData({ $content, params, store }) {
-    const page = await $content('home').fetch();
-    store.commit('SET_DOC', page);
+});
 
-    return {
-      page,
-    };
-  },
-  head() {
-    return {
-      title: 'VeeValidate',
-      titleTemplate: '%s',
-    };
-  },
-};
+const { data: page } = await useAsyncData('home', () => queryContent('home').findOne());
+
+useHead(() => {
+  return {
+    title: 'VeeValidate',
+  };
+});
 </script>
