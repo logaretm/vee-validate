@@ -251,7 +251,7 @@ import { useForm } from 'vee-validate';
 
 // keep all values when their fields get unmounted
 const { values } = useForm({
-  keepValueOnUnmount: true,
+  keepValuesOnUnmount: true,
 });
 ```
 
