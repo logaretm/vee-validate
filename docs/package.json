@@ -1,22 +1,23 @@
 {
   "private": true,
   "scripts": {
-    "dev": "nuxt dev",
-    "serve": "nuxt dev",
-    "generate": "nuxt generate && node scripts/afterBuild.js",
-    "build": "nuxt build --target static",
-    "export": "nuxt export"
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build && node scripts/afterBuild.js"
   },
   "dependencies": {
+    "@astrojs/mdx": "^0.9.0",
+    "@astrojs/sitemap": "^1.0.0",
+    "@astrojs/vue": "^1.0.0",
     "@docsearch/css": "^3.0.0-alpha.41",
     "@docsearch/js": "^3.0.0-alpha.41",
-    "@nuxt/content": "^2.0.1",
     "@stackblitz/sdk": "^1.8.0",
-    "@vueuse/core": "^9.1.0",
+    "astro": "^1.0.5",
     "autoprefixer": "^10.3.4",
-    "cheerio": "^1.0.0-rc.12",
-    "nuxt": "^3.0.0-rc.8",
-    "shiki": "0.9.11",
-    "tailwindcss": "^3.1.8"
+    "jsdom": "^20.0.0",
+    "shiki": "^0.11.1",
+    "tailwindcss": "^3.1.8",
+    "unist-util-visit": "^4.1.0",
+    "vue": "^3.2.37"
   }
 }

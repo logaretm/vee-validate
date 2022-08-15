@@ -1,0 +1,125 @@
+---
+import path from 'path';
+import SiteHead from '@/components/SiteHead.astro';
+import TheHeader from '@/components/TheHeader.vue';
+import EditPage from '@/components/EditPage.vue';
+import SponsorButton from '@/components/SponsorButton.vue';
+import DocMenu from '@/components/DocMenu.vue';
+import DocToc from '@/components/DocToc.vue';
+import DocSearch from '@/components/DocSearch.vue';
+import ContentWrapper from '@/components/ContentWrapper.vue';
+import { buildMenu, Frontmatter } from '@/utils/seo';
+import '@/styles/tailwind.css';
+import '@/styles/page.css';
+
+const { headings, frontmatter } = Astro.props;
+const filePath = path.relative(path.resolve('../'), frontmatter.file);
+
+const menu = [
+  {
+    title: 'tutorials',
+    pages: buildMenu(await Astro.glob<Frontmatter>('../pages/tutorials/*.mdx')),
+  },
+  {
+    title: 'guide',
+    pages: buildMenu(
+      [
+      ...await Astro.glob<Frontmatter>('../pages/guide/*.mdx'),     
+      {
+        frontmatter: {
+          order: 2,
+          title: 'Components'
+        },
+        children: await Astro.glob<Frontmatter>('../pages/guide/components/*.mdx'),
+        icon: `<svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+          ></path>
+        </svg>
+        `,
+      },
+      {
+        frontmatter: {
+          order: 3,
+          title: 'Composition API'
+        },
+        children: await Astro.glob<Frontmatter>('../pages/guide/composition-api/*.mdx'),
+        icon: `
+          <svg
+            class="w-5 h5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z"
+            ></path>
+          </svg>
+        `,
+      },
+    ]),
+  },
+  {
+    title: 'examples',
+    pages: buildMenu(await Astro.glob<Frontmatter>('../pages/examples/*.mdx')),
+  },
+  {
+    title: 'resources',
+    pages: buildMenu(await Astro.glob<Frontmatter>('../pages/resources.mdx')),
+  },
+  {
+    title: 'integrations',
+    pages: buildMenu(await Astro.glob<Frontmatter>('../pages/integrations/*.mdx')),
+  },
+  {
+    title: 'api reference',
+    pages: buildMenu(await Astro.glob<Frontmatter>('../pages/api/*.mdx')),
+  },
+];
+
+---
+
+<html>
+  <SiteHead {...Astro.props} />
+  <body>
+    <TheHeader client:load currentUrl={frontmatter.url} menu={menu}  />
+    <div class="PageApp">
+      <main class="main">
+        <ContentWrapper>
+          <slot />
+        </ContentWrapper>
+
+        <div class="mt-20 pt-2 border-t dark:border-gray-600 border-gray-200 flex items-center">
+          <EditPage path={filePath} />
+
+          <SponsorButton class="ml-auto" />
+        </div>
+      </main>
+
+      <aside class="lside hidden lg:block px-5">
+        <div class="sticky top-24"> 
+
+          <DocSearch client:idle />
+          <DocMenu currentUrl={frontmatter.url} menu={menu} client:idle />
+        </div>
+      </aside>
+
+      <aside class="rside hidden xl:block">
+        <DocToc headings={headings} class="sticky top-24" />
+      </aside>
+    </div>
+  </body>
+</html>
