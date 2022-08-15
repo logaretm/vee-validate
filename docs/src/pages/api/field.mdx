@@ -1,9 +1,13 @@
 ---
+layout: ../../layouts/PageLayout.astro
 title: Field
 description: API reference for the Field component
 menuTitle: '<Field />'
 order: 1
 ---
+
+import DocTip from '@/components/DocTip.vue';
+import CodeTitle from '@/components/CodeTitle.vue';
 
 # Field
 
@@ -43,7 +47,7 @@ For example you could render a `select` input like this:
 </Field>
 ```
 
-<doc-tip>
+<DocTip>
 
 The `Field` component has partial support for native `select[multiple]` element, while it picks up the multiple values correctly, it doesn't set the initial values UI state on the element itself. You may use `v-model` here or bind the `selected` attributes on the options which is straightforward with the `value` prop exposed on the slot props.
 
@@ -54,7 +58,7 @@ The `Field` component has partial support for native `select[multiple]` element,
 </Field>
 ```
 
-</doc-tip>
+</DocTip>
 
 You can also render any globally defined components:
 
@@ -62,11 +66,11 @@ You can also render any globally defined components:
 <Field name="field" as="my-text-field" />
 ```
 
-<doc-tip>
+<DocTip>
 
 For validation to work, the rendered tag with `as` prop must conform to the events that the `Field` component listens for, you can view a list of these in the [Validation Behavior](/guide/components/validation#validation-behavior)
 
-</doc-tip>
+</DocTip>
 
 ### Rendering Complex Fields with Scoped Slots
 
@@ -81,7 +85,7 @@ The `as` prop is very easy to use but also limited as you cannot render a group 
 
 The most crucial part of rendering fields with `v-slot` is that you **bind the `field` object to your input element/input**, the `field` object contains all the common attributes and listeners required for the field to be validated, this is done automatically if you are using the `as` prop.
 
-<doc-tip title="File Inputs and Custom Components" type="warn">
+<DocTip title="File Inputs and Custom Components" type="warn">
 
 When rendering File inputs and custom components, binding the `field` object may not be a good idea in these cases as generally you need to pick the suitable attributes that you should bind. In the case of `input[type="file"]` you could do something like this:
 
@@ -93,15 +97,15 @@ When rendering File inputs and custom components, binding the `field` object may
 
 This is because the file input doesn't work with two-way binding since you cannot really force pick a file from a user's device. Custom components may emit different events and may have additional requirements for two-way binding to work. You can check the [UI Libraries](/examples/ui-libraries) section for a few examples on how to do that.
 
-</doc-tip>
+</DocTip>
 
 When using `v-slot` on the `Field` component you no longer have to provide an `as` prop and then it will become a renderless component.
 
-<doc-tip title="Passing Props and Attrs">
+<DocTip title="Passing Props and Attrs">
 
 Whichever element/component you chose to render with `<Field />` you can pass also any props or attributes the element/component would normally reieve for example if you render `input` elements you can pass any of it's attributes like `type` or `disabled` to just name a few.
 
-</doc-tip>
+</DocTip>
 
 ### Using v-model
 
@@ -161,11 +165,11 @@ Note that you no longer should use `v-model` on your input as `v-bind="field"` w
 
 The default slot gives you access to the following props:
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `meta: FieldMeta`
 
-</code-title>
+</CodeTitle>
 
 Contains useful information/flags about the field status.
 
@@ -179,43 +183,43 @@ interface FieldMeta {
 }
 ```
 
-<doc-tip title="The valid flag">
+<DocTip title="The valid flag">
 
 The `valid` flag on the meta object can be tricky, because by default it stars off with `true` for a few moments, only then it is updated to its proper state.
 
 Combining your `valid` flag checks with `dirty` will yield the expected result based on user interaction.
 
-</doc-tip>
+</DocTip>
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `errors: string[]`
 
-</code-title>
+</CodeTitle>
 
 An array containing all error messages for the field.
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `value: unknown`
 
-</code-title>
+</CodeTitle>
 
 The current value of the field, useful to compare and do conditional rendering based on the field value. **You should not use it as a target of `v-model` or `:value` binding**. Instead use the `field` prop.
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `errorMessage: ComputedRef<string | undefined>`
 
-</code-title>
+</CodeTitle>
 
 The first error in the `errors` array if available, a handy shortcut to display error messages
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `resetField: (state?: Partial<FieldState>) => void`
 
-</code-title>
+</CodeTitle>
 
 Resets the field's validation state, reverts all `meta` object to their default values and clears out the error messages, it will also reset the field value to it's initial value. Note that no error messages will be generated if the initial value is invalid after reset, the `valid` flag will be then set to `true` in that case.
 
@@ -235,19 +239,19 @@ You can use `resetField` to update the fields' current value to something other 
 <button @click="resetField({ value: 'new value' })">Reset</button>
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `handleReset: () => void`
 
-</code-title>
+</CodeTitle>
 
 Similar to `resetField` but it doesn't accept any arguments and can be safely used as an event handler. The values won't be validated after reset.
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `validate: () => Promise<{ errors: string[] }>`
 
-</code-title>
+</CodeTitle>
 
 Validates the field's current value and returns a promise that resolves with an object containing the error messages emitted by the various rule(s).
 
@@ -258,21 +262,21 @@ const { validate } = useField('field', value => !!value);
 await validate();
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `handleChange: (evt: Event | any, shouldValidate?: boolean) => void`
 
-</code-title>
+</CodeTitle>
 
 Updates the field value, and validates the field vt default. Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
 
 You can update the field value without validation by passing `false` as a second argument.
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `handleBlur: (evt: Event | any) => void`
 
-</code-title>
+</CodeTitle>
 
 Validates the field by default unless explicitly [specified by validation triggers](/guide/components/validation#customizing-validation-triggers). Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
 
@@ -280,11 +284,11 @@ It sets the `touched` meta flag to true
 
 Because this handler doesn't set the field value, it might not report validation correctly if other events are unspecified or disabled.
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `setTouched: (isTouched: boolean) => void`
 
-</code-title>
+</CodeTitle>
 
 Sets the `touched` meta flag for this field, useful to create your own `blur` handlers
 
@@ -292,42 +296,42 @@ Sets the `touched` meta flag for this field, useful to create your own `blur` ha
 
 Contains a few properties that you can use `v-bind` with to get all vee-validate features on that input. The following is a description of the properties
 
-<code-title level="5">
+<CodeTitle level="5">
 
 `field.value: any`
 
-</code-title>
+</CodeTitle>
 
 The field's current value, you can bind it with `value` prop on your inputs to sync both values. Don't use it with `v-model` otherwise your input will freeze.
 
-<code-title level="5">
+<CodeTitle level="5">
 
 `field.name: string`
 
-</code-title>
+</CodeTitle>
 
 The field name.
 
-<code-title level="5">
+<CodeTitle level="5">
 
 `field.onBlur: Function[]`
 
-</code-title>
+</CodeTitle>
 
 An array containing a few listeners for the `blur` event, it involves updating some meta information and triggers validation by default.
 
-<code-title level="5">
+<CodeTitle level="5">
 
 `field.onInput: Function[]`
 
-</code-title>
+</CodeTitle>
 
 An array containing a few listeners for the `input` event, it involves updating the field value and some meta information.
 
-<code-title level="5">
+<CodeTitle level="5">
 
 `field.onChange: Function[]`
 
-</code-title>
+</CodeTitle>
 
 An array containing a few listeners for the `change` event, it involves updating the field value and triggering validation.

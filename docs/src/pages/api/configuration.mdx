@@ -1,8 +1,11 @@
 ---
+layout: ../../layouts/PageLayout.astro
 title: Configuration
 description: VeeValidate Global Config Reference
 order: 8
 ---
+
+import DocTip from '@/components/DocTip.vue';
 
 # Configuration
 
@@ -35,7 +38,7 @@ configure({
 });
 ```
 
-<doc-tip>
+<DocTip>
 
 Note that the following config do not affect `useField`, they only apply to the `<Field />` component:
 
@@ -44,4 +47,4 @@ Note that the following config do not affect `useField`, they only apply to the 
 - `validateOnInput`
 - `validateOnModelUpdate`
 
-</doc-tip>
+</DocTip>

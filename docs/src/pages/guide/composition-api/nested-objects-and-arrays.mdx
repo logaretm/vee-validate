@@ -6,6 +6,9 @@ order: 4
 next: guide/composition-api/api-review
 ---
 
+import DocTip from '@/components/DocTip.vue';
+import DocBadge from '@/components/DocBadge.vue';
+
 # Nested Objects and Arrays
 
 vee-validate supports nested objects and arrays by using field name syntax to indicate a field's path. This allows you to structure forms easily to make data mapping straightforward without having to deal with flat form values.
@@ -90,11 +93,11 @@ Submitting the previous form would result in the following values being passed t
 }
 ```
 
-<doc-tip type="warn">
+<DocTip type="warn">
 
 vee-validate will only create nested arrays if the path expression is a complete number, for example, paths like `some.nested[0path]` will not create any arrays because the `0path` key is not a number. However `some.nested[0].path` will create the array with an object as the first item.
 
-</doc-tip>
+</DocTip>
 
 ## Avoiding Nesting
 

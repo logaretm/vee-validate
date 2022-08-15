@@ -6,6 +6,8 @@ order: 9
 new: true
 ---
 
+import LiveExample from '@/components/LiveExample.vue';
+
 # Value Formatting and Masks
 
 Some inputs may have a mask applied to them, that is their value is displayed in a different way than the actual value to make it more friendly towards the user.
@@ -30,4 +32,4 @@ The main key to getting this right is to sync the value in multiple formats, the
 
 Ideally, vee-validate should be synced with the non-formatted one, you can do this by updating the value manually using `setValue` or `handleChange`.
 
-<live-example id="vee-validate-v4-input-masks"></live-example>
+<LiveExample id="vee-validate-v4-input-masks" />

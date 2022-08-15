@@ -6,6 +6,10 @@ order: 2
 next: guide/composition-api/handling-forms
 ---
 
+import DocTip from '@/components/DocTip.vue';
+import DocBadge from '@/components/DocBadge.vue';
+import LiveExample from '@/components/LiveExample.vue';
+
 # Validation
 
 vee-validate handles complex validations in a very easy way, it supports synchronous and asynchronous validation and allows defining rules on the field-level or the form level using validation schemas with built-in support for [yup](https://github.com/jquense/yup).
@@ -19,7 +23,7 @@ There are other composition API functions, check them out in the [API reference]
 
 This is the most basic example with the composition API, you can create a simple field and validate it in a couple of lines:
 
-<live-example id="vee-validate-v4-starter-composition-example"></live-example>
+<LiveExample id="vee-validate-v4-starter-composition-example" />
 
 ## Field-level Validation
 
@@ -169,17 +173,17 @@ useForm({
 
 For more information on the `useForm` function, read [the API reference](/api/use-form).
 
-<doc-tip title="Yup Schema Optimizations" type="warn">
+<DocTip title="Yup Schema Optimizations" type="warn">
 
 There are a couple of optimization caveats when it comes to using `yup` schemas to validate your forms, be sure to check the [best practices guide](/guide/best-practices).
 
-</doc-tip>
+</DocTip>
 
-<doc-tip title="Zod Schema Plugin">
+<DocTip title="Zod Schema Plugin">
 
 There is an official integration available for [Zod validation](https://github.com/colinhacks/zod) that you can use as a drop-in replacement for `yup`. Check the [zod integration page](/integrations/zod-schema-validation).
 
-</doc-tip>
+</DocTip>
 
 ### Reactive Form Schema
 
@@ -216,11 +220,11 @@ When the validation schema changes, only the fields that were validated at least
 
 ## Validation Behavior
 
-<doc-tip>
+<DocTip>
 
 This is only relevant to the `useField` and `useForm` API
 
-</doc-tip>
+</DocTip>
 
 By default vee-validate runs validation whenever the `value` ref changes whether it was bound by a `v-model` or changed in your code:
 
@@ -348,7 +352,7 @@ const validationListeners = computed(() => {
 
 Check the working example here:
 
-<live-example id="vee-validate-v4-eager-validation-with-composition-api"></live-example>
+<LiveExample id="vee-validate-v4-eager-validation-with-composition-api" />
 
 ## Displaying Error Messages
 
@@ -519,7 +523,7 @@ const { value, meta } = useField('fieldName', undefined, {
 </script>
 ```
 
-<doc-tip title="Field Dirty Flag and Initial Values">
+<DocTip title="Field Dirty Flag and Initial Values">
   
 Notice in the previous example, we passed an `initialValue`, this is because the default field value is `undefined` which may cause unexpected `meta.dirty` results.
 
@@ -527,15 +531,15 @@ To get accurate results for the `meta.dirty` flag, you must provide an initial v
 
 To reduce the verbosity of adding an `initialValue` prop to each field, you could provide the `initialValues` prop to your `useForm` call instead.
 
-</doc-tip>
+</DocTip>
 
-<doc-tip title="Valid Flag Combinations">
+<DocTip title="Valid Flag Combinations">
   
 Since the `meta.valid` flag is initially `true` (because it just means there are no errors yet), it would cause problems if you have a "success" UI state an indicator.
 
 To avoid this case you should combine the `valid` flag with either `meta.dirty` or `meta.touched` to get an accurate representation.
 
-</doc-tip>
+</DocTip>
 
 ### Form-level Meta
 

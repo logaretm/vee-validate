@@ -1,9 +1,14 @@
 ---
+layout: ../../layouts/PageLayout.astro
 title: useForm
 description: API reference for the useForm composition API function
 menuTitle: useForm()
 order: 6
 ---
+
+import DocTip from '@/components/DocTip.vue';
+import CodeTitle from '@/components/CodeTitle.vue';
+import DocBadge from '@/components/DocBadge.vue';
 
 # useForm
 
@@ -194,19 +199,19 @@ type useForm = (opts?: FormOptions) => {
 
 ### Arguments
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `validationSchema?: any`
 
-</code-title>
+</CodeTitle>
 
 Enables form-level validation, uses the specified schema to validate the fields. The schema can be either valid vee-validate global validators or functions or a yup object schema.
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `initialValues?: MaybeRef<Record<string, any>>`
 
-</code-title>
+</CodeTitle>
 
 The initial values for the form, can be a reactive object or reference.
 
@@ -219,11 +224,11 @@ const { ... } = useForm({
 });
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `initialErrors?: Record<string, string>`
 
-</code-title>
+</CodeTitle>
 
 The initial errors for the fields, useful for non hydrated SSR applications like Laravel, errors are applied on mounted.
 
@@ -236,11 +241,11 @@ const { ... } = useForm({
 });
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `initialTouched?: Record<string, any>`
 
-</code-title>
+</CodeTitle>
 
 The initial touched status for the form fields, applied on mounted.
 
@@ -253,11 +258,11 @@ const { ... } = useForm({
 });
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `validateOnMount?: boolean`
 
-</code-title>
+</CodeTitle>
 
 If true, it will trigger validation for all fields once the form component is mounted.
 
@@ -265,11 +270,11 @@ If true, it will trigger validation for all fields once the form component is mo
 
 The following sections documents each available property on the `useForm` composable.
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `errors: Ref<Record<string, string>>`
 
-</code-title>
+</CodeTitle>
 
 An object that maps field names to their error messages, it only takes the first error message of each field if multiple exists.
 
@@ -290,11 +295,11 @@ Here is an example of its shape:
 
 Any fields without error messages will not be included in the object. So you can safety iterate over it with `Object.keys()` knowing all the included fields are invalid.
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `isSubmitting: Ref<boolean>`
 
-</code-title>
+</CodeTitle>
 
 Indicates if the submission handler is still running, once it resolves/rejects it will be automatically set to false again.
 
@@ -304,11 +309,11 @@ const { isSubmitting } = useForm();
 isSubmitting.value; // true or false
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `meta: ComputedRef<FormMeta>`
 
-</code-title>
+</CodeTitle>
 
 A computed property that contains an aggregated meta information/flags reflecting the state of all the fields inside the form.
 
@@ -330,11 +335,11 @@ const { meta } = useForm();
 meta.value; // { valid: false, invalid: true, dirty: true, .... }
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `values: Record<string, any>`
 
-</code-title>
+</CodeTitle>
 
 A reactive property that contains the current form values, you should not try to mutate it directly.
 
@@ -344,11 +349,11 @@ const { values } = useForm();
 values; // { email: 'something@gmail.com', .... }
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `setFieldError: (field: string, message: string | undefined) => void`
 
-</code-title>
+</CodeTitle>
 
 Sets a field's error message, useful for setting messages form an API or that are not available as a validation rule. Setting the message to `undefined` or an empty string clears the errors and marks the field as valid.
 
@@ -363,11 +368,11 @@ setFieldError('email', undefined);
 
 If you try to set an error for a field that doesn't exist, it will be added to the form's errors object and it will change the form's `valid` state
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `setErrors: (fields: Record<string, string | undefined>) => void`
 
-</code-title>
+</CodeTitle>
 
 Sets multiple fields error messages, uses `setFieldError` internally.
 
@@ -381,17 +386,17 @@ setErrors({
 });
 ```
 
-<doc-tip>
+<DocTip>
 
 Any missing fields you didn't pass to `setErrors` will be unaffected and their state will not change
 
-</doc-tip>
+</DocTip>
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `setFieldValue: (field: string, value: any) => void`
 
-</code-title>
+</CodeTitle>
 
 Sets a field's value, if a field does not exist it will not be reflected in the `values` ref. This will trigger validation on the field whose value changed.
 
@@ -403,11 +408,11 @@ setFieldValue('email', 'example@gmail.com');
 
 If you try to set a value for a field that doesn't exist, it will be added to the form's values object and will stay there until the next `resetForm` is called.
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `setValues: (fields: Record<string, any>) => void`
 
-</code-title>
+</CodeTitle>
 
 Sets all fields values, will trigger validation for the changed fields.
 
@@ -420,11 +425,11 @@ setValues({
 });
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `setFieldTouched: (field: string, isTouched: boolean) => void`
 
-</code-title>
+</CodeTitle>
 
 Sets a field's `touched` meta flag, if you set it for a non-existing field it will have no effect.
 
@@ -434,11 +439,11 @@ const { setFieldTouched } = useForm();
 setFieldTouched('email', true);
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `setTouched: (fields: Record<string, boolean>) => void`
 
-</code-title>
+</CodeTitle>
 
 Sets multiple fields `touched` meta flag, does not validate.
 
@@ -451,11 +456,11 @@ setTouched({
 });
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `validate: () => Promise<{ valid: boolean; errors: Record<string, string>}>`
 
-</code-title>
+</CodeTitle>
 
 Validates all the fields and populates the `errors` object, returns a promise that resolves to an object containing aggregated validation result of all fields.
 
@@ -465,11 +470,11 @@ const { validate } = useForm();
 const { valid, errors } = await validate();
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `validateField: (field: string) => Promise<{ valid: boolean; errors: string[] }>`
 
-</code-title>
+</CodeTitle>
 
 Validates a specific field inside the form, returns a promise that resolves to an object containing the validation result.
 
@@ -479,11 +484,11 @@ const { validateField } = useForm();
 const { valid, errors } = await validateField('email');
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `handleSubmit: (cb: SubmissionHandler) => (evt?: Event) => Promise<void>`
 
-</code-title>
+</CodeTitle>
 
 This is a higher order function used to create `submit` event handlers, You shouldn't use it as a handler for the events directly but rather use it to create those handlers.
 
@@ -532,17 +537,17 @@ const onSubmit = handleSubmit((values, actions) => {
 });
 ```
 
-<doc-tip title="Virtual Forms">
+<DocTip title="Virtual Forms">
 
 You can use `handleSubmit` to submit **virtual forms** that may use `form` elements or not. As you may have noticed the snippet above doesn't really care if you are using forms or not.
 
-</doc-tip>
+</DocTip>
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `submitForm: (evt: Event) => void`
 
-</code-title>
+</CodeTitle>
 
 Unlike `handleSubmit` this function can be used as an event handler for form `submit` event, it will prevent the propagation and submission of the forms using it as long as they are invalid. Once all the fields are valid it will submit the form with the native HTML behavior following the `form` element's `action` and `method` attributes.
 
@@ -562,19 +567,19 @@ const { submitForm } = useForm();
 </script>
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `submitCount: number`
 
-</code-title>
+</CodeTitle>
 
 The number of submission attempts by the user, it increments whenever `submitForm` or `handleSubmit` callback are called.
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `resetForm: (state?: Partial<FormState>) => void`
 
-</code-title>
+</CodeTitle>
 
 Clears error messages, resets the meta state for all fields and reverts their values to their initial state as well as the `submitCount` state. Accepts an optional object containing the new form state, useful if you need to reset the form values to different values other than their initial state.
 
@@ -617,11 +622,11 @@ function onSubmit(values) {
 }
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `handleReset: () => void`
 
-</code-title>
+</CodeTitle>
 
 Clears error messages, resets the meta state for all fields and reverts their values to their initial state as well as the `submitCount` state. you can use this function as handler for the `reset` events on native form elements.
 
@@ -642,11 +647,11 @@ handleReset();
 </script>
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `useFieldModel` <DocBadge title="v4.6" />
 
-</code-title>
+</CodeTitle>
 
 This creates a bindable two-way model value for the specified fields, there are a couple of signatures for `useFieldModel`. Must be called in the `setup` function.
 

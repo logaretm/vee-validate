@@ -5,6 +5,8 @@ description: VeeValidate Official Zod Schema Integration
 order: 1
 ---
 
+import DocTip from '@/components/DocTip.vue';
+
 # Zod Schema Validation
 
 <div class="mb-10 w-full flex items-center justify-center">
@@ -185,7 +187,7 @@ const onSubmit = handleSubmit(values => {
 </script>
 ```
 
-<doc-tip title="TypeScript Form Values Inference">
+<DocTip title="TypeScript Form Values Inference">
 
 vee-validate will try to do its best to infer the types of the form values if you are using the composition API, vee-validate can infer the types of the form values when you provide either a `yup` or a converted `zod` validation schema.
 
@@ -212,4 +214,4 @@ const onSubmit = handleSubmit(values => {
 });
 ```
 
-</doc-tip>
+</DocTip>

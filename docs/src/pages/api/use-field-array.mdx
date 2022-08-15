@@ -5,6 +5,9 @@ menuTitle: useFieldArray()
 order: 7
 ---
 
+import DocBadge from '@/components/DocBadge.vue';
+import CodeTitle from '@/components/CodeTitle.vue';
+
 # useFieldArray <DocBadge title="v4.5" />
 
 `useFieldArray` is a custom composition API function that allows you to manage repeatable fields and forms entries and provides common operation helpers.
@@ -73,11 +76,11 @@ function useFieldArray: (arrayPath: string): FieldArrayContext;
 
 The following sections documents each available property on the `useFieldArray` composable.
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `fields: Ref<FieldArrayEntry<TValue>[]>`
 
-</code-title>
+</CodeTitle>
 
 This is a **read-only** version of your array items, wrapped inside a `FieldArrayEntry` object which has the following interface:
 
@@ -94,11 +97,11 @@ interface FieldEntry<TValue = unknown> {
 }
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `push(item: any)`
 
-</code-title>
+</CodeTitle>
 
 Adds an item to the end of the array.
 
@@ -109,11 +112,11 @@ const { push, fields } = useFieldArray('links');
 push({ url: '' });
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `prepend(item: any)`
 
-</code-title>
+</CodeTitle>
 
 Adds an item to the start of the array.
 
@@ -124,11 +127,11 @@ const { prepend, fields } = useFieldArray('links');
 prepend({ url: '' });
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `remove(idx: number)`
 
-</code-title>
+</CodeTitle>
 
 Removes the item at the specified index from the array if it exists.
 
@@ -139,11 +142,11 @@ const { remove, fields } = useFieldArray('links');
 remove(1);
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `swap(idxA: number, idxB: number)`
 
-</code-title>
+</CodeTitle>
 
 Swaps the items at the given indexes with each other. Both indexes must exist in the array or it won't have an effect.
 
@@ -154,11 +157,11 @@ const { swap, fields } = useFieldArray('links');
 swap(3, 4);
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `insert(idx: number, item: any)`
 
-</code-title>
+</CodeTitle>
 
 Adds an item at the specified index. If the specified index will place the item out of bounds (i.e: larger than length) the operation will be ignored, you still can add items as the last item of the array.
 
@@ -169,11 +172,11 @@ const { insert, fields } = useFieldArray('links');
 insert(1, { url: '' });
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `update(idx: number, value: any)`
 
-</code-title>
+</CodeTitle>
 
 Updates the value at the specified index, note that it doesn't merge the values if they are objects. If the specified index is outside the array boundary the operation will be ignored.
 
@@ -184,11 +187,11 @@ const { update, fields } = useFieldArray('links');
 update(1, { url: '' });
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `replace(items: any[])`
 
-</code-title>
+</CodeTitle>
 
 Replaces the entire array of fields.
 

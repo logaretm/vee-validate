@@ -2,7 +2,7 @@
   <div
     class="p-6 rounded my-8 border-l-4 dark:bg-background bg-gray-100"
     :class="{
-      'border-accent-800 text-accent-800': type === 'tip',
+      'border-accent-800 text-accent-800': !type || type === 'tip',
       'border-warning text-warning': type === 'warn',
       'border-error text-error': type === 'danger',
     }"
@@ -23,7 +23,7 @@
       </svg>
 
       <p v-if="title" class="font-bold text-lg">{{ title }}</p>
-      <p v-else class="font-bold text-lg uppercase">{{ type }}</p>
+      <p v-else class="font-bold text-lg uppercase">{{ type || 'tip' }}</p>
     </div>
 
     <div class="mt-4 text-black dark:text-white px-4 lg:px-8">
@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 defineProps<{
-  title: string;
-  type: 'tip' | 'warn' | 'danger';
+  title?: string;
+  type?: 'tip' | 'warn' | 'danger';
 }>();
 </script>

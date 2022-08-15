@@ -6,6 +6,8 @@ order: 3
 next: guide/components/nested-objects-and-arrays
 ---
 
+import DocTip from '@/components/DocTip.vue';
+
 # Handling Forms
 
 vee-validate offers many helpers to handle form submissions, resets, and DX to make your forms much easier to reason about and less of a burden to maintain. The `Form` component handles the following form cases:
@@ -263,17 +265,17 @@ Here is small example:
   </span>
 </p>
 
-<doc-tip title="isSubmitting and validate()">
+<DocTip title="isSubmitting and validate()">
 
 Note that calling `validate` from the `Form` slot props will not cause the `isSubmitting` state to change, it will only change if either `submitForm` or `handleSubmit` are called or when a submit event is triggered.
 
-</doc-tip>
+</DocTip>
 
-<doc-tip title="submitCount">
+<DocTip title="submitCount">
 
 The `Form` component exposes a `submitCount` state that you can use to track the number of submission attempts done by the user. For more information check the [API Reference](/api/form).
 
-</doc-tip>
+</DocTip>
 
 ## Handling Invalid Submissions
 
@@ -386,11 +388,11 @@ You can use `validateOnMount` prop present on the `<Form />` component to force 
 
 Note that **only the non-dirty fields will be updated**. In other words, **only the fields that were not manipulated by the user will be updated**. For information on how to set the values for all fields regardless of their dirty status check the following [Setting Form Values section](#setting-form-values)
 
-<doc-tip>
+<DocTip>
 
 It's generally recommended that you provide the `initialValues`, this is because vee-validate cannot assume a reasonable initial value for your fields other than `undefined` which may cause unexpected behavior when using a 3rd-party validator that does not deal with `undefined`.
 
-</doc-tip>
+</DocTip>
 
 ## Setting Form Values
 
@@ -723,13 +725,13 @@ export default {
 </script>
 ```
 
-<doc-tip>
+<DocTip>
 
 `initialErrors` are applied once the `Form` component is mounted and is ignored after, so any changes to the `initialErrors` props won't affect the messages.
 
 See the next section for setting errors manually.
 
-</doc-tip>
+</DocTip>
 
 ## Setting Errors Manually
 
@@ -828,12 +830,12 @@ export default {
 </script>
 ```
 
-<doc-tip title="Avoid Template $refs" type="warn">
+<DocTip title="Avoid Template $refs" type="warn">
 
 Always try to avoid using the template `$refs` to gain access to the `<Form />` component methods, template `$refs` are designed to be an escape hatch of sorts when all else fails.
 
 So treat them as such and don't reach out for template `$refs` if you can help it.
 
-</doc-tip>
+</DocTip>
 
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>

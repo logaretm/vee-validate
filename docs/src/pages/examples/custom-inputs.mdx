@@ -5,6 +5,8 @@ description: Building custom inputs with useField()
 order: 2
 ---
 
+import LiveExample from '@/components/LiveExample.vue';
+
 # Custom Inputs
 
 More often than not, you will have complex requirements for your inputs. Like a custom design, multiple UI states, validation and more. You can easily build your custom components with `useField()` composable function. While it is possible to build your inputs with `<Field />` component it is not recommended as you won't have access to many of the underlying features to manage your UI state and you would rely on scoped slot props which is only available in the template.
@@ -13,4 +15,4 @@ More often than not, you will have complex requirements for your inputs. Like a 
 
 In the following example we have a complex `TextInput` component that we use for many types of fields.
 
-<live-example id="vee-validate-v4-custom-inputs"></live-example>
+<LiveExample id="vee-validate-v4-custom-inputs" />

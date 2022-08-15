@@ -1,9 +1,12 @@
 ---
+layout: ../../layouts/PageLayout.astro
 title: ErrorMessage
 description: API reference for the ErrorMessage component
 menuTitle: '<ErrorMessage />'
 order: 3
 ---
+
+import DocTip from '@/components/DocTip.vue';
 
 # ErrorMessage
 
@@ -68,11 +71,11 @@ You can use a combination of both to render a root node with children:
 </ErrorMessage>
 ```
 
-<doc-tip title="No Errors Rendering" type="danger">
+<DocTip title="No Errors Rendering" type="danger">
 
 When there are not any error messages for the field the `<ErrorMessage />` component will render nothing, even if you used the slot or `as` prop.
 
-</doc-tip>
+</DocTip>
 
 ## API
 

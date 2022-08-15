@@ -1,9 +1,13 @@
 ---
+layout: ../../layouts/PageLayout.astro
 title: useField
 description: API reference for the useField composition API function
 menuTitle: useField()
 order: 5
 ---
+
+import DocTip from '@/components/DocTip.vue';
+import CodeTitle from '@/components/CodeTitle.vue';
 
 # useField
 
@@ -175,19 +179,19 @@ function useField<TValue = unknown>(
 
 The following sections documents each available property on the `useField` composable.
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `name: string`
 
-</code-title>
+</CodeTitle>
 
 The field name, this is a static string and cannot be changed.
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `value: Ref<TValue = unknown>`
 
-</code-title>
+</CodeTitle>
 
 A reactive reference to the field's current value, can be changed and will trigger validation by default unless disabled by the `validateOnValueUpdate` option.
 
@@ -199,11 +203,11 @@ value.value = 'hello world'; // sets the value and validates the field
 
 You can also bind it with `v-model` to get two-way value binding with validation.
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `meta: FieldMeta<TValue = unknown>`
 
-</code-title>
+</CodeTitle>
 
 Contains useful information/flags about the field status, should be treated as **read only**.
 
@@ -217,13 +221,13 @@ interface FieldMeta {
 }
 ```
 
-<doc-tip title="The valid flag">
+<DocTip title="The valid flag">
 
 The `valid` flag on the meta object can be tricky, because by default it stars off with `true` for a few moments, only then it is updated to its proper state.
 
 Combining your `valid` flag checks with `dirty` will yield the expected result based on user interaction.
 
-</doc-tip>
+</DocTip>
 
 **usage**
 
@@ -233,11 +237,11 @@ const { meta } = useField('field', value => !!value);
 meta; // { valid: true, invalid: false, dirty: true, .... }
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `errors: Ref<string[]>`
 
-</code-title>
+</CodeTitle>
 
 A reactive reference containing all error messages for the field, should be treated as **read only**
 
@@ -247,11 +251,11 @@ const { errors } = useField('field', value => !!value);
 errors.value; // ['field is not valid']
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `errorMessage: ComputedRef<string | undefined>`
 
-</code-title>
+</CodeTitle>
 
 A computed reference that returns the first error in the `errors` array, a handy shortcut to display error messages
 
@@ -261,11 +265,11 @@ const { errorMessage } = useField('field', value => !!value);
 errorMessage.value; // 'field is not valid' or undefined
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `resetField: (state?: Partial<FieldState>) => void`
 
-</code-title>
+</CodeTitle>
 
 Resets the field's validation state, by default it reverts all `meta` object to their default values and clears out the error messages. It also updates the field value to its initial value without validating them.
 
@@ -298,11 +302,11 @@ resetField({
 });
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `setErrors: (errors: string | string[]) => void`
 
-</code-title>
+</CodeTitle>
 
 Sets then field errors, you can pass a single message string or an array of errors.
 
@@ -331,11 +335,11 @@ Note that it is unsafe to use this function as an event handler directly, check 
 
 You can also use `handleReset` which is a safe alternative for `resetField`.
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `handleReset: () => void`
 
-</code-title>
+</CodeTitle>
 
 Similar to `resetField` but it doesn't accept any arguments and can be safely used as an event handler. The values won't be validated after reset.
 
@@ -346,11 +350,11 @@ const { handleReset } = useField('field', value => !!value);
 handleReset();
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `validate: () => Promise<{ errors: string[] }>`
 
-</code-title>
+</CodeTitle>
 
 Validates the field's current value and returns a promise that resolves with an object containing the error messages emitted by the various rule(s).
 
@@ -361,11 +365,11 @@ const { validate } = useField('field', value => !!value);
 await validate();
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `handleChange: (evt: Event | any) => void`
 
-</code-title>
+</CodeTitle>
 
 Updates the field value, and validates the field. Can be used as an event handler to bind on the field. If the passed argument isn't an event object it will be used as the new value for that field.
 
@@ -384,11 +388,11 @@ handleChange('new value 2', false); // update field value without validating it 
 </script>
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `handleBlur: (evt: Event | any) => void`
 
-</code-title>
+</CodeTitle>
 
 Sets the `touched` meta flag to `true`
 
@@ -402,11 +406,11 @@ const { handleBlur } = useField('field');
 </script>
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `setTouched: (isTouched: boolean) => void`
 
-</code-title>
+</CodeTitle>
 
 Sets the `touched` meta flag for this field, useful to create your own `blur` handlers
 
@@ -417,11 +421,11 @@ const { setTouched } = useField('field', value => !!value);
 setTouched(true);
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `checked: ComputedRef<boolean> | undefined`
 
-</code-title>
+</CodeTitle>
 
 A computed property that indicates if the field should be checked or unchecked, only available if `type=checkbox` or `type=radio` in field options. Useful if you are creating [custom checkboxes](/examples/custom-checkboxes).
 

@@ -6,6 +6,8 @@ order: 3
 next: guide/composition-api/nested-objects-and-arrays
 ---
 
+import DocTip from '@/components/DocTip.vue';
+
 # Handling Forms
 
 vee-validate offers many helpers to handle form submissions, resets, and DX to make your forms much easier to reason about and less of a burden to maintain. The `useForm` function allow you to easily handle:
@@ -195,11 +197,11 @@ useForm({
 
 All fields created with `useField` or `<Field />` component will then grab their initial value from the object you passed to `useForm`.
 
-<doc-tip>
+<DocTip>
 
 It's generally recommended that you provide the `initialValues`, this is because vee-validate cannot assume a reasonable initial value for your fields other than `undefined` which may cause unexpected behavior when using a 3rd-party validator that does not deal with `undefined`.
 
-</doc-tip>
+</DocTip>
 
 ## Setting Form Values
 
@@ -365,11 +367,11 @@ const { value, errorMessage } = useField('email');
 </script>
 ```
 
-<doc-tip>
+<DocTip>
 
 `initialErrors` are applied once the component that called `useForm` is mounted and is ignored after, so any changes to the `initialErrors` props won't affect the messages.
 
-</doc-tip>
+</DocTip>
 
 ## Setting Errors Manually
 

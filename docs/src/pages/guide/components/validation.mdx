@@ -6,6 +6,9 @@ order: 2
 next: guide/components/handling-forms
 ---
 
+import DocTip from '@/components/DocTip.vue';
+import LiveExample from '@/components/LiveExample.vue';
+
 # Validation
 
 vee-validate handles complex validations in a very easy way, it supports synchronous and asynchronous validation and allows defining rules on the field-level or the form level using validation schemas with built-in support for [yup](https://github.com/jquense/yup).
@@ -34,11 +37,11 @@ Here is the most simple example in action:
   </span>
 </p>
 
-<doc-tip>
+<DocTip>
 
 From this point forwards, the docs will assume basic knowledge of [Vue's SFC components](https://v3.vuejs.org/guide/single-file-component.html) and will demonstrate examples as such and will be using ES6+ code snippets. So be sure to brush up on these if you haven't already.
 
-</doc-tip>
+</DocTip>
 
 ## Field-level Validation
 
@@ -210,17 +213,17 @@ export default {
 
 For more information on the `Form` component, read [the API reference](/api/form).
 
-<doc-tip title="Yup Schema Optimizations" type="warn">
+<DocTip title="Yup Schema Optimizations" type="warn">
 
 There are a couple of optimization caveats when it comes to using `yup` schemas to validate your forms, be sure to check the [best practices guide](/guide/best-practices).
 
-</doc-tip>
+</DocTip>
 
-<doc-tip title="Zod Schema Plugin">
+<DocTip title="Zod Schema Plugin">
 
 There is an official integration available for [Zod validation](https://github.com/colinhacks/zod) that you can use as a drop-in replacement for `yup`. Check the [zod integration page](/integrations/zod-schema-validation).
 
-</doc-tip>
+</DocTip>
 
 ### Reactive Form Schema
 
@@ -370,7 +373,7 @@ You can also specify if a `handleChange` call should trigger validation or not b
 </Field>
 ```
 
-<doc-tip title="Vue components validation triggers">
+<DocTip title="Vue components validation triggers">
 
 When applying `v-bind="field"` to a Vue component, be careful that the listeners will both be applied for Vue and native DOM events, meaning you might trigger validation unintentionally.
 
@@ -392,7 +395,7 @@ For custom components, it is recommended that you listen to the proper events wh
 
 For 3rd party components you may consult their documentation to figure which events to trigger validation for. Here are a few examples for the common UI frameworks [here](/examples/ui-libraries).
 
-</doc-tip>
+</DocTip>
 
 ## Displaying Error Messages
 
@@ -482,7 +485,7 @@ const schema = Yup.object({
 
 Here is a live example:
 
-<live-example id="vee-validate-v4-friendly-labels-with-yup"></live-example>
+<LiveExample id="vee-validate-v4-friendly-labels-with-yup" />
 
 If you are interested in how to do the same for global validators check the [i18n guide](/guide/i18n#custom-labels)
 
@@ -517,7 +520,7 @@ interface FieldMeta {
 }
 ```
 
-<doc-tip title="Field Dirty Flag and Initial Values">
+<DocTip title="Field Dirty Flag and Initial Values">
   
 The default value is `undefined` unless specified which may cause unexpected `meta.dirty` results. To get accurate results for the `meta.dirty` flag, you must provide an initial value to your field even if the values are empty.
 
@@ -530,9 +533,9 @@ The default value is `undefined` unless specified which may cause unexpected `me
 
 To reduce the verbosity of adding a `value` prop to each field, you could provide the `initial-values` prop to your `<Form />` component instead.
 
-</doc-tip>
+</DocTip>
 
-<doc-tip title="Valid Flag Combinations">
+<DocTip title="Valid Flag Combinations">
   
 Since the `meta.valid` flag is initially `true` (because it just means there are no errors yet), it would cause problems if you have a "success" UI state an indicator.
 
@@ -546,7 +549,7 @@ To avoid this case you could combine the `valid` flag with either `meta.dirty` o
 </Field>
 ```
 
-</doc-tip>
+</DocTip>
 
 ### Form-level Meta
 
@@ -595,13 +598,13 @@ export default {
 </script>
 ```
 
-<doc-tip title="Form Dirty Flag and Initial Values">
+<DocTip title="Form Dirty Flag and Initial Values">
   
 Notice that the `initial-values` in the previous example were provided, like mentioned for the `meta.dirty` accuracy for fields, to get accurate results for the `meta.dirty` flag, you must provide initial values to your forms even if the values are empty.
 
-</doc-tip>
+</DocTip>
 
-<doc-tip title="Valid Flag Combinations">
+<DocTip title="Valid Flag Combinations">
   
 Forms `meta.valid` flag is also initially `true` (because it just means there are no errors yet), it would cause problems if you have a "success" UI state or an indicator.
 
@@ -615,6 +618,6 @@ To avoid this case you could combine the form's `valid` flag with either `meta.d
 </Form>
 ```
 
-</doc-tip>
+</DocTip>
 
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>

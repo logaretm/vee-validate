@@ -5,6 +5,9 @@ description: Creating validatable checkbox inputs
 order: 6
 ---
 
+import DocTip from '@/components/DocTip.vue';
+import LiveExample from '@/components/LiveExample.vue';
+
 # Custom Checkboxes
 
 Checkboxes are more complex than regular text inputs, because there is always two states to keep track of which can be confusing at first. Mainly you should keep track of:
@@ -68,9 +71,9 @@ vee-validate handles some of the complexities of the checkbox inputs nature, by 
 
 Here is a live example of a custom checkbox input:
 
-<live-example id="vee-validate-v4-custom-checkboxes"></live-example>
+<LiveExample id="vee-validate-v4-custom-checkboxes" />
 
-<doc-tip>
+<DocTip>
 
 You can also specify a custom `uncheckedValue` which sets the input value to when it is unchecked.
 
@@ -83,4 +86,4 @@ const { checked, handleChange } = useField('toa', undefined, {
 });
 ```
 
-</doc-tip>
+</DocTip>

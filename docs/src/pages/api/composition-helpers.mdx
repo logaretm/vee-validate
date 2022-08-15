@@ -1,8 +1,12 @@
 ---
+layout: ../../layouts/PageLayout.astro
 title: Composition Helpers
 description: Various composable functions to compose validation logic into your components
 order: 9
 ---
+
+import DocTip from '@/components/DocTip.vue';
+import CodeTitle from '@/components/CodeTitle.vue';
 
 # Composition Helpers
 
@@ -12,17 +16,17 @@ These functions expose validation state to child components, most of these funct
 
 ## API Reference
 
-<doc-tip>
+<DocTip>
 
 All of the following code snippets assume you are using them inside a `setup` function.
 
-</doc-tip>
+</DocTip>
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `useFieldError(field?: string): ComputedRef<string | undefined>`
 
-</code-title>
+</CodeTitle>
 
 Returns a computed ref to a single field's error message, returns `undefined` if no errors were found for that field or if the field does not exist.
 
@@ -44,11 +48,11 @@ const message = useFieldError();
 message.value;
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `useFormErrors(): ComputedRef<Record<string, string | undefined>>`
 
-</code-title>
+</CodeTitle>
 
 Returns a computed ref to the error bag of the entire form, fields with no errors will not be included in the error bag object.
 
@@ -60,11 +64,11 @@ const errors = useFormErrors();
 message.value; // {}
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `useIsFieldDirty(field?: string): ComputedRef<boolean>`
 
-</code-title>
+</CodeTitle>
 
 Returns a computed ref to the specified field's `dirty` meta state.
 
@@ -85,11 +89,11 @@ import { useIsFieldDirty } from 'vee-validate';
 const isDirty = useIsFieldDirty();
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `useIsFormDirty(): ComputedRef<boolean>`
 
-</code-title>
+</CodeTitle>
 
 Returns a computed ref to the context form `dirty` meta state.
 
@@ -101,11 +105,11 @@ const isDirty = useIsFormDirty();
 isDirty.value; // true or false
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `useIsFieldTouched(field?: string): ComputedRef<boolean>`
 
-</code-title>
+</CodeTitle>
 
 Returns a computed ref to the specified field's `touched` meta state.
 
@@ -126,11 +130,11 @@ import { useIsFieldTouched } from 'vee-validate';
 const isTouched = useIsFieldTouched();
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `useIsFormTouched(): ComputedRef<boolean>`
 
-</code-title>
+</CodeTitle>
 
 Returns a computed ref to the context form `touched` meta state.
 
@@ -142,11 +146,11 @@ const isTouched = useIsFormTouched();
 isTouched.value; // true or false
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `useIsFieldValid(field?: string): ComputedRef<boolean>`
 
-</code-title>
+</CodeTitle>
 
 Returns a computed ref to the specified field's `valid` meta state, inner `value` will be `true` if the field has no errors, and `false` if it has any error message.
 
@@ -167,17 +171,17 @@ import { useIsFieldValid } from 'vee-validate';
 const isValid = useIsFieldValid();
 ```
 
-<doc-tip type="warn">
+<DocTip type="warn">
 
 Creating disabled buttons based on the `valid` attribute isn't accurate, because if the field hasn't been validated yet it, the `valid` property will be `true` which isn't accurate. You should combine `valid` checks with `dirty` state to get the most accuracy.
 
-</doc-tip>
+</DocTip>
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `useIsFormValid(): ComputedRef<boolean>`
 
-</code-title>
+</CodeTitle>
 
 Returns a computed ref to the context form `valid` meta state.
 
@@ -189,17 +193,17 @@ const isValid = useIsFormValid();
 isValid.value; // true or false
 ```
 
-<doc-tip type="warn">
+<DocTip type="warn">
 
 Creating disabled buttons based on the `valid` attribute isn't accurate, because if the form hasn't been validated yet it, the `valid` property will be `true` which isn't accurate. You should combine `valid` checks with `dirty` state to get the most accuracy.
 
-</doc-tip>
+</DocTip>
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `useValidateField(field?: string): () => Promise<ValidationResult>`
 
-</code-title>
+</CodeTitle>
 
 Returns a function that validates the field and returns a validation result object containing any errors, if the `errors` field is empty then it means the field is valid. If a field doesn't not exist it will return an empty `errors` field with a warning.
 
@@ -220,11 +224,11 @@ import { useValidateField } from 'vee-validate';
 const validate = useValidateField();
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `useValidateForm(): () => Promise<FormValidationResult>`
 
-</code-title>
+</CodeTitle>
 
 Returns a function that validates the form and returns a `Form`.
 
@@ -236,11 +240,11 @@ const validate = useValidateForm();
 await validate();
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `useIsSubmitting(): ComputedRef<boolean>`
 
-</code-title>
+</CodeTitle>
 
 Returns a computed ref to the form's `isSubmitting` state.
 
@@ -252,11 +256,11 @@ const isSubmitting = useIsSubmitting();
 useIsSubmitting.value; // true or false
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `useSubmitCount(): ComputedRef<number>`
 
-</code-title>
+</CodeTitle>
 
 Returns a computed ref to the form's `submitCount` state.
 
@@ -268,11 +272,11 @@ const count = useSubmitCount();
 count.value;
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `useResetForm(): () => void`
 
-</code-title>
+</CodeTitle>
 
 Returns a function that you can use to reset the form
 
@@ -284,11 +288,11 @@ const resetForm = useResetForm();
 resetForm(); // resets the form
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `useSubmitForm(cb: SubmissionHandler): () => void`
 
-</code-title>
+</CodeTitle>
 
 Returns a function that you can use to validate the form and submit if it turns out valid. It does this by accepting a function that should handle the submission logic like sending data to your API. That function will not run unless the form is valid and it receives all the fields current values packed in an object.
 
@@ -313,17 +317,17 @@ const submitForm = useSubmitForm((values, actions) => {
 });
 ```
 
-<doc-tip title="Virtual Forms">
+<DocTip title="Virtual Forms">
 
 While it is recommended to use actual `form` elements for accessibility, you could still use `useSubmitForm` to submit any group of data which may or may not be involved with a `form` element.
 
-</doc-tip>
+</DocTip>
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `useFieldValue(field?: string): ComputedRef<any>`
 
-</code-title>
+</CodeTitle>
 
 Returns a computed ref to the specified field's current value.
 
@@ -344,11 +348,11 @@ import { useFieldValue } from 'vee-validate';
 const currentValue = useFieldValue();
 ```
 
-<code-title level="4">
+<CodeTitle level="4">
 
 `useFormValues(): ComputedRef<Record<string, any>>`
 
-</code-title>
+</CodeTitle>
 
 Returns a computed ref to the context form current values.
 

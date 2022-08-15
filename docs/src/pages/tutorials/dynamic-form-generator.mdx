@@ -5,6 +5,9 @@ description: Learn how to build a schema-generated form
 order: 2
 ---
 
+import DocTip from '@/components/DocTip.vue';
+import LiveExample from '@/components/LiveExample.vue';
+
 # Build a Form Generator
 
 Building forms is often a repetitive task and requires a lot of back and forth to maintain. Maybe your client asked to add a field, maybe they asked to remove a field.
@@ -24,13 +27,13 @@ Let's quickly recap what you will be building, the component we will be building
 
 </div>
 
-<doc-tip>
+<DocTip>
 
 This guide will cover how to build a basic form generator.
 
 If you are looking for a more robust solution for form generation, take a look at [Formvuelate](https://formvuelate.js.org/), and it has first-party [vee-validate support](https://formvuelate.js.org/guide/veevalidate.html).
 
-</doc-tip>
+</DocTip>
 
 ## Prerequisites
 
@@ -472,7 +475,7 @@ And that's it, you should have validation working now 🎉
 
 You can check a live sample of what we did here.
 
-<live-example id="vee-validate-v4-form-generator"></live-example>
+<LiveExample id="vee-validate-v4-form-generator" />
 
 ## Conclusion
 
@@ -480,8 +483,8 @@ In this guide, you learned how to use the dynamic rendering capabilities of Vue.
 
 While the finished product is far from being complete, you can add features as needed to your form generator.
 
-<doc-tip>
+<DocTip>
 
 If you are looking for a more robust solution for form generation, take a look at [Formvuelate](https://formvuelate.js.org/), and it has first-party [vee-validate support](https://formvuelate.js.org/#vee-validate-plugin).
 
-</doc-tip>
+</DocTip>
