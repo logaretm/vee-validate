@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.6](https://github.com/logaretm/vee-validate/compare/v4.6.5...v4.6.6) (2022-08-16)
+
+### Bug Fixes
+
+* return value if no model modifiers are defined closes [#3895](https://github.com/logaretm/vee-validate/issues/3895) ([#3896](https://github.com/logaretm/vee-validate/issues/3896)) ([6ab40df](https://github.com/logaretm/vee-validate/commit/6ab40df4452c5bee8a487a37164e2273c2aaf0ba))
+
 ## [4.6.5](https://github.com/logaretm/vee-validate/compare/v4.6.4...v4.6.5) (2022-08-11)
 
 ### Bug Fixes
