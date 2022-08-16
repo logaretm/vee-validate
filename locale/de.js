@@ -10,7 +10,7 @@ const messages = {
   before: (field, [target]) => `${field} muss vor ${target} liegen`,
   between: (field, [min, max]) => `${field} muss zwischen ${min} und ${max} liegen`,
   confirmed: (field) => `Die Bestätigung von ${field} stimmt nicht überein`,
-  credit_card: (field) => `${field} ist keine gültiger Wert für Kreditkarten`,
+  credit_card: (field) => `${field} ist kein gültiger Wert für Kreditkarten`,
   date_between: (field, [min, max]) => `${field} muss zwischen ${min} und ${max} liegen`,
   date_format: (field, [format]) => `${field} muss das Format ${format} haben`,
   decimal: (field, [decimals = '*'] = []) => `${field} muss numerisch sein und darf${!decimals || decimals === '*' ? '' : ' ' + decimals} Dezimalpunkte enthalten`,
