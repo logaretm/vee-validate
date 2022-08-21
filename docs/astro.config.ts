@@ -8,8 +8,9 @@ import baseLink from './baseLink';
 
 // https://astro.build/config
 export default defineConfig({
-  site: process.env.NODE_ENV === 'production' ? 'https://vee-validate.logaretm.com/v4/' : 'http://localhost:3000/v4/',
+  site: process.env.NODE_ENV === 'production' ? 'https://vee-validate.logaretm.com/' : 'http://localhost:3000/',
   trailingSlash: 'always',
+  base: '/v4',
   integrations: [
     vue(),
     sitemap(),
