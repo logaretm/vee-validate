@@ -185,7 +185,7 @@ Here are a few examples:
 
 _*Iterate over the `users` array:*_
 
-```vue
+```vue-html
 <Form>
   <FieldArray name="users" v-slot="{ fields }">
     <div v-for="(entry, idx) in fields" :key="entry.key">
@@ -197,7 +197,7 @@ _*Iterate over the `users` array:*_
 
 _*Iterate over the `domains` inside `settings.dns` object:*_
 
-```vue
+```vue-html
 <Form>
   <FieldArray name="settings.dns.domains" v-slot="{ fields }">
     <div v-for="(entry, idx) in fields" :key="entry.key">
@@ -209,7 +209,7 @@ _*Iterate over the `domains` inside `settings.dns` object:*_
 
 _*Iterate over both `users` and `links`:*_
 
-```vue
+```vue-html
 <Form>
   <FieldArray name="users" v-slot="{ fields: users }">
     <div v-for="(userEntry, userIdx) in users">
@@ -227,7 +227,7 @@ _*Iterate over both `users` and `links`:*_
 
 The `FieldArrayEntry` item exposes a `key` property, this property is unique and is auto-generated for you so you can use it as an iteration key.
 
-```vue
+```vue-html
 <FieldArray name="users" v-slot="{ fields }">
   <div v-for="(entry, idx) in fields" :key="entry.key">
     <Field :name="`users[${idx}].name`" />

@@ -332,14 +332,14 @@ Note that configuring any of these options to `false` will not remove all the ev
 
 This might not be flexible enough for your needs, which is why you can define the same config per `Field` component instance:
 
-```vue
+```vue-html
 <!-- Turns off validation events -->
 <Field name="email" :validateOnBlur="false" :validateOnChange="false" :validateOnInput="false" />
 ```
 
 Additionally if you need to use different events or have specific needs in mind, you can control which events to listen to by using the scoped-slot `handleChange` prop of the `<Field />` component and binding it to the desired event:
 
-```vue
+```vue-html
 <!-- Listen to all events, this is the default behavior -->
 <Field v-slot="{ field }">
   <input v-bind="field" />
@@ -353,7 +353,7 @@ Additionally if you need to use different events or have specific needs in mind,
 
 In addition to those events, you can also validate when the `<Field />` or `<Form />` components are mounted with `validateOnMount` prop present on both components:
 
-```vue
+```vue-html
 <!-- Trigger validation when this field is mounted (initial validation) -->
 <Field name="name" validate-on-mount />
 
@@ -366,7 +366,7 @@ In addition to those events, you can also validate when the `<Field />` or `<For
 
 You can also specify if a `handleChange` call should trigger validation or not by providing the second argument:
 
-```vue
+```vue-html
 <!-- Only update field value without validating it -->
 <Field v-slot="{ field, handleChange }">
   <input @change="$event => handleChange($event, false)" :value="field.value" />
@@ -379,7 +379,7 @@ When applying `v-bind="field"` to a Vue component, be careful that the listeners
 
 An example of that could be `input[type="file"]` inputs, because you cannot bind the `value` attribute to a file instance which means two-way binding won't work there. In that case, only listing to handful of events makes more sense:
 
-```vue
+```vue-html
 <Field name="file" v-slot="{ handleChange, handleBlur }">
   <input type="file" @change="handleChange" @blur="handleBlur" />
 </Field>
@@ -387,7 +387,7 @@ An example of that could be `input[type="file"]` inputs, because you cannot bind
 
 For custom components, it is recommended that you listen to the proper events when using `v-bind` with custom components, the following sample uses `modelValue` events.
 
-```vue
+```vue-html
 <Field name="custom" v-slot="{ handleChange, value }">
   <CustomInput :modelValue="value" @update:modelValue="handleChange" />
 </Field>
@@ -403,7 +403,7 @@ For 3rd party components you may consult their documentation to figure which eve
 
 If you intend to use the scoped slot on the `Field` component, you can access `errors` or `errorMessage` on the scoped slot props to render your messages:
 
-```vue
+```vue-html
 <Field name="field" :rules="rules" v-slot="{ field, errors, errorMessage }">
   <input v-bind="field" type="text" />
   <span>{{ errors[0] }}</span>
@@ -418,7 +418,7 @@ This is convenient if you have a complex markup for your input and would like to
 
 As you noticed the `<Form />` component gives you access to the `errors` on its scoped-slot props which you can use to display any error messages for any `<Field />` within that form:
 
-```vue
+```vue-html
 <Form v-slot="{ errors }">
   <Field name="field" :rules="rules" />
   {{ errors.field }}
@@ -427,7 +427,7 @@ As you noticed the `<Form />` component gives you access to the `errors` on its 
 
 and if you would like, you could display all error messages for your fields by iterating over the `errors` object:
 
-```vue
+```vue-html
 <Form v-slot="{ errors }">
   <template v-if="Object.keys(errors).length">
     <p>Please correct the following errors</p>
@@ -448,7 +448,7 @@ and if you would like, you could display all error messages for your fields by i
 
 You've seen how the `ErrorMessage` works in the previous examples, by default the `ErrorMessage` component renders a `span` but you can specify any kind of HTML element or global component to the `as` prop.
 
-```vue
+```vue-html
 <Form>
   <Field name="field" :rules="rules" />
   <!-- Render the error message as a div element -->
@@ -485,7 +485,7 @@ const schema = Yup.object({
 
 Here is a live example:
 
-<LiveExample id="vee-validate-v4-friendly-labels-with-yup" />
+<LiveExample client:visible id="vee-validate-v4-friendly-labels-with-yup" />
 
 If you are interested in how to do the same for global validators check the [i18n guide](/guide/i18n#custom-labels)
 
@@ -501,7 +501,7 @@ Each field has metadata associated with it, the `meta` property available on the
 - `pending`: If the field's validations are still running, useful for long-running async validation.
 - `initialValue`: The field's initial value, is `undefined` if you didn't specify any.
 
-```vue
+```vue-html
 <Field name="email" type="email" :rules="validateEmail" v-slot="{ field, meta }">
   <input v-bind="field" />
   <pre>{{ meta }}</pre>
@@ -524,7 +524,7 @@ interface FieldMeta {
   
 The default value is `undefined` unless specified which may cause unexpected `meta.dirty` results. To get accurate results for the `meta.dirty` flag, you must provide an initial value to your field even if the values are empty.
 
-```vue
+```vue-html
 <Field name="email" value="" type="email" v-slot="{ field, meta }">
   <input v-bind="field" />
   <pre>{{ meta }}</pre>
@@ -541,7 +541,7 @@ Since the `meta.valid` flag is initially `true` (because it just means there are
 
 To avoid this case you could combine the `valid` flag with either `meta.dirty` or `meta.touched` to get accurate representation:
 
-```vue
+```vue-html
 <Field name="email" type="email" :rules="validateEmail" v-slot="{ field, errorMessage, meta }">
   <input v-bind="field" />
   <span v-if="errorMessage">⛔️ {{ errorMessage }}</span>
@@ -563,7 +563,7 @@ The form's metadata properties are:
 - `pending`: If at least one field's validation is still pending.
 - `initialValues`: All fields' initial values, packed into an object where the keys are the field names.
 
-```vue
+```vue-html
 <Form v-slot="{ meta }">
   <!-- Some fields -->
   <pre>{{ meta }}</pre>
@@ -610,7 +610,7 @@ Forms `meta.valid` flag is also initially `true` (because it just means there ar
 
 To avoid this case you could combine the form's `valid` flag with either `meta.dirty` or `meta.touched` to get accurate representation:
 
-```vue
+```vue-html
 <Form v-slot="{ meta, errors }">
   <Field name="email" type="email" :rules="validateEmail" />
   <span v-if="errors.email">⛔️ {{ errors.email }}</span>

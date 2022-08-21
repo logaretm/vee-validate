@@ -39,7 +39,7 @@ The `as` prop tells the Field component which tag to render in its place, you ca
 
 For example you could render a `select` input like this:
 
-```vue
+```vue-html
 <Field name="field" as="select">
   <option>Coffee</option>
   <option>Tea</option>
@@ -51,7 +51,7 @@ For example you could render a `select` input like this:
 
 The `Field` component has partial support for native `select[multiple]` element, while it picks up the multiple values correctly, it doesn't set the initial values UI state on the element itself. You may use `v-model` here or bind the `selected` attributes on the options which is straightforward with the `value` prop exposed on the slot props.
 
-```vue
+```vue-html
 <Field v-slot="{ value }" name="drink" as="select" multiple>
   <option value="" disabled>Select a drink</option>
   <option v-for="drink in drinks" :key="drink" :value="drink" :selected="value && value.includes(drink)">{{ drink }}</option>
@@ -62,7 +62,7 @@ The `Field` component has partial support for native `select[multiple]` element,
 
 You can also render any globally defined components:
 
-```vue
+```vue-html
 <Field name="field" as="my-text-field" />
 ```
 
@@ -76,7 +76,7 @@ For validation to work, the rendered tag with `as` prop must conform to the even
 
 The `as` prop is very easy to use but also limited as you cannot render a group of markup. Fortunately the `Field` component makes use of the scoped-slots (v-slot) feature to allow you to render complex markup:
 
-```vue
+```vue-html
 <Field name="password" v-slot="{ field }">
   <input v-bind="field" type="password">
   <p>Hint: Enter a secure password you can remember</p>
@@ -89,7 +89,7 @@ The most crucial part of rendering fields with `v-slot` is that you **bind the `
 
 When rendering File inputs and custom components, binding the `field` object may not be a good idea in these cases as generally you need to pick the suitable attributes that you should bind. In the case of `input[type="file"]` you could do something like this:
 
-```vue
+```vue-html
 <Field name="file" v-slot="{ handleChange, handleBlur }">
   <input type="file" @change="handleChange" @blur="handleBlur" />
 </Field>
@@ -115,14 +115,14 @@ Because of this, using `v-model` will conflict with `v-bind="field"` because bot
 
 For simple inputs this is not an issue:
 
-```vue
+```vue-html
 <!-- ✅  Simple Field -->
 <Field type="text" name="name" v-model="name" />
 ```
 
 But for complex inputs rendered with scoped slots (v-slot), you need to place it on the `Field` component tag itself, not the rendered input.
 
-```vue
+```vue-html
 <!-- DONT: ⛔️  v-model on input tag -->
 <Field type="text" name="name" v-slot="{ field }">
   <!-- Conflict between v-model and `v-bind=field` -->
@@ -225,7 +225,7 @@ Resets the field's validation state, reverts all `meta` object to their default 
 
 Note that it is unsafe to use this function as an event handler directly, check the following snippet:
 
-```vue
+```vue-html
 <!-- ⛔️ Unsafe -->
 <button @click="resetField">Reset</button>
 
@@ -235,7 +235,7 @@ Note that it is unsafe to use this function as an event handler directly, check 
 
 You can use `resetField` to update the fields' current value to something other than its initial value,
 
-```vue
+```vue-html
 <button @click="resetField({ value: 'new value' })">Reset</button>
 ```
 

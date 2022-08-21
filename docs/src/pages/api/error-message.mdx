@@ -47,13 +47,13 @@ export default {
 
 The `ErrorMessage` component accepts an `as` prop that allows to control the root node to render for your error messages, by default it will render a `span` if none provided if there is an error message for the field.
 
-```vue
+```vue-html
 <ErrorMessage name="email" as="p" />
 ```
 
 For more flexible markup and the ability to render multiple root nodes, you can use the `ErrorMessage` component's default scoped slot
 
-```vue
+```vue-html
 <ErrorMessage name="email" v-slot="{ message }">
   <p>Error:</p>
   <p>{{ message }}</p>
@@ -64,7 +64,7 @@ If an `as` prop is not provided while having a slot, it will render the slot con
 
 You can use a combination of both to render a root node with children:
 
-```vue
+```vue-html
 <ErrorMessage as="div" name="email" v-slot="{ message }">
   <p>Error:</p>
   <p>{{ message }}</p>

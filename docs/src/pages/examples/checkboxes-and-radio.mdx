@@ -26,7 +26,7 @@ The only requirements are that the fields:
 
 When using `Field` slot props with checkbox/radio components, you still need to provide the `type` and `value` props to the `Field` node itself.
 
-```vue
+```vue-html
 <Field v-slot="{ field }" name="terms" type="checkbox" :value="false">
   <label>
     <input type="checkbox" name="terms" v-bind="field" :value="false" />
@@ -37,7 +37,7 @@ When using `Field` slot props with checkbox/radio components, you still need to 
 
 The same caveat applies if you are rendering another component with `as` prop:
 
-```vue
+```vue-html
 <Field as="my-checkbox" name="terms" type="checkbox" :value="false" />
 ```
 
@@ -47,12 +47,12 @@ The same caveat applies if you are rendering another component with `as` prop:
 
 vee-validate handles radio input groups as long as they have the `type="radio"` and the same `name` prop value. The selected value will be present in the `values` object.
 
-<LiveExample id="vee-validate-v4-radio" />
+<LiveExample client:visible id="vee-validate-v4-radio" />
 
 ## Validating Checkbox Inputs
 
 vee-validate handles checkboxes as long as they have the `type="checkbox"` prop and the same `name` prop value. The selected values will be collected in an array similar to what `v-model` does.
 
-<LiveExample id="vee-validate-v4-checkboxes" />
+<LiveExample client:visible id="vee-validate-v4-checkboxes" />
 
 If there is only one checkbox then its value will be directly assigned in the `values` object without binding it in an array.

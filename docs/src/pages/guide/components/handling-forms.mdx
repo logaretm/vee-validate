@@ -109,7 +109,7 @@ If you have a `submit` listener on the `Form` component, vee-validate assumes yo
 
 But in the case when you don't have a `submit` listener on your form, vee-validate assumes that the form will be submitted using the native HTML submission that causes the page to "reload". However vee-validate will make sure the form is not submitted unless all fields are valid, here is an example:
 
-```vue
+```vue-html
 <Form method="post" action="/api/users" :validation-schema="schema" />
   <Field name="email" />
   <Field name="name" type="email" />
@@ -227,7 +227,7 @@ This will prevent submitting the form until all fields are valid.
 
 You can validate the form without submissions using the `validate()` slot prop function:
 
-```vue
+```vue-html
 <Form v-slot="{ validate }" :validation-schema="schema">
   <Field name="email" type="email" />
   <ErrorMessage name="email" />
@@ -402,7 +402,7 @@ You can call them with template `$refs` and for an added convenience you can cal
 
 **Using scoped slot props**
 
-```vue
+```vue-html
 <Form v-slot="{ setFieldValue, setValues }">
   <Field name="email"  />
   <ErrorMessage name="email" />
@@ -561,7 +561,7 @@ export default {
 
 Alternatively if you plan to use the scoped slot for complex markup, you can use the `handleReset` slot prop function to trigger the reset manually:
 
-```vue
+```vue-html
 <Form v-slot="{ handleReset }" :validation-schema="schema">
   <Field name="email" type="email" />
   <ErrorMessage name="email" />
@@ -745,7 +745,7 @@ Here are a few snippets showcasing its usage in these various scenarios:
 
 **Using scoped slot props (recommended)**
 
-```vue
+```vue-html
 <Form v-slot="{ setFieldError, setErrors }">
   <Field name="email"  />
   <ErrorMessage name="email" />

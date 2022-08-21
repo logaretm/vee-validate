@@ -23,7 +23,7 @@ There are other composition API functions, check them out in the [API reference]
 
 This is the most basic example with the composition API, you can create a simple field and validate it in a couple of lines:
 
-<LiveExample id="vee-validate-v4-starter-composition-example" />
+<LiveExample client:visible id="vee-validate-v4-starter-composition-example" />
 
 ## Field-level Validation
 
@@ -282,7 +282,7 @@ const { errorMessage, value, handleChange } = useField('fieldName', isRequired);
 
 With a slight adjustment we can make our validation lazy by changing the listener to `@change` (validates when the user leaves the control):
 
-```vue
+```vue-html
 <div>
   <input @change="handleChange" :value="value" type="text" />
   <span>{{ errorMessage }}</span>
@@ -291,7 +291,7 @@ With a slight adjustment we can make our validation lazy by changing the listene
 
 If we wanted to validate on `blur` as well, you can simply add `handleChange` as a handler for it:
 
-```vue
+```vue-html
 <div>
   <input @change="handleChange" @blur="handleChange" :value="value" type="text" />
   <span>{{ errorMessage }}</span>
@@ -352,7 +352,7 @@ const validationListeners = computed(() => {
 
 Check the working example here:
 
-<LiveExample id="vee-validate-v4-eager-validation-with-composition-api" />
+<LiveExample client:visible id="vee-validate-v4-eager-validation-with-composition-api" />
 
 ## Displaying Error Messages
 

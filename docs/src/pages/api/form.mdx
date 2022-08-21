@@ -15,7 +15,7 @@ import CodeTitle from '@/components/CodeTitle.vue';
 
 The `<Form />` component is like its name, a simple HTML form but with a few adjustments and DX improvements, By default it will render a native HTML `form` element.
 
-```vue
+```vue-html
 <Form>
   <Field name="password" type="password" />
 </Form>
@@ -25,7 +25,7 @@ The `<Form />` component is like its name, a simple HTML form but with a few adj
 
 Just like the `Field` component you can pass whatever you want to render in its place, for example a custom `v-form` component that is registered globally:
 
-```vue
+```vue-html
 <Form as="v-form">
   <Field name="password" type="password" />
 </Form>
@@ -35,7 +35,7 @@ By default a `submit` and `reset` listeners are added to the rendered tag specif
 
 For more complex form markup, you can render a `div` and inline your forms in the `Form` component's slots.
 
-```vue
+```vue-html
 <Form as="div">
   <h2>Sign up form</h2>
   <form>
@@ -66,7 +66,7 @@ const component = {
 
 Lastly, you can use the `Form` component slot props to access various aspects of the form state:
 
-```vue
+```vue-html
 <Form v-slot="{ values }">
   <Field name="name" />
   <Field name="email" type="email" />
@@ -83,7 +83,7 @@ Lastly, you can use the `Form` component slot props to access various aspects of
 
 While not recommended, you can make the `Form` component a renderless component by passing an empty string to the as prop, this is useful if you already need to add a form inside the scoped slot:
 
-```vue
+```vue-html
 <Form as="" v-slot="{ values, submitForm }">
   <h2>Sign up form</h2>
   <form @submit="submitForm">
@@ -303,7 +303,7 @@ interface FormState {
 
 In the following example the form is resetting the `email` field value to another value, this will change the field current value as well as it's initial value. Meaning any future calls of `resetForm` without arguments or `handleReset` will use `example@example.com` as their value. This also applies if fields are reset individually using `resetField` on either `useField` return value or `<Field />` component's slot props.
 
-```vue
+```vue-html
 <Form v-slot="{ resetForm }">
   ...
 
