@@ -5,19 +5,27 @@ import { visit } from 'unist-util-visit';
 import theme from './theme.json';
 
 const dom = new JSDOM();
+const document = dom.window.document;
+
+/**
+ * Some langs are highlighted with different grammar rules but need to be displayed
+ */
+const LANG_REPLACEMENTS = {
+  'vue-html': 'vue',
+};
+
+const highlighterPromise = shiki.getHighlighter({
+  // Complete themes: https://github.com/shikijs/shiki/tree/master/packages/themes
+  theme: theme as any,
+  langs: ['js', 'ts', 'vue', 'graphql', 'jsx', 'css', 'sh', 'yaml', 'json', 'vue-html', 'html'],
+});
 
 export default function highlight() {
   return async function (tree) {
-    const highlighter = await shiki.getHighlighter({
-      // Complete themes: https://github.com/shikijs/shiki/tree/master/packages/themes
-      theme: theme as any,
-      langs: ['js', 'ts', 'vue', 'graphql', 'jsx', 'css', 'sh', 'yaml', 'json', 'vue-html', 'html'],
-    });
-
+    const highlighter = await highlighterPromise;
     visit(tree, 'code', visitor);
 
     function visitor(node) {
-      const document = dom.window.document;
       const { lang, lines, fileName } = parseParts(node.lang || 'sh');
       try {
         const html = replaceColorsWithVariables(highlighter.codeToHtml(node.value, { lang: lang || 'sh' }));
@@ -27,22 +35,27 @@ export default function highlight() {
         wrapper.innerHTML = html;
         fragment.appendChild(wrapper);
 
-        const langSpan = createSpan(lang, 'shiki-language', {
+        const langSpan = createSpan(LANG_REPLACEMENTS[lang] || lang, 'shiki-language', {
           'data-language': lang,
         });
-        (fragment.querySelector('.shiki') as HTMLElement | null)?.prepend(langSpan);
+        const shikiEl = fragment.querySelector('.shiki') as HTMLElement | null;
+        shikiEl?.prepend(langSpan);
 
         if (lines.length) {
           lines.forEach(line => {
             const lineEl = fragment.querySelector(`.line:nth-child(${line})`) as HTMLElement | null;
             lineEl?.classList.add('is-highlighted');
           });
-          (fragment.querySelector('.shiki') as HTMLElement | null)?.classList.add('with-line-highlights');
+          shikiEl?.classList.add('with-line-highlights');
         }
         fragment.querySelector('.line:last-child:empty')?.remove();
+        if ([...fragment.querySelectorAll('.line')].length === 1) {
+          shikiEl?.classList.add('single-line');
+        }
+
         if (fileName) {
           wrapper.prepend(createSpan(fileName, 'filename'));
-          (fragment.querySelector('.shiki') as HTMLElement | null)?.classList.add('with-filename');
+          shikiEl?.classList.add('with-filename');
         }
         node.value = fragment.querySelector('.shiki-snippet')?.outerHTML;
         node.type = 'html';
