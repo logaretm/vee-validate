@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import vue from '@astrojs/vue';
+import remarkGfm from 'remark-gfm';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import highlight from './highlight';
@@ -11,7 +12,7 @@ export default defineConfig({
     vue(),
     sitemap(),
     mdx({
-      remarkPlugins: [highlight],
+      remarkPlugins: [highlight, remarkGfm],
     }),
   ],
 });
