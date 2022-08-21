@@ -15,11 +15,9 @@
             :aria-current="currentUrl === category.pages[0].path ? 'page' : undefined"
             class="flex items-center"
           >
-            <span
-              v-if="category.pages[0].icon"
-              v-html="category.pages[0].icon"
-              class="mr-2 bg-gray-200 dark:bg-gray-500 rounded p-1"
-            ></span>
+            <span v-if="category.pages[0].icon" class="mr-2 bg-gray-200 dark:bg-gray-500 rounded p-1">
+              <Icon :name="category.pages[0].icon" class="w-5 h-5 fill-current" />
+            </span>
             {{ category.pages[0].menuTitle || category.pages[0].title }}
           </a>
 
@@ -42,7 +40,7 @@
                   class="w-full flex items-center focus:outline-none transition-colors duration-300"
                   @click="expanded[page.title] = !expanded[page.title]"
                 >
-                  <span v-html="page.icon"></span>
+                  <Icon :name="page.icon" class="w-5 h-5 fill-current" />
                   <span class="ml-2 group-hover:text-accent-800">{{ page.title }}</span>
 
                   <svg
@@ -90,6 +88,7 @@
 <script lang="ts" setup>
 import { reactive } from 'vue';
 import ExpandTransition from '@/components/ExpandTransition.vue';
+import Icon from '@/components/Icon.vue';
 
 export interface CategoryMenuItem {
   title: string;

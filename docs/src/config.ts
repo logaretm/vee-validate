@@ -4,5 +4,5 @@ export default {
     appId: 'F6BYW6NAIH',
     indexName: 'vee-validate-v4',
   },
-  appURL: process.env.NODE_ENV === 'production' ? 'https://vee-validate.logaretm.com/v4' : 'http://localhost:3000',
+  appURL: process.env.NODE_ENV === 'production' ? 'https://vee-validate.logaretm.com' : 'http://localhost:3000',
 } as const;

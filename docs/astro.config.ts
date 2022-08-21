@@ -5,6 +5,7 @@ import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import highlight from './highlight';
 import baseLink from './baseLink';
+import { svgSprite } from './src/integrations/svgSprite';
 
 // https://astro.build/config
 export default defineConfig({
@@ -17,5 +18,6 @@ export default defineConfig({
     mdx({
       remarkPlugins: [baseLink('/v4'), highlight, remarkGfm],
     }),
+    svgSprite,
   ],
 });

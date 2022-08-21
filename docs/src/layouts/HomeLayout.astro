@@ -1,6 +1,7 @@
 ---
 import TheHeader from '@/components/TheHeader.vue';
 import SiteHead from '@/components/SiteHead.astro';
+import SpriteSheet from '@/components/SpriteSheet.astro';
 import ContentWrapper from '@/components/ContentWrapper.vue';
 import '@/styles/tailwind.css';
 import '@/styles/home.css';
@@ -39,6 +40,7 @@ const menu = [
 <html>
   <SiteHead {...Astro.props} />
   <body>
+    <SpriteSheet />
     <TheHeader client:load menu={menu} currentUrl={frontmatter.url} />
     <div class="App">
       <main class="main">

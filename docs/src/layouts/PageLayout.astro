@@ -1,6 +1,7 @@
 ---
 import path from 'path';
 import SiteHead from '@/components/SiteHead.astro';
+import SpriteSheet from '@/components/SpriteSheet.astro';
 import TheHeader from '@/components/TheHeader.vue';
 import EditPage from '@/components/EditPage.vue';
 import SponsorButton from '@/components/SponsorButton.vue';
@@ -21,7 +22,7 @@ const menu = [
     pages: buildMenu([
       {
         ...(await Astro.glob<Frontmatter>('../pages/resources.mdx'))[0],
-        icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>',
+        icon: 'grid',
       },
     ]),
   },
@@ -39,21 +40,7 @@ const menu = [
           title: 'Components',
         },
         children: await Astro.glob<Frontmatter>('../pages/guide/components/*.mdx'),
-        icon: `<svg
-          class="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
-          ></path>
-        </svg>
-        `,
+        icon: 'code',
       },
       {
         frontmatter: {
@@ -61,22 +48,7 @@ const menu = [
           title: 'Composition API',
         },
         children: await Astro.glob<Frontmatter>('../pages/guide/composition-api/*.mdx'),
-        icon: `
-          <svg
-            class="w-5 h5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z"
-            ></path>
-          </svg>
-        `,
+        icon: 'grid-add',
       },
     ]),
   },
@@ -98,6 +70,7 @@ const menu = [
 <html>
   <SiteHead {...Astro.props} />
   <body>
+    <SpriteSheet />
     <TheHeader client:load currentUrl={frontmatter.url} menu={menu} />
     <div class="PageApp">
       <main class="main">
