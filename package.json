@@ -50,6 +50,7 @@
     "klona": "^2.0.4",
     "lint-staged": "^12.4.1",
     "prettier": "^2.6.2",
+    "prettier-plugin-astro": "^0.5.0",
     "raf-stub": "^3.0.0",
     "rollup": "^2.73.0",
     "rollup-plugin-commonjs": "^10.1.0",
