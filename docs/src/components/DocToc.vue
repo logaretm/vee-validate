@@ -2,7 +2,7 @@
   <nav class="pt-24" v-show="headings.length">
     <p class="font-bold text-xs uppercase text-gray-400">On this page</p>
     <ul class="mt-4 space-y-1 text-sm">
-      <li v-for="heading in headings" :key="heading.id" :class="{ 'ml-4': heading.depth === 3 }">
+      <li v-for="heading in headings" :key="heading.slug" :class="{ 'ml-4': heading.depth === 3 }">
         <a class="inline-block py-1" :href="`#${heading.slug}`">{{ heading.text }}</a>
       </li>
     </ul>
@@ -10,9 +10,15 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  headings: any[];
+import { computed } from 'vue';
+
+const props = defineProps<{
+  headings: { depth: number; slug: string; text: string }[];
 }>();
+
+const headings = computed(() => {
+  return props.headings.filter(h => h.depth <= 3);
+});
 </script>
 
 <style lang="postcss" scoped>

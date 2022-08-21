@@ -24,10 +24,10 @@
 
     <div class="flex items-center header__content px-6 lg:px-10" :class="{ 'lg:mt-8': displayWarning }">
       <a class="mr-auto" href="/">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 858.42 693.79" class="h-10 w-10 lg:w-12 lg:h-12 logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 687.36 595.28005" class="h-8 w-8 lg:w-10 lg:h-10 logo">
           <path
-            d="M572.4 0l-57.49 99.56-171.23 296.59L172.45 99.56h118.02l53.21 92.14 53.21-92.14L454.36 0H0l343.68 595.28L687.36 0H572.4z"
-          ></path>
+            d="m572.4 0-57.49 99.56-171.23 296.59L172.45 99.56h118.02l53.21 92.14 53.21-92.14L454.36 0H0l343.68 595.28L687.36 0Z"
+          />
         </svg>
       </a>
 

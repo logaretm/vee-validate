@@ -5,14 +5,14 @@
     'content'
     'footer';
   display: grid;
-  grid-gap: 20px;
+  grid-gap: 50px;
 
   @screen lg {
     grid-template-areas:
       'lside content rside'
       'footer footer footer';
     grid-template-columns: 1.5fr 45rem 0.5fr;
-    column-gap: 70px;
+    column-gap: 100px;
   }
 
   @screen xl {

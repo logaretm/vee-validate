@@ -1,5 +1,5 @@
 <template>
-  <div ref="el"></div>
+  <div ref="elRef"></div>
 </template>
 
 <script setup lang="ts">
@@ -23,6 +23,7 @@ onMounted(() => {
     forceEmbedLayout: true,
     openFile: 'src/App.vue',
     hideNavigation: true,
+    height: 500,
     view: props.previewOnly ? 'preview' : undefined,
     clickToLoad: props.clickToLoad,
   });

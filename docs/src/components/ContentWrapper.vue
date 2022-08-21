@@ -63,16 +63,14 @@
     }
   }
 
-  .features {
-    ul {
-      li {
-        @apply relative flex items-center antialiased;
-        &:before {
-          @apply w-6 h-6 text-lg absolute rounded-full flex items-center justify-center flex-shrink-0;
-          content: '';
-          background-image: url("data:image/svg+xml,%3Csvg fill='none' stroke='%2309a884' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'%3E%3C/path%3E%3C/svg%3E");
-          left: -2rem;
-        }
+  ul {
+    li {
+      @apply relative antialiased list-none;
+      &:before {
+        @apply w-6 h-6 text-lg absolute rounded-full flex items-center justify-center flex-shrink-0;
+        content: '';
+        background-image: url("data:image/svg+xml,%3Csvg fill='none' stroke='%2309a884' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'%3E%3C/path%3E%3C/svg%3E");
+        left: -2rem;
       }
     }
   }
@@ -86,7 +84,7 @@
     }
 
     .shiki-language {
-      @apply absolute right-4 top-4 text-xs;
+      @apply absolute right-2 top-2 text-xs;
       color: var(--code-lang-label);
     }
   }
@@ -127,32 +125,38 @@
       }
     }
 
-    .line {
-      @apply block pr-2;
-      padding-left: 1.4rem;
-      line-height: 1.6;
-
-      &::before {
-        @apply select-none;
-        content: counter(step);
-        counter-increment: step;
-        width: 1rem;
-        border-left: 0.2rem transparent solid;
-        margin-right: 1.3rem;
-        display: inline-block;
-        text-align: right;
-        color: var(--code-line-numbers);
-      }
-
-      &.is-highlighted {
-        padding-left: 0;
+    &:not(.single-line) {
+      .line {
+        @apply block pr-2;
+        padding-left: 1.4rem;
+        line-height: 1.6;
 
         &::before {
-          padding-left: 1.7rem;
-          margin-right: 2rem;
-          border-color: var(--code-line-highlight-border);
+          @apply select-none;
+          content: counter(step);
+          counter-increment: step;
+          width: 1rem;
+          border-left: 0.2rem transparent solid;
+          margin-right: 1.3rem;
+          display: inline-block;
+          text-align: right;
+          color: var(--code-line-numbers);
+        }
+
+        &.is-highlighted {
+          padding-left: 0;
+
+          &::before {
+            padding-left: 1.7rem;
+            margin-right: 2rem;
+            border-color: var(--code-line-highlight-border);
+          }
         }
       }
+    }
+
+    &.single-line {
+      @apply px-6;
     }
   }
 
@@ -166,6 +170,10 @@
 
   *:not(pre) > code:not([class]) {
     @apply text-sm px-1 rounded bg-gray-100 border border-gray-200 text-gray-900;
+  }
+
+  iframe {
+    @apply my-8;
   }
 
   details {
@@ -193,13 +201,16 @@
   }
 
   table {
-    @apply w-full my-4;
+    @apply w-full my-4 overflow-hidden;
   }
 
-  table,
   th,
   td {
     @apply border border-gray-100;
+  }
+
+  th {
+    @apply text-sm font-medium;
   }
 
   th,
@@ -210,7 +221,7 @@
 
 .dark {
   *:not(pre) > code:not([class]) {
-    @apply px-1 bg-black border border-gray-900 text-gray-200;
+    @apply px-1 bg-black border border-gray-500 text-gray-200;
   }
 
   pre code,
@@ -226,10 +237,9 @@
     @apply border-carbon;
   }
 
-  table,
   th,
   td {
-    @apply border border-carbon;
+    @apply border-gray-500;
   }
 
   .shiki-snippet {

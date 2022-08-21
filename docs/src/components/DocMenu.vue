@@ -8,7 +8,12 @@
         <p class="md:text-xs font-bold text-gray-400 uppercase">{{ category.title }}</p>
         <div class="mt-3 space-y-2 w-full">
           <div v-for="page in category.pages" :key="page.title" class="group">
-            <a v-if="!page.children" :href="page.path" class="flex items-center">
+            <a
+              v-if="!page.children"
+              :href="page.path"
+              :aria-current="currentUrl === page.path ? 'page' : undefined"
+              class="flex items-center"
+            >
               {{ page.menuTitle || page.title }}
 
               <span v-if="page.new" class="ml-2 w-2 h-2 rounded-full flex-shrink-0 bg-blue-600"></span>

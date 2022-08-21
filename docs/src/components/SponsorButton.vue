@@ -19,7 +19,7 @@
       ></path>
     </svg>
 
-    <span class="ml-1">Sponsor</span>
+    <span class="ml-1 text-sm">Sponsor</span>
   </a>
 </template>
 
