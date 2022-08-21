@@ -51,24 +51,12 @@ The first function is `toFieldValidator`, which accepts a Zod schema. You can us
   </Form>
 </template>
 
-<script>
+<script setup>
 import { Field, Form, ErrorMessage } from 'vee-validate';
 import { toFieldValidator } from '@vee-validate/zod';
 import * as zod from 'zod';
 
-export default {
-  components: {
-    Form,
-    Field,
-  },
-  setup() {
-    const fieldSchema = toFieldValidator(zod.string().nonempty('Field is required').email('Must be a valid email'));
-
-    return {
-      rules,
-    };
-  },
-};
+const fieldSchema = toFieldValidator(zod.string().nonempty('Field is required').email('Must be a valid email'));
 </script>
 ```
 
@@ -115,35 +103,21 @@ You can pass the converted schema to the `validation-schema` prop present on the
   </Form>
 </template>
 
-<script>
+<script setup>
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import { toFormValidator } from '@vee-validate/zod';
 import * as zod from 'zod';
 
-export default {
-  components: {
-    Form,
-    Field,
-    ErrorMessage,
-  },
-  setup() {
-    const validationSchema = toFormValidator(
-      zod.object({
-        email: zod.string().nonempty('This is required').email({ message: 'Must be a valid email' }),
-        password: zod.string().nonempty('This is required').min(8, { message: 'Too short' }),
-      })
-    );
+const validationSchema = toFormValidator(
+  zod.object({
+    email: zod.string().nonempty('This is required').email({ message: 'Must be a valid email' }),
+    password: zod.string().nonempty('This is required').min(8, { message: 'Too short' }),
+  })
+);
 
-    function onSubmit(values) {
-      alert(JSON.stringify(values, null, 2));
-    }
-
-    return {
-      validationSchema,
-      onSubmit,
-    };
-  },
-};
+function onSubmit(values) {
+  alert(JSON.stringify(values, null, 2));
+}
 </script>
 ```
 

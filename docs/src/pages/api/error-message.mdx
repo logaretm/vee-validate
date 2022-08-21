@@ -22,24 +22,11 @@ The basic usage looks like this:
   </Form>
 </template>
 
-<script>
+<script setup>
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
-export default {
-  components: {
-    Form,
-    Field,
-    ErrorMessage,
-  },
-  data() {
-    const validateEmail = yup.string().required().email();
-
-    return {
-      validateEmail,
-    };
-  },
-};
+const validateEmail = yup.string().required().email();
 </script>
 ```
 

@@ -55,25 +55,16 @@ You can define validation rules for your fields using the `Field` component, you
   </Form>
 </template>
 
-<script>
+<script setup>
 import { Field, Form, ErrorMessage } from 'vee-validate';
 
-export default {
-  components: {
-    Field,
-    Form,
-    ErrorMessage,
-  },
-  methods: {
-    isRequired(value) {
-      if (value && value.trim()) {
-        return true;
-      }
+function required(value) {
+  if (value && value.trim()) {
+    return true;
+  }
 
-      return 'This is required';
-    },
-  },
-};
+  return 'This is required';
+}
 </script>
 ```
 
@@ -89,22 +80,11 @@ export default {
   </Form>
 </template>
 
-<script>
+<script setup>
 import { Field, Form, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
-export default {
-  components: {
-    Field,
-    Form,
-    ErrorMessage,
-  },
-  data() {
-    return {
-      passwordRules: yup.string().required().min(8),
-    };
-  },
-};
+const passwordRules = yup.string().required().min(8);
 </script>
 ```
 
@@ -130,32 +110,19 @@ A simple validation schema can be an object containing field names as keys and v
   </Form>
 </template>
 
-<script>
+<script setup>
 import { Form, Field, ErrorMessage } from 'vee-validate';
 
-export default {
-  components: {
-    Form,
-    Field,
-    ErrorMessage,
+const simpleSchema = {
+  email(value) {
+    // validate email value...
   },
-  data() {
-    const simpleSchema = {
-      email(value) {
-        // validate email value...
-      },
-      name(value) {
-        // validate name value...
-      },
-      // If you defined global rules you can also use them
-      password: 'required|min:8',
-      // ...
-    };
-
-    return {
-      simpleSchema,
-    };
+  name(value) {
+    // validate name value...
   },
+  // If you defined global rules you can also use them
+  password: 'required|min:8',
+  // ...
 };
 </script>
 ```
@@ -187,27 +154,14 @@ vee-validate has built-in support for yup schemas, You can pass your schemas to 
   </Form>
 </template>
 
-<script>
+<script setup>
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
-export default {
-  components: {
-    Form,
-    Field,
-    ErrorMessage,
-  },
-  data() {
-    const schema = yup.object({
-      email: yup.string().required().email(),
-      password: yup.string().required().min(8),
-    });
-
-    return {
-      schema,
-    };
-  },
-};
+const schema = yup.object({
+  email: yup.string().required().email(),
+  password: yup.string().required().min(8),
+});
 </script>
 ```
 

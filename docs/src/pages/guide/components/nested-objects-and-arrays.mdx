@@ -27,14 +27,10 @@ You can specify a field to be nested in an object using dot paths, like what you
   </Form>
 </template>
 
-<script>
-export default {
-  methods: {
-    onSubmit(values) {
-      alert(JSON.stringify(values, null, 2));
-    },
-  },
-};
+<script setup>
+function onSubmit(values) {
+  alert(JSON.stringify(values, null, 2));
+}
 </script>
 ```
 
@@ -67,14 +63,10 @@ Here is the same example as above but in array format:
   </Form>
 </template>
 
-<script>
-export default {
-  methods: {
-    onSubmit(values) {
-      alert(JSON.stringify(values, null, 2));
-    },
-  },
-};
+<script setup>
+function onSubmit(values) {
+  alert(JSON.stringify(values, null, 2));
+}
 </script>
 ```
 
@@ -109,14 +101,10 @@ If your fields' names are using the dot notation and you want to avoid the nesti
   </Form>
 </template>
 
-<script>
-export default {
-  methods: {
-    onSubmit(values) {
-      alert(JSON.stringify(values, null, 2));
-    },
-  },
-};
+<script setup>
+function onSubmit(values) {
+  alert(JSON.stringify(values, null, 2));
+}
 </script>
 ```
 
@@ -154,20 +142,14 @@ Here is a small example that shows how easy it is to create a repeatable `URL` f
   </Form>
 </template>
 
-<script>
-export default {
-  data: () => ({
-    // you can set initial values for those array fields
-    initialValues: {
-      links: ['https://github.com/logaretm'],
-    },
-  }),
-  methods: {
-    onSubmit(values) {
-      alert(JSON.stringify(values, null, 2));
-    },
-  },
+<script setup>
+const initialValues = {
+  links: ['https://github.com/logaretm'],
 };
+
+function onSubmit(values) {
+  alert(JSON.stringify(values, null, 2));
+}
 </script>
 ```
 
@@ -312,26 +294,19 @@ If you are using yup, you can utilize the nested `yup.object` or `yup.array` sch
   </Form>
 </template>
 
-<script>
+<script setup>
 import * as yup from 'yup';
 
-export default {
-  data() {
-    return {
-      schema: yup.object({
-        user: yup.object({
-          name: yup.string().required(),
-          addresses: yup.array().of(yup.string().required()),
-        }),
-      }),
-    };
-  },
-  methods: {
-    onSubmit(values: any) {
-      fn(values);
-    },
-  },
-};
+const schema = yup.object({
+  user: yup.object({
+    name: yup.string().required(),
+    addresses: yup.array().of(yup.string().required()),
+  }),
+});
+
+function onSubmit(values: any) {
+  fn(values);
+}
 </script>
 ```
 

@@ -39,16 +39,8 @@ You may access your form's values using the `values` scoped slot prop on the `Fo
   </Form>
 </template>
 
-<script>
+<script setup>
 import { Form, Field } from 'vee-validate';
-
-export default {
-  components: {
-    Form,
-    Field,
-  },
-  // no data, no v-model!!!
-};
 </script>
 ```
 
@@ -69,33 +61,19 @@ So if you were to add a `submit` handler on the `<Form />` component, vee-valida
   </Form>
 </template>
 
-<script>
+<script setup>
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
-export default {
-  components: {
-    Form,
-    Field,
-    ErrorMessage,
-  },
-  data() {
-    const schema = yup.object({
-      email: yup.string().required().email(),
-      password: yup.string().required().min(8),
-    });
+const schema = yup.object({
+  email: yup.string().required().email(),
+  password: yup.string().required().min(8),
+});
 
-    return {
-      schema,
-    };
-  },
-  methods: {
-    onSubmit(values) {
-      // Submit values to API...
-      alert(JSON.stringify(values, null, 2));
-    },
-  },
-};
+function onSubmit(values) {
+  // Submit values to API...
+  alert(JSON.stringify(values, null, 2));
+}
 </script>
 ```
 
@@ -146,34 +124,19 @@ The `handleSubmit` slot prop is probably the most common method you will use to 
   </VeeForm>
 </template>
 
-<script>
+<script setup>
 import { Form as VeeForm, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
-export default {
-  components: {
-    // Rename form to avoid confusion with native `form`
-    VeeForm,
-    Field,
-    ErrorMessage,
-  },
-  data() {
-    const schema = yup.object({
-      email: yup.string().required().email(),
-      password: yup.string().required().min(8),
-    });
+const schema = yup.object({
+  email: yup.string().required().email(),
+  password: yup.string().required().min(8),
+});
 
-    return {
-      schema,
-    };
-  },
-  methods: {
-    onSubmit(values) {
-      // Submit values to API...
-      alert(JSON.stringify(values, null, 2));
-    },
-  },
-};
+function onSubmit(values) {
+  // Submit values to API...
+  alert(JSON.stringify(values, null, 2));
+}
 </script>
 ```
 
@@ -196,28 +159,14 @@ Alternatively if you plan to submit forms natively which will cause a page "relo
   </VeeForm>
 </template>
 
-<script>
+<script setup>
 import { Form as VeeForm, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
-export default {
-  components: {
-    // Rename form to avoid confusion with native `form`
-    VeeForm,
-    Field,
-    ErrorMessage,
-  },
-  data() {
-    const schema = yup.object({
-      email: yup.string().required().email(),
-      password: yup.string().required().min(8),
-    });
-
-    return {
-      schema,
-    };
-  },
-};
+const schema = yup.object({
+  email: yup.string().required().email(),
+  password: yup.string().required().min(8),
+});
 </script>
 ```
 
@@ -294,38 +243,25 @@ In case you want to perform some logic after a form fails to submit due to valid
   </Form>
 </template>
 
-<script>
+<script setup>
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
-export default {
-  components: {
-    Form,
-    Field,
-    ErrorMessage,
-  },
-  data() {
-    const schema = yup.object({
-      email: yup.string().required().email(),
-      password: yup.string().required().min(8),
-    });
+const schema = yup.object({
+  email: yup.string().required().email(),
+  password: yup.string().required().min(8),
+});
 
-    return {
-      schema,
-    };
-  },
-  methods: {
-    onSubmit(values) {
-      // Submit values to API...
-      alert(JSON.stringify(values, null, 2));
-    },
-    onInvalidSubmit({ values, errors, results }) {
-      console.log(values); // current form values
-      console.log(errors); // a map of field names and their first error message
-      console.log(results); // a detailed map of field names and their validation results
-    },
-  },
-};
+function onSubmit(values) {
+  // Submit values to API...
+  alert(JSON.stringify(values, null, 2));
+}
+
+function onInvalidSubmit({ values, errors, results }) {
+  console.log(values); // current form values
+  console.log(errors); // a map of field names and their first error message
+  console.log(results); // a detailed map of field names and their validation results
+}
 </script>
 ```
 
@@ -350,34 +286,19 @@ Using the `initialValues` prop you can send an object that contains the field na
   </Form>
 </template>
 
-<script>
+<script setup>
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
-export default {
-  components: {
-    Form,
-    Field,
-    ErrorMessage,
-  },
-  data() {
-    // Validation Schema
-    const schema = yup.object({
-      email: yup.string().required().email(),
-      password: yup.string().required().min(8),
-    });
+const schema = yup.object({
+  email: yup.string().required().email(),
+  password: yup.string().required().min(8),
+});
 
-    // Initial values
-    const formValues = {
-      email: 'example@example.com',
-      password: 'P@$$w0Rd',
-    };
-
-    return {
-      schema,
-      formValues,
-    };
-  },
+// Initial values
+const formValues = {
+  email: 'example@example.com',
+  password: 'P@$$w0Rd',
 };
 </script>
 ```
@@ -432,24 +353,19 @@ You can call them with template `$refs` and for an added convenience you can cal
   </Form>
 </template>
 
-<script>
-export default {
-  // ...
-  methods: {
-    onSubmit(values, actions) {
-      // Submit the values...
+<script setup>
+function onSubmit(values, actions) {
+  // Submit the values...
 
-      // set single field value
-      actions.setFieldValue('email', 'ummm@example.com');
+  // set single field value
+  actions.setFieldValue('email', 'ummm@example.com');
 
-      // set multiple values
-      actions.setValues({
-        email: 'ummm@example.com',
-        password: 'P@$$w0Rd',
-      });
-    },
-  },
-};
+  // set multiple values
+  actions.setValues({
+    email: 'ummm@example.com',
+    password: 'P@$$w0Rd',
+  });
+}
 </script>
 ```
 
@@ -468,24 +384,19 @@ export default {
   </Form>
 </template>
 
-<script>
-export default {
-  // ...
-  methods: {
-    onSubmit(values) {
-      // Submit the values...
+<script setup>
+function onSubmit(values) {
+  // Submit the values...
 
-      // set single field value
-      this.$refs.myForm.setFieldValue('email', 'ummm@example.com');
+  // set single field value
+  this.$refs.myForm.setFieldValue('email', 'ummm@example.com');
 
-      // set multiple values
-      this.$refs.myForm.setValues({
-        email: 'ummm@example.com',
-        password: 'P@$$w0Rd',
-      });
-    },
-  },
-};
+  // set multiple values
+  this.$refs.myForm.setValues({
+    email: 'ummm@example.com',
+    password: 'P@$$w0Rd',
+  });
+}
 </script>
 ```
 
@@ -536,26 +447,14 @@ Form reset is handled automatically if you are using the `as` prop to render a `
   </Form>
 </template>
 
-<script>
+<script setup>
 import { Form, Field } from 'vee-validate';
 import * as yup from 'yup';
 
-export default {
-  components: {
-    Form,
-    Field,
-  },
-  data() {
-    const schema = yup.object({
-      email: yup.string().required().email(),
-      password: yup.string().required().min(8),
-    });
-
-    return {
-      schema,
-    };
-  },
-};
+const schema = yup.object({
+  email: yup.string().required().email(),
+  password: yup.string().required().min(8),
+});
 </script>
 ```
 
@@ -598,32 +497,19 @@ This is an example of using the form actions object to reset the form:
   </Form>
 </template>
 
-<script>
+<script setup>
 import { Form, Field } from 'vee-validate';
 import * as yup from 'yup';
 
-export default {
-  components: {
-    Form,
-    Field,
-  },
-  data() {
-    const schema = yup.object({
-      // ...
-    });
+const schema = yup.object({
+  // ...
+});
 
-    return {
-      schema,
-    };
-  },
-  methods: {
-    onSubmit(values, { resetForm }) {
-      console.log(values); // send data to API
-      // reset the form and the field values to their initial values
-      resetForm();
-    },
-  },
-};
+function onSubmit(values, { resetForm }) {
+  console.log(values); // send data to API
+  // reset the form and the field values to their initial values
+  resetForm();
+}
 </script>
 ```
 
@@ -664,33 +550,20 @@ You can also use template `$refs` to reset the form whenever you need:
   </Form>
 </template>
 
-<script>
+<script setup>
 import { Form, Field } from 'vee-validate';
 import * as yup from 'yup';
 
-export default {
-  components: {
-    Form,
-    Field,
-  },
-  data() {
-    const schema = yup.object({
-      // ...
-    });
+const schema = yup.object({
+  // ...
+});
 
-    return {
-      schema,
-    };
-  },
-  methods: {
-    onSubmit(values) {
-      console.log(values); // send data to API
+function onSubmit(values) {
+  console.log(values); // send data to API
 
-      // reset the form
-      this.$refs.form.resetForm();
-    },
-  },
-};
+  // reset the form
+  this.$refs.form.resetForm();
+}
 </script>
 ```
 
@@ -713,14 +586,10 @@ The `initialErrors` property accepts an object containing the field names as key
   </Form>
 </template>
 
-<script>
-export default {
-  data: () => ({
-    initialErrors: {
-      email: 'This email is already taken',
-      password: 'The password is too short',
-    },
-  }),
+<script setup>
+const initialErrors = {
+  email: 'This email is already taken',
+  password: 'The password is too short',
 };
 </script>
 ```
@@ -775,24 +644,19 @@ Here are a few snippets showcasing its usage in these various scenarios:
   </Form>
 </template>
 
-<script>
-export default {
-  // ...
-  methods: {
-    onSubmit(values, actions) {
-      // Submit the values...
+<script setup>
+function onSubmit(values, actions) {
+  // Submit the values...
 
-      // set single field error
-      actions.setFieldError('email', 'this email is already taken');
+  // set single field error
+  actions.setFieldError('email', 'this email is already taken');
 
-      // set multiple errors
-      actions.setErrors({
-        email: 'this field is already taken',
-        password: 'someone already has this password',
-      });
-    },
-  },
-};
+  // set multiple errors
+  actions.setErrors({
+    email: 'this field is already taken',
+    password: 'someone already has this password',
+  });
+}
 </script>
 ```
 
@@ -811,22 +675,17 @@ export default {
   </Form>
 </template>
 
-<script>
-export default {
-  // ...
-  methods: {
-    onSubmit(values) {
-      // Submit the values...
+<script setup>
+function onSubmit(values) {
+  // Submit the values...
 
-      // if API returns errors
-      this.$refs.myForm.setFieldError('email', 'this email is already taken');
-      this.$refs.myForm.setErrors({
-        email: 'this field is already taken',
-        password: 'someone already has this password',
-      });
-    },
-  },
-};
+  // if API returns errors
+  this.$refs.myForm.setFieldError('email', 'this email is already taken');
+  this.$refs.myForm.setErrors({
+    email: 'this field is already taken',
+    password: 'someone already has this password',
+  });
+}
 </script>
 ```
 

@@ -37,20 +37,15 @@ The `<FieldArray />` component is used to manage repeatable array fields. It is 
   </Form>
 </template>
 
-<script>
-export default {
-  data: () => ({
-    // you can set initial values for those array fields
-    initialValues: {
-      links: [{ id: 1, url: 'https://github.com/logaretm' }],
-    },
-  }),
-  methods: {
-    onSubmit(values) {
-      alert(JSON.stringify(values, null, 2));
-    },
-  },
+<script setup>
+// you can set initial values for those array fields
+const initialValues = {
+  links: [{ id: 1, url: 'https://github.com/logaretm' }],
 };
+
+function onSubmit(values) {
+  alert(JSON.stringify(values, null, 2));
+}
 </script>
 ```
 
