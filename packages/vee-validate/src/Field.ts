@@ -1,10 +1,9 @@
-import { h, defineComponent, toRef, SetupContext, resolveDynamicComponent, computed, PropType, VNode } from 'vue';
+import { h, defineComponent, toRef, SetupContext, resolveDynamicComponent, computed, PropType, VNode, Ref } from 'vue';
 import { getConfig } from './config';
 import { RuleExpression, useField } from './useField';
 import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent, normalizeEventValue } from './utils';
 import { IS_ABSENT } from './symbols';
-import { FieldMeta } from './types';
-import { FieldContext } from '.';
+import { FieldMeta, FieldContext } from './types';
 
 interface ValidationTriggersProps {
   validateOnMount: boolean;
@@ -32,6 +31,7 @@ interface FieldSlotProps<TValue = unknown>
   field: FieldBindingObject<TValue>;
   value: TValue;
   meta: FieldMeta<TValue>;
+  model: Ref<TValue>;
   errors: string[];
   errorMessage: string | undefined;
   handleInput: FieldContext['handleChange'];
@@ -189,6 +189,11 @@ const FieldImpl = defineComponent({
       return attrs;
     });
 
+    const model = computed({
+      get: () => value.value,
+      set: value => handleChange(value),
+    });
+
     function slotProps(): FieldSlotProps {
       return {
         field: fieldProps.value,
@@ -196,6 +201,7 @@ const FieldImpl = defineComponent({
         meta,
         errors: errors.value,
         errorMessage: errorMessage.value,
+        model,
         validate: validateField,
         resetField,
         handleChange: onChangeHandler,
@@ -213,6 +219,7 @@ const FieldImpl = defineComponent({
       reset: resetField,
       validate: validateField,
       handleChange,
+      setValue: handleChange,
     });
 
     return () => {
@@ -273,6 +280,7 @@ export const Field = FieldImpl as typeof FieldImpl & {
     reset: FieldContext['resetField'];
     validate: FieldContext['validate'];
     handleChange: FieldContext['handleChange'];
+    setValue: FieldContext['handleChange'];
     $slots: {
       default: (arg: FieldSlotProps<unknown>) => VNode[];
     };
