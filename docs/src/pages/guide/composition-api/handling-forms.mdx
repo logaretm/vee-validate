@@ -80,7 +80,7 @@ In that case **YOU MUST** use `submitForm` as an event handler for the `submit` 
 
 In case you want to perform some logic after a form fails to submit due to validation errors (e.g: focusing the first invalid field), you can pass a callback as the second argument to `handleSubmit` function.
 
-```vue{14-18,22}
+```vue{12-16,22}
 <template>
   <form @submit="onSubmit">
     <!-- some fields -->
@@ -90,21 +90,17 @@ In case you want to perform some logic after a form fails to submit due to valid
 <script setup>
 import { useForm } from 'vee-validate';
 
+const { handleSubmit } = useForm();
 
-    const { handleSubmit } = useForm();
+function onInvalidSubmit({ values, errors, results }) {
+  console.log(values); // current form values
+  console.log(errors); // a map of field names and their first error message
+  console.log(results); // a detailed map of field names and their validation results
+}
 
-    function onInvalidSubmit({ values, errors, results }) {
-      console.log(values); // current form values
-      console.log(errors); // a map of field names and their first error message
-      console.log(results); // a detailed map of field names and their validation results
-    }
-
-    const onSubmit = handleSubmit(values => {
-      alert(JSON.stringify(values, null, 2));
-    }, onInvalidSubmit);
-
-
-
+const onSubmit = handleSubmit(values => {
+  alert(JSON.stringify(values, null, 2));
+}, onInvalidSubmit);
 </script>
 ```
 

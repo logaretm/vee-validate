@@ -13,9 +13,7 @@ const metaTags = generateMetaTags({
 
 <head>
   <title>{frontmatter.title}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
-  {metaTags.map(t => (
-    <meta content={t.content} name={t.name} property={t.property} >
-  ))}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover" />
+  {metaTags.map(t => <meta content={t.content} name={t.name} property={t.property} />)}
   <script is:inline src="/loadTheme.js"></script>
 </head>

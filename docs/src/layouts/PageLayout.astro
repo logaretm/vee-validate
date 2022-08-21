@@ -17,18 +17,26 @@ const filePath = path.relative(path.resolve('../'), frontmatter.file);
 
 const menu = [
   {
+    title: 'resources',
+    pages: buildMenu([
+      {
+        ...(await Astro.glob<Frontmatter>('../pages/resources.mdx'))[0],
+        icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>',
+      },
+    ]),
+  },
+  {
     title: 'tutorials',
     pages: buildMenu(await Astro.glob<Frontmatter>('../pages/tutorials/*.mdx')),
   },
   {
     title: 'guide',
-    pages: buildMenu(
-      [
-      ...await Astro.glob<Frontmatter>('../pages/guide/*.mdx'),     
+    pages: buildMenu([
+      ...(await Astro.glob<Frontmatter>('../pages/guide/*.mdx')),
       {
         frontmatter: {
           order: 2,
-          title: 'Components'
+          title: 'Components',
         },
         children: await Astro.glob<Frontmatter>('../pages/guide/components/*.mdx'),
         icon: `<svg
@@ -50,7 +58,7 @@ const menu = [
       {
         frontmatter: {
           order: 3,
-          title: 'Composition API'
+          title: 'Composition API',
         },
         children: await Astro.glob<Frontmatter>('../pages/guide/composition-api/*.mdx'),
         icon: `
@@ -77,10 +85,6 @@ const menu = [
     pages: buildMenu(await Astro.glob<Frontmatter>('../pages/examples/*.mdx')),
   },
   {
-    title: 'resources',
-    pages: buildMenu(await Astro.glob<Frontmatter>('../pages/resources.mdx')),
-  },
-  {
     title: 'integrations',
     pages: buildMenu(await Astro.glob<Frontmatter>('../pages/integrations/*.mdx')),
   },
@@ -89,13 +93,12 @@ const menu = [
     pages: buildMenu(await Astro.glob<Frontmatter>('../pages/api/*.mdx')),
   },
 ];
-
 ---
 
 <html>
   <SiteHead {...Astro.props} />
   <body>
-    <TheHeader client:load currentUrl={frontmatter.url} menu={menu}  />
+    <TheHeader client:load currentUrl={frontmatter.url} menu={menu} />
     <div class="PageApp">
       <main class="main">
         <ContentWrapper>
@@ -110,8 +113,7 @@ const menu = [
       </main>
 
       <aside class="lside hidden lg:block px-5">
-        <div class="sticky top-24"> 
-
+        <div class="sticky top-24">
           <DocSearch client:idle />
           <DocMenu currentUrl={frontmatter.url} menu={menu} client:idle />
         </div>

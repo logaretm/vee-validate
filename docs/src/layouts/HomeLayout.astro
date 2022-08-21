@@ -16,7 +16,6 @@ const menu = [
   {
     title: 'guide',
     pages: buildMenu(await Astro.glob<Frontmatter>('../pages/guide/*.mdx')),
-
   },
   {
     title: 'examples',
@@ -40,7 +39,7 @@ const menu = [
 <html>
   <SiteHead {...Astro.props} />
   <body>
-    <TheHeader client:load menu={menu} currentUrl={frontmatter.url}  />
+    <TheHeader client:load menu={menu} currentUrl={frontmatter.url} />
     <div class="App">
       <main class="main">
         <div class="flex flex-col items-center justify-center mb-16">
@@ -49,42 +48,42 @@ const menu = [
           <p class="mt-4 text-xl text-gray-800">{frontmatter.description}</p>
 
           <div class="mt-16 grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8">
-            {frontmatter.features.map(feature => (
-              <div>
-                <h3 class="md:text-xl font-bold font-display">{feature.title}</h3>
-                <p class="mt-2">{feature.details}</p>
-              </div>
-            ))}
+            {
+              frontmatter.features.map(feature => (
+                <div>
+                  <h3 class="md:text-xl font-bold font-display">{feature.title}</h3>
+                  <p class="mt-2">{feature.details}</p>
+                </div>
+              ))
+            }
           </div>
 
           <div class="mt-16 grid md:grid-cols-3 gap-x-4">
             <a
               class="block mt-8 bg-gray-600 p-4 text-white rounded-lg font-bold text-center focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-accent-800"
               href="/v4/guide/overview/"
-              >
+            >
               📚 Getting Started
             </a>
             <a
               class="block mt-8 bg-warning p-4 text-gray-800 rounded-lg font-bold text-center focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-accent-800"
               href="/v4/tutorials/basics/"
-              >
+            >
               ⏰ 10 Minute Tutorial
             </a>
             <a
               class="block mt-8 bg-error p-4 text-white rounded-lg font-bold text-center focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-accent-800"
               href="/v4/examples/checkboxes-and-radio/"
-              >
+            >
               🧪 Examples
             </a>
           </div>
         </div>
 
         <ContentWrapper>
-          <slot></slot>
+          <slot />
         </ContentWrapper>
       </main>
     </div>
   </body>
 </html>
-
-
