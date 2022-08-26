@@ -133,7 +133,7 @@
     "@jridgewell/gen-mapping" "^0.1.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
-"@astrojs/compiler@^0.23.3":
+"@astrojs/compiler@^0.23.4":
   version "0.23.4"
   resolved "https://registry.yarnpkg.com/@astrojs/compiler/-/compiler-0.23.4.tgz#e22d1436876d0477e62be38063263d2851c57403"
   integrity sha512-vNZIa5Tf5nOqBEGJvM6xyYBnGcz4MAp+bBPnyVI0UYRjsIWlP7RgMdCpRV0OOh5kgh00BoAypGv27kcoJCMVfA==
@@ -1059,12 +1059,12 @@ astring@^1.8.0:
   resolved "https://registry.yarnpkg.com/astring/-/astring-1.8.3.tgz#1a0ae738c7cc558f8e5ddc8e3120636f5cebcb85"
   integrity sha512-sRpyiNrx2dEYIMmUXprS8nlpRg2Drs8m9ElX9vVEXaCB4XEAJhKfs7IcX0IwShjuOAjLR6wzIrgoptz1n19i1A==
 
-astro@^1.0.6:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/astro/-/astro-1.0.8.tgz#a7b449698a4df1cafb63ec40c7224fe4bfb59e04"
-  integrity sha512-cWey5M/EjdgeZCRlOAB6YP05ui3U9ZfHPdb4r5HmumOE/1w8auDqRiHPpb2RCGYD7RpxOXcJu5XfJL4V2F1UpQ==
+astro@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/astro/-/astro-1.0.9.tgz#87b44c9be9e595133b9f5acd0dbf9f56b39352dd"
+  integrity sha512-Pa/7wLIuXFs+sgdVxUTT0QHe+9yKQVE21jxZU/p2ZzcUrAB+8JN32fHEG28QTwEx+NuwTqvC5xTvDBXLZJGtqw==
   dependencies:
-    "@astrojs/compiler" "^0.23.3"
+    "@astrojs/compiler" "^0.23.4"
     "@astrojs/language-server" "^0.20.0"
     "@astrojs/markdown-remark" "^1.0.0"
     "@astrojs/telemetry" "^1.0.0"
@@ -1105,7 +1105,7 @@ astro@^1.0.6:
     recast "^0.20.5"
     rehype "^12.0.1"
     resolve "^1.22.0"
-    rollup "^2.75.6"
+    rollup "~2.77.0"
     semver "^7.3.7"
     shiki "^0.10.1"
     sirv "^2.0.2"
@@ -3646,17 +3646,10 @@ reusify@^1.0.4:
   resolved "https://registry.yarnpkg.com/reusify/-/reusify-1.0.4.tgz#90da382b1e126efc02146e90845a88db12925d76"
   integrity sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==
 
-"rollup@>=2.75.6 <2.77.0 || ~2.77.0":
+"rollup@>=2.75.6 <2.77.0 || ~2.77.0", rollup@~2.77.0:
   version "2.77.3"
   resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.77.3.tgz#8f00418d3a2740036e15deb653bed1a90ee0cc12"
   integrity sha512-/qxNTG7FbmefJWoeeYJFbHehJ2HNWnjkAFRKzWN/45eNBBF/r8lo992CwcJXEzyVxs5FmfId+vTSTQDb+bxA+g==
-  optionalDependencies:
-    fsevents "~2.3.2"
-
-rollup@^2.75.6:
-  version "2.78.1"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.78.1.tgz#52fe3934d9c83cb4f7c4cb5fb75d88591be8648f"
-  integrity sha512-VeeCgtGi4P+o9hIg+xz4qQpRl6R401LWEXBmxYKOV4zlF82lyhgh2hTZnheFUbANE8l2A41F458iwj2vEYaXJg==
   optionalDependencies:
     fsevents "~2.3.2"
 
