@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.7](https://github.com/logaretm/vee-validate/compare/v4.6.6...v4.6.7) (2022-08-27)
+
+### Bug Fixes
+
+* allow generics for generic function type ([91e97aa](https://github.com/logaretm/vee-validate/commit/91e97aa41bca278970780973fcbf90e17fb29920))
+* handle validation races for async validations ([#3908](https://github.com/logaretm/vee-validate/issues/3908)) ([8c82079](https://github.com/logaretm/vee-validate/commit/8c82079dac8535678e45428ad8e5afe7dcd3da63))
+
 ## [4.6.6](https://github.com/logaretm/vee-validate/compare/v4.6.5...v4.6.6) (2022-08-16)
 
 ### Bug Fixes
