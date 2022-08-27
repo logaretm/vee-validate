@@ -46,6 +46,7 @@ import {
   isFormSubmitEvent,
   debounceAsync,
   isEmptyContainer,
+  withLatest,
 } from './utils';
 import { FormContextKey } from './symbols';
 import { validateYupSchema, validateObjectSchema } from './validate';
@@ -156,6 +157,70 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   const meta = useFormMeta(fieldsByPath, formValues, originalInitialValues, errors);
 
   const schema = opts?.validationSchema;
+
+  /**
+   * Batches validation runs in 5ms batches
+   * Must have two distinct batch queues to make sure they don't override each other settings #3783
+   */
+  const debouncedSilentValidation = debounceAsync(_validateSchema, 5);
+  const debouncedValidation = debounceAsync(_validateSchema, 5);
+
+  const validateSchema = withLatest(
+    async (mode: SchemaValidationMode) => {
+      return (await mode) === 'silent' ? debouncedSilentValidation() : debouncedValidation();
+    },
+    (formResult, [mode]) => {
+      // fields by id lookup
+      const fieldsById = formCtx.fieldsByPath.value || {};
+      // errors fields names, we need it to also check if custom errors are updated
+      const currentErrorsPaths = keysOf(formCtx.errorBag.value);
+      // collect all the keys from the schema and all fields
+      // this ensures we have a complete keymap of all the fields
+      const paths = [
+        ...new Set([...keysOf(formResult.results), ...keysOf(fieldsById), ...currentErrorsPaths]),
+      ] as string[];
+
+      // aggregates the paths into a single result object while applying the results on the fields
+      return paths.reduce(
+        (validation, path) => {
+          const field = fieldsById[path];
+          const messages = (formResult.results[path] || { errors: [] as string[] }).errors;
+          const fieldResult = {
+            errors: messages,
+            valid: !messages.length,
+          };
+          validation.results[path as keyof TValues] = fieldResult;
+          if (!fieldResult.valid) {
+            validation.errors[path as keyof TValues] = fieldResult.errors[0];
+          }
+
+          // field not rendered
+          if (!field) {
+            setFieldError(path, messages);
+
+            return validation;
+          }
+
+          // always update the valid flag regardless of the mode
+          applyFieldMutation(field, f => (f.meta.valid = fieldResult.valid));
+          if (mode === 'silent') {
+            return validation;
+          }
+
+          const wasValidated = Array.isArray(field) ? field.some(f => f.meta.validated) : field.meta.validated;
+          if (mode === 'validated-only' && !wasValidated) {
+            return validation;
+          }
+
+          applyFieldMutation(field, f => f.setState({ errors: fieldResult.errors }));
+
+          return validation;
+        },
+        { valid: formResult.valid, results: {}, errors: {} } as FormValidationResult<TValues>
+      );
+    }
+  );
+
   const formCtx: PrivateFormContext<TValues> = {
     formId,
     fieldsByPath,
@@ -658,66 +723,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
         });
 
     return formResult;
-  }
-
-  /**
-   * Batches validation runs in 5ms batches
-   * Must have two distinct batch queues to make sure they don't override each other settings #3783
-   */
-  const debouncedSilentValidation = debounceAsync(_validateSchema, 5);
-  const debouncedValidation = debounceAsync(_validateSchema, 5);
-
-  async function validateSchema(mode: SchemaValidationMode): Promise<FormValidationResult<TValues>> {
-    const formResult = await (mode === 'silent' ? debouncedSilentValidation() : debouncedValidation());
-
-    // fields by id lookup
-    const fieldsById = formCtx.fieldsByPath.value || {};
-    // errors fields names, we need it to also check if custom errors are updated
-    const currentErrorsPaths = keysOf(formCtx.errorBag.value);
-    // collect all the keys from the schema and all fields
-    // this ensures we have a complete keymap of all the fields
-    const paths = [
-      ...new Set([...keysOf(formResult.results), ...keysOf(fieldsById), ...currentErrorsPaths]),
-    ] as string[];
-
-    // aggregates the paths into a single result object while applying the results on the fields
-    return paths.reduce(
-      (validation, path) => {
-        const field = fieldsById[path];
-        const messages = (formResult.results[path] || { errors: [] as string[] }).errors;
-        const fieldResult = {
-          errors: messages,
-          valid: !messages.length,
-        };
-        validation.results[path as keyof TValues] = fieldResult;
-        if (!fieldResult.valid) {
-          validation.errors[path as keyof TValues] = fieldResult.errors[0];
-        }
-
-        // field not rendered
-        if (!field) {
-          setFieldError(path, messages);
-
-          return validation;
-        }
-
-        // always update the valid flag regardless of the mode
-        applyFieldMutation(field, f => (f.meta.valid = fieldResult.valid));
-        if (mode === 'silent') {
-          return validation;
-        }
-
-        const wasValidated = Array.isArray(field) ? field.some(f => f.meta.validated) : field.meta.validated;
-        if (mode === 'validated-only' && !wasValidated) {
-          return validation;
-        }
-
-        applyFieldMutation(field, f => f.setState({ errors: fieldResult.errors }));
-
-        return validation;
-      },
-      { valid: formResult.valid, results: {}, errors: {} } as FormValidationResult<TValues>
-    );
   }
 
   const submitForm = handleSubmit((_, { evt }) => {

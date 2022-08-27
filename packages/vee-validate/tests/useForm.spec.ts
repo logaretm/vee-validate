@@ -452,21 +452,60 @@ describe('useForm()', () => {
     });
   });
 
-  test('Validates the field model immediately and when it changes', async () => {
-    await runInSetup(async () => {
-      const { errors, useFieldModel } = useForm();
-      const model = useFieldModel('test');
+  // #3906
+  test('only latest schema validation run messages are used', async () => {
+    function validator(value: string | undefined) {
+      if (!value) {
+        return true;
+      }
 
-      await flushPromises();
-      expect(errors.value.test).toBe(REQUIRED_MESSAGE);
+      if (value.toLowerCase().startsWith('b')) {
+        return 'not b';
+      }
 
-      model.value = 'hello';
-      await flushPromises();
-      expect(errors.value.test).toBe('');
+      return new Promise<string | boolean>(resolve => {
+        setTimeout(() => {
+          if (value.toLowerCase().startsWith('a')) {
+            resolve('not a');
+            return;
+          }
 
-      model.value = '';
-      await flushPromises();
-      expect(errors.value.test).toBe(REQUIRED_MESSAGE);
+          resolve(true);
+        }, 100);
+      });
+    }
+
+    mountWithHoc({
+      setup() {
+        const { errors, useFieldModel } = useForm({
+          validationSchema: {
+            test: validator,
+          },
+        });
+        const model = useFieldModel('test');
+
+        return {
+          model,
+          errors,
+        };
+      },
+      template: `
+        <input name="field" v-model="model" />
+        <span>{{ errors.test }}</span>
+      `,
     });
+
+    await flushPromises();
+
+    const input = document.querySelector('input');
+    const error = document.querySelector('span');
+
+    setValue(input as any, 'a');
+    await flushPromises();
+    setValue(input as any, 'b');
+    await flushPromises();
+    jest.advanceTimersByTime(200);
+    await flushPromises();
+    expect(error?.textContent).toBe('not b');
   });
 });
