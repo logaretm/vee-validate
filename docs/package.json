@@ -6,7 +6,7 @@
     "build": "astro build && node scripts/afterBuild.js"
   },
   "dependencies": {
-    "@astrojs/mdx": "^0.10.0",
+    "@astrojs/mdx": "^0.10.2",
     "@astrojs/sitemap": "^1.0.0",
     "@astrojs/vue": "^1.0.0",
     "@docsearch/css": "^3.0.0-alpha.41",
@@ -15,7 +15,7 @@
     "@stackblitz/sdk": "^1.8.0",
     "@types/fs-extra": "^9.0.13",
     "@vueuse/core": "^9.1.0",
-    "astro": "^1.0.9",
+    "astro": "^1.1.1",
     "autoprefixer": "^10.3.4",
     "fs-extra": "^10.1.0",
     "jsdom": "^20.0.0",
