@@ -3,10 +3,12 @@
     target="_blank"
     rel="noopener"
     href="https://github.com/sponsors/logaretm"
-    class="flex items-center group text-white bg-pink-600 px-3.5 py-1 rounded-md shadow"
+    class="flex items-center group text-white bg-pink-600 rounded-md shadow hover:bg-pink-700 focus:ring focus:ring-pink-500 focus:outline-none"
+    :class="{ 'px-3.5 py-1': !size || size === 'sm', 'px-5 py-2.5': size === 'lg' }"
   >
     <svg
-      class="w-5 h-5 stroke-current transform transition duration-200 group-hover:scale-110"
+      class="stroke-current transform transition duration-200 group-hover:scale-110"
+      :class="{ 'w-5 h-5': !size || size === 'sm', 'w-6 h-6': size === 'lg' }"
       fill="none"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
@@ -19,8 +21,14 @@
       ></path>
     </svg>
 
-    <span class="ml-1 text-sm">Sponsor</span>
+    <span class="ml-1 font-display" :class="{ 'text-sm': !size || size === 'sm', 'font-medium': size === 'lg' }"
+      >Sponsor</span
+    >
   </a>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+defineProps<{
+  size?: 'sm' | 'lg';
+}>();
+</script>

@@ -23,8 +23,13 @@
     </svg>
 
     <div class="flex items-center header__content px-6 lg:px-10" :class="{ 'lg:mt-8': displayWarning }">
-      <a class="mr-auto" href="/">
+      <a class="mr-auto flex items-center" href="/">
         <Icon name="logo" class="h-8 w-8 lg:w-10 lg:h-10 logo" />
+
+        <span
+          class="ml-2 font-display text-xl bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-500 text-transparent font-semibold"
+          >VeeValidate</span
+        >
       </a>
 
       <SideMenuButton class="ml-auto block lg:hidden relative z-30" v-model="isMenuOpen" />

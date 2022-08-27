@@ -12,6 +12,7 @@ module.exports = {
     'src/layouts/**/*.vue',
     'src/layouts/**/*.astro',
     'src/pages/**/*.mdx',
+    'src/pages/**/*.astro',
   ],
   theme: {
     fontFamily: {

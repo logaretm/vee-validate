@@ -8,11 +8,6 @@
   grid-gap: 20px;
 }
 
-.App {
-  max-width: 45rem;
-  @apply mx-auto;
-}
-
 .main {
   @apply py-12 px-6 min-w-0;
   grid-area: content;
