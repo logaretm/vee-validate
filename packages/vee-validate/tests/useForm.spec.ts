@@ -469,4 +469,63 @@ describe('useForm()', () => {
       expect(errors.value.test).toBe(REQUIRED_MESSAGE);
     });
   });
+
+  // #3906
+  test('only latest schema validation run messages are used', async () => {
+    jest.useFakeTimers();
+    function validator(value: string | undefined) {
+      if (!value) {
+        return true;
+      }
+
+      if (value.toLowerCase().startsWith('b')) {
+        return 'not b';
+      }
+
+      return new Promise<string | boolean>(resolve => {
+        setTimeout(() => {
+          if (value.toLowerCase().startsWith('a')) {
+            resolve('not a');
+            return;
+          }
+
+          resolve(true);
+        }, 100);
+      });
+    }
+
+    mountWithHoc({
+      setup() {
+        const { errors, useFieldModel } = useForm({
+          validationSchema: {
+            test: validator,
+          },
+        });
+        const model = useFieldModel('test');
+
+        return {
+          model,
+          errors,
+        };
+      },
+      template: `
+        <input name="field" v-model="value" />
+        <span>{{ errorMessage }}</span>
+      `,
+    });
+
+    await flushPromises();
+
+    const input = document.querySelector('input');
+    const error = document.querySelector('span');
+
+    setValue(input as any, 'a');
+    await flushPromises();
+    setValue(input as any, 'b');
+    await flushPromises();
+    jest.advanceTimersByTime(200);
+    await flushPromises();
+    expect(error?.textContent).toBe('not b');
+    jest.useRealTimers();
+  });
 });

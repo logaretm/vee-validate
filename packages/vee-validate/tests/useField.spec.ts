@@ -1,5 +1,5 @@
 import { useField, useForm } from '@/vee-validate';
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, nextTick, onMounted, ref } from 'vue';
 import { mountWithHoc, setValue, flushPromises } from './helpers';
 
 describe('useField()', () => {
@@ -655,5 +655,57 @@ describe('useField()', () => {
     model.value = '321';
     await flushPromises();
     expect(input?.value).toBe('321');
+  });
+
+  // #3906
+  test('only latest validation run messages are used', async () => {
+    jest.useFakeTimers();
+    function validator(value: string | undefined) {
+      if (!value) {
+        return true;
+      }
+
+      if (value.toLowerCase().startsWith('b')) {
+        return 'not b';
+      }
+
+      return new Promise<string | boolean>(resolve => {
+        setTimeout(() => {
+          if (value.toLowerCase().startsWith('a')) {
+            resolve('not a');
+            return;
+          }
+
+          resolve(true);
+        }, 100);
+      });
+    }
+
+    mountWithHoc({
+      setup() {
+        const { value, errorMessage } = useField<string>('field', validator);
+
+        return {
+          value,
+          errorMessage,
+        };
+      },
+      template: `
+      <input name="field" v-model="value" />
+      <span>{{ errorMessage }}</span>
+    `,
+    });
+
+    const input = document.querySelector('input');
+    const error = document.querySelector('span');
+
+    setValue(input as any, 'a');
+    await flushPromises();
+    setValue(input as any, 'b');
+    await flushPromises();
+    jest.advanceTimersByTime(200);
+    await flushPromises();
+    expect(error?.textContent).toBe('not b');
+    jest.useRealTimers();
   });
 });
