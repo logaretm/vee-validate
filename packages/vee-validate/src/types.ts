@@ -109,8 +109,8 @@ export interface PrivateFieldContext<TValue = unknown> {
 
 export type FieldContext<TValue = unknown> = Omit<PrivateFieldContext<TValue>, 'id' | 'instances'>;
 
-export type GenericValidateFunction = (
-  value: unknown,
+export type GenericValidateFunction<TValue = unknown> = (
+  value: TValue,
   ctx: FieldValidationMetaInfo
 ) => boolean | string | Promise<boolean | string>;
 

@@ -14,9 +14,14 @@ import { isCallable, FieldValidationMetaInfo } from '../../shared';
 /**
  * Used internally
  */
-interface FieldValidationContext {
+interface FieldValidationContext<TValue = unknown> {
   name: string;
-  rules: GenericValidateFunction | GenericValidateFunction[] | YupValidator | string | Record<string, unknown>;
+  rules:
+    | GenericValidateFunction<TValue>
+    | GenericValidateFunction<TValue>[]
+    | YupValidator<TValue>
+    | string
+    | Record<string, unknown>;
   bails: boolean;
   formData: Record<string, unknown>;
 }
@@ -30,18 +35,18 @@ interface ValidationOptions {
 /**
  * Validates a value against the rules.
  */
-export async function validate(
-  value: unknown,
+export async function validate<TValue = unknown>(
+  value: TValue,
   rules:
     | string
     | Record<string, unknown | unknown[]>
-    | GenericValidateFunction
-    | GenericValidateFunction[]
+    | GenericValidateFunction<TValue>
+    | GenericValidateFunction<TValue>[]
     | YupValidator,
   options: ValidationOptions = {}
 ): Promise<ValidationResult> {
   const shouldBail = options?.bails;
-  const field: FieldValidationContext = {
+  const field: FieldValidationContext<TValue> = {
     name: options?.name || '{field}',
     rules,
     bails: shouldBail ?? true,
@@ -60,7 +65,7 @@ export async function validate(
 /**
  * Starts the validation process.
  */
-async function _validate(field: FieldValidationContext, value: unknown) {
+async function _validate<TValue = unknown>(field: FieldValidationContext<TValue>, value: TValue) {
   if (isYupValidator(field.rules)) {
     return validateFieldWithYup(value, field.rules, { bails: field.bails });
   }

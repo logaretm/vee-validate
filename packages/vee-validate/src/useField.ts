@@ -61,8 +61,8 @@ export interface FieldOptions<TValue = unknown> {
 export type RuleExpression<TValue> =
   | string
   | Record<string, unknown>
-  | GenericValidateFunction
-  | GenericValidateFunction[]
+  | GenericValidateFunction<TValue>
+  | GenericValidateFunction<TValue>[]
   | YupValidator<TValue>
   | undefined;
 
