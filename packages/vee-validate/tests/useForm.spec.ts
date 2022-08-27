@@ -452,27 +452,8 @@ describe('useForm()', () => {
     });
   });
 
-  test('Validates the field model immediately and when it changes', async () => {
-    await runInSetup(async () => {
-      const { errors, useFieldModel } = useForm();
-      const model = useFieldModel('test');
-
-      await flushPromises();
-      expect(errors.value.test).toBe(REQUIRED_MESSAGE);
-
-      model.value = 'hello';
-      await flushPromises();
-      expect(errors.value.test).toBe('');
-
-      model.value = '';
-      await flushPromises();
-      expect(errors.value.test).toBe(REQUIRED_MESSAGE);
-    });
-  });
-
   // #3906
   test('only latest schema validation run messages are used', async () => {
-    jest.useFakeTimers();
     function validator(value: string | undefined) {
       if (!value) {
         return true;
@@ -509,8 +490,8 @@ describe('useForm()', () => {
         };
       },
       template: `
-        <input name="field" v-model="value" />
-        <span>{{ errorMessage }}</span>
+        <input name="field" v-model="model" />
+        <span>{{ errors.test }}</span>
       `,
     });
 
@@ -526,6 +507,5 @@ describe('useForm()', () => {
     jest.advanceTimersByTime(200);
     await flushPromises();
     expect(error?.textContent).toBe('not b');
-    jest.useRealTimers();
   });
 });

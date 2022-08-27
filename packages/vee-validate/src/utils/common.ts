@@ -244,3 +244,24 @@ export function applyModelModifiers(value: unknown, modifiers: unknown) {
 
   return value;
 }
+
+export function withLatest<TFunction extends (...args: any[]) => Promise<any>, TResult = ReturnType<TFunction>>(
+  fn: TFunction,
+  onDone: (result: Awaited<TResult>, args: Parameters<TFunction>) => void
+) {
+  let latestRun: Promise<TResult> | undefined;
+
+  return async function runLatest(...args: Parameters<TFunction>) {
+    const pending = fn(...args);
+    latestRun = pending;
+    const result = await pending;
+    if (pending !== latestRun) {
+      return result;
+    }
+
+    latestRun = undefined;
+    onDone(result, args);
+
+    return result;
+  };
+}

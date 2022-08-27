@@ -659,7 +659,6 @@ describe('useField()', () => {
 
   // #3906
   test('only latest validation run messages are used', async () => {
-    jest.useFakeTimers();
     function validator(value: string | undefined) {
       if (!value) {
         return true;
@@ -706,6 +705,5 @@ describe('useField()', () => {
     jest.advanceTimersByTime(200);
     await flushPromises();
     expect(error?.textContent).toBe('not b');
-    jest.useRealTimers();
   });
 });

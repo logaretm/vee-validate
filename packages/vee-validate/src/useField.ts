@@ -36,6 +36,7 @@ import {
   resolveNextCheckboxValue,
   isYupValidator,
   applyModelModifiers,
+  withLatest,
 } from './utils';
 import { isCallable } from '../../shared';
 import { FieldContextKey, FormContextKey, IS_ABSENT } from './symbols';
@@ -147,42 +148,47 @@ function _useField<TValue = unknown>(
     });
   }
 
-  async function validateWithStateMutation(): Promise<ValidationResult> {
-    meta.pending = true;
-    meta.validated = true;
-    const result = await validateCurrentValue('validated-only');
-    if (markedForRemoval) {
-      result.valid = true;
-      result.errors = [];
+  const validateWithStateMutation = withLatest(
+    async () => {
+      meta.pending = true;
+      meta.validated = true;
+
+      return validateCurrentValue('validated-only');
+    },
+    result => {
+      if (markedForRemoval) {
+        result.valid = true;
+        result.errors = [];
+      }
+
+      setState({ errors: result.errors });
+      meta.pending = false;
+
+      return result;
     }
+  );
 
-    setState({ errors: result.errors });
-    meta.pending = false;
+  const validateValidStateOnly = withLatest(
+    async () => {
+      return validateCurrentValue('silent');
+    },
+    result => {
+      if (markedForRemoval) {
+        result.valid = true;
+      }
 
-    return result;
-  }
+      meta.valid = result.valid;
 
-  async function validateValidStateOnly(): Promise<ValidationResult> {
-    const result = await validateCurrentValue('silent');
-    if (markedForRemoval) {
-      result.valid = true;
+      return result;
     }
-
-    meta.valid = result.valid;
-
-    return result;
-  }
+  );
 
   function validate(opts?: Partial<ValidationOptions>) {
-    if (!opts?.mode || opts?.mode === 'force') {
-      return validateWithStateMutation();
+    if (opts?.mode === 'silent') {
+      return validateValidStateOnly();
     }
 
-    if (opts?.mode === 'validated-only') {
-      return validateWithStateMutation();
-    }
-
-    return validateValidStateOnly();
+    return validateWithStateMutation();
   }
 
   // Common input/change event handler
