@@ -1,6 +1,7 @@
 ---
 import TheHeader from '@/components/TheHeader.vue';
 import SiteHead from '@/components/SiteHead.astro';
+import Ad from '@/components/Ad.vue';
 import SpriteSheet from '@/components/SpriteSheet.astro';
 import '@/styles/tailwind.css';
 import '@/styles/home.css';
@@ -43,6 +44,7 @@ const menu = [
       <main class="main">
         <slot />
       </main>
+      <Ad client:idle placement="home-page" />
     </div>
   </body>
 </html>

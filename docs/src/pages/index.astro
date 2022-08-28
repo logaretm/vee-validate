@@ -5,9 +5,6 @@ import Icon from '@/components/Icon.vue';
 import MainPageExample from '@/components/examples/MainPageExample.vue';
 import StarCount from '@/components/StarCount.vue';
 import { features } from '@/constants';
-import { fetchStarCount } from '@/utils/github';
-
-const starsCount = await fetchStarCount();
 
 const highlights = [
   {
@@ -65,7 +62,7 @@ const highlights = [
           Live Examples
         </a>
 
-        <StarCount initial-count={starsCount} client:idle />
+        <StarCount client:idle />
       </div>
     </div>
 
@@ -75,7 +72,7 @@ const highlights = [
   <section class="mt-24 grid grid-cols-2 md:grid-cols-3 gap-5 mx-auto min-w-0 max-w-6xl">
     {
       highlights.map(feature => (
-        <div class="bg-gradient-to-br bg-grad from-gray-200 to-gray-100 dark:from-zinc-800 dark:to-zinc-900 p-6 rounded-lg font-display shadow-sm">
+        <div class="bg-gradient-to-br from-gray-200 to-gray-100 dark:from-zinc-800 dark:to-zinc-900 p-6 rounded-lg font-display shadow-sm">
           <h3 class="text-xl font-bold">{feature.title}</h3>
           <p class="mt-4 font-display font-medium text-gray-600 dark:text-gray-300" set:html={feature.details} />
         </div>
@@ -111,10 +108,10 @@ const highlights = [
 
   <section class="mt-48 mx-auto max-w-4xl">
     <h2 class="text-center text-gray-500 dark:text-gray-200 font-display font-bold text-4xl">Do more with less</h2>
-    <p class="mt-4 text-center text-gray-300">
-      Basic example, handles value tracking, validation and submissions in short line count
+    <p class="mt-4 text-center text-gray-300 text-lg font-display">
+      In this example, value tracking, validation and submissions are handled in just a few lines of code
     </p>
 
-    <MainPageExample client:visible class="mt-16" />
+    <MainPageExample client:visible />
   </section>
 </HomeLayout>

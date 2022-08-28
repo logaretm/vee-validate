@@ -1,6 +1,6 @@
 <template>
   <div
-    class="p-6 rounded my-8 border-l-4 dark:bg-background bg-gray-100"
+    class="p-6 rounded my-8 border-l-4 bg-gray-100 dark:bg-zinc-800"
     :class="{
       'border-accent-800 text-accent-800': !type || type === 'tip',
       'border-warning text-warning': type === 'warn',

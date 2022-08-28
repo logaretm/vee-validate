@@ -1,9 +1,13 @@
 <template>
-  <div id="ad"></div>
+  <div id="ad" :class="{ 'placement-home': placement === 'home-page' }"></div>
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
+
+defineProps<{
+  placement?: 'content' | 'home-page';
+}>();
 
 function loadScript() {
   const script = document.createElement('script');
@@ -124,6 +128,11 @@ onMounted(loadScript);
     .carbon-poweredby {
       position: static;
       margin-top: 10px;
+    }
+
+    &.placement-home {
+      left: unset;
+      right: 4rem;
     }
   }
 }
