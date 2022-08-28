@@ -23,7 +23,7 @@ export default {
   methods: {
     load() {
       const script = document.createElement('script');
-      script.src = '//cdn.carbonads.com/carbon.js?serve=CE7DKKQ7&placement=logaretmgithubio';
+      script.src = '//cdn.carbonads.com/carbon.js?serve=CE7DKKQ7&placement=vee-validatelogaretmcom';
       script.id = '_carbonads_js';
       this.$el.appendChild(script);
     },
