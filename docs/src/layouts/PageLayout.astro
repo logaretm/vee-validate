@@ -1,0 +1,103 @@
+---
+import path from 'path';
+import SiteHead from '@/components/SiteHead.astro';
+import Ad from '@/components/Ad.vue';
+import SpriteSheet from '@/components/SpriteSheet.astro';
+import TheHeader from '@/components/TheHeader.vue';
+import EditPage from '@/components/EditPage.vue';
+import SponsorButton from '@/components/SponsorButton.vue';
+import DocMenu from '@/components/DocMenu.vue';
+import DocToc from '@/components/DocToc.vue';
+import DocSearch from '@/components/DocSearch.vue';
+import ContentWrapper from '@/components/ContentWrapper.vue';
+import { buildMenu, Frontmatter } from '@/utils/seo';
+import '@/styles/tailwind.css';
+import '@/styles/page.css';
+
+const { headings, frontmatter } = Astro.props;
+const filePath = path.relative(path.resolve('../'), frontmatter.file);
+
+const menu = [
+  {
+    title: 'resources',
+    pages: buildMenu([
+      {
+        ...(await Astro.glob<Frontmatter>('../pages/resources.mdx'))[0],
+        icon: 'grid',
+      },
+    ]),
+  },
+  {
+    title: 'tutorials',
+    pages: buildMenu(await Astro.glob<Frontmatter>('../pages/tutorials/*.mdx')),
+  },
+  {
+    title: 'guide',
+    pages: buildMenu([
+      ...(await Astro.glob<Frontmatter>('../pages/guide/*.mdx')),
+      {
+        frontmatter: {
+          order: 2,
+          title: 'Components',
+        },
+        children: await Astro.glob<Frontmatter>('../pages/guide/components/*.mdx'),
+        icon: 'code',
+      },
+      {
+        frontmatter: {
+          order: 3,
+          title: 'Composition API',
+        },
+        children: await Astro.glob<Frontmatter>('../pages/guide/composition-api/*.mdx'),
+        icon: 'grid-add',
+      },
+    ]),
+  },
+  {
+    title: 'examples',
+    pages: buildMenu(await Astro.glob<Frontmatter>('../pages/examples/*.mdx')),
+  },
+  {
+    title: 'integrations',
+    pages: buildMenu(await Astro.glob<Frontmatter>('../pages/integrations/*.mdx')),
+  },
+  {
+    title: 'api reference',
+    pages: buildMenu(await Astro.glob<Frontmatter>('../pages/api/*.mdx')),
+  },
+];
+---
+
+<html>
+  <SiteHead {...Astro.props} />
+  <body>
+    <SpriteSheet />
+    <TheHeader client:load currentUrl={frontmatter.url} menu={menu} />
+    <div class="PageApp">
+      <main class="main">
+        <ContentWrapper>
+          <slot />
+        </ContentWrapper>
+
+        <div class="mt-20 pt-2 border-t dark:border-gray-600 border-gray-200 flex items-center">
+          <EditPage path={filePath} />
+
+          <SponsorButton class="ml-auto" />
+        </div>
+      </main>
+
+      <aside class="lside hidden lg:block px-5">
+        <div class="sticky top-24">
+          <DocSearch client:idle />
+          <DocMenu currentUrl={frontmatter.url} menu={menu} client:idle />
+        </div>
+      </aside>
+
+      <aside class="rside hidden xl:block">
+        <DocToc headings={headings} class="sticky top-24" />
+
+        <Ad client:idle />
+      </aside>
+    </div>
+  </body>
+</html>

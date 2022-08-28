@@ -2,7 +2,6 @@
   "$schema": "vscode://schemas/color-theme",
   "name": "custom",
   "author": "Abdelrahman Awad",
-  "semanticHighlighting": true,
   "maintainers": ["Abdelrahman Awad <logaretm@gmail.com>"],
   "colors": {
     "editor.foreground": "#F8F8F2",
@@ -628,7 +627,20 @@
         "foreground": "#ffff80"
       }
     },
-
+    {
+      "name": "String quotes (temporary vscode fix)",
+      "scope": ["punctuation.definition.string.begin", "punctuation.definition.string.end"],
+      "settings": {
+        "foreground": "#ffff80"
+      }
+    },
+    {
+      "name": "Property quotes (temporary vscode fix)",
+      "scope": ["punctuation.support.type.property-name.begin", "punctuation.support.type.property-name.end"],
+      "settings": {
+        "foreground": "#80ffea"
+      }
+    },
     {
       "name": "Docstrings",
       "scope": [

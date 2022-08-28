@@ -1,0 +1,264 @@
+---
+layout: ../../layouts/PageLayout.astro
+title: Localization (i18n)
+description: Localization support with the first party module and other providers
+order: 6
+next: guide/composition-api
+---
+
+import LiveExample from '@/components/LiveExample.vue';
+import DocTip from '@/components/DocTip.vue';
+
+# Localization (i18n)
+
+This guide only addresses generating error messages for [globally defined validators](/guide/global-validators) using vee-validate's own `@vee-validate/i18n` plugin.
+
+If you are using vee-validate with yup, then you should check out [yup's localization guide](https://github.com/jquense/yup#using-a-custom-locale-dictionary). If you are using another library for data validation, check their i18n capabilities.
+
+## Global Message Generator
+
+vee-validate exposes a global config called `generateMessage` which is a function that should return a string. Whenever any globally defined rule returns a falsy value the `generateMessage` will be called and its result will be used as an error message for that rule.
+
+The message generator function has the following type:
+
+```ts
+interface FieldContext {
+  field: string; // The field's name or label (see next section)
+  value: any; // the field's current value
+  form: Record<string, any>; // other values in the form
+  rule: {
+    name: string; //the rule name
+    params?: any[]; // any params sent to it
+  };
+}
+
+type ValidationgenerateMessage = (ctx: FieldContext) => string;
+```
+
+With this information, you could create message handlers with any kind of 3rd party libraries. To register a message generator use the `configure` function exposed by vee-validate:
+
+```js
+import { configure } from 'vee-validate';
+
+configure({
+  generateMessage: context => {
+    return `The field ${context.field} is invalid`;
+  },
+});
+```
+
+### Custom Labels
+
+If you want to display different field names in your error messages, the `<Field />` component accepts a `label` prop which allows you to display better names for your fields in their generated messages. Here is an example:
+
+```vue-html
+<Form>
+  <Field name="_bad_field_name" label="nice name" rules="required|email" />
+  <ErrorMessage name="_bad_field_name" />
+</Form>
+```
+
+The generated message will use `nice name` instead of the badly formatted one.
+
+## Using @vee-validate/i18n
+
+### Overview
+
+The `@vee-validate/i18n` contains a simple message generator function that you can use to generate localized messages from JSON objects:
+
+First, you need to install the `@vee-validate/i18n` package:
+
+```sh
+yarn add @vee-validate/i18n
+
+# or with npm
+npm install @vee-validate/i18n
+```
+
+\import the `localize()` function from `@vee-validate/i18n` which returns a message generator function:
+
+```js
+import { defineRule, configure } from 'vee-validate';
+import { required } from '@vee-validate/rules';
+import { localize } from '@vee-validate/i18n';
+
+// Define the rule globally
+defineRule('required', required);
+
+configure({
+  // Generates an English message locale generator
+  generateMessage: localize('en', {
+    messages: {
+      required: 'This field is required',
+    },
+  }),
+});
+```
+
+If you have multiple locales in your application, you can add them like this:
+
+```js
+import { defineRule, configure } from 'vee-validate';
+import { required } from '@vee-validate/rules';
+import { localize } from '@vee-validate/i18n';
+
+// Define the rule globally
+defineRule('required', required);
+
+configure({
+  generateMessage: localize({
+    en: {
+      messages: {
+        required: 'This field is required',
+      },
+    },
+    ar: {
+      messages: {
+        required: 'هذا الحقل مطلوب',
+      },
+    },
+  }),
+});
+```
+
+You can change the locale using `setLocale` function exported by the `@vee-validate/i18n` anywhere in your application:
+
+```js
+import { setLocale } from '@vee-validate/i18n';
+
+setLocale('ar');
+```
+
+To save you a lot of time translating `@vee-validate/rules` messages to your language, the awesome community around vee-validate already contributed over 40+ languages that you can use directly in your application and get started quickly. The localized files include localized messages for all the [global rules provided by @vee-validate/rules package](/guide/global-validators#available-rules).
+
+You can import the needed locale from the `@vee-validate/i18n/dist/locale/{localeCode}.json` and they can be passed directly to the localize function. This snippet adds the English and Arabic localized messages for all the rules of `@vee-validate/rules` package into the message generator function:
+
+```js
+import { configure } from 'vee-validate';
+import { localize } from '@vee-validate/i18n';
+import en from '@vee-validate/i18n/dist/locale/en.json';
+import ar from '@vee-validate/i18n/dist/locale/ar.json';
+
+configure({
+  generateMessage: localize({
+    en,
+    ar,
+  }),
+});
+```
+
+### Localizing Field Names
+
+To localize the field name with the `@vee-validate/i18n` package, you can add a `names` property to your dictionaries containing the translated names of the fields.
+
+```js
+import { configure } from 'vee-validate';
+import { localize } from '@vee-validate/i18n';
+
+configure({
+  generateMessage: localize({
+    en: {
+      names: {
+        age: 'Age',
+      },
+    },
+    ar: {
+      age: 'السن',
+    },
+  }),
+});
+```
+
+Then whenever a message is generated for a global rule, vee-validate will try to match the field name with the `names` property found in the active locale.
+
+This is such an example:
+
+<LiveExample client:visible id="vee-validate-v4-localizing-field-names" />
+
+## Custom messages for specific fields
+
+You may want to override specific rule messages for specific fields, you can do this by calling `localize` with the specific messages object:
+
+```js
+import { localize } from '@vee-validate/i18n';
+
+localize('en', {
+  fields: {
+    password: {
+      required: 'Hey! Password cannot be empty',
+    },
+  },
+});
+
+// Or update multiple languages
+localize({
+  en: {
+    fields: {
+      password: {
+        required: 'Hey! Password cannot be empty',
+      },
+    },
+  },
+});
+```
+
+You can call `localize` anywhere in your component initialization, ideally before any error is generated so either `mounted` or `setup` should be safe to call `localize`.
+
+### Placeholder Interpolation
+
+Your messages can be more complex than `required`, for example a `between` rule would need access to the params values to be able to produce a meaningful error message, the `@vee-validate/i18n` plugin comes with interpolation support for various placeholders, consider this example:
+
+```js
+import { defineRule, configure } from 'vee-validate';
+import { between } from '@vee-validate/rules';
+import { localize } from '@vee-validate/i18n';
+
+// Define the rule globally
+defineRule('between', between);
+
+configure({
+  // Generates an English message locale generator
+  generateMessage: localize('en', {
+    messages: {
+      between: 'The {field} value must be between 0:{min} and 1:{max}',
+    },
+  }),
+});
+```
+
+The `{field}` placeholder will be replaced with the field name, and `0:{min}` and `1:{max}` will be replaced with the rule arguments. Note that the indices that prefix each param name are recommended because the interpolation will need to know the order of the arguments because you may define your global rules in one of `object` or `array` or `string` formats, and thus the interpolation process needs to know both argument names and their order if array params or strings are used.
+
+You can also interpolate the other fields in the form by using their names as placeholders.
+
+Here is an example that show cases interpolation for different cases:
+
+<LiveExample client:visible id="vee-validate-v4-i18n-interpolation" />
+
+### Loading Locale From CDN
+
+If you are using Vue.js over CDN, you can still load the locale files without having to copy them to your code, the `@vee-validate/i18n` library exposes a `loadLocaleFromURL` function that accepts a URL to a locale file.
+
+```html
+<script src="path/to/vee-validate.js"></script>
+<script src="path/to/@vee-validate/rules.js"></script>
+<script src="path/to/@vee-validate/i18n.js"></script>
+
+<script>
+  // Install all rules
+  Object.keys(VeeValidateRules).forEach(rule => {
+    VeeValidate.defineRule(rule, VeeValidateRules[rule]);
+  });
+
+  // Downloads and merges the locale from URL
+  VeeValidateI18n.loadLocaleFromURL('https://unpkg.com/@vee-validate/i18n@4.0.2/dist/locale/ar.json');
+
+  // Activate the locale
+  VeeValidate.configure({
+    generateMessage: VeeValidateI18n.localize('ar'),
+  });
+</script>
+```
+
+Here is an example of the previous snippet:
+
+<LiveExample client:visible id="vee-validate-v4-localize-from-cdn" />

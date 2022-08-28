@@ -1,0 +1,61 @@
+<template>
+  <div class="mt-14 flex flex-col items-center">
+    <div
+      class="bg-gray-200 dark:bg-black max-w-xs p-1 rounded-md flex items-center gap-2 font-display font-semibold text-sm mb-8"
+    >
+      <button
+        type="button"
+        class="flavor-btn"
+        :aria-pressed="currentFlavor === 'components'"
+        @click="setFlavor('components')"
+      >
+        Components
+      </button>
+      <button
+        type="button"
+        class="flavor-btn"
+        :aria-pressed="currentFlavor === 'composition'"
+        @click="setFlavor('composition')"
+      >
+        Composition API
+      </button>
+    </div>
+
+    <div v-if="currentFlavor === 'components'" class="w-full">
+      <iframe
+        loading="lazy"
+        src="https://stackblitz.com/edit/vitejs-vite-2ia3j4?embed=1&file=src/App.vue&hideExplorer=1&hideNavigation=1&hideDevTools=1&devToolsHeight=0&terminalHeight=1"
+      ></iframe>
+    </div>
+    <div v-else class="w-full">
+      <iframe
+        loading="lazy"
+        src="https://stackblitz.com/edit/vitejs-vite-zwb5gb?file=src/App.vue&embed=1&hideExplorer=1&hideNavigation=1&hideDevTools=1&devToolsHeight=0&terminalHeight=1"
+      ></iframe>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+
+const currentFlavor = ref<'components' | 'composition'>('components');
+
+function setFlavor(flavor: typeof currentFlavor['value']) {
+  currentFlavor.value = flavor;
+}
+</script>
+
+<style lang="postcss" scoped>
+.flavor-btn {
+  @apply px-3 py-1.5 rounded-md hover:text-emerald-500 select-none;
+
+  &[aria-pressed='true'] {
+    @apply bg-emerald-500 dark:bg-emerald-600 text-white hover:text-white;
+  }
+}
+
+iframe {
+  @apply w-full min-h-[800px] rounded-md border-4 border-emerald-500 border-opacity-60;
+}
+</style>

@@ -6,24 +6,14 @@
  */
 module.exports = {
   darkMode: 'class',
-  mode: 'jit',
-  purge: {
-    content: [
-      'components/**/*.vue',
-      'layouts/**/*.vue',
-      'pages/**/*.vue',
-      'plugins/**/*.js',
-      'nuxt.config.js',
-      'content/**/*.md',
-    ],
-    options: {
-      whitelistPatterns: [
-        /-(leave|enter|appear)(|-(to|from|active))$/,
-        /^(?!(|.*?:)cursor-move).+-move$/,
-        /^nuxt-link(|-exact)-active$/,
-      ],
-    },
-  },
+  content: [
+    'src/components/**/*.vue',
+    'src/components/**/*.astro',
+    'src/layouts/**/*.vue',
+    'src/layouts/**/*.astro',
+    'src/pages/**/*.mdx',
+    'src/pages/**/*.astro',
+  ],
   theme: {
     fontFamily: {
       display: ['Montserrat', 'sans-serif'],
@@ -42,18 +32,6 @@ module.exports = {
     },
 
     extend: {
-      fontSize: {
-        xs: '12px',
-        sm: '14px',
-        base: '16px',
-        lg: '20px',
-        xl: 'calc(1em + 0.40vw)',
-        '2xl': 'calc(1em + 0.75vw)',
-        '3xl': 'calc(1em + 1.75vw)',
-        '4xl': 'calc(1em + 2vw)',
-        '6xl': 'calc(1em + 2.8vw)',
-      },
-
       colors: {
         'accent-900': '#009f53',
         'accent-800': 'var(--accent, #06d77b)',
@@ -75,16 +53,13 @@ module.exports = {
         'gray-100': '#f6f6f6',
         'dracula-selection': '#454158',
         background: '#22212C',
+        dark: 'hsl(240 6% 9%)',
+        carbon: '#333',
       },
 
       screens: {
         motion: { raw: '(prefers-reduced-motion: no-preference)' },
       },
     },
-  },
-  variants: {
-    backgroundColor: ['responsive', 'hover', 'focus', 'dark'],
-    textColor: ['responsive', 'hover', 'focus', 'dark'],
-    borderColor: ['responsive', 'hover', 'focus', 'dark'],
   },
 };

@@ -1,31 +1,29 @@
 {
   "private": true,
   "scripts": {
-    "dev": "nuxt dev",
-    "serve": "nuxt dev",
-    "generate": "nuxt generate && node scripts/afterBuild.js",
-    "build": "nuxt build --target static",
-    "export": "nuxt export"
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build && node scripts/afterBuild.js"
   },
   "dependencies": {
+    "@astrojs/mdx": "^0.10.2",
+    "@astrojs/sitemap": "^1.0.0",
+    "@astrojs/vue": "^1.0.0",
     "@docsearch/css": "^3.0.0-alpha.41",
     "@docsearch/js": "^3.0.0-alpha.41",
-    "@nuxt/content": "^1.13.1",
-    "@nuxtjs/pwa": "^3.3.5",
-    "@nuxtjs/tailwindcss": "^4.2.1",
+    "@floating-ui/dom": "^1.0.1",
     "@stackblitz/sdk": "^1.8.0",
+    "@types/fs-extra": "^9.0.13",
+    "@vueuse/core": "^9.1.0",
+    "astro": "^1.1.1",
     "autoprefixer": "^10.3.4",
-    "nuxt": "^2.15.8"
+    "fs-extra": "^10.1.0",
+    "jsdom": "^20.0.0",
+    "remark-gfm": "^3.0.1",
+    "shiki": "^0.11.1",
+    "tailwindcss": "^3.1.8",
+    "unist-util-visit": "^4.1.0",
+    "vue": "^3.2.37"
   },
-  "devDependencies": {
-    "cheerio": "^1.0.0-rc.10",
-    "css-loader": "^5.0.2",
-    "postcss": "^8.2.6",
-    "postcss-import": "^13.0.0",
-    "postcss-loader": "4.1",
-    "postcss-nested": "5.0.1",
-    "postcss-url": "10",
-    "shiki": "0.9.11",
-    "tailwindcss": "^2.2.9"
-  }
+  "devDependencies": {}
 }

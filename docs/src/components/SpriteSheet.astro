@@ -1,0 +1,25 @@
+---
+const iconModules = import.meta.env.DEV ? await import.meta.glob('../icons/*.svg', { as: 'raw' }) : {};
+
+const icons = import.meta.env.DEV
+  ? await Promise.all(
+      Object.keys(iconModules).map(k => {
+        return iconModules[k]().then(content => {
+          const id = k.split('/').pop().split('.').shift();
+
+          return content.replace('<svg', `<symbol id="icon-${id}"`).replace('</svg>', '</symbol>');
+        });
+      })
+    )
+  : [];
+---
+
+{
+  import.meta.env.DEV && (
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="hidden">
+      {icons.map(icon => {
+        return <Fragment set:html={icon} />;
+      })}
+    </svg>
+  )
+}

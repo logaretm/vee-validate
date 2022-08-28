@@ -1,0 +1,57 @@
+<template>
+  <div class="pt-4">
+    <h2 class="text-xl">Next Step</h2>
+
+    <a :href="path" class="bg-accent-800 w-full flex items-start p-4 rounded text-white">
+      <svg
+        class="w-5 h-5 mr-2 mt-1 flex-shrink-0"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+      </svg>
+      <div class="NextTitle flex flex-col">
+        <span class="text-lg font-semibold flex">{{ title }}</span>
+        <span class="mt-2 text-sm">{{ description }}</span>
+      </div>
+    </a>
+  </div>
+</template>
+
+<script lang="ts" setup>
+defineProps({
+  title: String,
+  description: String,
+  path: String,
+});
+</script>
+
+<style lang="postcss" scoped>
+h2 {
+  @apply font-semibold mb-8 relative;
+  transform: translateX(2ch);
+  &::before {
+    @apply absolute text-accent-800;
+    margin-left: -2ch;
+    content: '#';
+  }
+
+  @screen lg {
+    transform: none;
+  }
+}
+
+a {
+  .NextTitle {
+    transition: transform 0.3s ease-in-out;
+  }
+
+  &:hover {
+    .NextTitle {
+      transform: translate3d(10px, 0, 0);
+    }
+  }
+}
+</style>

@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:700,400,600,500|Noto+Sans:400,500,700&display=swap');
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+html,
+body {
+  width: 100%;
+  min-height: 100vh;
+  @apply font-body;
+  scroll-padding-top: 130px;
+}
+
+body {
+  @apply bg-white text-gray-700 w-full;
+}
+
+.dark {
+  body {
+    @apply bg-dark text-white;
+  }
+}
+
+.lside {
+  grid-area: lside;
+}
+
+.rside {
+  grid-area: rside;
+}
+
+.main {
+  grid-area: content;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.8s ease-in-out, transform 0.2s ease-in-out;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+  transform: translate3d(40%, 0, 0);
+}
+
+:root {
+  --accent: #09a884;
+
+  --code-foreground: #2c3e50;
+  --code-background: #f6f6f6;
+  --code-token-constant: #c25205;
+  --code-token-operator: #b2085f;
+  --code-token-type: #b92dbc;
+  --code-token-parameter: #2c3e50;
+  --code-token-attribute: #c25205;
+  --code-token-regex: #ff9580;
+  --code-token-string: #0a7a34;
+  --code-token-comment: #848486;
+  --code-line-numbers: #bbbbbb;
+  --code-line-highlight: #f8f4e4;
+  --code-line-highlight-border: #b92dbc;
+  --code-lang-label: #bbbbbb;
+}
+
+.dark {
+  --accent: #09a884;
+
+  --code-foreground: #f8f8f2;
+  --code-background: #22212c;
+  --code-token-constant: #9580ff;
+  --code-token-operator: #ff80bf;
+  --code-token-type: #80ffea;
+  --code-token-parameter: #ffca80;
+  --code-token-attribute: #8aff80;
+  --code-token-regex: #ff9580;
+  --code-token-string: #ffff80;
+  --code-token-comment: #7970a9;
+  --code-line-numbers: #7970a9;
+  --code-line-highlight: #16171d;
+  --code-line-highlight-border: #7970a9;
+  --code-lang-label: #7970a9;
+}
+
+ul.features {
+  li {
+    @apply relative antialiased list-none;
+    &:before {
+      @apply w-6 h-6 text-lg absolute rounded-full flex items-center justify-center flex-shrink-0;
+      content: '';
+      background-image: url("data:image/svg+xml,%3Csvg fill='none' stroke='%2309a884' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'%3E%3C/path%3E%3C/svg%3E");
+      left: -2rem;
+    }
+  }
+}

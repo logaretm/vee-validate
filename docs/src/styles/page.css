@@ -1,0 +1,28 @@
+.PageApp {
+  @apply h-full mx-auto;
+  max-width: 1500px;
+  grid-template-areas:
+    'content'
+    'footer';
+  display: grid;
+  grid-gap: 50px;
+
+  @screen lg {
+    grid-template-areas:
+      'lside content rside'
+      'footer footer footer';
+    grid-template-columns: 1.5fr 45rem 0.5fr;
+    column-gap: 100px;
+  }
+
+  @screen xl {
+    grid-template-areas:
+      'lside content rside'
+      'footer footer footer';
+    grid-template-columns: 1fr 45rem 1fr;
+  }
+
+  .main {
+    @apply py-12 px-6 min-w-0 lg:px-0;
+  }
+}

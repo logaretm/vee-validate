@@ -1,0 +1,25 @@
+---
+import { generateMetaTags } from '@/utils/seo';
+import config from '@/config';
+
+const { frontmatter } = Astro.props;
+
+const title = frontmatter?.title || 'VeeValidate: Painless Vue.js forms';
+const description = frontmatter?.title || 'Painless Vue.js forms';
+const path = frontmatter?.url || '/';
+
+const metaTags = generateMetaTags({
+  title,
+  description,
+  url: `${config.appURL}${path}`,
+});
+---
+
+<head>
+  <title>{title}</title>
+  <meta charset="utf-8" />
+  <link rel="icon" type="image/x-icon" href="/img/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover" />
+  {metaTags.map(t => <meta content={t.content} name={t.name} property={t.property} />)}
+  <script is:inline src="/v4/loadTheme.js"></script>
+</head>

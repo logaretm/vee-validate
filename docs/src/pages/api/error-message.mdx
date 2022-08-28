@@ -1,0 +1,91 @@
+---
+layout: ../../layouts/PageLayout.astro
+title: ErrorMessage
+description: API reference for the ErrorMessage component
+menuTitle: '<ErrorMessage />'
+order: 3
+---
+
+import DocTip from '@/components/DocTip.vue';
+
+# ErrorMessage
+
+The `ErrorMessage` component is used to conveniently display error messages without resorting to scoped slots on either the `Form` and `Field` components. It also renders nothing if there are no messages for the associated field.
+
+The basic usage looks like this:
+
+```vue
+<template>
+  <Form>
+    <Field name="email" type="email" :rules="validateEmail" />
+    <ErrorMessage name="email" />
+  </Form>
+</template>
+
+<script setup>
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
+
+const validateEmail = yup.string().required().email();
+</script>
+```
+
+## Rendering Messages
+
+The `ErrorMessage` component accepts an `as` prop that allows to control the root node to render for your error messages, by default it will render a `span` if none provided if there is an error message for the field.
+
+```vue-html
+<ErrorMessage name="email" as="p" />
+```
+
+For more flexible markup and the ability to render multiple root nodes, you can use the `ErrorMessage` component's default scoped slot
+
+```vue-html
+<ErrorMessage name="email" v-slot="{ message }">
+  <p>Error:</p>
+  <p>{{ message }}</p>
+</ErrorMessage>
+```
+
+If an `as` prop is not provided while having a slot, it will render the slot contents only. _Effectively becoming a renderless-component._
+
+You can use a combination of both to render a root node with children:
+
+```vue-html
+<ErrorMessage as="div" name="email" v-slot="{ message }">
+  <p>Error:</p>
+  <p>{{ message }}</p>
+</ErrorMessage>
+```
+
+<DocTip title="No Errors Rendering" type="danger">
+
+When there are not any error messages for the field the `<ErrorMessage />` component will render nothing, even if you used the slot or `as` prop.
+
+</DocTip>
+
+## API
+
+### Props
+
+| Prop | Type     | Required/Default | Description                              |
+| :--- | :------- | :--------------- | :--------------------------------------- |
+| as   | `string` | `"span"`         | The element to render as a root node     |
+| name | `string` | Required         | The field's name to display messages for |
+
+### Slots
+
+#### default
+
+The default slot gives you access to the following props:
+
+| Scoped Prop | Type     | Description                 |
+| :---------- | :------- | :-------------------------- |
+| message     | `string` | The element's error message |
+
+Check the sample above for rendering with scoped slots
+
+## Caveats
+
+- The ErrorMessage component must be used inside a `Form` component otherwise it won't be able to find the errors.
+- ErrorMessage component can only display errors for a field that exists within the same form, it cannot reference fields outside its own form.

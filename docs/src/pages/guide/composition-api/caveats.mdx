@@ -1,0 +1,150 @@
+---
+layout: ../../../layouts/PageLayout.astro
+title: Composition API Caveats
+description: Things to watch out for when using the composition API
+order: 6
+next: guide/global-validators
+menuTitle: Caveats
+new: true
+---
+
+# Composition API Caveats
+
+When using the composition API, there are a few things that are not clear when first starting to use it. This page will contain these topics and help you understand how to workaround or address them.
+
+## Reactive Field Names with `useField`
+
+You might've noticed that some examples in the docs call `toRef` when assigning a field name to `useField`:
+
+```js
+import { toRef } from 'vue';
+import { useField } from 'vee-validate';
+
+export default {
+  props: {
+    name: String,
+  },
+  setup(props) {
+    const { value, errorMessage } = useField(toRef(props, 'name'));
+  },
+};
+```
+
+This is mainly because the `props` in Vue.js is a reactive object, meaning if you access or destruct any of its properties they will lose the reactivity aspect. Let's say you did the following:
+
+```js
+import { useField } from 'vee-validate';
+
+export default {
+  props: {
+    name: String,
+  },
+  setup(props) {
+    // ❌ Don't do this in custom input components
+    const { value, errorMessage } = useField(props.name);
+  },
+};
+```
+
+The implications are that vee-validate is no longer able to tell when the field name changes, which is crucial for syncing values when they do.
+
+A common example where field names change frequently is in a array field where `v-for` loops field names use the index or the iterated value to generate the field name
+
+```vue{4}
+<CustomTextField
+  v-for="(user, idx) in users"
+  :key="user.id"
+  :name="`users[${idx}].name`"
+></CustomTextField>
+```
+
+To address this issue, you need to get a reactive reference to the `name` property. Vue offers a few ways to do this, so you can use any of the following methods:
+
+```js
+import { toRef, toRefs, computed } from 'vue';
+
+// ✅ using `toRef`
+const { value, errorMessage } = useField(toRef(props, 'name'));
+
+// ✅ using `toRefs`
+const { name } = toRefs(props);
+const { value, errorMessage } = useField(name);
+
+// ✅ using `computed`
+const name = computed(() => props.name);
+const { value, errorMessage } = useField(name);
+```
+
+## Destructing composable
+
+The composition API examples in the docs have always used the left-hand side destructing syntax when assigning component data with any of the composable functions vee-validate offers. To quickly refresh your memory:
+
+```js
+const { value } = useField('field');
+const { handleChange } = useForm();
+const { fields } = useFieldArray('users');
+```
+
+This is required by default, because each of these functions assumes you might never need the entire features each one provides and such each state/function is exposed independently as a `Ref` or a `Function`.
+
+This means if you try the following, it won't work as expected when used in your template:
+
+```vue
+<script setup>
+import { useField, useForm, useFieldArray } from 'vee-validate';
+
+export default {
+  setup() {
+    const form = useForm();
+    const field = useField('field');
+    const fieldArray = useFieldArray('users');
+
+    return {
+      form,
+      field,
+      fieldArray,
+    };
+  },
+};
+</script>
+
+<template>
+  <!-- ❌ Doesn't work -->
+  <input v-model="field.value" />
+
+  <!-- ❌ Doesn't work -->
+  <pre>{{ form.meta.valid }}</pre>
+
+  <!-- ❌ Doesn't work -->
+  <div v-for="item in fieldArray.fields"></div>
+</template>
+```
+
+This is because the `setup` function doesn't recursively expose the refs inside of these objects. If you prefer to use the composition API like shown above, then you can fix most of the issues by wrapping the function calls with `reactive()`.
+
+```vue
+<script setup>
+import { reactive } from 'vue';
+import { useField, useForm, useFieldArray } from 'vee-validate';
+
+const form = reactive(useForm());
+const field = reactive(useField('field'));
+const fieldArray = reactive(useFieldArray('users'));
+</script>
+
+<template>
+  <!-- ❌  Still Doesn't work because it is a writeable computed ref -->
+  <input v-model="field.value" />
+
+  <!-- ✅  Works if unwrapped manually -->
+  <input v-model="field.value.value" />
+
+  <!-- ✅  Works -->
+  <pre>{{ form.meta.valid }}</pre>
+
+  <!-- ✅  Works -->
+  <div v-for="item in fieldArray.fields"></div>
+</template>
+```
+
+You can read more on that behavior in [Vue.js docs](https://vuejs.org/guide/reusability/composables.html#conventions-and-best-practices). Note that once you wrap the composable calls with `reactive` you no longer can destruct them and preserve the reactivity.
