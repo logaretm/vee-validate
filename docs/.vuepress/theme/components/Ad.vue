@@ -23,9 +23,28 @@ export default {
   methods: {
     load() {
       const script = document.createElement('script');
-      script.src = '//cdn.carbonads.com/carbon.js?serve=CE7DKKQ7&placement=logaretmgithubio';
+      script.src = '//cdn.carbonads.com/carbon.js?serve=CE7DKKQ7&placement=vee-validatelogaretmcom';
       script.id = '_carbonads_js';
+      script.onload = () => {
+        setTimeout(() => {
+          this.checkIfAdLoaded();
+        }, 1000);
+      };
       this.$el.appendChild(script);
+    },
+    checkIfAdLoaded() {
+      const adEl = document.querySelector('#carbonads');
+      if (adEl) {
+        return;
+      }
+
+      if (window._carbonads) {
+        window._carbonads.init();
+      }
+
+      setTimeout(() => {
+        this.checkIfAdLoaded();
+      }, 1000);
     }
   }
 };
@@ -75,6 +94,7 @@ export default {
     max-width: calc(100% - 130px - 1em)
     text-align: left
     color: #637381
+    padding-bottom: 12px
 
   .carbon-poweredby
     position: absolute
@@ -87,6 +107,9 @@ export default {
     text-transform: uppercase
     line-height: 1
     letter-spacing: 1px
+
+  .carbon-wrap
+    overflow: auto
 
 @media screen and (max-width: 1500px) and (min-width: 1301px)
   #ad
