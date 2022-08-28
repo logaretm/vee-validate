@@ -1,7 +1,6 @@
 <template>
   <div class="flex flex-col items-center">
     <div
-      type="button"
       class="bg-gray-200 dark:bg-black max-w-xs p-1 rounded-md flex items-center gap-2 font-display font-semibold text-sm mb-8"
     >
       <button
@@ -51,7 +50,7 @@ function setFlavor(flavor: typeof currentFlavor['value']) {
 
 <style lang="postcss" scoped>
 .flavor-btn {
-  @apply px-3 py-1.5 rounded-md hover:text-emerald-500;
+  @apply px-3 py-1.5 rounded-md hover:text-emerald-500 select-none;
 
   &[aria-pressed='true'] {
     @apply bg-emerald-500 dark:bg-emerald-600 text-white hover:text-white;

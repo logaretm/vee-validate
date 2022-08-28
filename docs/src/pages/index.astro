@@ -3,7 +3,11 @@ import HomeLayout from '@/layouts/HomeLayout.astro';
 import SponsorButton from '@/components/SponsorButton.vue';
 import Icon from '@/components/Icon.vue';
 import MainPageExample from '@/components/examples/MainPageExample.vue';
+import StarCount from '@/components/StarCount.vue';
 import { features } from '@/constants';
+import { fetchStarCount } from '@/utils/github';
+
+const starsCount = await fetchStarCount();
 
 const highlights = [
   {
@@ -28,7 +32,7 @@ const highlights = [
   <div class="mt-16 grid grid-cols-2 max-w-6xl mx-auto">
     <div class="flex flex-col items-start justify-center">
       <h1
-        class="text-5xl font-bold font-display bg-clip-text bg-gradient-to-r from-emerald-600 to-emerald-400 text-transparent leading-tight"
+        class="text-6xl font-bold font-display bg-clip-text bg-gradient-to-r from-emerald-600 to-emerald-400 text-transparent leading-tight"
       >
         VeeValidate
       </h1>
@@ -46,7 +50,7 @@ const highlights = [
 
       <div class="mt-8 flex items-center gap-4">
         <a
-          class="flex items-center bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 py-3 px-6 text-white rounded-lg text-center focus:outline-none focus:ring focus:ring-emerald-500 text-base font-medium font-display"
+          class="flex items-center bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 py-3 px-6 text-white rounded-lg text-center focus:outline-none focus:ring focus:ring-emerald-500 text-base font-medium font-display select-none"
           href="/v4/guide/overview/"
         >
           Get Started
@@ -55,22 +59,14 @@ const highlights = [
         </a>
 
         <a
-          class="bg-gray-200 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-800 py-3 px-6 rounded-lg text-center focus:outline-none focus:ring focus:ring-emerald-500 font-medium font-display"
+          class="bg-gray-200 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-800 py-3 px-6 rounded-lg text-center focus:outline-none focus:ring focus:ring-emerald-500 font-medium font-display select-none"
           href="/v4/examples/checkboxes-and-radio/"
         >
           Live Examples
         </a>
-      </div>
 
-      <a
-        href="https://github.com/logaretm/vee-validate/stargazers"
-        target="_blank"
-        rel="noopener"
-        class="mt-8 flex items-center text-xs font-bold font-body border-2 text-zinc-400 border-zinc-400 rounded-full px-3 py-1.5 hover:border-emerald-500 hover:text-emerald-500"
-      >
-        <Icon name="star" class="w-4 h-4 mr-1" />
-        9330
-      </a>
+        <StarCount initial-count={starsCount} client:idle />
+      </div>
     </div>
 
     <img src="/v4/logo.png" width="300" height="300" class="ml-auto" alt="" />
@@ -105,15 +101,20 @@ const highlights = [
   </section>
 
   <section class="mt-48 max-w-6xl mx-auto">
-    <h2 class="text-center text-gray-500 dark:text-gray-200 font-display font-bold text-3xl">Features</h2>
+    <h2 class="text-center text-gray-500 dark:text-gray-200 font-display font-bold text-4xl">Features</h2>
     <ul
-      class="mt-16 grid grid-rows-4 min-w-0 mx-auto text-lg font-display font-semibold gap-x-20 gap-y-3 grid-flow-col justify-center"
+      class="mt-16 grid grid-rows-4 min-w-0 mx-auto text-lg font-display font-semibold gap-x-20 gap-y-3 grid-flow-col justify-center features"
     >
       {features.map(feature => <li class="flex items-center">{feature.title}</li>)}
     </ul>
   </section>
 
   <section class="mt-48 mx-auto max-w-4xl">
-    <MainPageExample client:visible />
+    <h2 class="text-center text-gray-500 dark:text-gray-200 font-display font-bold text-4xl">Do more with less</h2>
+    <p class="mt-4 text-center text-gray-300">
+      Basic example, handles value tracking, validation and submissions in short line count
+    </p>
+
+    <MainPageExample client:visible class="mt-16" />
   </section>
 </HomeLayout>

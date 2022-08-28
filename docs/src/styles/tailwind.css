@@ -81,7 +81,7 @@ body {
   --code-lang-label: #7970a9;
 }
 
-ul {
+ul.features {
   li {
     @apply relative antialiased list-none;
     &:before {
