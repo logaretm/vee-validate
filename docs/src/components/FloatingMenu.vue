@@ -5,7 +5,7 @@
     <transition name="menu">
       <div
         v-if="isOpen"
-        class="bg-white shadow border border-gray-200 dark:bg-gray-600 dark:border-gray-500 p-3 rounded-md"
+        class="bg-white shadow border border-gray-200 dark:bg-zinc-800 dark:border-zinc-700 p-3 rounded-md"
       >
         <slot name="menu" />
       </div>

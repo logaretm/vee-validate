@@ -7,7 +7,7 @@
 <style lang="postcss">
 .rendered-content {
   h1 {
-    @apply text-5xl mb-8;
+    @apply text-5xl mb-8 font-bold;
   }
 
   h2 {

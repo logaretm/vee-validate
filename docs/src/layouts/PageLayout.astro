@@ -1,6 +1,7 @@
 ---
 import path from 'path';
 import SiteHead from '@/components/SiteHead.astro';
+import Ad from '@/components/Ad.vue';
 import SpriteSheet from '@/components/SpriteSheet.astro';
 import TheHeader from '@/components/TheHeader.vue';
 import EditPage from '@/components/EditPage.vue';
@@ -94,6 +95,8 @@ const menu = [
 
       <aside class="rside hidden xl:block">
         <DocToc headings={headings} class="sticky top-24" />
+
+        <Ad client:idle />
       </aside>
     </div>
   </body>

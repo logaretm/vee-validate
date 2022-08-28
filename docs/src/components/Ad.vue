@@ -3,24 +3,38 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute();
+import { onMounted } from 'vue';
 
-watch(route, to => {
-  const adEl = document.querySelector('#ad');
-  adEl.innerHTML = '';
-  loadAd();
-});
-
-function loadAd() {
-  const adEl = document.querySelector('#ad');
-
+function loadScript() {
   const script = document.createElement('script');
-  script.src = '//cdn.carbonads.com/carbon.js?serve=CE7DKKQ7&placement=logaretmgithubio';
+  script.src = '//cdn.carbonads.com/carbon.js?serve=CE7DKKQ7&placement=vee-validatelogaretmcom';
   script.id = '_carbonads_js';
-  adEl.appendChild(script);
+  script.onload = () => {
+    setTimeout(() => {
+      checkIfAdLoaded();
+    }, 1000);
+  };
+
+  const el = document.querySelector('#ad');
+  el?.appendChild(script);
 }
 
-onMounted(loadAd);
+function checkIfAdLoaded() {
+  const adEl = document.querySelector('#carbonads');
+  if (adEl) {
+    return;
+  }
+
+  if ((window as any)._carbonads) {
+    (window as any)._carbonads.init();
+  }
+
+  setTimeout(() => {
+    checkIfAdLoaded();
+  }, 1000);
+}
+
+onMounted(loadScript);
 </script>
 
 <style lang="postcss">
@@ -73,12 +87,13 @@ onMounted(loadAd);
     letter-spacing: 1px;
   }
 }
+
 @screen lg {
   #ad {
     @apply fixed rounded-md ml-0;
     width: 160px;
     z-index: 19;
-    bottom: 2rem;
+    bottom: 0;
     left: calc((100% - 45rem - 100px) / 2 - 140px);
     background-color: #fff;
     font-size: 13px;
@@ -125,7 +140,7 @@ onMounted(loadAd);
 .dark {
   #ad {
     #carbonads {
-      @apply bg-black;
+      @apply bg-zinc-800;
     }
   }
 }

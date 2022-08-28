@@ -1,21 +1,24 @@
 ---
 import HomeLayout from '@/layouts/HomeLayout.astro';
 import SponsorButton from '@/components/SponsorButton.vue';
+import Icon from '@/components/Icon.vue';
 
 const features = [
-  { title: '🧘‍♀️ Flexible', details: 'Synchronous, Asynchronous, field-level, or form-level validation' },
-  { title: '⚡️ Fast', details: 'Build faster forms faster with intuitive API and small footprint' },
   {
-    title: '🏏 Minimal',
-    details: 'Only handles the complicated and painful form concerns, gives you full control over everything else',
-  },
-  { title: '😎 UI Agnostic', details: 'Works with native HTML elements or your favorite UI library components' },
-  {
-    title: '✅ Any validators',
+    title: 'Flexible',
     details:
-      'Use Yup, Zod or first-party laravel-like validators or bring your own through with any 3rd party validators',
+      'Offers both declarative components or composable functions API.<br><br>vee-validate sets up the foundation for you to <span title="pun intended">form</span> in whatever style you prefer.',
   },
-  { title: '🌐 i18n', details: '45+ locales for built-in rules contributed by developers from all over the world' },
+  {
+    title: 'Incremental',
+    details:
+      'vee-validate can do a lot if you let it. Like tracking values, validation, handling submissions and more. <br><br> You may opt-in or out to all of these aspects. You are in control of how much form code you write.',
+  },
+  {
+    title: 'Great DX',
+    details:
+      'Vue.js devtools support.<br><br> vee-validate makes debugging forms much easier and less of a wild goose chase every time that form does not submit.',
+  },
 ];
 ---
 
@@ -35,20 +38,22 @@ const features = [
         forms
       </p>
       <p class="mt-4 text-lg text-white-800 font-display">
-        VeeValidate is the most popular Vue.js form library. It take care of value tracking, validation and errors
+        VeeValidate is the most popular Vue.js form library. It takes care of value tracking, validation, errors,
         submissions and more.
       </p>
 
       <div class="mt-8 flex items-center gap-4">
         <a
-          class="bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 py-3 px-6 text-white rounded-lg text-center focus:outline-none focus:ring focus:ring-emerald-500 text-base font-display"
+          class="flex items-center bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 py-3 px-6 text-white rounded-lg text-center focus:outline-none focus:ring focus:ring-emerald-500 text-base font-medium font-display"
           href="/v4/guide/overview/"
         >
           Get Started
+
+          <Icon name="arrow-right" class="w-5 h-5 ml-2" />
         </a>
 
         <a
-          class="bg-transparent py-3 px-6 border border-emerald-600 text-emerald-600 rounded-lg text-center focus:outline-none focus:ring focus:ring-emerald-500 text-base font-display hover:bg-emerald-300"
+          class="bg-gray-200 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-800 py-3 px-6 rounded-lg text-center focus:outline-none focus:ring focus:ring-emerald-500 font-medium font-display"
           href="/v4/examples/checkboxes-and-radio/"
         >
           Live Examples
@@ -59,28 +64,30 @@ const features = [
     <img src="/v4/logo.png" width="300" height="300" class="ml-auto" alt="" />
   </div>
 
-  <section class="mt-20 grid grid-cols-2 md:grid-cols-3 gap-5 mx-auto min-w-0 max-w-4xl">
+  <section class="mt-20 grid grid-cols-2 md:grid-cols-3 gap-5 mx-auto min-w-0 max-w-6xl">
     {
       features.map(feature => (
-        <div class="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-500 dark:to-gray-600 p-6 rounded-lg font-display">
+        <div class="bg-gradient-to-br bg-grad from-gray-200 to-gray-100 dark:from-zinc-800 dark:to-zinc-900 p-6 rounded-lg font-display shadow-sm">
           <h3 class="text-xl font-bold">{feature.title}</h3>
-          <p class="mt-4 text-base">{feature.details}</p>
+          <p class="mt-4 font-display font-medium text-gray-600 dark:text-gray-300" set:html={feature.details} />
         </div>
       ))
     }
   </section>
 
   <section class="mt-16 flex flex-col mx-auto items-center">
-    <a href="https://github.com/sponsors/logaretm" tabindex="-1">
+    <a href="https://github.com/sponsors/logaretm" tabindex="-1" rel="noopener" target="_blank">
       <img src="https://sponsors.logaretm.com/sponsors.svg" />
     </a>
 
-    You can also help this this project and my other projects by donating one time or by sponsoring via the following
-    link
+    <p class="font-display text-gray-600 dark:text-gray-400">
+      You can also help this this project and my other projects by <br /> donating one time or by sponsoring via the following
+      link
+    </p>
 
     <br />
 
-    <div class="mt-10 flex justify-center items-center">
+    <div class="mt-5 flex justify-center items-center">
       <SponsorButton size="lg" />
     </div>
   </section>

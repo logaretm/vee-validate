@@ -4,7 +4,7 @@
       <button
         type="button"
         @click="toggle"
-        class="group hidden lg:flex items-center text-sm font-semibold text-gray-400 hover:text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 px-2 py-1 rounded-md"
+        class="group hidden lg:flex items-center text-sm font-semibold text-gray-400 hover:text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 px-2 py-1 rounded-md font-display"
         :class="{ 'bg-gray-200 text-gray-500 dark:bg-gray-600 dark:text-gray-400': isOpen }"
       >
         {{ versions[0].text }}
@@ -20,7 +20,7 @@
           v-for="(version, idx) in versions"
           :key="idx"
           @click="onChange(version)"
-          class="hover:bg-gray-200 hover:dark:bg-gray-500 hover:dark:text-white cursor-pointer select-none px-2 py-1 rounded-md text-gray-600 dark:text-gray-300"
+          class="hover:bg-gray-200 hover:dark:bg-gray-500 hover:dark:text-white cursor-pointer select-none px-2 py-1 rounded-md text-gray-600 dark:text-gray-200 font-semibold font-display"
         >
           <div class="flex items-center">
             <span class="text-sm"> {{ version.text }}</span>
