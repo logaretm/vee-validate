@@ -55,26 +55,6 @@
     @apply mt-4;
   }
 
-  ul {
-    @apply px-8 my-4 list-disc;
-
-    li + li {
-      @apply mt-2;
-    }
-  }
-
-  ul {
-    li {
-      @apply relative antialiased list-none;
-      &:before {
-        @apply w-6 h-6 text-lg absolute rounded-full flex items-center justify-center flex-shrink-0;
-        content: '';
-        background-image: url("data:image/svg+xml,%3Csvg fill='none' stroke='%2309a884' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'%3E%3C/path%3E%3C/svg%3E");
-        left: -2rem;
-      }
-    }
-  }
-
   .shiki-snippet {
     @apply my-5 rounded-md text-sm shadow;
 

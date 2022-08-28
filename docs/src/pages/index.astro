@@ -2,8 +2,10 @@
 import HomeLayout from '@/layouts/HomeLayout.astro';
 import SponsorButton from '@/components/SponsorButton.vue';
 import Icon from '@/components/Icon.vue';
+import MainPageExample from '@/components/examples/MainPageExample.vue';
+import { features } from '@/constants';
 
-const features = [
+const highlights = [
   {
     title: 'Flexible',
     details:
@@ -59,14 +61,24 @@ const features = [
           Live Examples
         </a>
       </div>
+
+      <a
+        href="https://github.com/logaretm/vee-validate/stargazers"
+        target="_blank"
+        rel="noopener"
+        class="mt-8 flex items-center text-xs font-bold font-body border-2 text-zinc-400 border-zinc-400 rounded-full px-3 py-1.5 hover:border-emerald-500 hover:text-emerald-500"
+      >
+        <Icon name="star" class="w-4 h-4 mr-1" />
+        9330
+      </a>
     </div>
 
     <img src="/v4/logo.png" width="300" height="300" class="ml-auto" alt="" />
   </div>
 
-  <section class="mt-20 grid grid-cols-2 md:grid-cols-3 gap-5 mx-auto min-w-0 max-w-6xl">
+  <section class="mt-24 grid grid-cols-2 md:grid-cols-3 gap-5 mx-auto min-w-0 max-w-6xl">
     {
-      features.map(feature => (
+      highlights.map(feature => (
         <div class="bg-gradient-to-br bg-grad from-gray-200 to-gray-100 dark:from-zinc-800 dark:to-zinc-900 p-6 rounded-lg font-display shadow-sm">
           <h3 class="text-xl font-bold">{feature.title}</h3>
           <p class="mt-4 font-display font-medium text-gray-600 dark:text-gray-300" set:html={feature.details} />
@@ -75,7 +87,7 @@ const features = [
     }
   </section>
 
-  <section class="mt-16 flex flex-col mx-auto items-center">
+  <section class="mt-24 flex flex-col mx-auto items-center">
     <a href="https://github.com/sponsors/logaretm" tabindex="-1" rel="noopener" target="_blank">
       <img src="https://sponsors.logaretm.com/sponsors.svg" />
     </a>
@@ -90,5 +102,18 @@ const features = [
     <div class="mt-5 flex justify-center items-center">
       <SponsorButton size="lg" />
     </div>
+  </section>
+
+  <section class="mt-48 max-w-6xl mx-auto">
+    <h2 class="text-center text-gray-500 dark:text-gray-200 font-display font-bold text-3xl">Features</h2>
+    <ul
+      class="mt-16 grid grid-rows-4 min-w-0 mx-auto text-lg font-display font-semibold gap-x-20 gap-y-3 grid-flow-col justify-center"
+    >
+      {features.map(feature => <li class="flex items-center">{feature.title}</li>)}
+    </ul>
+  </section>
+
+  <section class="mt-48 mx-auto max-w-4xl">
+    <MainPageExample client:visible />
   </section>
 </HomeLayout>
