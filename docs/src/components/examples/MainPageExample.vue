@@ -24,13 +24,13 @@
     <div v-if="currentFlavor === 'components'" class="w-full">
       <iframe
         loading="lazy"
-        src="https://stackblitz.com/edit/vitejs-vite-2ia3j4?embed=1&file=src/App.vue&hideExplorer=1&hideNavigation=1&hideDevTools=1&devToolsHeight=0&terminalHeight=1"
+        src="https://stackblitz.com/edit/vitejs-vite-2ia3j4?embed=1&file=src/App.vue&hideExplorer=1&hideNavigation=1&hideDevTools=1&devToolsHeight=0&terminalHeight=1&ctl=1"
       ></iframe>
     </div>
     <div v-else class="w-full">
       <iframe
         loading="lazy"
-        src="https://stackblitz.com/edit/vitejs-vite-zwb5gb?file=src/App.vue&embed=1&hideExplorer=1&hideNavigation=1&hideDevTools=1&devToolsHeight=0&terminalHeight=1"
+        src="https://stackblitz.com/edit/vitejs-vite-zwb5gb?file=src/App.vue&embed=1&hideExplorer=1&hideNavigation=1&hideDevTools=1&devToolsHeight=0&terminalHeight=1&ctl=1"
       ></iframe>
     </div>
   </div>

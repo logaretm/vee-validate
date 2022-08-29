@@ -78,6 +78,7 @@ onMounted(loadScript);
     @apply p-2 block float-left text-left;
     max-width: calc(100% - 130px - 1em);
     color: currentColor;
+    padding-bottom: 20px;
   }
 
   .carbon-poweredby {
