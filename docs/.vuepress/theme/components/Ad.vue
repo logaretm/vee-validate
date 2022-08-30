@@ -28,7 +28,7 @@ export default {
       script.onload = () => {
         setTimeout(() => {
           this.checkIfAdLoaded();
-        }, 1000);
+        }, 4000);
       };
       this.$el.appendChild(script);
     },
@@ -44,7 +44,7 @@ export default {
 
       setTimeout(() => {
         this.checkIfAdLoaded();
-      }, 1000);
+      }, 4000);
     }
   }
 };
