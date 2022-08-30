@@ -16,7 +16,7 @@ function loadScript() {
   script.onload = () => {
     setTimeout(() => {
       checkIfAdLoaded();
-    }, 1000);
+    }, 4000);
   };
 
   const el = document.querySelector('#ad');
@@ -35,7 +35,7 @@ function checkIfAdLoaded() {
 
   setTimeout(() => {
     checkIfAdLoaded();
-  }, 1000);
+  }, 4000);
 }
 
 onMounted(loadScript);
