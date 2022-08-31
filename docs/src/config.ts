@@ -5,4 +5,5 @@ export default {
     indexName: 'vee-validate-v4',
   },
   appURL: process.env.NODE_ENV === 'production' ? 'https://vee-validate.logaretm.com' : 'http://localhost:3000',
+  gaId: 'UA-100131478-1',
 } as const;
