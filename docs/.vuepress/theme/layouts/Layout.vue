@@ -26,6 +26,7 @@
 </template>
 
 <script>
+  import galite from 'ga-lite/dist/ga-lite.js';
 import Home from "@parent-theme/components/Home.vue";
 import Navbar from "@parent-theme/components/Navbar.vue";
 import UpgradeNotice from "@theme/components/UpgradeNotice.vue";
@@ -92,8 +93,11 @@ export default {
   },
 
   mounted() {
+    galite('create', 'UA-100131478-1', 'auto');
+    galite('send', 'pageview');
     this.$router.afterEach(() => {
       this.isSidebarOpen = false;
+      galite('send', 'pageview');
     });
   },
 
