@@ -70,6 +70,7 @@
     "filesize": "^6.1.0",
     "flush-promises": "^1.0.2",
     "fs-extra": "^9.0.1",
+    "ga-lite": "^2.1.6",
     "gzip-size": "^5.1.1",
     "husky": "^4.3.0",
     "jest": "^26.4.2",
