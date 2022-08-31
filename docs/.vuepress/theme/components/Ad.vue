@@ -25,26 +25,8 @@ export default {
       const script = document.createElement('script');
       script.src = '//cdn.carbonads.com/carbon.js?serve=CE7DKKQ7&placement=vee-validatelogaretmcom';
       script.id = '_carbonads_js';
-      script.onload = () => {
-        setTimeout(() => {
-          this.checkIfAdLoaded();
-        }, 4000);
-      };
+
       this.$el.appendChild(script);
-    },
-    checkIfAdLoaded() {
-      const adEl = document.querySelector('#carbonads');
-      if (adEl) {
-        return;
-      }
-
-      if (window._carbonads) {
-        window._carbonads.init();
-      }
-
-      setTimeout(() => {
-        this.checkIfAdLoaded();
-      }, 4000);
     }
   }
 };
