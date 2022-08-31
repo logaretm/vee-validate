@@ -13,29 +13,9 @@ function loadScript() {
   const script = document.createElement('script');
   script.src = '//cdn.carbonads.com/carbon.js?serve=CE7DKKQ7&placement=vee-validatelogaretmcom';
   script.id = '_carbonads_js';
-  script.onload = () => {
-    setTimeout(() => {
-      checkIfAdLoaded();
-    }, 4000);
-  };
 
   const el = document.querySelector('#ad');
   el?.appendChild(script);
-}
-
-function checkIfAdLoaded() {
-  const adEl = document.querySelector('#carbonads');
-  if (adEl) {
-    return;
-  }
-
-  if ((window as any)._carbonads) {
-    (window as any)._carbonads.init();
-  }
-
-  setTimeout(() => {
-    checkIfAdLoaded();
-  }, 4000);
 }
 
 onMounted(loadScript);
