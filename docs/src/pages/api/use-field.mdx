@@ -302,6 +302,18 @@ resetField({
 });
 ```
 
+Note that it is unsafe to use this function as an event handler directly, check the following snippet:
+
+```vue-html
+<!-- ⛔️ Unsafe -->
+<button @click="resetField">Reset</button>
+
+<!-- ✅  Safe -->
+<button @click="resetField()">Reset</button>
+```
+
+You can also use `handleReset` which is a safe alternative for `resetField`.
+  
 <CodeTitle level="4">
 
 `setErrors: (errors: string | string[]) => void`
@@ -322,18 +334,6 @@ setErrors(['field is required', 'field must be valid']);
 // clears the errors
 setErrors([]);
 ```
-
-Note that it is unsafe to use this function as an event handler directly, check the following snippet:
-
-```vue-html
-<!-- ⛔️ Unsafe -->
-<button @click="resetField">Reset</button>
-
-<!-- ✅  Safe -->
-<button @click="resetField()">Reset</button>
-```
-
-You can also use `handleReset` which is a safe alternative for `resetField`.
 
 <CodeTitle level="4">
 
