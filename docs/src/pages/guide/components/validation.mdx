@@ -58,7 +58,7 @@ You can define validation rules for your fields using the `Field` component, you
 <script setup>
 import { Field, Form, ErrorMessage } from 'vee-validate';
 
-function required(value) {
+function isRequired(value) {
   if (value && value.trim()) {
     return true;
   }
