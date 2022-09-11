@@ -156,6 +156,17 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   // form meta aggregations
   const meta = useFormMeta(fieldsByPath, formValues, originalInitialValues, errors);
 
+  const controlledValues = computed(() => {
+    return keysOf(fieldsByPath.value).reduce((acc, path) => {
+      const field = getFirstFieldAtPath(path as string);
+      if (field) {
+        setInPath(acc, path as string, field?.value.value);
+      }
+
+      return acc;
+    }, {} as TValues);
+  });
+
   const schema = opts?.validationSchema;
 
   /**
@@ -225,6 +236,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     formId,
     fieldsByPath,
     values: formValues,
+    controlledValues,
     errorBag,
     errors,
     schema,

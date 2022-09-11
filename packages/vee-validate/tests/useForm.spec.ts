@@ -1,7 +1,7 @@
 import { FormContext, useField, useForm } from '@/vee-validate';
 import { mountWithHoc, setValue, flushPromises, runInSetup } from './helpers';
 import * as yup from 'yup';
-import { Ref } from 'vue';
+import { onMounted, Ref } from 'vue';
 
 describe('useForm()', () => {
   const REQUIRED_MESSAGE = 'Field is required';
@@ -507,5 +507,43 @@ describe('useForm()', () => {
     jest.advanceTimersByTime(200);
     await flushPromises();
     expect(error?.textContent).toBe('not b');
+  });
+
+  // #3862
+  test('exposes controlled only values', async () => {
+    const spy = jest.fn();
+    const initial = {
+      field: '111',
+      createdAt: Date.now(),
+    };
+    mountWithHoc({
+      setup() {
+        const { controlledValues, handleSubmit } = useForm({
+          initialValues: initial,
+        });
+
+        const onSubmit = handleSubmit(values => {
+          spy({ values, controlled: controlledValues.value });
+        });
+
+        useField('field');
+
+        onMounted(onSubmit);
+
+        return {};
+      },
+      template: `
+        <div></div>
+      `,
+    });
+
+    await flushPromises();
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        values: expect.objectContaining(initial),
+        controlled: expect.objectContaining({ field: initial.field }),
+      })
+    );
   });
 });

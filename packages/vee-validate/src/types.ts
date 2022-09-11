@@ -181,6 +181,7 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
   extends FormActions<TValues> {
   formId: number;
   values: TValues;
+  controlledValues: Ref<TValues>;
   fieldsByPath: Ref<FieldPathLookup>;
   fieldArrays: PrivateFieldArrayContext[];
   submitCount: Ref<number>;
