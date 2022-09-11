@@ -1,4 +1,4 @@
-import { useField, useForm } from '@/vee-validate';
+import { FieldContext, FormContext, useField, useForm } from '@/vee-validate';
 import { defineComponent, nextTick, onMounted, ref } from 'vue';
 import { mountWithHoc, setValue, flushPromises } from './helpers';
 
@@ -743,5 +743,37 @@ describe('useField()', () => {
     jest.advanceTimersByTime(200);
     await flushPromises();
     expect(error?.textContent).toBe('not b');
+  });
+
+  test('allows explicit forms to be provided via the form option', async () => {
+    let form1!: FormContext;
+    let form2!: FormContext;
+    let field1!: FieldContext;
+    let field2!: FieldContext;
+    mountWithHoc({
+      setup() {
+        form1 = useForm();
+        form2 = useForm();
+        field1 = useField('field', undefined, {
+          form: form1,
+        });
+        field2 = useField('field', undefined, {
+          form: form2,
+        });
+
+        return {};
+      },
+      template: `
+      <div></div>
+    `,
+    });
+
+    await flushPromises();
+    field1.value.value = '1';
+    field2.value.value = '2';
+    await flushPromises();
+
+    expect(form1.values.field).toBe('1');
+    expect(form2.values.field).toBe('2');
   });
 });

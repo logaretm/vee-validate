@@ -355,7 +355,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   }
 
   function createModel<TPath extends keyof TValues>(path: MaybeRef<TPath>) {
-    const { value } = _useFieldValue<TValues[TPath]>(path as string);
+    const { value } = _useFieldValue<TValues[TPath]>(path as string, undefined, formCtx as PrivateFormContext);
     watch(
       value,
       () => {
@@ -782,24 +782,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   }
 
   return {
-    errors,
-    meta,
-    values: formValues,
-    isSubmitting,
-    submitCount,
-    validate,
-    validateField,
+    ...formCtx,
     handleReset: () => resetForm(),
-    resetForm,
-    handleSubmit,
     submitForm,
-    setFieldError,
-    setErrors,
-    setFieldValue,
-    setValues,
-    setFieldTouched,
-    setTouched,
-    useFieldModel,
   };
 }
 
