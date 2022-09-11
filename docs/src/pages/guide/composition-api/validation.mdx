@@ -41,9 +41,12 @@ You can define validation rules for your fields using the `useField` composition
 import { useField } from 'vee-validate';
 import { defineProps, toRef } from 'vue';
 
-const props = defineProps<{
-  name: string;
-}>();
+const props = defineProps({
+  name: {
+    type: String,
+    required: true,
+  },
+});
 
 function isRequired(value) {
   if (value && value.trim()) {
@@ -79,9 +82,12 @@ import { defineProps, toRef } from 'vue';
 import { useField } from 'vee-validate';
 import * as yup from 'yup';
 
-const props = defineProps<{
-  name: string;
-}>();
+const props = defineProps({
+  name: {
+    type: String,
+    required: true,
+  },
+});
 
 // make sure to convert the name prop to a ref to maintain its reactivity
 // this way vee-validate can react to the field name changing
