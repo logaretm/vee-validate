@@ -219,16 +219,18 @@ function _useField<TValue = unknown>(
   }
 
   let unwatchValue: WatchStopHandle;
+  let lastWatchedValue = deepCopy(value.value);
   function watchValue() {
     unwatchValue = watch(
       value,
       (val, oldVal) => {
-        if (isEqual(val, oldVal)) {
+        if (isEqual(val, oldVal) && isEqual(val, lastWatchedValue)) {
           return;
         }
 
         const validateFn = validateOnValueUpdate ? validateWithStateMutation : validateValidStateOnly;
         validateFn();
+        lastWatchedValue = deepCopy(val);
       },
       {
         deep: true,
