@@ -451,6 +451,9 @@ function useCheckboxField<TValue = unknown>(
 
     function handleCheckboxChange(e: unknown, shouldValidate = true) {
       if (checked.value === ((e as Event)?.target as HTMLInputElement)?.checked) {
+        if (shouldValidate) {
+          field.validate();
+        }
         return;
       }
 
