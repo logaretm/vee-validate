@@ -111,3 +111,81 @@ export function isEvent(evt: unknown): evt is Event {
 export function isPropPresent(obj: Record<string, unknown>, prop: string) {
   return prop in obj && obj[prop] !== IS_ABSENT;
 }
+
+/**
+ * Compares if two values are the same borrowed from:
+ * https://github.com/epoberezkin/fast-deep-equal
+ * We added a case for file matching since `Object.keys` doesn't work with Files.
+ * */
+export function isEqual(a: any, b: any) {
+  if (a === b) return true;
+
+  if (a && b && typeof a === 'object' && typeof b === 'object') {
+    if (a.constructor !== b.constructor) return false;
+
+    // eslint-disable-next-line no-var
+    var length, i, keys;
+    if (Array.isArray(a)) {
+      length = a.length;
+      // eslint-disable-next-line eqeqeq
+      if (length != b.length) return false;
+      for (i = length; i-- !== 0; ) if (!isEqual(a[i], b[i])) return false;
+      return true;
+    }
+
+    if (a instanceof Map && b instanceof Map) {
+      if (a.size !== b.size) return false;
+      for (i of a.entries()) if (!b.has(i[0])) return false;
+      for (i of a.entries()) if (!isEqual(i[1], b.get(i[0]))) return false;
+      return true;
+    }
+
+    // We added this part for file comparison, arguably a little naive but should work for most cases.
+    // #3911
+    if (a instanceof File && b instanceof File) {
+      if (a.size !== b.size) return false;
+      if (a.name !== b.name) return false;
+      if (a.lastModified !== b.lastModified) return false;
+      if (a.type !== b.type) return false;
+
+      return true;
+    }
+
+    if (a instanceof Set && b instanceof Set) {
+      if (a.size !== b.size) return false;
+      for (i of a.entries()) if (!b.has(i[0])) return false;
+      return true;
+    }
+
+    if (ArrayBuffer.isView(a) && ArrayBuffer.isView(b)) {
+      length = (a as any).length;
+      // eslint-disable-next-line eqeqeq
+      if (length != (b as any).length) return false;
+      for (i = length; i-- !== 0; ) if ((a as any)[i] !== (b as any)[i]) return false;
+      return true;
+    }
+
+    if (a.constructor === RegExp) return a.source === b.source && a.flags === b.flags;
+    if (a.valueOf !== Object.prototype.valueOf) return a.valueOf() === b.valueOf();
+    if (a.toString !== Object.prototype.toString) return a.toString() === b.toString();
+
+    keys = Object.keys(a);
+    length = keys.length;
+    if (length !== Object.keys(b).length) return false;
+
+    for (i = length; i-- !== 0; ) if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;
+
+    for (i = length; i-- !== 0; ) {
+      // eslint-disable-next-line no-var
+      var key = keys[i];
+
+      if (!isEqual(a[key], b[key])) return false;
+    }
+
+    return true;
+  }
+
+  // true if both NaN, false otherwise
+  // eslint-disable-next-line no-self-compare
+  return a !== a && b !== b;
+}

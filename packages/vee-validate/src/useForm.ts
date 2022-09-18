@@ -13,7 +13,6 @@ import {
   markRaw,
   watchEffect,
 } from 'vue';
-import isEqual from 'fast-deep-equal/es6';
 import { klona as deepCopy } from 'klona/full';
 import {
   FieldMeta,
@@ -47,6 +46,7 @@ import {
   debounceAsync,
   isEmptyContainer,
   withLatest,
+  isEqual,
 } from './utils';
 import { FormContextKey } from './symbols';
 import { validateYupSchema, validateObjectSchema } from './validate';

@@ -13,10 +13,8 @@ import {
   ComponentInternalInstance,
 } from 'vue';
 import { klona as deepCopy } from 'klona/full';
-import isEqual from 'fast-deep-equal/es6';
 import { validate as validateValue } from './validate';
 import {
-  ValidationResult,
   MaybeRef,
   GenericValidateFunction,
   YupValidator,
@@ -37,6 +35,7 @@ import {
   isYupValidator,
   applyModelModifiers,
   withLatest,
+  isEqual,
 } from './utils';
 import { isCallable } from '../../shared';
 import { FieldContextKey, FormContextKey, IS_ABSENT } from './symbols';
