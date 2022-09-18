@@ -29,6 +29,44 @@ describe('useField()', () => {
     expect(error?.textContent).toBe(REQUIRED_MESSAGE);
   });
 
+  // #3926
+  test('validates when nested value changes', async () => {
+    mountWithHoc({
+      setup() {
+        const { value, errorMessage } = useField<any>(
+          'field',
+          val => {
+            if (!val?.name) {
+              return REQUIRED_MESSAGE;
+            }
+
+            return true;
+          },
+          {
+            initialValue: { name: 'test' },
+          }
+        );
+
+        onMounted(() => {
+          value.value.name = '';
+        });
+
+        return {
+          value,
+          errorMessage,
+        };
+      },
+      template: `
+      <span>{{ errorMessage }}</span>
+    `,
+    });
+
+    const error = document.querySelector('span');
+
+    await flushPromises();
+    expect(error?.textContent).toBe(REQUIRED_MESSAGE);
+  });
+
   test('valid flag is correct after reset', async () => {
     mountWithHoc({
       setup() {
