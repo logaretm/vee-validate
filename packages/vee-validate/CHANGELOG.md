@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.8](https://github.com/logaretm/vee-validate/compare/v4.6.7...v4.6.8) (2022-09-19)
+
+### Bug Fixes
+
+* ensure validation if we skip checkbox value setting [#3927](https://github.com/logaretm/vee-validate/issues/3927) ([#3930](https://github.com/logaretm/vee-validate/issues/3930)) ([82d05db](https://github.com/logaretm/vee-validate/commit/82d05dbd2a5c7d5ea2fe7b73222dd339e92ee373))
+* extend is equal with file comparison logic [#3911](https://github.com/logaretm/vee-validate/issues/3911) ([#3932](https://github.com/logaretm/vee-validate/issues/3932)) ([c7c806c](https://github.com/logaretm/vee-validate/commit/c7c806c0c5393f3188c16384f5fc1b46ebc78cbd))
+* handle nested value change validation [#3926](https://github.com/logaretm/vee-validate/issues/3926) ([#3929](https://github.com/logaretm/vee-validate/issues/3929)) ([771e7f2](https://github.com/logaretm/vee-validate/commit/771e7f21cf332052b74c5506a8c2f38f666cae55))
+
+### Features
+
+* expose RuleExpression type closes [#3913](https://github.com/logaretm/vee-validate/issues/3913) ([cdaf22d](https://github.com/logaretm/vee-validate/commit/cdaf22df04b42a68f55133ad3854aae9a7ad6953))
+
 ## [4.6.7](https://github.com/logaretm/vee-validate/compare/v4.6.6...v4.6.7) (2022-08-27)
 
 ### Bug Fixes
