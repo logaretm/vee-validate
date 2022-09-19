@@ -1,8 +1,7 @@
 import { computed, reactive, ref, Ref, unref, watch } from 'vue';
-import isEqual from 'fast-deep-equal/es6';
 import { FormContextKey } from './symbols';
 import { FieldMeta, FieldState, MaybeRef } from './types';
-import { getFromPath, injectWithSelf } from './utils';
+import { getFromPath, injectWithSelf, isEqual } from './utils';
 
 export interface StateSetterInit<TValue = unknown> extends FieldState<TValue> {
   initialValue: TValue;
