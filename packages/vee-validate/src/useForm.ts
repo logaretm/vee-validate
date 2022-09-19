@@ -406,6 +406,10 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
    */
   function resetForm(state?: Partial<FormState<TValues>>) {
     RESET_LOCK = true;
+
+    // Reset all field states first
+    mutateAllFields(f => f.resetField());
+
     // set initial values if provided
     if (state?.values) {
       setInitialValues(state.values);
@@ -416,9 +420,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       // otherwise clean the current values
       setValues(originalInitialValues.value);
     }
-
-    // avoid resetting the field values, because they should've been reset already.
-    mutateAllFields(f => f.resetField());
 
     if (state?.touched) {
       setTouched(state.touched);
