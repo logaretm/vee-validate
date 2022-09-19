@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.9](https://github.com/logaretm/vee-validate/compare/v4.6.8...v4.6.9) (2022-09-19)
+
+### Bug Fixes
+
+* perform field reset before all values reset closes [#3934](https://github.com/logaretm/vee-validate/issues/3934) ([1c016d9](https://github.com/logaretm/vee-validate/commit/1c016d93b367229644dca643931ef63bc6e433dc))
+
 ## [4.6.8](https://github.com/logaretm/vee-validate/compare/v4.6.7...v4.6.8) (2022-09-19)
 
 ### Bug Fixes
