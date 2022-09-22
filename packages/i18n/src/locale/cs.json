@@ -1,6 +1,7 @@
 {
   "code": "cs",
   "messages": {
+    "_default": "Pole {field} není platné",
     "alpha": "Pole {field} může obsahovat pouze písmena",
     "alpha_num": "Pole {field} může obsahovat pouze alfanumerické znaky",
     "alpha_dash": "Pole {field} může obsahovat pouze alfanumerické znaky, pomlčky nebo podtržítka",
@@ -13,6 +14,8 @@
     "excluded": "{field} musí být správná hodnota",
     "ext": "{field} musí být validní soubor",
     "image": "{field} musí být obrázek",
+    "integer": "Pole {field} musí být celé číslo",
+    "length": "Pole {field} musí mít délku 0:{délka}",
     "max_value": "Pole {field} musí být 0:{max}, nebo mensí",
     "max": "{field} nesmí být delší než 0:{length} znaků",
     "mimes": "Pole {field} musí být správný typ souboru",
@@ -21,8 +24,9 @@
     "numeric": "Pole {field} může obsahovat pouze číslice",
     "one_of": "{field} musí být správná hodnota",
     "regex": "Pole {field} není vyplněno správně",
-    "required": "Pole {field} je povinné",
     "required_if": "Pole {field} je povinné",
-    "size": "{field} musí být menší než 0:{size}"
+    "required": "Pole {field} je povinné",
+    "size": "Soubor {field} musí být menší než 0:{size}KB",
+    "url": "Pole {field} není platná adresa URL"
   }
 }
