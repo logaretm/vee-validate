@@ -2,6 +2,8 @@ import { Locator, YupValidator } from '../types';
 import { isCallable, isObject } from '../../../shared';
 import { IS_ABSENT } from '../symbols';
 
+export const isClient = typeof window !== 'undefined';
+
 export function isLocator(value: unknown): value is Locator {
   return isCallable(value) && !!(value as Locator).__locatorRef;
 }
@@ -142,7 +144,7 @@ export function isEqual(a: any, b: any) {
 
     // We added this part for file comparison, arguably a little naive but should work for most cases.
     // #3911
-    if (a instanceof File && b instanceof File) {
+    if (isFile(a) && isFile(b)) {
       if (a.size !== b.size) return false;
       if (a.name !== b.name) return false;
       if (a.lastModified !== b.lastModified) return false;
@@ -188,4 +190,12 @@ export function isEqual(a: any, b: any) {
   // true if both NaN, false otherwise
   // eslint-disable-next-line no-self-compare
   return a !== a && b !== b;
+}
+
+export function isFile(a: unknown): a is File {
+  if (!isClient) {
+    return false;
+  }
+
+  return a instanceof File;
 }
