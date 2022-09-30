@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.10](https://github.com/logaretm/vee-validate/compare/v4.6.9...v4.6.10) (2022-09-30)
+
+### Bug Fixes
+
+* use ssr safe file check ([56663aa](https://github.com/logaretm/vee-validate/commit/56663aa2e50d7aa285ca1cb22887c8e8b3f7fd3c))
+
 ## [4.6.9](https://github.com/logaretm/vee-validate/compare/v4.6.8...v4.6.9) (2022-09-19)
 
 ### Bug Fixes
