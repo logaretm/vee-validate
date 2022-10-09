@@ -202,3 +202,18 @@ const { replace, fields } = useFieldArray('links');
 // replace the entire array with these items
 replace([{ url: 'https://google.com' }, { url: 'https://vuejs.org' }]);
 ```
+
+<CodeTitle level="4">
+
+`move(oldIdx:number, newIdx: number)`
+
+</CodeTitle>
+
+Moves an array item to a different position within the array.
+
+```js
+const { move, fields } = useFieldArray('links');
+
+// move array item to a different position
+move(2, 1);
+```
