@@ -178,6 +178,11 @@ export type MapValues<T, TValues extends Record<string, any>> = {
     : Ref<unknown>;
 };
 
+type HandleSubmitFactory<TValues extends GenericFormValues> = <TReturn = unknown>(
+  cb: SubmissionHandler<TValues, TReturn>,
+  onSubmitValidationErrorCb?: InvalidSubmissionHandler<TValues>
+) => (e?: Event) => Promise<TReturn | undefined>;
+
 export interface PrivateFormContext<TValues extends Record<string, any> = Record<string, any>>
   extends FormActions<TValues> {
   formId: number;
@@ -200,10 +205,7 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
   unsetInitialValue(path: string): void;
   register(field: PrivateFieldContext): void;
   unregister(field: PrivateFieldContext): void;
-  handleSubmit<TReturn = unknown>(
-    cb: SubmissionHandler<TValues, TReturn>,
-    onSubmitValidationErrorCb?: InvalidSubmissionHandler<TValues>
-  ): (e?: Event) => Promise<TReturn | undefined>;
+  handleSubmit: HandleSubmitFactory<TValues> & { withControlled: HandleSubmitFactory<TValues> };
   setFieldInitialValue(path: string, value: unknown): void;
   useFieldModel<TPath extends keyof TValues>(path: MaybeRef<TPath>): Ref<TValues[TPath]>;
   useFieldModel<TPath extends keyof TValues>(paths: [...MaybeRef<TPath>[]]): MapValues<typeof paths, TValues>;

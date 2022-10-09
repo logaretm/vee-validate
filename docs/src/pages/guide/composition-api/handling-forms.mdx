@@ -391,7 +391,7 @@ const { handleSubmit, setFieldError, setErrors } = useForm();
 
 const onSubmit = handleSubmit(async values => {
   // Send data to the API
-  const response = await client.post('/users/');
+  const response = await client.post('/users/', values);
 
   // all good
   if (!response.errors) {
@@ -415,7 +415,7 @@ Alternatively you can use the `FormActions` passed as the second argument to the
 ```js
 const onSubmit = handleSubmit(async (values, actions) => {
   // Send data to the API
-  const response = await client.post('/users/');
+  const response = await client.post('/users/', values);
   // ...
 
   // set single field error
@@ -427,4 +427,57 @@ const onSubmit = handleSubmit(async (values, actions) => {
   // and the values is the error message
   actions.setErrors(response.errors);
 });
+```
+
+## Controlled Values
+
+The form values can be categorized into two categories:
+
+- Controlled values: values that have a form input controlling them via `useField` or `<Field />` or via `useFieldModel` model binding.
+- Uncontrolled values: values that are inserted dynamically with `setFieldValue` or inserted initially with initial values.
+
+Sometimes you maybe only interested in controlled values. For example, your initial data contains noisy extra properties from your API and you wish to ignore them when submitting them back to your API.
+
+When accessing `values` from `useForm` result or the submission handler you get all the values, both controlled and uncontrolled values. To get access to only the controlled values you can use `controlledValues` from the `useForm` result:
+
+```vue
+<template>
+  <form @submit="onSubmit">
+    <!-- some fields -->
+  </form>
+</template>
+
+<script setup>
+import { useForm } from 'vee-validate';
+
+const { handleSubmit, controlledValues } = useForm();
+
+const onSubmit = handleSubmit(async () => {
+  // Send only controlled values to the API
+  // Only fields declared with `useField` or `useFieldModel` will be sent
+  const response = await client.post('/users/', controlledValues.value);
+});
+</script>
+```
+
+Alternatively you can create handlers with only the controlled values with `handleSubmit.controlled` which has the same API as `handleSubmit`:
+
+```vue
+<template>
+  <form @submit="onSubmit">
+    <!-- some fields -->
+  </form>
+</template>
+
+<script setup>
+import { useForm } from 'vee-validate';
+
+const { handleSubmit } = useForm();
+
+const onSubmit = handleSubmit.controlled(async values => {
+  // Send only controlled values to the API
+  // Only fields declared with `useField` or `useFieldModel` will be sent
+  const response = await client.post('/users/', values);
+});
+</script>
 ```

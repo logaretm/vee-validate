@@ -541,8 +541,45 @@ describe('useForm()', () => {
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        values: expect.objectContaining(initial),
-        controlled: expect.objectContaining({ field: initial.field }),
+        values: initial,
+        controlled: { field: initial.field },
+      })
+    );
+  });
+
+  // #3862
+  test('exposes controlled only via submission handler withControlled', async () => {
+    const spy = jest.fn();
+    const initial = {
+      field: '111',
+      createdAt: Date.now(),
+    };
+    mountWithHoc({
+      setup() {
+        const { handleSubmit } = useForm({
+          initialValues: initial,
+        });
+
+        const onSubmit = handleSubmit.withControlled(values => {
+          spy({ values });
+        });
+
+        useField('field');
+
+        onMounted(onSubmit);
+
+        return {};
+      },
+      template: `
+        <div></div>
+      `,
+    });
+
+    await flushPromises();
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        values: { field: initial.field },
       })
     );
   });
