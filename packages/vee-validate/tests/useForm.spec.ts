@@ -583,4 +583,41 @@ describe('useForm()', () => {
       })
     );
   });
+
+  test('useFieldModel marks the field as controlled', async () => {
+    const spy = jest.fn();
+    const initial = {
+      field: '111',
+      field2: '222',
+      createdAt: Date.now(),
+    };
+    mountWithHoc({
+      setup() {
+        const { handleSubmit, useFieldModel } = useForm({
+          initialValues: initial,
+        });
+
+        const onSubmit = handleSubmit.withControlled(values => {
+          spy({ values });
+        });
+
+        const fields = useFieldModel(['field', 'field2']);
+
+        onMounted(onSubmit);
+
+        return {};
+      },
+      template: `
+        <div></div>
+      `,
+    });
+
+    await flushPromises();
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        values: { field: initial.field, field2: initial.field2 },
+      })
+    );
+  });
 });

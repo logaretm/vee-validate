@@ -71,6 +71,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 ): FormContext<TValues> {
   const formId = FORM_COUNTER++;
 
+  const controlledModelPaths: Set<string> = new Set();
+
   // Prevents fields from double resetting their values, which causes checkboxes to toggle their initial value
   // TODO: This won't be needed if we centralize all the state inside the `form` for form inputs
   let RESET_LOCK = false;
@@ -157,11 +159,9 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   const meta = useFormMeta(fieldsByPath, formValues, originalInitialValues, errors);
 
   const controlledValues = computed(() => {
-    return keysOf(fieldsByPath.value).reduce((acc, path) => {
-      const field = getFirstFieldAtPath(path as string);
-      if (field) {
-        setInPath(acc, path as string, field?.value.value);
-      }
+    return [...controlledModelPaths, ...keysOf(fieldsByPath.value)].reduce((acc, path) => {
+      const value = getFromPath(formValues, path as string);
+      setInPath(acc, path as string, value);
 
       return acc;
     }, {} as TValues);
@@ -450,6 +450,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
         deep: true,
       }
     );
+
+    controlledModelPaths.add(unref(path) as string);
 
     return value;
   }
