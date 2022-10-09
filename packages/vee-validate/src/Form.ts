@@ -22,6 +22,7 @@ type FormSlotProps = UnwrapRef<
     | 'setFieldTouched'
     | 'setTouched'
     | 'resetForm'
+    | 'controlledValues'
   >
 > & {
   handleSubmit: (evt: Event | SubmissionHandler, onSubmit?: SubmissionHandler) => Promise<unknown>;
@@ -80,6 +81,7 @@ const FormImpl = defineComponent({
       meta,
       isSubmitting,
       submitCount,
+      controlledValues,
       validate,
       validateField,
       handleReset,
@@ -132,6 +134,7 @@ const FormImpl = defineComponent({
         values: values,
         isSubmitting: isSubmitting.value,
         submitCount: submitCount.value,
+        controlledValues: controlledValues.value,
         validate,
         validateField,
         handleSubmit: handleScopedSlotSubmit,
