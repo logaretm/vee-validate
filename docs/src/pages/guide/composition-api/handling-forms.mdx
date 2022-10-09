@@ -460,7 +460,7 @@ const onSubmit = handleSubmit(async () => {
 </script>
 ```
 
-Alternatively you can create handlers with only the controlled values with `handleSubmit.controlled` which has the same API as `handleSubmit`:
+Alternatively for less verbosity, you can create handlers with only the controlled values with `handleSubmit.withControlled` which has the same API as `handleSubmit`:
 
 ```vue
 <template>
@@ -474,7 +474,7 @@ import { useForm } from 'vee-validate';
 
 const { handleSubmit } = useForm();
 
-const onSubmit = handleSubmit.controlled(async values => {
+const onSubmit = handleSubmit.withControlled(async values => {
   // Send only controlled values to the API
   // Only fields declared with `useField` or `useFieldModel` will be sent
   const response = await client.post('/users/', values);
