@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.7.0](https://github.com/logaretm/vee-validate/compare/v4.6.10...v4.7.0) (2022-10-09)
+
+**Note:** Version bump only for package @vee-validate/rules
+
 ## [4.6.10](https://github.com/logaretm/vee-validate/compare/v4.6.9...v4.6.10) (2022-09-30)
 
 **Note:** Version bump only for package @vee-validate/rules
