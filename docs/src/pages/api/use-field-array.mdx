@@ -98,6 +98,11 @@ interface FieldEntry<TValue = unknown> {
 }
 ```
 
+```js
+// call composable in component setup to get readable version of links array
+const { fields } = useFieldArray('links);
+```
+
 <CodeTitle level="4">
 
 `push(item: any)`
@@ -107,10 +112,14 @@ interface FieldEntry<TValue = unknown> {
 Adds an item to the end of the array.
 
 ```js
-const { push, fields } = useFieldArray('links');
+// get push function from composable in component setup
+const { push } = useFieldArray('links');
 
-// adds a new item to the array
-push({ url: '' });
+// call push function within custom function
+const myPushFunction = () => {
+  // adds a new item to the array
+  push({ url: '' });
+}
 ```
 
 <CodeTitle level="4">
@@ -122,10 +131,14 @@ push({ url: '' });
 Adds an item to the start of the array.
 
 ```js
-const { prepend, fields } = useFieldArray('links');
+// get prepend function from composable in component setup
+const { prepend } = useFieldArray('links');
 
-// adds a new item to the array
-prepend({ url: '' });
+// call prepend function within custom function
+const myPrependFunction = () => {
+  // adds a new item to the array
+  prepend({ url: '' });
+}
 ```
 
 <CodeTitle level="4">
@@ -137,10 +150,14 @@ prepend({ url: '' });
 Removes the item at the specified index from the array if it exists.
 
 ```js
-const { remove, fields } = useFieldArray('links');
+// get remove function from composable in component setup
+const { remove } = useFieldArray('links');
 
-// removes the second item from the array
-remove(1);
+// call remove function within custom function
+const myRemoveFunction = () => {
+  // removes the second item from the array
+  remove(1);
+}
 ```
 
 <CodeTitle level="4">
@@ -152,10 +169,14 @@ remove(1);
 Swaps the items at the given indexes with each other. Both indexes must exist in the array or it won't have an effect.
 
 ```js
-const { swap, fields } = useFieldArray('links');
+// get swap function from composable in component setup
+const { swap } = useFieldArray('links');
 
-// Swaps the 4th item with the 5th
-swap(3, 4);
+// call swap function within custom function
+const mySwapFunction = () => {
+  // Swaps the 4th item with the 5th
+  swap(3, 4);
+}
 ```
 
 <CodeTitle level="4">
@@ -167,10 +188,14 @@ swap(3, 4);
 Adds an item at the specified index. If the specified index will place the item out of bounds (i.e: larger than length) the operation will be ignored, you still can add items as the last item of the array.
 
 ```js
-const { insert, fields } = useFieldArray('links');
+// get insert function from composable in component setup
+const { insert } = useFieldArray('links');
 
-// inserts a new item to the array at the second index
-insert(1, { url: '' });
+// call insert function within custom function
+const myInsertFunction = () => {  
+  // inserts a new item to the array at the second index
+  insert(1, { url: '' });
+}
 ```
 
 <CodeTitle level="4">
@@ -182,10 +207,14 @@ insert(1, { url: '' });
 Updates the value at the specified index, note that it doesn't merge the values if they are objects. If the specified index is outside the array boundary the operation will be ignored.
 
 ```js
-const { update, fields } = useFieldArray('links');
+// get update function from composable in component setup
+const { update } = useFieldArray('links');
 
-// updates the 2nd item value
-update(1, { url: '' });
+// call update function within custom function
+const myUpdateFunction = () => {
+  // updates the 2nd item value
+  update(1, { url: '' });
+}
 ```
 
 <CodeTitle level="4">
@@ -197,10 +226,14 @@ update(1, { url: '' });
 Replaces the entire array of fields.
 
 ```js
-const { replace, fields } = useFieldArray('links');
+// get replace function from composable in component setup
+const { replace } = useFieldArray('links');
 
-// replace the entire array with these items
-replace([{ url: 'https://google.com' }, { url: 'https://vuejs.org' }]);
+// call replace function within custom function
+const myReplaceFunction = () => {
+  // replace the entire array with these items
+  replace([{ url: 'https://google.com' }, { url: 'https://vuejs.org' }]);
+}
 ```
 
 <CodeTitle level="4">
@@ -212,8 +245,12 @@ replace([{ url: 'https://google.com' }, { url: 'https://vuejs.org' }]);
 Moves an array item to a different position within the array.
 
 ```js
-const { move, fields } = useFieldArray('links');
+// get move function from composable in component setup
+const { move } = useFieldArray('links');
 
-// move array item to a different position
-move(2, 1);
+// call move function within custom function
+const myMoveFunction => {
+  // move array item to a different position
+  move(2, 1);
+}
 ```
