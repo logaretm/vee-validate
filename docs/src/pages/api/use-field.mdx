@@ -149,7 +149,7 @@ export interface ValidationOptions {
 
 function useField<TValue = unknown>(
   fieldName: MaybeRef<string>,
-  rules: RuleExpression,
+  rules?: MaybeRef<RuleExpression>,
   opts?: FieldOptions
 ): {
   name: MaybeRef<string>;  // The field name

@@ -23,6 +23,8 @@ import {
   PrivateFieldContext,
   SchemaValidationMode,
   ValidationOptions,
+  FormContext,
+  PrivateFormContext,
 } from './types';
 import {
   normalizeRules,
@@ -52,10 +54,12 @@ export interface FieldOptions<TValue = unknown> {
   checkedValue?: MaybeRef<TValue>;
   uncheckedValue?: MaybeRef<TValue>;
   label?: MaybeRef<string | undefined>;
+  controlled?: boolean;
   standalone?: boolean;
   keepValueOnUnmount?: MaybeRef<boolean | undefined>;
   modelPropName?: string;
   syncVModel?: boolean;
+  form?: FormContext;
 }
 
 export type RuleExpression<TValue> =
@@ -95,19 +99,21 @@ function _useField<TValue = unknown>(
     label,
     validateOnValueUpdate,
     uncheckedValue,
-    standalone,
+    controlled,
     keepValueOnUnmount,
     modelPropName,
     syncVModel,
+    form: controlForm,
   } = normalizeOptions(unref(name), opts);
 
-  const form = !standalone ? injectWithSelf(FormContextKey) : undefined;
+  const injectedForm = controlled ? injectWithSelf(FormContextKey) : undefined;
+  const form = (controlForm as PrivateFormContext | undefined) || injectedForm;
 
   // a flag indicating if the field is about to be removed/unmounted.
   let markedForRemoval = false;
   const { id, value, initialValue, meta, setState, errors, errorMessage } = useFieldState(name, {
     modelValue,
-    standalone,
+    form,
   });
 
   if (syncVModel) {
@@ -382,31 +388,32 @@ function _useField<TValue = unknown>(
  * Normalizes partial field options to include the full options
  */
 function normalizeOptions<TValue>(name: string, opts: Partial<FieldOptions<TValue>> | undefined): FieldOptions<TValue> {
-  const defaults = () => ({
+  const defaults = (): Partial<FieldOptions> => ({
     initialValue: undefined,
     validateOnMount: false,
     bails: true,
-    rules: '',
     label: name,
     validateOnValueUpdate: true,
-    standalone: false,
     keepValueOnUnmount: undefined,
     modelPropName: 'modelValue',
     syncVModel: true,
+    controlled: true,
   });
 
   if (!opts) {
-    return defaults();
+    return defaults() as FieldOptions<TValue>;
   }
 
   // TODO: Deprecate this in next major release
   const checkedValue = 'valueProp' in opts ? opts.valueProp : opts.checkedValue;
+  const controlled = 'standalone' in opts ? !opts.standalone : opts.controlled;
 
   return {
     ...defaults(),
     ...(opts || {}),
+    controlled: controlled ?? true,
     checkedValue,
-  };
+  } as FieldOptions<TValue>;
 }
 
 /**

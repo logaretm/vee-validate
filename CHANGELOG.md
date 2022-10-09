@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.7.0](https://github.com/logaretm/vee-validate/compare/v4.6.10...v4.7.0) (2022-10-09)
+
+### Features
+
+* allow passing form control to useField closes [#3204](https://github.com/logaretm/vee-validate/issues/3204) ([#3923](https://github.com/logaretm/vee-validate/issues/3923)) ([4c59d63](https://github.com/logaretm/vee-validate/commit/4c59d634f25d7fff024b50f3ffd667f7fdf0076c))
+* expose controlled values on useForm ([#3924](https://github.com/logaretm/vee-validate/issues/3924)) ([2517319](https://github.com/logaretm/vee-validate/commit/25173196f3b689d919015cf8e7df8254b9e3090e))
+
 ## [4.6.10](https://github.com/logaretm/vee-validate/compare/v4.6.9...v4.6.10) (2022-09-30)
 
 ### Bug Fixes
