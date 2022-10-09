@@ -145,6 +145,7 @@ export interface FormValidationResult<TValues> {
 
 export interface SubmissionContext<TValues extends GenericFormValues = GenericFormValues> extends FormActions<TValues> {
   evt?: Event;
+  controlledValues: Partial<TValues>;
 }
 
 export type SubmissionHandler<TValues extends GenericFormValues = GenericFormValues, TReturn = unknown> = (

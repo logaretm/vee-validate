@@ -668,6 +668,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
           if (result.valid && typeof fn === 'function') {
             return fn(deepCopy(formValues), {
               evt: e as Event,
+              controlledValues: deepCopy(controlledValues.value),
               setErrors,
               setFieldError,
               setTouched,
