@@ -71,6 +71,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 ): FormContext<TValues> {
   const formId = FORM_COUNTER++;
 
+  const controlledModelPaths: Set<string> = new Set();
+
   // Prevents fields from double resetting their values, which causes checkboxes to toggle their initial value
   // TODO: This won't be needed if we centralize all the state inside the `form` for form inputs
   let RESET_LOCK = false;
@@ -156,6 +158,15 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   // form meta aggregations
   const meta = useFormMeta(fieldsByPath, formValues, originalInitialValues, errors);
 
+  const controlledValues = computed(() => {
+    return [...controlledModelPaths, ...keysOf(fieldsByPath.value)].reduce((acc, path) => {
+      const value = getFromPath(formValues, path as string);
+      setInPath(acc, path as string, value);
+
+      return acc;
+    }, {} as TValues);
+  });
+
   const schema = opts?.validationSchema;
 
   /**
@@ -221,10 +232,82 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
   );
 
+  function makeSubmissionFactory(onlyControlled: boolean) {
+    return function submitHandlerFactory<TReturn = unknown>(
+      fn?: SubmissionHandler<TValues, TReturn>,
+      onValidationError?: InvalidSubmissionHandler<TValues>
+    ) {
+      return function submissionHandler(e: unknown) {
+        if (e instanceof Event) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+
+        // Touch all fields
+        setTouched(
+          keysOf(fieldsByPath.value).reduce((acc, field) => {
+            acc[field] = true;
+
+            return acc;
+          }, {} as Record<keyof TValues, boolean>)
+        );
+
+        isSubmitting.value = true;
+        submitCount.value++;
+        return validate()
+          .then(result => {
+            const values = deepCopy(formValues);
+
+            if (result.valid && typeof fn === 'function') {
+              const controlled = deepCopy(controlledValues.value);
+              return fn(onlyControlled ? controlled : values, {
+                evt: e as Event,
+                controlledValues: controlled,
+                setErrors,
+                setFieldError,
+                setTouched,
+                setFieldTouched,
+                setValues,
+                setFieldValue,
+                resetForm,
+              });
+            }
+
+            if (!result.valid && typeof onValidationError === 'function') {
+              onValidationError({
+                values,
+                evt: e as Event,
+                errors: result.errors,
+                results: result.results,
+              });
+            }
+          })
+          .then(
+            returnVal => {
+              isSubmitting.value = false;
+
+              return returnVal;
+            },
+            err => {
+              isSubmitting.value = false;
+
+              // re-throw the err so it doesn't go silent
+              throw err;
+            }
+          );
+      };
+    };
+  }
+
+  const handleSubmitImpl = makeSubmissionFactory(false);
+  const handleSubmit: typeof handleSubmitImpl & { withControlled: typeof handleSubmitImpl } = handleSubmitImpl as any;
+  handleSubmit.withControlled = makeSubmissionFactory(true);
+
   const formCtx: PrivateFormContext<TValues> = {
     formId,
     fieldsByPath,
     values: formValues,
+    controlledValues,
     errorBag,
     errors,
     schema,
@@ -367,6 +450,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
         deep: true,
       }
     );
+
+    controlledModelPaths.add(unref(path) as string);
 
     return value;
   }
@@ -630,71 +715,6 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     return fieldInstance.validate();
   }
 
-  function handleSubmit<TReturn = unknown>(
-    fn?: SubmissionHandler<TValues, TReturn>,
-    onValidationError?: InvalidSubmissionHandler<TValues>
-  ) {
-    return function submissionHandler(e: unknown) {
-      if (e instanceof Event) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-
-      // Touch all fields
-      setTouched(
-        keysOf(fieldsByPath.value).reduce((acc, field) => {
-          acc[field] = true;
-
-          return acc;
-        }, {} as Record<keyof TValues, boolean>)
-      );
-
-      isSubmitting.value = true;
-      submitCount.value++;
-      return validate()
-        .then(result => {
-          if (result.valid && typeof fn === 'function') {
-            return fn(deepCopy(formValues), {
-              evt: e as Event,
-              setErrors,
-              setFieldError,
-              setTouched,
-              setFieldTouched,
-              setValues,
-              setFieldValue,
-              resetForm,
-            });
-          }
-
-          if (!result.valid && typeof onValidationError === 'function') {
-            onValidationError({
-              values: deepCopy(formValues),
-              evt: e as Event,
-              errors: result.errors,
-              results: result.results,
-            });
-          }
-        })
-        .then(
-          returnVal => {
-            isSubmitting.value = false;
-
-            return returnVal;
-          },
-          err => {
-            isSubmitting.value = false;
-
-            // re-throw the err so it doesn't go silent
-            throw err;
-          }
-        );
-    };
-  }
-
-  function setFieldInitialValue(path: string, value: unknown) {
-    setInPath(initialValues.value, path, deepCopy(value));
-  }
-
   function unsetInitialValue(path: string) {
     unsetPath(initialValues.value, path);
   }
@@ -708,6 +728,10 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     if (updateOriginal && !opts?.initialValues) {
       setInPath(originalInitialValues.value, path, deepCopy(value));
     }
+  }
+
+  function setFieldInitialValue(path: string, value: unknown) {
+    setInPath(initialValues.value, path, deepCopy(value));
   }
 
   async function _validateSchema(): Promise<FormValidationResult<TValues>> {
