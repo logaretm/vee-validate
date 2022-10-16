@@ -26,6 +26,7 @@
     "regex": "Das Format von {field} ist ungültig",
     "required": "{field} ist ein Pflichtfeld",
     "required_if": "{field} ist ein Pflichtfeld",
-    "size": "{field} muss kleiner als 0:{size}KB sein"
+    "size": "{field} muss kleiner als 0:{size}KB sein",
+    "url": "{field} ist keine gültige URL"
   }
 }
