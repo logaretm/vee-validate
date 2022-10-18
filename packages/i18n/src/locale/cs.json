@@ -15,7 +15,7 @@
     "ext": "{field} musí být validní soubor",
     "image": "{field} musí být obrázek",
     "integer": "Pole {field} musí být celé číslo",
-    "length": "Pole {field} musí mít délku 0:{délka}",
+    "length": "Pole {field} musí mít délku 0:{length}",
     "max_value": "Pole {field} musí být 0:{max}, nebo mensí",
     "max": "{field} nesmí být delší než 0:{length} znaků",
     "mimes": "Pole {field} musí být správný typ souboru",
