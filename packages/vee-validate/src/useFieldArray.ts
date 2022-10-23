@@ -1,8 +1,8 @@
-import { Ref, unref, ref, computed, onBeforeUnmount } from 'vue';
+import { Ref, unref, ref, onBeforeUnmount } from 'vue';
 import { isNullOrUndefined } from '../../shared';
 import { FormContextKey } from './symbols';
 import { FieldArrayContext, FieldEntry, MaybeRef, PrivateFieldArrayContext } from './types';
-import { getFromPath, injectWithSelf, warn } from './utils';
+import { computedDeep, getFromPath, injectWithSelf, warn } from './utils';
 
 export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): FieldArrayContext<TValue> {
   const form = injectWithSelf(FormContextKey, undefined);
@@ -64,7 +64,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
 
     const entry: FieldEntry<TValue> = {
       key,
-      value: computed<TValue>({
+      value: computedDeep<TValue>({
         get() {
           const currentValues = getFromPath<TValue[]>(form?.values, unref(arrayPath), []) || [];
           const idx = fields.value.findIndex(e => e.key === key);
@@ -172,7 +172,9 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     if (!Array.isArray(pathValue) || pathValue.length - 1 < idx) {
       return;
     }
+
     form?.setFieldValue(`${pathName}[${idx}]`, value);
+    form?.validate({ mode: 'validated-only' });
   }
 
   function prepend(value: TValue) {

@@ -1,7 +1,7 @@
-import { getCurrentInstance, inject, InjectionKey, warn as vueWarning } from 'vue';
-import isEqual from 'fast-deep-equal';
+import { getCurrentInstance, inject, InjectionKey, ref, Ref, warn as vueWarning, watch } from 'vue';
+import { klona as deepCopy } from 'klona/full';
 import { isIndex, isNullOrUndefined, isObject, toNumber } from '../../../shared';
-import { isContainerValue, isEmptyContainer, isNotNestedPath } from './assertions';
+import { isContainerValue, isEmptyContainer, isEqual, isNotNestedPath } from './assertions';
 import { PrivateFieldContext } from '../types';
 
 function cleanupNonNestedPath(path: string) {
@@ -264,4 +264,38 @@ export function withLatest<TFunction extends (...args: any[]) => Promise<any>, T
 
     return result;
   };
+}
+
+export function computedDeep<TValue = unknown>({ get, set }: { get(): TValue; set(value: TValue): void }): Ref<TValue> {
+  const baseRef = ref(deepCopy(get())) as Ref<TValue>;
+
+  watch(
+    get,
+    newValue => {
+      if (isEqual(newValue, baseRef.value)) {
+        return;
+      }
+
+      baseRef.value = deepCopy(newValue);
+    },
+    {
+      deep: true,
+    }
+  );
+
+  watch(
+    baseRef,
+    newValue => {
+      if (isEqual(newValue, get())) {
+        return;
+      }
+
+      set(deepCopy(newValue));
+    },
+    {
+      deep: true,
+    }
+  );
+
+  return baseRef;
 }
