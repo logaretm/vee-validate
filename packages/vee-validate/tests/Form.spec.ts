@@ -919,6 +919,7 @@ describe('<Form />', () => {
           <Field name="drink" as="input" type="checkbox" value="" rules="required" /> Coffee
           <Field name="drink" as="input" type="checkbox" value="Tea" rules="required" /> Tea
         </template>
+
         <Field name="drink" as="input" type="checkbox" value="Coke" rules="required" /> Coke
 
         <span id="errors">{{ errors }}</span>
@@ -2759,4 +2760,164 @@ describe('<Form />', () => {
     await flushPromises();
     expect(value.value).toBe(true);
   });
+});
+
+// #3963
+test('unmounted radio fields gets unregistered and their submitted values are kept if configured on the form level', async () => {
+  let showFields!: Ref<boolean>;
+  const spy = jest.fn();
+  const wrapper = mountWithHoc({
+    setup() {
+      showFields = ref(true);
+
+      return {
+        showFields,
+        onSubmit(values: any) {
+          spy(values);
+        },
+      };
+    },
+    template: `
+      <VForm @submit="onSubmit" as="form" v-slot="{ errors }" keep-values>
+        <template v-if="showFields">
+          <Field name="drink"  type="radio" value="" rules="required" /> Coffee
+          <Field name="drink"  type="radio" value="Tea" rules="required" /> Tea
+        </template>
+
+        <Field name="drink"  type="radio" value="Coke" rules="required" /> Coke
+
+        <span id="errors">{{ errors }}</span>
+
+        <button>Submit</button>
+      </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const errors = wrapper.$el.querySelector('#errors');
+  const button = wrapper.$el.querySelector('button');
+  const inputs = wrapper.$el.querySelectorAll('input');
+
+  wrapper.$el.querySelector('button').click();
+  await flushPromises();
+  expect(errors.textContent).toBeTruthy();
+  setChecked(inputs[1]);
+
+  await flushPromises();
+  button.click();
+  await flushPromises();
+  const expected = {
+    drink: 'Tea',
+  };
+  expect(spy).toHaveBeenLastCalledWith(expected);
+
+  showFields.value = false;
+  await flushPromises();
+  expect(errors.textContent).toBe('{}');
+  button.click();
+  await flushPromises();
+  expect(spy).toHaveBeenLastCalledWith(expected);
+});
+
+// #3963
+test('unmounted radio fields gets unregistered and their submitted values are removed', async () => {
+  let showFields!: Ref<boolean>;
+  const spy = jest.fn();
+  const wrapper = mountWithHoc({
+    setup() {
+      showFields = ref(true);
+
+      return {
+        showFields,
+        onSubmit(values: any) {
+          spy(values);
+        },
+      };
+    },
+    template: `
+      <VForm @submit="onSubmit" v-slot="{ errors }">
+        <template v-if="showFields">
+          <Field name="drink" type="radio" value="" /> Coffee
+          <Field name="drink" type="radio" value="Tea" /> Tea
+        </template>
+
+        <Field name="drink"  type="radio" value="Coke" /> Coke
+
+        <span id="errors">{{ errors }}</span>
+
+        <button>Submit</button>
+      </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const errors = wrapper.$el.querySelector('#errors');
+  const button = wrapper.$el.querySelector('button');
+  const inputs = wrapper.$el.querySelectorAll('input');
+
+  wrapper.$el.querySelector('button').click();
+  await flushPromises();
+  expect(errors.textContent).toBeTruthy();
+  setChecked(inputs[1]);
+
+  await flushPromises();
+  button.click();
+  await flushPromises();
+  expect(spy).toHaveBeenLastCalledWith({ drink: 'Tea' });
+
+  showFields.value = false;
+  await flushPromises();
+  expect(errors.textContent).toBe('{}');
+  button.click();
+  await flushPromises();
+  expect(spy).toHaveBeenLastCalledWith({});
+});
+
+// #3963
+test('unmounted radio fields gets unregistered and their values are removed if configured on the field level', async () => {
+  const showFields = ref(true);
+
+  const wrapper = mountWithHoc({
+    setup() {
+      return {
+        showFields,
+      };
+    },
+    template: `
+      <VForm v-slot="{ errors, values }" keep-values>
+        <template v-if="showFields">
+          <Field name="drink"  type="radio" value="" rules="required" /> Coffee
+          <Field name="drink"  type="radio" value="Tea" rules="required" :keep-value="false" /> Tea
+        </template>
+
+        <Field name="drink"  type="radio" value="Coke" rules="required" /> Coke
+
+        <span id="errors">{{ errors }}</span>
+        <span id="values">{{ values }}</span>
+
+        <button>Validate</button>
+      </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const errors = wrapper.$el.querySelector('#errors');
+  const values = wrapper.$el.querySelector('#values');
+  const inputs = wrapper.$el.querySelectorAll('input');
+
+  wrapper.$el.querySelector('button').click();
+  await flushPromises();
+  expect(errors.textContent).toBeTruthy();
+  setChecked(inputs[1]);
+
+  await flushPromises();
+  expect(JSON.parse(values.textContent)).toEqual({
+    drink: 'Tea',
+  });
+
+  showFields.value = false;
+  await flushPromises();
+  // errors were cleared
+  expect(errors.textContent).toBe('{}');
+  expect(JSON.parse(values.textContent)).toEqual({});
 });

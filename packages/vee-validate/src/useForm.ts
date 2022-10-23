@@ -626,12 +626,17 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       // This used to be handled in the useField composable but the form has better context on when it should/not happen.
       // if it does belong to it that means the group still exists
       // #3844
-      if (isSameGroup && Array.isArray(currentGroupValue) && !shouldKeepValue) {
-        const valueIdx = currentGroupValue.findIndex(i => isEqual(i, unref(field.checkedValue)));
-        if (valueIdx > -1) {
-          const newVal = [...currentGroupValue];
-          newVal.splice(valueIdx, 1);
-          setFieldValue(fieldName, newVal as any, { force: true });
+      if (isSameGroup && !shouldKeepValue) {
+        if (Array.isArray(currentGroupValue)) {
+          const valueIdx = currentGroupValue.findIndex(i => isEqual(i, unref(field.checkedValue)));
+          if (valueIdx > -1) {
+            const newVal = [...currentGroupValue];
+            newVal.splice(valueIdx, 1);
+            setFieldValue(fieldName, newVal as any, { force: true });
+          }
+        } else if (currentGroupValue === unref(field.checkedValue)) {
+          // Remove field if it is a group but does not have an array value, like for radio inputs #3963
+          unsetPath(formValues, fieldName);
         }
       }
 
@@ -647,7 +652,8 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
           return;
         }
 
-        if (isGroup && !isEmptyContainer(getFromPath(formValues, fieldName))) {
+        // Don't apply emptyContainer check unless the current group value is an array
+        if (isGroup && Array.isArray(currentGroupValue) && !isEmptyContainer(currentGroupValue)) {
           return;
         }
 
