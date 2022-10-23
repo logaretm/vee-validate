@@ -18,7 +18,7 @@ describe('<ErrorMessage />', () => {
       },
       template: `
       <VForm>
-        <Field name="field" rules="required" as="input" />
+        <Field name="field" rules="required" />
         <ErrorMessage name="field" id="error" />
       </VForm>
     `,
@@ -35,7 +35,7 @@ describe('<ErrorMessage />', () => {
       },
       template: `
       <VForm>
-        <Field name="field" rules="required" as="input" />
+        <Field name="field" rules="required" />
         <ErrorMessage name="field" id="error" />
       </VForm>
     `,
@@ -63,8 +63,8 @@ describe('<ErrorMessage />', () => {
         ErrorMessage,
       },
       template: `
-      <VForm as="form">
-        <Field name="field" rules="required" as="input" />
+      <VForm>
+        <Field name="field" rules="required" />
         <ErrorMessage as="div" name="field" id="error" />
 
         <button>Validate</button>
@@ -86,8 +86,8 @@ describe('<ErrorMessage />', () => {
         ErrorMessage,
       },
       template: `
-      <VForm as="form">
-        <Field name="field" rules="required" as="input" />
+      <VForm>
+        <Field name="field" rules="required" />
         <ErrorMessage as="div" name="field" id="error" v-slot="{ message }">
           <span>icon</span>
           <span>{{ message }}</span>
@@ -111,8 +111,8 @@ describe('<ErrorMessage />', () => {
         ErrorMessage,
       },
       template: `
-      <VForm as="form">
-        <Field name="field" rules="required" as="input" />
+      <VForm>
+        <Field name="field" rules="required" />
         <ErrorMessage name="field" v-slot="{ message }">
           <p id="error">{{ message }}</p>
         </ErrorMessage>

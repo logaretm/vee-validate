@@ -46,7 +46,7 @@ describe('<Field />', () => {
   test('renders an input by default', () => {
     const wrapper = mountWithHoc({
       template: `
-      <Field name="field" as="input" />
+      <Field name="field" />
     `,
     });
 
@@ -112,7 +112,7 @@ describe('<Field />', () => {
         };
       },
       template: `
-      <VForm as="form">
+      <VForm>
         <Field name="field" :rules="rules" v-slot="{ errors, field }">
           <input v-bind="field" type="text">
           <span id="fieldError">{{ errors[0] }}</span>
@@ -166,7 +166,7 @@ describe('<Field />', () => {
   test('listens for change events', async () => {
     const wrapper = mountWithHoc({
       template: `
-      <VForm as="form" v-slot="{ errors }">
+      <VForm v-slot="{ errors }">
         <Field name="select" as="select" rules="required">
           <option value="">0</option>
           <option value="1">1</option>
@@ -287,8 +287,8 @@ describe('<Field />', () => {
   test('validates target fields using targeted params', async () => {
     const wrapper = mountWithHoc({
       template: `
-      <VForm as="form">
-        <Field rules="required" name="confirmation" as="input" />
+      <VForm>
+        <Field rules="required" name="confirmation" />
 
         <Field name="password" rules="required|confirmed:@confirmation" v-slot="{ field, errors }">
           <input type="password" v-bind="field">
@@ -846,7 +846,7 @@ describe('<Field />', () => {
       },
       template: `
       <VForm @submit="onSubmit">
-        <Field name="terms" as="input" type="checkbox" :unchecked-value="false" :value="true" /> Coffee
+        <Field name="terms" type="checkbox" :unchecked-value="false" :value="true" /> Coffee
 
         <button type="submit">Submit</button>
       </VForm>

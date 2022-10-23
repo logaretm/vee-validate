@@ -61,11 +61,11 @@ test('validates form with zod', async () => {
       };
     },
     template: `
-      <VForm as="form" :validationSchema="schema" :initialValues="initialValues" v-slot="{ errors }">
-        <Field id="email" name="email" as="input" />
+      <VForm :validationSchema="schema" :initialValues="initialValues" v-slot="{ errors }">
+        <Field id="email" name="email" />
         <span id="emailErr">{{ errors.email }}</span>
 
-        <Field id="password" name="password" as="input" type="password" />
+        <Field id="password" name="password" type="password" />
         <span id="passwordErr">{{ errors.password }}</span>
 
         <button>Validate</button>
@@ -123,11 +123,11 @@ test('cross field validation with zod', async () => {
       };
     },
     template: `
-      <VForm as="form" :validationSchema="schema" v-slot="{ errors }">
-        <Field id="password" name="password" as="input" />
+      <VForm :validationSchema="schema" v-slot="{ errors }">
+        <Field id="password" name="password" />
         <span id="field">{{ errors.password }}</span>
 
-        <Field id="confirmation" name="confirmation" as="input" />
+        <Field id="confirmation" name="confirmation" />
         <span id="confirmationError">{{ errors.confirmation }}</span>
 
         <button>Validate</button>
@@ -172,9 +172,9 @@ test('checkboxes with zod schema', async () => {
     },
     template: `
       <VForm :validation-schema="schema" :initialValues="initialValues" v-slot="{ errors, values }">
-        <Field name="drink" as="input" type="checkbox" value="" /> Coffee
-        <Field name="drink" as="input" type="checkbox" value="Tea" /> Tea
-        <Field name="drink" as="input" type="checkbox" value="Coke" /> Coke
+        <Field name="drink" type="checkbox" value="" /> Coffee
+        <Field name="drink" type="checkbox" value="Tea" /> Tea
+        <Field name="drink" type="checkbox" value="Coke" /> Coke
 
         <span id="err">{{ errors.drink }}</span>
         <span id="values">{{ values.drink && values.drink.toString() }}</span>
