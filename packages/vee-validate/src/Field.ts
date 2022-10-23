@@ -274,7 +274,7 @@ export const Field = FieldImpl as typeof FieldImpl & {
     validate: FieldContext['validate'];
     handleChange: FieldContext['handleChange'];
     $slots: {
-      default: (arg: FieldSlotProps<unknown>) => VNode[];
+      default: (arg: FieldSlotProps<any>) => VNode[];
     };
   };
 };
