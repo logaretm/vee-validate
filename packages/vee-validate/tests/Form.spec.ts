@@ -26,7 +26,7 @@ describe('<Form />', () => {
     const wrapper = mountWithHoc({
       template: `
       <div>
-        <VForm as="form" />
+        <VForm />
       </div>
     `,
     });
@@ -37,8 +37,8 @@ describe('<Form />', () => {
   test('observes the current state of providers', async () => {
     const wrapper = mountWithHoc({
       template: `
-      <VForm as="form" v-slot="{ meta }">
-        <Field name="field" rules="required" as="input" type="text" />
+      <VForm v-slot="{ meta }">
+        <Field name="field" rules="required" type="text" />
 
         <span id="state">{{ meta.valid }}</span>
       </VForm>
@@ -70,8 +70,8 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm @submit="submit" as="form" v-slot="{ errors }">
-        <Field name="field" rules="required" as="input" />
+      <VForm @submit="submit" v-slot="{ errors }">
+        <Field name="field" rules="required" />
         <span id="error">{{ errors.field }}</span>
 
         <button>Validate</button>
@@ -108,8 +108,8 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm @reset="reset" as="form" v-slot="{ errors }">
-        <Field rules="required" name="field" as="input"/>
+      <VForm @reset="reset" v-slot="{ errors }">
+        <Field rules="required" name="field" />
         <span id="error">{{ errors.field }}</span>
 
         <button id="submit">Validate</button>
@@ -145,8 +145,8 @@ describe('<Form />', () => {
     const resetValue = 'I was reset';
     const wrapper = mountWithHoc({
       template: `
-      <VForm as="form" v-slot="{ errors, resetForm, meta, values }">
-        <Field rules="required" name="field" as="input"/>
+      <VForm v-slot="{ errors, resetForm, meta, values }">
+        <Field rules="required" name="field" />
         <span id="error">{{ errors.field }}</span>
         <span id="dirty">{{ meta.dirty.toString() }}</span>
         <span id="touched">{{ meta.touched.toString() }}</span>
@@ -191,8 +191,8 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm :initialValues="initialValues" as="form">
-        <Field rules="required" name="field" as="input" />
+      <VForm :initialValues="initialValues">
+        <Field rules="required" name="field" />
 
         <button id="submit">Submit</button>
       </VForm>
@@ -219,9 +219,9 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm :initialValues="initialValues" as="form">
-        <Field rules="required" name="field1" as="input" />
-        <Field rules="required" name="field2" as="input" />
+      <VForm :initialValues="initialValues">
+        <Field rules="required" name="field1" />
+        <Field rules="required" name="field2" />
 
         <button id="submit">Submit</button>
       </VForm>
@@ -260,9 +260,9 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm :initialValues="initialValues" as="form">
-        <Field rules="required" name="field1" as="input" />
-        <Field rules="required" name="field2" as="input" />
+      <VForm :initialValues="initialValues">
+        <Field rules="required" name="field1" />
+        <Field rules="required" name="field2" />
 
         <button id="submit">Submit</button>
       </VForm>
@@ -293,8 +293,8 @@ describe('<Form />', () => {
     const submitMock = jest.fn();
     const wrapper = mountWithHoc({
       template: `
-      <VForm as="form" v-slot="{ errors }">
-        <Field name="field" rules="required" as="input" />
+      <VForm v-slot="{ errors }">
+        <Field name="field" rules="required" />
         <span id="error">{{ errors.field }}</span>
 
         <button>Validate</button>
@@ -325,7 +325,7 @@ describe('<Form />', () => {
       <div>
         <VForm as="" v-slot="{ errors, submitForm }">
           <form @submit="submitForm">
-            <Field name="field" rules="required" as="input" />
+            <Field name="field" rules="required" />
             <span id="error">{{ errors.field }}</span>
 
             <button>Validate</button>
@@ -364,11 +364,11 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm as="form" :validationSchema="schema" v-slot="{ errors }">
-        <Field id="email" name="email" as="input" />
+      <VForm :validationSchema="schema" v-slot="{ errors }">
+        <Field id="email" name="email" />
         <span id="emailErr">{{ errors.email }}</span>
 
-        <Field id="password" name="password" as="input" type="password" />
+        <Field id="password" name="password" type="password" />
         <span id="passwordErr">{{ errors.password }}</span>
 
         <button>Validate</button>
@@ -418,11 +418,11 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm as="form" :validationSchema="schema" v-slot="{ errors }">
-        <Field name="field" as="input" />
+      <VForm :validationSchema="schema" v-slot="{ errors }">
+        <Field name="field" />
         <span id="field">{{ errors.field }}</span>
 
-        <Field name="other" as="input" />
+        <Field name="other" />
         <span id="other">{{ errors.other }}</span>
 
         <button>Validate</button>
@@ -453,11 +453,11 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm as="form" :validationSchema="schema" v-slot="{ errors }">
-        <Field id="password" name="password" as="input" />
+      <VForm :validationSchema="schema" v-slot="{ errors }">
+        <Field id="password" name="password" />
         <span id="field">{{ errors.password }}</span>
 
-        <Field id="confirmation" name="confirmation" as="input" />
+        <Field id="confirmation" name="confirmation" />
         <span id="confirmationError">{{ errors.confirmation }}</span>
 
         <button>Validate</button>
@@ -496,9 +496,9 @@ describe('<Form />', () => {
       },
       template: `
       <VForm :validation-schema="schema" v-slot="{ errors }">
-        <Field name="drink" as="input" type="radio" value="" /> Coffee
-        <Field name="drink" as="input" type="radio" value="Tea" /> Tea
-        <Field name="drink" as="input" type="radio" value="Coke" /> Coke
+        <Field name="drink" type="radio" value="" /> Coffee
+        <Field name="drink" type="radio" value="Tea" /> Tea
+        <Field name="drink" type="radio" value="Coke" /> Coke
 
         <span id="err">{{ errors.drink }}</span>
 
@@ -552,7 +552,7 @@ describe('<Form />', () => {
 
         <label v-for="(value, index) in values" v-bind:key="index">
           <div v-if="showFields">
-            <Field name="test" as="input" type="radio" :value="value" /> {{value}}
+            <Field name="test" type="radio" :value="value" /> {{value}}
           </div>
         </label>
         <button>Submit</button>
@@ -597,7 +597,7 @@ describe('<Form />', () => {
       <VForm  @submit="onSubmit" :initialValues="initialValues" >
         <label v-for="(value, index) in values" v-bind:key="index">
           <div v-if="showFields">
-            <Field name="test.fieldOne.option" as="input" type="radio" :value="value" /> {{value}}
+            <Field name="test.fieldOne.option" type="radio" :value="value" /> {{value}}
           </div>
         </label>
 
@@ -684,7 +684,7 @@ describe('<Form />', () => {
       },
       template: `
       <VForm :validation-schema="schema" v-slot="{ errors, values }">
-        <Field name="drink" as="input" type="checkbox" :value="true" /> Coffee
+        <Field name="drink" type="checkbox" :value="true" /> Coffee
 
         <span id="err">{{ errors.drink }}</span>
         <span id="value">{{ typeof values.drink }}</span>
@@ -726,15 +726,15 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm as="form" :validationSchema="schema" v-slot="{ errors, values }">
+      <VForm :validationSchema="schema" v-slot="{ errors, values }">
         <template v-if="showFields">
-          <Field name="field" as="input" />
+          <Field name="field" />
           <Field name="nested.field" />
           <Field name="[non-nested.field]" />
-          <Field name="drink" as="input" type="checkbox" value="" /> Coffee
-          <Field name="drink" as="input" type="checkbox" value="Tea" /> Tea
+          <Field name="drink" type="checkbox" value="" /> Coffee
+          <Field name="drink" type="checkbox" value="Tea" /> Tea
         </template>
-        <Field name="drink" as="input" type="checkbox" value="Coke" /> Coke
+        <Field name="drink" type="checkbox" value="Coke" /> Coke
 
         <span id="errors">{{ errors }}</span>
         <span id="values">{{ values }}</span>
@@ -786,15 +786,15 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm @submit="onSubmit" as="form" v-slot="{ errors }">
+      <VForm @submit="onSubmit" v-slot="{ errors }">
         <template v-if="showFields">
-          <Field name="field" as="input" rules="required" />
+          <Field name="field" rules="required" />
           <Field name="nested.field" rules="required" />
           <Field name="[non-nested.field]" rules="required" />
-          <Field name="drink" as="input" type="checkbox" value="" rules="required" /> Coffee
-          <Field name="drink" as="input" type="checkbox" value="Tea" rules="required" /> Tea
+          <Field name="drink" type="checkbox" value="" rules="required" /> Coffee
+          <Field name="drink" type="checkbox" value="Tea" rules="required" /> Tea
         </template>
-        <Field name="drink" as="input" type="checkbox" value="Coke" rules="required" /> Coke
+        <Field name="drink" type="checkbox" value="Coke" rules="required" /> Coke
 
         <span id="errors">{{ errors }}</span>
 
@@ -849,15 +849,15 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm as="form" :validationSchema="schema" v-slot="{ errors, values }" keep-values>
+      <VForm :validationSchema="schema" v-slot="{ errors, values }" keep-values>
         <template v-if="showFields">
-          <Field name="field" as="input" />
+          <Field name="field" />
           <Field name="nested.field" />
           <Field name="[non-nested.field]" />
-          <Field name="drink" as="input" type="checkbox" value="" /> Coffee
-          <Field name="drink" as="input" type="checkbox" value="Tea" /> Tea
+          <Field name="drink" type="checkbox" value="" /> Coffee
+          <Field name="drink" type="checkbox" value="Tea" /> Tea
         </template>
-        <Field name="drink" as="input" type="checkbox" value="Coke" /> Coke
+        <Field name="drink" type="checkbox" value="Coke" /> Coke
 
         <span id="errors">{{ errors }}</span>
         <span id="values">{{ values }}</span>
@@ -911,16 +911,16 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm @submit="onSubmit" as="form" v-slot="{ errors }" keep-values>
+      <VForm @submit="onSubmit" v-slot="{ errors }" keep-values>
         <template v-if="showFields">
-          <Field name="field" as="input" rules="required" />
+          <Field name="field" rules="required" />
           <Field name="nested.field" rules="required" />
           <Field name="[non-nested.field]" rules="required" />
-          <Field name="drink" as="input" type="checkbox" value="" rules="required" /> Coffee
-          <Field name="drink" as="input" type="checkbox" value="Tea" rules="required" /> Tea
+          <Field name="drink" type="checkbox" value="" rules="required" /> Coffee
+          <Field name="drink" type="checkbox" value="Tea" rules="required" /> Tea
         </template>
 
-        <Field name="drink" as="input" type="checkbox" value="Coke" rules="required" /> Coke
+        <Field name="drink" type="checkbox" value="Coke" rules="required" /> Coke
 
         <span id="errors">{{ errors }}</span>
 
@@ -976,15 +976,15 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm as="form" :validationSchema="schema" v-slot="{ errors, values }">
+      <VForm :validationSchema="schema" v-slot="{ errors, values }">
         <template v-if="showFields">
-          <Field name="field" as="input" />
+          <Field name="field" />
           <Field name="nested.field" keep-value />
           <Field name="[non-nested.field]" keep-value />
-          <Field name="drink" as="input" type="checkbox" value="" /> Coffee
-          <Field name="drink" as="input" type="checkbox" value="Tea" keep-value /> Tea
+          <Field name="drink" type="checkbox" value="" /> Coffee
+          <Field name="drink" type="checkbox" value="Tea" keep-value /> Tea
         </template>
-        <Field name="drink" as="input" type="checkbox" value="Coke" /> Coke
+        <Field name="drink" type="checkbox" value="Coke" /> Coke
 
         <span id="errors">{{ errors }}</span>
         <span id="values">{{ values }}</span>
@@ -1041,15 +1041,15 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm @submit="onSubmit" as="form" v-slot="{ errors }">
+      <VForm @submit="onSubmit" v-slot="{ errors }">
         <template v-if="showFields">
-          <Field name="field" as="input" rules="required" />
+          <Field name="field" rules="required" />
           <Field name="nested.field" rules="required" keep-value />
           <Field name="[non-nested.field]" rules="required" keep-value />
-          <Field name="drink" as="input" type="checkbox" value="" rules="required" /> Coffee
-          <Field name="drink" as="input" type="checkbox" value="Tea" rules="required" keep-value /> Tea
+          <Field name="drink" type="checkbox" value="" rules="required" /> Coffee
+          <Field name="drink" type="checkbox" value="Tea" rules="required" keep-value /> Tea
         </template>
-        <Field name="drink" as="input" type="checkbox" value="Coke" rules="required" /> Coke
+        <Field name="drink" type="checkbox" value="Coke" rules="required" /> Coke
 
         <span id="errors">{{ errors }}</span>
 
@@ -1108,14 +1108,14 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm as="form" :validationSchema="schema" v-slot="{ errors, values }" keep-values>
+      <VForm :validationSchema="schema" v-slot="{ errors, values }" keep-values>
         <template v-if="showFields">
-          <Field name="field" as="input" />
+          <Field name="field" />
           <Field name="nested.field" :keep-value="false" />
           <Field name="[non-nested.field]" :keep-value="false" />
-          <Field name="drink" as="input" type="checkbox" value="" /> Coffee
-          <Field name="drink" as="input" type="checkbox" value="Tea" :keep-value="false" /> Tea
-          <Field name="drink" as="input" type="checkbox" value="Coke" /> Coke
+          <Field name="drink" type="checkbox" value="" /> Coffee
+          <Field name="drink" type="checkbox" value="Tea" :keep-value="false" /> Tea
+          <Field name="drink" type="checkbox" value="Coke" /> Coke
         </template>
 
         <span id="errors">{{ errors }}</span>
@@ -1170,9 +1170,9 @@ describe('<Form />', () => {
       },
       template: `
       <VForm :validation-schema="schema" v-slot="{ errors, values }">
-        <Field name="drink" as="input" type="checkbox" value="" /> Coffee
-        <Field name="drink" as="input" type="checkbox" value="Tea" /> Tea
-        <Field name="drink" as="input" type="checkbox" value="Coke" /> Coke
+        <Field name="drink" type="checkbox" value="" /> Coffee
+        <Field name="drink" type="checkbox" value="Tea" /> Tea
+        <Field name="drink" type="checkbox" value="Coke" /> Coke
 
         <span id="err">{{ errors.drink }}</span>
         <span id="values">{{ values.drink && values.drink.toString() }}</span>
@@ -1221,9 +1221,9 @@ describe('<Form />', () => {
       },
       template: `
       <VForm :validation-schema="schema" v-slot="{ errors, values }">
-        <Field name="drink" as="input" type="checkbox" :value="{ id: '' }" /> Coffee
-        <Field name="drink" as="input" type="checkbox" :value="{ id: 'tea' }" /> Tea
-        <Field name="drink" as="input" type="checkbox" :value="{ id: 'coke' }" /> Coke
+        <Field name="drink" type="checkbox" :value="{ id: '' }" /> Coffee
+        <Field name="drink" type="checkbox" :value="{ id: 'tea' }" /> Tea
+        <Field name="drink" type="checkbox" :value="{ id: 'coke' }" /> Coke
 
         <span id="err">{{ errors.drink }}</span>
         <span id="values">{{ JSON.stringify(values.drink) }}</span>
@@ -1274,9 +1274,9 @@ describe('<Form />', () => {
       },
       template: `
       <VForm :validation-schema="schema" v-slot="{ errors, values }">
-        <Field v-model="drinks" name="drink" as="input" type="checkbox" value="" /> Coffee
-        <Field v-model="drinks" name="drink" as="input" type="checkbox" value="Tea" /> Tea
-        <Field v-model="drinks" name="drink" as="input" type="checkbox" value="Coke" /> Coke
+        <Field v-model="drinks" name="drink" type="checkbox" value="" /> Coffee
+        <Field v-model="drinks" name="drink" type="checkbox" value="Tea" /> Tea
+        <Field v-model="drinks" name="drink" type="checkbox" value="Coke" /> Coke
 
         <span id="err">{{ errors.drink }}</span>
         <span id="values">{{ values.drink && values.drink.toString() }}</span>
@@ -1330,7 +1330,7 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm @submit="onSubmit" as="form" v-slot="{ isSubmitting }">
+      <VForm @submit="onSubmit" v-slot="{ isSubmitting }">
 
         <button id="submit">Submit</button>
         <span id="submitting">{{ isSubmitting }}</span>
@@ -1360,7 +1360,7 @@ describe('<Form />', () => {
     const wrapper = mountWithHoc({
       template: `
       <VForm v-slot="{ meta }">
-        <Field name="field" as="input" rules="required"  />
+        <Field name="field" rules="required"  />
 
         <button :disabled="!meta.valid" id="submit">Submit</button>
       </VForm>
@@ -1388,8 +1388,8 @@ describe('<Form />', () => {
       },
       template: `
       <VForm @submit="onSubmit" v-slot="{ values }">
-        <Field name="user.name" as="input" rules="required"  />
-        <Field name="user.addresses.0" as="input" id="address" rules="required"  />
+        <Field name="user.name" rules="required"  />
+        <Field name="user.addresses.0" id="address" rules="required"  />
         <pre>{{ values }}</pre>
 
         <button id="submit">Submit</button>
@@ -1428,9 +1428,9 @@ describe('<Form />', () => {
       },
       template: `
       <VForm @submit="onSubmit" v-slot="{ errors }" :validation-schema="schema">
-        <Field name="user.name" as="input" />
+        <Field name="user.name" />
         <span id="nameErr">{{ errors['user.name'] }}</span>
-        <Field name="user.addresses[0]" as="input" id="address" />
+        <Field name="user.addresses[0]" id="address" />
         <span id="addrErr">{{ errors['user.addresses[0]'] }}</span>
 
         <button id="submit">Submit</button>
@@ -1472,8 +1472,8 @@ describe('<Form />', () => {
       },
       template: `
       <VForm @submit="onSubmit" v-slot="{ values }">
-        <Field name="[user.name]" as="input" rules="required"  />
-        <Field name="[user.addresses.0]" as="input" id="address" rules="required"  />
+        <Field name="[user.name]" rules="required"  />
+        <Field name="[user.addresses.0]" id="address" rules="required"  />
         <pre>{{ values }}</pre>
 
         <button id="submit">Submit</button>
@@ -1507,11 +1507,11 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm as="form" :validationSchema="schema" validateOnMount v-slot="{ errors }">
-        <Field id="email" name="email" as="input" />
+      <VForm :validationSchema="schema" validateOnMount v-slot="{ errors }">
+        <Field id="email" name="email" />
         <span id="emailErr">{{ errors.email }}</span>
 
-        <Field id="password" name="password" as="input" type="password" />
+        <Field id="password" name="password" type="password" />
         <span id="passwordErr">{{ errors.password }}</span>
 
         <button>Validate</button>
@@ -1534,7 +1534,7 @@ describe('<Form />', () => {
     const wrapper = mountWithHoc({
       template: `
       <VForm ref="form" v-slot="{ errors }">
-        <Field id="email" name="email" as="input" />
+        <Field id="email" name="email" />
         <span id="emailErr">{{ errors.email }}</span>
       </VForm>
     `,
@@ -1552,10 +1552,10 @@ describe('<Form />', () => {
     const wrapper = mountWithHoc({
       template: `
       <VForm ref="form" v-slot="{ errors }">
-        <Field id="email" name="email" as="input" />
+        <Field id="email" name="email" />
         <span id="emailErr">{{ errors.email }}</span>
 
-        <Field id="password" name="password" as="input" type="password" />
+        <Field id="password" name="password" type="password" />
         <span id="passwordErr">{{ errors.password }}</span>
       </VForm>
     `,
@@ -1599,7 +1599,7 @@ describe('<Form />', () => {
     const wrapper = mountWithHoc({
       template: `
       <VForm ref="form">
-        <Field id="email" name="email" as="input" />
+        <Field id="email" name="email" />
       </VForm>
     `,
     });
@@ -1616,8 +1616,8 @@ describe('<Form />', () => {
     const wrapper = mountWithHoc({
       template: `
       <VForm ref="form">
-        <Field id="email" name="email" as="input" />
-        <Field id="password" name="password" as="input" />
+        <Field id="email" name="email" />
+        <Field id="password" name="password" />
       </VForm>
     `,
     });
@@ -1651,10 +1651,10 @@ describe('<Form />', () => {
       template: `
       <VForm as="div" :validationSchema="schema" v-slot="{ errors, handleSubmit }">
         <form @submit="handleSubmit($event, onSubmit)">
-          <Field id="email" name="email" as="input" />
+          <Field id="email" name="email" />
           <span id="emailErr">{{ errors.email }}</span>
 
-          <Field id="password" name="password" as="input" type="password" />
+          <Field id="password" name="password" type="password" />
           <span id="passwordErr">{{ errors.password }}</span>
 
           <button>Validate</button>
@@ -1703,10 +1703,10 @@ describe('<Form />', () => {
       template: `
       <VForm as="div" :validationSchema="schema" v-slot="{ errors, handleSubmit }">
         <form @submit.prevent.stop="handleSubmit(onSubmit)">
-          <Field id="email" name="email" as="input" />
+          <Field id="email" name="email" />
           <span id="emailErr">{{ errors.email }}</span>
 
-          <Field id="password" name="password" as="input" type="password" />
+          <Field id="password" name="password" type="password" />
           <span id="passwordErr">{{ errors.password }}</span>
 
           <button>Validate</button>
@@ -1772,9 +1772,9 @@ describe('<Form />', () => {
       },
       template: `
       <VForm ref="form" :initial-errors="errors">
-        <Field id="email" name="email" as="input" />
+        <Field id="email" name="email" />
         <ErrorMessage name="email" />
-        <Field id="password" name="password" as="input" />
+        <Field id="password" name="password" />
         <ErrorMessage name="password" />
       </VForm>
     `,
@@ -1877,7 +1877,7 @@ describe('<Form />', () => {
     const wrapper = mountWithHoc({
       template: `
       <VForm>
-        <Field name="field" as="input" type="checkbox" :value="true" />
+        <Field name="field" type="checkbox" :value="true" />
 
         <button type="reset">Submit</button>
       </VForm>
@@ -1937,7 +1937,7 @@ describe('<Form />', () => {
         <VForm>
           <ul>
             <li v-for="field in fields" :key="field.id">
-              <Field v-if="modified.id === field.id" name="test" v-model="modified.title" type="text" as="input" />
+              <Field v-if="modified.id === field.id" name="test" v-model="modified.title" type="text" />
             </li>
           </ul>
         </VForm>
@@ -1960,8 +1960,8 @@ describe('<Form />', () => {
     const wrapper = mountWithHoc({
       template: `
       <VForm  v-slot="{ meta, resetForm }">
-        <Field id="email" name="email" as="input" rules="required" />
-        <Field id="password" name="password" as="input" rules="required" />
+        <Field id="email" name="email" rules="required" />
+        <Field id="password" name="password" rules="required" />
 
         <span id="meta">{{ meta.valid ? 'valid' : 'invalid' }}</span>
         <button type="button" @click="resetForm()">Reset</button> 
@@ -1986,8 +1986,8 @@ describe('<Form />', () => {
     const wrapper = mountWithHoc({
       template: `
       <VForm :initial-values="{ email: '2', password: '3' }"  v-slot="{ meta, resetForm }">
-        <Field id="email" name="email" as="input" rules="required" />
-        <Field id="password" name="password" as="input" rules="required" />
+        <Field id="email" name="email" rules="required" />
+        <Field id="password" name="password" rules="required" />
 
         <span id="meta">{{ meta.valid ? 'valid' : 'invalid' }}</span>
         <button type="button" @click="resetForm({ errors: { email: 'bad' } })">Reset</button> 
@@ -2007,8 +2007,8 @@ describe('<Form />', () => {
     const wrapper = mountWithHoc({
       template: `
       <VForm  v-slot="{ meta, resetForm }">
-        <Field id="email" name="email" as="input" rules="required" />
-        <Field id="password" name="password" as="input" rules="required" />
+        <Field id="email" name="email" rules="required" />
+        <Field id="password" name="password" rules="required" />
 
         <span id="meta">{{ meta.valid ? 'valid' : 'invalid' }}</span>
       </VForm>
@@ -2052,8 +2052,8 @@ describe('<Form />', () => {
       },
       template: `
       <VForm :validation-schema="schema"  v-slot="{ errors }">
-        <Field id="email" name="email" as="input" :validate-on-blur="false" />
-        <Field id="password" name="password" as="input" :validate-on-blur="false" />
+        <Field id="email" name="email" :validate-on-blur="false" />
+        <Field id="password" name="password" :validate-on-blur="false" />
 
         <span>{{ errors.email }}</span>
       </VForm>
@@ -2187,8 +2187,8 @@ describe('<Form />', () => {
       },
       template: `
       <VForm @submit="onSubmit" v-slot="{ meta }">
-        <Field id="email" name="email" as="input" rules="required" />
-        <Field id="password" name="password" as="input" rules="required" v-slot="fieldProps">
+        <Field id="email" name="email" rules="required" />
+        <Field id="password" name="password" rules="required" v-slot="fieldProps">
           <input v-bind="fieldProps.field" />
           <span id="fieldMeta">{{ fieldProps.meta.touched ? 'touched' : 'untouched' }}</span>
         </Field>
@@ -2564,10 +2564,10 @@ describe('<Form />', () => {
       },
       template: `
       <VForm :validationSchema="schema" @invalid-submit="onInvalidSubmit" @submit="onSubmit" v-slot="{ errors }">
-        <Field id="email" name="email" as="input" />
+        <Field id="email" name="email" />
         <span id="emailErr">{{ errors.email }}</span>
 
-        <Field id="password" name="password" as="input" type="password" />
+        <Field id="password" name="password" type="password" />
         <span id="passwordErr">{{ errors.password }}</span>
 
         <button>Submit</button>
@@ -2624,10 +2624,10 @@ describe('<Form />', () => {
       template: `
       <VForm v-slot="{ submitForm, errors }" :validationSchema="schema" @invalid-submit="onInvalidSubmit">
         <form @submit="submitForm">
-            <Field id="email" name="email" as="input" />
+            <Field id="email" name="email" />
             <span id="emailErr">{{ errors.email }}</span>
 
-            <Field id="password" name="password" as="input" type="password" />
+            <Field id="password" name="password" type="password" />
             <span id="passwordErr">{{ errors.password }}</span>
 
             <button>Submit</button>
@@ -2679,7 +2679,7 @@ describe('<Form />', () => {
         };
       },
       template: `
-      <VForm as="form" v-slot="{  resetForm }" :initial-values="values">
+      <VForm v-slot="{  resetForm }" :initial-values="values">
         <Field v-slot="{ field }" name="terms" type="checkbox" :value="true" :unchecked-value="false">
           <label>
             <input type="checkbox" name="terms" v-bind="field" :value="true" :unchecked-value="false" />
@@ -2778,7 +2778,7 @@ test('unmounted radio fields gets unregistered and their submitted values are ke
       };
     },
     template: `
-      <VForm @submit="onSubmit" as="form" v-slot="{ errors }" keep-values>
+      <VForm @submit="onSubmit" v-slot="{ errors }" keep-values>
         <template v-if="showFields">
           <Field name="drink"  type="radio" value="" rules="required" /> Coffee
           <Field name="drink"  type="radio" value="Tea" rules="required" /> Tea
