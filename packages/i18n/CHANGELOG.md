@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.7.1](https://github.com/logaretm/vee-validate/compare/v4.7.0...v4.7.1) (2022-10-23)
+
+### Bug Fixes
+
+* wrong placeholder in CS localization ([#3959](https://github.com/logaretm/vee-validate/issues/3959)) ([a4603fa](https://github.com/logaretm/vee-validate/commit/a4603fab9647918b6776072b3450aa6e0378660a))
+
 # [4.7.0](https://github.com/logaretm/vee-validate/compare/v4.6.10...v4.7.0) (2022-10-09)
 
 **Note:** Version bump only for package @vee-validate/i18n

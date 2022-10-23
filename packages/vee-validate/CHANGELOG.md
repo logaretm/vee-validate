@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.7.1](https://github.com/logaretm/vee-validate/compare/v4.7.0...v4.7.1) (2022-10-23)
+
+### Bug Fixes
+
+* clean up single group value after unmount closes [#3963](https://github.com/logaretm/vee-validate/issues/3963) ([#3972](https://github.com/logaretm/vee-validate/issues/3972)) ([8ccfd2b](https://github.com/logaretm/vee-validate/commit/8ccfd2b2b542963d3d35cfe5f82490c94ec1635f))
+* correctly mutate deep field array item and trigger validation ([#3974](https://github.com/logaretm/vee-validate/issues/3974)) ([267736f](https://github.com/logaretm/vee-validate/commit/267736f43ca207a8fe35af30020fc61fdc009265))
+* mark slot prop field value as any closes [#3969](https://github.com/logaretm/vee-validate/issues/3969) ([#3973](https://github.com/logaretm/vee-validate/issues/3973)) ([70ddc5b](https://github.com/logaretm/vee-validate/commit/70ddc5b60232f0dc761b7803a3220010d2f8ba69))
+
 # [4.7.0](https://github.com/logaretm/vee-validate/compare/v4.6.10...v4.7.0) (2022-10-09)
 
 ### Features
