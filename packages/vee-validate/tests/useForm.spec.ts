@@ -1,4 +1,4 @@
-import { FormContext, useField, useForm } from '@/vee-validate';
+import { FieldMeta, FormContext, useField, useForm } from '@/vee-validate';
 import { mountWithHoc, setValue, flushPromises, runInSetup } from './helpers';
 import * as yup from 'yup';
 import { onMounted, Ref } from 'vue';
@@ -619,5 +619,36 @@ describe('useForm()', () => {
         values: { field: initial.field, field2: initial.field2 },
       })
     );
+  });
+
+  // #3981 #3982
+  test('fields validated meta should not be mutated when silently validating fields', async () => {
+    let meta!: FieldMeta<any>;
+
+    mountWithHoc({
+      setup() {
+        const { validate } = useForm({
+          validationSchema: yup.object({
+            name: yup.string().required(),
+          }),
+        });
+
+        const field = useField('name');
+        meta = field.meta;
+
+        onMounted(() => {
+          validate({ mode: 'silent' });
+          validate({ mode: 'validated-only' });
+        });
+
+        return {};
+      },
+      template: `
+        <div></div>
+      `,
+    });
+
+    await flushPromises();
+    expect(meta.validated).toBe(false);
   });
 });

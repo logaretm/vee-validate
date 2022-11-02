@@ -663,9 +663,13 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   }
 
   async function validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>> {
-    mutateAllFields(f => (f.meta.validated = true));
+    const mode = opts?.mode || 'force';
+    if (mode === 'force') {
+      mutateAllFields(f => (f.meta.validated = true));
+    }
+
     if (formCtx.validateSchema) {
-      return formCtx.validateSchema(opts?.mode || 'force');
+      return formCtx.validateSchema(mode);
     }
 
     // No schema, each field is responsible to validate itself
