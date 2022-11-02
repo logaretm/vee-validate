@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.7.2](https://github.com/logaretm/vee-validate/compare/v4.7.1...v4.7.2) (2022-11-02)
+
+### Bug Fixes
+
+* don't mutate validated meta when silent validation closes [#3981](https://github.com/logaretm/vee-validate/issues/3981) closes [#3982](https://github.com/logaretm/vee-validate/issues/3982) ([6652a22](https://github.com/logaretm/vee-validate/commit/6652a22f99cde5b018c633365025d74e15dde835))
+
 ## [4.7.1](https://github.com/logaretm/vee-validate/compare/v4.7.0...v4.7.1) (2022-10-23)
 
 ### Bug Fixes
