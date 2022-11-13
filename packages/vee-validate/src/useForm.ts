@@ -404,7 +404,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
       return;
     }
 
-    let newValue = value;
+    let newValue = clonedValue;
     // Single Checkbox: toggles the field value unless the field is being reset then force it
     if (!isFieldGroup(fieldInstance) && fieldInstance.type === 'checkbox' && !force && !RESET_LOCK) {
       newValue = deepCopy(

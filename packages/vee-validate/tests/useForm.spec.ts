@@ -1,4 +1,4 @@
-import { FieldMeta, FormContext, useField, useForm } from '@/vee-validate';
+import { FieldMeta, FormContext, FormMeta, useField, useForm } from '@/vee-validate';
 import { mountWithHoc, setValue, flushPromises, runInSetup } from './helpers';
 import * as yup from 'yup';
 import { onMounted, Ref } from 'vue';
@@ -650,5 +650,49 @@ describe('useForm()', () => {
 
     await flushPromises();
     expect(meta.validated).toBe(false);
+  });
+
+  // #3991
+  test('initial value should not be mutable if nested field model is used', async () => {
+    let model!: Ref<{ name: string }>;
+    let formMeta!: Ref<FormMeta<{ field: { name: string } }>>;
+    let reset!: () => void;
+
+    mountWithHoc({
+      setup() {
+        const { meta, resetForm } = useForm({
+          initialValues: { field: { name: '1' } },
+          validationSchema: yup.object({
+            name: yup.string().required(),
+          }),
+        });
+
+        const field = useField<{ name: string }>('field');
+        model = field.value;
+        formMeta = meta;
+        reset = resetForm;
+
+        return {};
+      },
+      template: `
+        <div></div>
+      `,
+    });
+
+    await flushPromises();
+    expect(formMeta.value.initialValues?.field.name).toBe('1');
+    model.value.name = 'test';
+    await flushPromises();
+    expect(model.value).toEqual({ name: 'test' });
+    expect(formMeta.value.initialValues?.field.name).toBe('1');
+    reset();
+    await flushPromises();
+    expect(model.value).toEqual({ name: '1' });
+    expect(formMeta.value.initialValues?.field.name).toBe('1');
+
+    model.value.name = 'test';
+    await flushPromises();
+    expect(model.value).toEqual({ name: 'test' });
+    expect(formMeta.value.initialValues?.field.name).toBe('1');
   });
 });
