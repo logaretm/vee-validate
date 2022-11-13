@@ -10,7 +10,7 @@
     "digits": "Mae'n rhaid i {field} fod yn ddigidau 0:{length} o hyd",
     "dimensions": "Mae'n rhaid i {field} fod yn 0:{width} pixel llydan, a 1:{height} pixel o uchder",
     "email": "Mae'n rhaid i {field} fod yn ebost ddilys",
-    "excluded": "Dyw {field} ddim yn fewnbwn ddilys",
+    "not_one_of": "Dyw {field} ddim yn fewnbwn ddilys",
     "ext": "Dyw {field} ddim yn ffeil dilys",
     "image": "Mae'n rhaid i {field} fod yn lun",
     "integer": "Mae'n rhaid i {field} fod yn gyfanrif",

@@ -11,7 +11,7 @@
     "digits": "{field} peab koosnema täpselt 0:{length}-st numbrist",
     "dimensions": "{field} peab olema 0:{width} korda 1:{height} pikslit suur",
     "email": "{field} peab olema e-maili aadress",
-    "excluded": "{field} ei oma sobivat väärtust",
+    "not_one_of": "{field} ei oma sobivat väärtust",
     "ext": "{field} peab olema sobiv fail",
     "image": "{field} peab olema pilt",
     "integer": "{field} peab olema täisarv",

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.7.3](https://github.com/logaretm/vee-validate/compare/v4.7.2...v4.7.3) (2022-11-13)
+
+### Bug Fixes
+
+* rename old excluded with not_one_of closes [#3993](https://github.com/logaretm/vee-validate/issues/3993) ([7fc5077](https://github.com/logaretm/vee-validate/commit/7fc50773275c9c65cdbb0735d0b14dfe7ffca227))
+
 ## [4.7.2](https://github.com/logaretm/vee-validate/compare/v4.7.1...v4.7.2) (2022-11-02)
 
 **Note:** Version bump only for package @vee-validate/i18n

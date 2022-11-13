@@ -10,7 +10,7 @@
     "digits": "Câmpul {field} trebuie să fie numeric și să conțină exact 0:{length} caractere",
     "dimensions": "Câmpul {field} trebuie să fie 0:{width} pixeli lungime și 1:{height} pixeli înălțime",
     "email": "Câmpul {field} trebuie să conțină un email valid",
-    "excluded": "Câmpul {field} trebuie să conțină o valoare validă",
+    "not_one_of": "Câmpul {field} trebuie să conțină o valoare validă",
     "ext": "Câmpul {field} trebuie să fie un nume de fișier valid",
     "image": "Câmpul {field} trebuie să fie o imagine",
     "one_of": "Câmpul {field} trebuie să conțină o valoare validă",

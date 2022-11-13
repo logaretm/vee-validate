@@ -10,7 +10,7 @@
     "digits": "Laukelio {field} reikšmė turi buti 0:{length} ženklų(-o) skaitmuo",
     "dimensions": "{field} turi būti 0:{width} px x 1:{height} px",
     "email": "Laukelis {field} turi būti teisinga el. pašto adresas",
-    "excluded": "{field} reikšmė nėra leidžiama",
+    "not_one_of": "{field} reikšmė nėra leidžiama",
     "ext": "{field} turi būti tinkamas failas",
     "image": "{field} turi būti paveikslėlis",
     "one_of": "{field} reikšmė nėra leidžiama",

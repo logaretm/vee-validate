@@ -9,7 +9,7 @@
     "digits": "{field} tulee olla numeerinen ja tarkalleen 0:{length} merkkiä",
     "dimensions": "{field} tulee olla 0:{width} pikseliä kertaa 1:{height} pikseliä",
     "email": "{field} tulee olla kelvollinen sähköpostiosoite",
-    "excluded": "{field} tulee olla kelvollinen arvo",
+    "not_one_of": "{field} tulee olla kelvollinen arvo",
     "ext": "{field} tulee olla kelvollinen tiedosto",
     "image": "{field} tulee olla kelvollinen kuva",
     "max": "{field} ei saa olla pidempi kuin 0:{length} merkkiä",

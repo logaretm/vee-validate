@@ -10,7 +10,7 @@
     "digits": "Booska {field} waa inuu ahaadaa lambar",
     "dimensions": "Booska {field} waa inuu ahaadaa {width} pixels illaa {height} pixels",
     "email": "Booska {field} waa inuu ahaadaa emayl ansax ah",
-    "excluded": "Booska {field} ma ahan qiime sax ah",
+    "not_one_of": "Booska {field} ma ahan qiime sax ah",
     "ext": "Booska {field} ma ahan fayl sax ah",
     "image": "Meesha {field} waa inay ahaato muuqaal",
     "integer": "Booska {field} waa inuu ahaadaa mid isku dhafan",

@@ -10,7 +10,7 @@
     "digits": "El camp {field} ha de ser numèric i contenir exactament 0:{length} dígits",
     "dimensions": "El camp {field} ha de ser de 0:{width} píxels per 1:{height} píxels",
     "email": "El camp {field} ha de ser un correu electrònic vàlid",
-    "excluded": "El camp {field} ha de ser un valor vàlid",
+    "not_one_of": "El camp {field} ha de ser un valor vàlid",
     "ext": "El camp {field} ha de ser un fitxer vàlid",
     "image": "El camp {field} ha de ser una imatge",
     "max_value": "El camp {field} ha de ser de 0:{max} o menys",

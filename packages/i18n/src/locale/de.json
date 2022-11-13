@@ -11,7 +11,7 @@
     "digits": "{field} muss numerisch sein und exakt 0:{length} Ziffern enthalten",
     "dimensions": "{field} muss 0:{width} x 1:{height} Bildpunkte groß sein",
     "email": "{field} muss eine gültige E-Mail-Adresse sein",
-    "excluded": "{field} muss ein gültiger Wert sein",
+    "not_one_of": "{field} muss ein gültiger Wert sein",
     "ext": "{field} muss eine gültige Datei sein",
     "image": "{field} muss eine Grafik sein",
     "one_of": "{field} muss ein gültiger Wert sein",

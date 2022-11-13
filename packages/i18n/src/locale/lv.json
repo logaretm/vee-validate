@@ -10,7 +10,7 @@
     "digits": "Lauka {field} vērtību veido precīzs 0:{length} ciparu skaits",
     "dimensions": "Lauka  {field} izmērs ir 0:{width} pikseļu platumā un 1:{height} pikseļu augstumā",
     "email": "Lauka {field} vērtībai jābūt derīgai e-pasta adresei",
-    "excluded": "Laukā {field} jāievada derīga vērtība",
+    "not_one_of": "Laukā {field} jāievada derīga vērtība",
     "ext": "Lauka {field} vērtībai jābūt failam",
     "image": "Lauka {field} vērtībai jābūt attēlam",
     "integer": "Lauka {field} vērtībai jābūt veselam skaitlim",

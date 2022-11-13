@@ -10,7 +10,7 @@
     "digits": "{field} eremuak zenbakizkoa izan behar du eta zehazki 0:{length} digitu izan behar ditu",
     "dimensions": "{field} eremuak 0:{width} pixel bider 1:{height} pixel izan behar du",
     "email": "{field} eremuak baliozko helbide elektroniko bat izan behar du",
-    "excluded": "{field} eremuak baliozko balio bat izan behar du",
+    "not_one_of": "{field} eremuak baliozko balio bat izan behar du",
     "ext": "{field} eremuak baliozko fitxategi bat izan behar du",
     "image": "{field} eremuak irudi bat izan behar du",
     "integer": "{field} eremuak zenbaki oso bat izan behar du",

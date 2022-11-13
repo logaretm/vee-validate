@@ -10,7 +10,7 @@
     "digits": "{field} duhet të jetë numerike dhe të përmbaj saktësisht 0:{length} shifra",
     "dimensions": "{field} duhet të jetë 0:{width} piksela me 1:{height} piksela",
     "email": "{field} duhet të jetë e-mail valid",
-    "excluded": "Vlera {field} duhet të jetë vlerë valide",
+    "not_one_of": "Vlera {field} duhet të jetë vlerë valide",
     "ext": "{field} duhet të jetë fajll valid",
     "image": "{field} duhet të jetë fotografi",
     "one_of": "Vlera {field} duhet të jetë vlerë valide",

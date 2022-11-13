@@ -1964,7 +1964,7 @@ describe('<Form />', () => {
         <Field id="password" name="password" rules="required" />
 
         <span id="meta">{{ meta.valid ? 'valid' : 'invalid' }}</span>
-        <button type="button" @click="resetForm()">Reset</button> 
+        <button type="button" @click="resetForm()">Reset</button>
       </VForm>
     `,
     });
@@ -1990,7 +1990,7 @@ describe('<Form />', () => {
         <Field id="password" name="password" rules="required" />
 
         <span id="meta">{{ meta.valid ? 'valid' : 'invalid' }}</span>
-        <button type="button" @click="resetForm({ errors: { email: 'bad' } })">Reset</button> 
+        <button type="button" @click="resetForm({ errors: { email: 'bad' } })">Reset</button>
       </VForm>
     `,
     });
@@ -2194,7 +2194,7 @@ describe('<Form />', () => {
         </Field>
 
         <span id="meta">{{ meta.touched ? 'touched' : 'untouched' }}</span>
-        <button type="submit">Submit</button> 
+        <button type="submit">Submit</button>
       </VForm>
     `,
     });
@@ -2228,7 +2228,7 @@ describe('<Form />', () => {
         <Field name="email" />
         <span id="passwordError">{{ errors.password }}</span>
 
-        <button type="submit">Submit</button> 
+        <button type="submit">Submit</button>
       </VForm>
     `,
     });
@@ -2260,7 +2260,7 @@ describe('<Form />', () => {
         <Field name="email" />
         <span id="passwordError">{{ errors.password }}</span>
 
-        <button type="submit">Submit</button> 
+        <button type="submit">Submit</button>
       </VForm>
     `,
     });
@@ -2501,7 +2501,7 @@ describe('<Form />', () => {
       },
       template: `
       <VForm>
-        <Field name="check" type="checkbox" v-model="value" value="CHECKED" /> 
+        <Field name="check" type="checkbox" v-model="value" value="CHECKED" />
       </VForm>
     `,
     });
@@ -2531,8 +2531,8 @@ describe('<Form />', () => {
       },
       template: `
       <VForm>
-        <Field name="name" type="text" v-model="value" /> 
-        <Field v-if="isHidden" name="name" type="text" v-model="value" /> 
+        <Field name="name" type="text" v-model="value" />
+        <Field v-if="isHidden" name="name" type="text" v-model="value" />
       </VForm>
     `,
     });

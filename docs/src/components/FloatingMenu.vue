@@ -36,7 +36,6 @@ async function updateStyle(reference: HTMLElement) {
     middleware: [offset({ mainAxis: 10 })],
   });
 
-  console.log(reference.getBoundingClientRect(), reference, x, y);
   menuRef.value.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
 }
 

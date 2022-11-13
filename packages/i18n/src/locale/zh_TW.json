@@ -11,7 +11,7 @@
     "digits": "{field} 須為 0:{length} 位數字",
     "dimensions": "{field} 圖片尺寸不正確。須為 0:{width} x 1:{height} 像素",
     "email": "{field} 須為有效的電子信箱",
-    "excluded": "{field} 的選項無效",
+    "not_one_of": "{field} 的選項無效",
     "ext": "{field} 須為有效的檔案",
     "image": "{field} 須為圖片",
     "one_of": "{field} 的選項無效",

@@ -307,7 +307,7 @@ Object.keys(AllRules).forEach(rule => {
     <a href="/v4/guide/global-validators#email">email</a>
   </li>
   <li>
-    <a href="/v4/guide/global-validators#excluded">excluded</a>
+    <a href="/v4/guide/global-validators#not_one_of">not_one_of</a>
   </li>
   <li>
     <a href="/v4/guide/global-validators#ext">ext</a>
@@ -506,19 +506,19 @@ The field under validation must be a valid email.
 <Field name="field" :rules="{ email: true }" />
 ```
 
-#### excluded
+#### not_one_of
 
 The field under validation must have a value that is not in the specified list. **Uses double equals** for checks.
 
 ```vue-html
 <!-- string format -->
-<Field name="field" rules="excluded:1,3" />
+<Field name="field" rules="not_one_of:1,3" />
 
 <!-- object format -->
-<Field name="field" :rules="{ excluded: [1, 3] }" />
+<Field name="field" :rules="{ not_one_of: [1, 3] }" />
 ```
 
-`excluded` accepts an infinite number of params, each is a value that is disallowed.
+`not_one_of` accepts an infinite number of params, each is a value that is disallowed.
 
 #### ext
 

@@ -10,7 +10,7 @@
     "digits": "Fältet {field} måste vara numeriskt och innehålla exakt 0:{length} siffor",
     "dimensions": "Fältet {field} måste vara 0:{width} pixlar bred och 1:{height} pixlar hög",
     "email": "Fältet {field} måste vara en giltig e-postadress",
-    "excluded": "Fältet {field} måste vara ett godkänt alternativ",
+    "not_one_of": "Fältet {field} måste vara ett godkänt alternativ",
     "ext": "Fältet {field} måste vara en godkänd fil",
     "image": "Fältet {field} måste vara en bildfil",
     "integer": "Fältet {field} måste vara ett heltal",

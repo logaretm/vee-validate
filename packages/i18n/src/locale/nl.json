@@ -11,7 +11,7 @@
     "digits": "{field} moet een nummer zijn en exact 0:{length} tekens bevatten",
     "dimensions": "{field} moet 0:{width} pixels breed zijn en 1:{height} pixels hoog",
     "email": "{field} moet een geldig e-mailadres zijn",
-    "excluded": "{field} is ongeldig",
+    "not_one_of": "{field} is ongeldig",
     "ext": "{field} moet een geldig bestand zijn",
     "image": "{field} moet een afbeelding zijn",
     "one_of": "{field} moet een geldige waarde zijn",

@@ -10,7 +10,7 @@
     "digits": "{field} 0:{length} rəqəmdən ibarət olmalıdır",
     "dimensions": "{field} ölçüsü 0:{width}x1:{height} piksel olmalıdır",
     "email": "{field} düzgün formatda daxil olunmalıdır",
-    "excluded": "{field} göstəricisi yalnışdır",
+    "not_one_of": "{field} göstəricisi yalnışdır",
     "ext": "{field} düzgün fayl formatında olmalıdır",
     "image": "{field} şəkil olmalıdır",
     "integer": "{field} göstəricisi tam ədəd olmalıdır",

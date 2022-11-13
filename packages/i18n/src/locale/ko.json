@@ -11,7 +11,7 @@
     "digits": "{field} 항목의 값은 0:{length}자리의 숫자여야 합니다",
     "dimensions": "{field} 항목의 크기는 가로 0:{width}픽셀, 세로 1:{height}픽셀이어야 합니다",
     "email": "{field} 항목의 값은 유효한 이메일 형식이어야 합니다",
-    "excluded": "{field} 항목의 값이 유효하지 않습니다",
+    "not_one_of": "{field} 항목의 값이 유효하지 않습니다",
     "ext": "{field} 항목은 유효한 파일이 아닙니다",
     "image": "{field} 항목은 이미지 파일이어야 합니다",
     "integer": "{field} 항목의 값은 정수여야 합니다",

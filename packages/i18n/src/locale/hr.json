@@ -10,7 +10,7 @@
     "digits": "{field} mora biti numerički i točno sadrživati 0:{length} znamenke",
     "dimensions": "{field} mora biti 0:{width} piksela za 1:{height} piksela",
     "email": "{field} mora biti važeća e-pošta",
-    "excluded": "Vrijednost {field} mora biti važeća vrijednost",
+    "not_one_of": "Vrijednost {field} mora biti važeća vrijednost",
     "ext": "{field} mora biti važeća datoteka",
     "image": "{field} mora biti slika",
     "max_value": "Vrijednost {field} mora biti 0:{max} ili manje",

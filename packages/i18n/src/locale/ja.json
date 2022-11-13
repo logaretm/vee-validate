@@ -11,7 +11,7 @@
     "digits": "{field}は 0:{length}桁の数字でなければなりません",
     "dimensions": "{field}は幅 0:{width}px、高さ 1:{height}px 以内でなければなりません",
     "email": "{field}は有効なメールアドレスではありません",
-    "excluded": "{field}は不正な値です",
+    "not_one_of": "{field}は不正な値です",
     "ext": "{field}は有効なファイル形式ではありません",
     "image": "{field}は有効な画像形式ではありません",
     "integer": "{field}は整数のみ使用できます",

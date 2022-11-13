@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.7.3](https://github.com/logaretm/vee-validate/compare/v4.7.2...v4.7.3) (2022-11-13)
+
+### Bug Fixes
+
+* use cloned value when setting field value closes [#3991](https://github.com/logaretm/vee-validate/issues/3991) ([90b61fc](https://github.com/logaretm/vee-validate/commit/90b61fc8810a1fdc677507251735b4210f175f4b))
+
 ## [4.7.2](https://github.com/logaretm/vee-validate/compare/v4.7.1...v4.7.2) (2022-11-02)
 
 ### Bug Fixes

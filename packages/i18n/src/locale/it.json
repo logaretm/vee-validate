@@ -10,7 +10,7 @@
     "digits": "Il campo {field} deve essere numerico e contenere esattamente 0:{length} cifre",
     "dimensions": "Il campo {field} deve essere 0:{width} x 1:{height}",
     "email": "Il campo {field} deve essere un indirizzo email valido",
-    "excluded": "Il campo {field} deve avere un valore valido",
+    "not_one_of": "Il campo {field} deve avere un valore valido",
     "ext": "Il campo {field} deve essere un file valido",
     "image": "Il campo {field} deve essere un'immagine",
     "integer": "Il campo {field} deve essere un numero",

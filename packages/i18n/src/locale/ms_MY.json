@@ -10,7 +10,7 @@
     "digits": "{field} perlulah dalam bentuk angka dan mempunyai 0:{length} digit",
     "dimensions": "{field} perlulah berdimensi 0:{width} pixel darab 1:{height} pixels",
     "email": "{field} perlulah dalam format emel yang sah",
-    "excluded": "{field} perlulah sah",
+    "not_one_of": "{field} perlulah sah",
     "ext": "{field} perlulah dalam format fail yang sah",
     "image": "{field} perlulah dalam bentuk imej",
     "one_of": "{field} perlulah dalam nilai yang sah",
