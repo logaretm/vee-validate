@@ -495,16 +495,10 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     // Reset all field states first
     mutateAllFields(f => f.resetField());
 
-    // set initial values if provided
-    if (state?.values) {
-      setInitialValues(state.values);
-      setValues(state?.values);
-    } else {
-      // clean up the initial values back to the original
-      setInitialValues(originalInitialValues.value);
-      // otherwise clean the current values
-      setValues(originalInitialValues.value);
-    }
+    // reset values
+    const newValues = state?.values ? state.values : originalInitialValues.value;
+    setInitialValues(newValues);
+    setValues(newValues);
 
     if (state?.touched) {
       setTouched(state.touched);
