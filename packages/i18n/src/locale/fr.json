@@ -11,7 +11,7 @@
     "digits": "Le champ {field} doit être un nombre entier de 0:{length} chiffres",
     "dimensions": "Le champ {field} doit avoir une taille de 0:{width} pixels par 1:{height} pixels",
     "email": "Le champ {field} doit être une adresse e-mail valide",
-    "excluded": "Le champ {field} doit être une valeur valide",
+    "not_one_of": "Le champ {field} doit être une valeur valide",
     "ext": "Le champ {field} doit être un fichier valide",
     "image": "Le champ {field} doit être une image",
     "integer": "Le champ {field} doit être un entier",

@@ -10,7 +10,7 @@
     "digits": "Trường {field} chỉ có thể chứa các kí tự số và bắt buộc phải có độ dài là 0:{length}",
     "dimensions": "{field} phải có chiều rộng 0:{width} pixels và chiều cao 1:{height} pixels",
     "email": "{field} phải là một địa chỉ email hợp lệ",
-    "excluded": "{field} phải chứa một giá trị hợp lệ",
+    "not_one_of": "{field} phải chứa một giá trị hợp lệ",
     "ext": "{field} phải là một tệp",
     "image": "Trường {field} phải là một ảnh",
     "one_of": "{field} phải là một giá trị",

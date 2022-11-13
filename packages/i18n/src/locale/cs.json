@@ -11,7 +11,7 @@
     "digits": "Pole {field} musí být číslo a musí obshovat přesně 0:{length} číslic",
     "dimensions": "{field} musí mít 0:{width} pixelů na 1:{height} pixelů",
     "email": "Pole {field} musí být validní email",
-    "excluded": "{field} musí být správná hodnota",
+    "not_one_of": "{field} musí být správná hodnota",
     "ext": "{field} musí být validní soubor",
     "image": "{field} musí být obrázek",
     "integer": "Pole {field} musí být celé číslo",

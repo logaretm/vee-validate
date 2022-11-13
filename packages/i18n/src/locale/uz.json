@@ -10,7 +10,7 @@
     "digits": "{_field_} maydoni raqam bo'lishi va uning uzunligi {length} ta bo'lishi lozim",
     "dimensions": "{_field_} maydoni {width} pikselga {height} piksel bo'lishi lozim",
     "email": "{_field_} maydoni haqiqiy elektron pochta bo'lishi lozim",
-    "excluded": "{_field_} maydonida ruhsat etilgan belgi bo'lishi lozim",
+    "not_one_of": "{_field_} maydonida ruhsat etilgan belgi bo'lishi lozim",
     "ext": "{_field_} maydonida haqiqiy fayl bo'lishi lozim. ({args})",
     "image": "{_field_} maydonida rasm bo'lishi lozim",
     "oneOf": "{_field_} maydonida ruhsat etilgan belgi bo'lishi lozim",

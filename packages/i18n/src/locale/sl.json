@@ -10,7 +10,7 @@
     "digits": "Vrednost polja {field} mora biti numerična in vsebovati natančno 0:{length} številk",
     "dimensions": "Slika {field} mora biti široka 0:{width} slikovnih točk in visoka 1:{height} slikovnih točk",
     "email": "Vrednost polja {field} mora biti ustrezen e-naslov",
-    "excluded": "Polje {field} mora biti ustrezne vrednosti",
+    "not_one_of": "Polje {field} mora biti ustrezne vrednosti",
     "ext": "Datoteka polja {field} mora biti ustrezna",
     "image": "Datoteka polja {field} mora biti slika",
     "one_of": "Polje {field} mora biti ustrezne vrednosti",

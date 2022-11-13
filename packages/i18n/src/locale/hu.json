@@ -10,7 +10,7 @@
     "digits": "A(z) {field} 0:{length} számjegyű kell, hogy legyen",
     "dimensions": "A(z) {field} felbontása 0:{width} és 1:{height} pixel között kell, hogy legyen",
     "email": "A(z) {field} nem érvényes email formátum",
-    "excluded": "A(z) {field} értéke érvénytelen",
+    "not_one_of": "A(z) {field} értéke érvénytelen",
     "ext": "A(z) {field} nem érvényes fájl",
     "image": "A(z) {field} képfálj kell, hogy legyen",
     "one_of": "A kiválaszott {field} érvénytelen",

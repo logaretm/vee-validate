@@ -10,7 +10,7 @@
     "digits": "{field} sayısal ve 0:{length} basamaklı olmalıdır",
     "dimensions": "{field} alanı 0:{width} piksel ile 1:{height} piksel arasında olmalıdır",
     "email": "{field} alanının geçerli bir e-posta olması gerekir",
-    "excluded": "{field} alanına geçerli bir değer giriniz",
+    "not_one_of": "{field} alanına geçerli bir değer giriniz",
     "ext": "{field} alanı geçerli bir dosya olmalıdır",
     "image": "{field} alanı resim dosyası olmalıdır",
     "integer": "{field} alanı bir tamsayı olmalıdır",

@@ -11,7 +11,7 @@
     "digits": "The {field} field must be numeric and exactly contain 0:{length} digits",
     "dimensions": "The {field} field must be 0:{width} pixels by 1:{height} pixels",
     "email": "The {field} field must be a valid email",
-    "excluded": "The {field} field is not a valid value",
+    "not_one_of": "The {field} field is not a valid value",
     "ext": "The {field} field is not a valid file",
     "image": "The {field} field must be an image",
     "integer": "The {field} field must be an integer",

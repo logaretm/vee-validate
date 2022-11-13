@@ -10,7 +10,7 @@
     "digits": "Pole {field} musi być liczbą i dokładnie 0:{length} cyfr",
     "dimensions": "Obraz {field} musi być szeroki na 0:{width} pikseli i wysoki na 1:{height} pikseli",
     "email": "Pole {field} musi być poprawnym adresem email",
-    "excluded": "Pole {field} musi być poprawną wartością",
+    "not_one_of": "Pole {field} musi być poprawną wartością",
     "ext": "Plik {field} musi być poprawnym plikiem",
     "image": "Pole {field} musi być obrazem",
     "one_of": "Pole {field} musi być poprawną wartością",

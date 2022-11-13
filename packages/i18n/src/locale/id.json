@@ -10,7 +10,7 @@
     "digits": "{field} harus berupa 0:{length} digit angka",
     "dimensions": "{field} harus berdimensi lebar 0:{width} pixel dan tinggi 1:{height} pixel",
     "email": "{field} harus berupa alamat surel yang benar",
-    "excluded": "{field} harus berupa nilai yang sah",
+    "not_one_of": "{field} harus berupa nilai yang sah",
     "ext": "{field} harus berupa berkas yang benar",
     "image": "{field} harus berupa gambar",
     "integer": "{field} harus berupa bilangan bulat",

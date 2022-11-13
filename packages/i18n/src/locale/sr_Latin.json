@@ -10,7 +10,7 @@
     "digits": "Polje {field} mora biti broj i sadržati tačno 0:{length} cifara",
     "dimensions": "Polje {field} mora biti 0:{width} x 1:{height} piksela",
     "email": "Polje {field} mora biti validan imejl",
-    "excluded": "Polje {field} mora imati validnu vrednost",
+    "not_one_of": "Polje {field} mora imati validnu vrednost",
     "ext": "Polje {field} mora biti validan fajl",
     "image": "Polje {field} mora biti slika",
     "one_of": "Polje {field} mora biti validna vrednost",

@@ -10,7 +10,7 @@
     "digits": "{field}-feltet må vere numerisk og innehalde nøyaktig 0:{length} siffer",
     "dimensions": "{field}-feltet må vere 0:{width} gonger 1:{height} piksler",
     "email": "{field}-feltet må innehalde ein gyldig E-post adresse",
-    "excluded": "{field}-feltet må ha ein gyldig verdi",
+    "not_one_of": "{field}-feltet må ha ein gyldig verdi",
     "ext": "{field}-feltet må innehalde ei gyldig fil",
     "image": "{field}-feltet må vere eit bilete",
     "one_of": "{field}-feltet må vere ein gyldig verdi",

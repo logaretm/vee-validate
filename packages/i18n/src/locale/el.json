@@ -10,7 +10,7 @@
     "digits": "{field} πρέπει να είναι αριθμός και να περιέχει 0:{length} ψηφία",
     "dimensions": "{field} πρέπει να είναι 0:{width} pixels επί 1:{height} pixels",
     "email": "{field} πρέπει να είναι έγκυρο email",
-    "excluded": "{field} πρέπει να είναι έγκυρη τιμή",
+    "not_one_of": "{field} πρέπει να είναι έγκυρη τιμή",
     "ext": "{field} πρέπει να είναι έγκυρο αρχείο",
     "image": "{field} πρέπει να είναι εικόνα",
     "integer": "{field} πρέπει να είναι ακέραιος αριθμός",

@@ -11,7 +11,7 @@
     "digits": "{field}必须是数字，且精确到0:{length}位数",
     "dimensions": "{field}必须在0:{width}像素与1:{height}像素之间",
     "email": "{field}不是一个有效的邮箱",
-    "excluded": "{field}不是一个有效值",
+    "not_one_of": "{field}不是一个有效值",
     "ext": "{field}不是一个有效的文件",
     "image": "{field}不是一张有效的图片",
     "one_of": "{field}不是一个有效值",
