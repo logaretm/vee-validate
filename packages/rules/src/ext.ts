@@ -9,7 +9,7 @@ const extValidator = (files: unknown, extensions: string[]) => {
     extensions = [];
   }
 
-  const regex = new RegExp(`.(${extensions.join('|')})$`, 'i');
+  const regex = new RegExp(`\\.(${extensions.join('|')})$`, 'i');
   if (Array.isArray(files)) {
     return files.every(file => regex.test((file as File).name));
   }
