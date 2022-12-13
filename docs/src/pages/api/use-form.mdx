@@ -685,10 +685,10 @@ This creates a bindable two-way model value for the specified fields, there are 
 
 ```vue
 <template>
-  <input name="email" v-model="email" />
+  <MyTextInput name="email" v-model="email" />
   <span>{{ errors.email }}</span>
 
-  <input name="password" v-model="password" type="password" />
+  <MyTextInput name="password" v-model="password" type="password" />
   <span>{{ errors.password }}</span>
 </template>
 
