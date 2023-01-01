@@ -9,6 +9,7 @@ const formatNameMap = {
   rules: 'VeeValidateRules',
   i18n: 'VeeValidateI18n',
   zod: 'VeeValidateZod',
+  yup: 'VeeValidateYup',
 };
 
 const pkgNameMap = {
@@ -16,6 +17,7 @@ const pkgNameMap = {
   rules: 'vee-validate-rules',
   i18n: 'vee-validate-i18n',
   zod: 'vee-validate-zod',
+  yup: 'vee-validate-yup',
 };
 
 const formatMap = {
