@@ -17,7 +17,7 @@ import { validate as validateValue } from './validate';
 import {
   MaybeRef,
   GenericValidateFunction,
-  YupValidator,
+  TypedSchema,
   FieldContext,
   FieldState,
   PrivateFieldContext,
@@ -25,6 +25,7 @@ import {
   ValidationOptions,
   FormContext,
   PrivateFormContext,
+  YupSchema,
 } from './types';
 import {
   normalizeRules,
@@ -67,7 +68,8 @@ export type RuleExpression<TValue> =
   | Record<string, unknown>
   | GenericValidateFunction<TValue>
   | GenericValidateFunction<TValue>[]
-  | YupValidator<TValue>
+  | TypedSchema<TValue>
+  | YupSchema<TValue>
   | undefined;
 
 /**

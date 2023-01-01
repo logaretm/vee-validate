@@ -1,4 +1,4 @@
-import { Locator, YupValidator } from '../types';
+import { Locator, TypedSchema, YupSchema } from '../types';
 import { isCallable, isObject } from '../../../shared';
 import { IS_ABSENT } from '../symbols';
 
@@ -22,8 +22,12 @@ export function isFileInputNode(tag: string, attrs: Record<string, unknown>) {
   return isHTMLTag(tag) && attrs.type === 'file';
 }
 
-export function isYupValidator(value: unknown): value is YupValidator {
-  return !!value && isCallable((value as { validate?: () => unknown }).validate);
+export function isTypedSchema(value: unknown): value is TypedSchema {
+  return !!value && (isCallable((value as TypedSchema).validate) || (value as TypedSchema).__type === 'VVTypedSchema');
+}
+
+export function isYupValidator(value: unknown): value is YupSchema {
+  return !!value && isCallable((value as YupSchema).validate);
 }
 
 export function hasCheckedAttr(type: unknown) {

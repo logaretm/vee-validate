@@ -1,21 +1,27 @@
 import { ComputedRef, Ref } from 'vue';
 import { FieldValidationMetaInfo } from '../../shared';
 
-export type GenericFormValues = Record<string, unknown>;
+export type GenericFormValues = Record<string, any>;
 
 export interface ValidationResult {
   errors: string[];
   valid: boolean;
 }
 
-export type YupValidator<TValue = any> = { validate(value: TValue, options: Record<string, any>): Promise<TValue> };
-
-export interface YupValidationError extends Error {
-  value: any;
+export interface TypedSchemaError extends Error {
   path?: string;
   errors: string[];
-  inner: YupValidationError[];
+  inner: TypedSchemaError[];
 }
+
+export interface TypedSchema<TInput = any, TOutput = TInput> {
+  __type: 'VVTypedSchema';
+  __input: TInput;
+  __output: TOutput;
+  validate(values: TInput): Promise<TypedSchemaError[]>;
+}
+
+export type YupSchema<TValue = any> = { validate(value: TValue, options: Record<string, any>): Promise<TValue> };
 
 export type Locator = { __locatorRef: string } & ((values: GenericFormValues) => unknown);
 
@@ -184,7 +190,7 @@ type HandleSubmitFactory<TValues extends GenericFormValues> = <TReturn = unknown
   onSubmitValidationErrorCb?: InvalidSubmissionHandler<TValues>
 ) => (e?: Event) => Promise<TReturn | undefined>;
 
-export interface PrivateFormContext<TValues extends Record<string, any> = Record<string, any>>
+export interface PrivateFormContext<TValues extends GenericFormValues = GenericFormValues, TOutput = TValues>
   extends FormActions<TValues> {
   formId: number;
   values: TValues;
@@ -192,7 +198,7 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
   fieldsByPath: Ref<FieldPathLookup>;
   fieldArrays: PrivateFieldArrayContext[];
   submitCount: Ref<number>;
-  schema?: MaybeRef<RawFormSchema<TValues> | YupValidator<TValues> | undefined>;
+  schema?: MaybeRef<RawFormSchema<TValues> | TypedSchema<TValues, TOutput> | undefined>;
   errorBag: Ref<FormErrorBag<TValues>>;
   errors: ComputedRef<FormErrors<TValues>>;
   meta: ComputedRef<FormMeta<TValues>>;

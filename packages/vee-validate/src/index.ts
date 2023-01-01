@@ -25,6 +25,8 @@ export {
   InvalidSubmissionHandler,
   GenericValidateFunction,
   ValidationOptions,
+  TypedSchema,
+  TypedSchemaError,
 } from './types';
 export { useResetForm } from './useResetForm';
 export { useIsFieldDirty } from './useIsFieldDirty';

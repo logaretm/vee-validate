@@ -50,7 +50,7 @@ import {
   isEqual,
 } from './utils';
 import { FormContextKey } from './symbols';
-import { validateYupSchema, validateObjectSchema } from './validate';
+import { validateTypedSchema, validateObjectSchema } from './validate';
 import { refreshInspector, registerFormWithDevTools } from './devtools';
 import { _useFieldValue } from './useFieldState';
 
@@ -756,7 +756,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     }
 
     const formResult = isYupValidator(schemaValue)
-      ? await validateYupSchema(schemaValue, formValues)
+      ? await validateTypedSchema(schemaValue, formValues)
       : await validateObjectSchema(schemaValue as RawFormSchema<TValues>, formValues, {
           names: fieldNames.value,
           bailsMap: fieldBailsMap.value,

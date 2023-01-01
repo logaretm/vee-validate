@@ -1,13 +1,14 @@
 import { resolveRule } from './defineRule';
-import { isLocator, normalizeRules, isYupValidator, keysOf, getFromPath } from './utils';
+import { isLocator, normalizeRules, keysOf, getFromPath, isTypedSchema, isYupValidator } from './utils';
 import { getConfig } from './config';
 import {
   ValidationResult,
   GenericValidateFunction,
-  YupValidator,
+  TypedSchema,
   FormValidationResult,
   RawFormSchema,
-  YupValidationError,
+  YupSchema,
+  TypedSchemaError,
 } from './types';
 import { isCallable, FieldValidationMetaInfo } from '../../shared';
 
@@ -20,7 +21,7 @@ interface FieldValidationContext<TValue = unknown> {
   rules:
     | GenericValidateFunction<TValue>
     | GenericValidateFunction<TValue>[]
-    | YupValidator<TValue>
+    | TypedSchema<TValue>
     | string
     | Record<string, unknown>;
   bails: boolean;
@@ -44,7 +45,7 @@ export async function validate<TValue = unknown>(
     | Record<string, unknown | unknown[]>
     | GenericValidateFunction<TValue>
     | GenericValidateFunction<TValue>[]
-    | YupValidator,
+    | TypedSchema<TValue>,
   options: ValidationOptions = {}
 ): Promise<ValidationResult> {
   const shouldBail = options?.bails;
@@ -69,7 +70,7 @@ export async function validate<TValue = unknown>(
  * Starts the validation process.
  */
 async function _validate<TValue = unknown>(field: FieldValidationContext<TValue>, value: TValue) {
-  if (isYupValidator(field.rules)) {
+  if (isTypedSchema(field.rules)) {
     return validateFieldWithYup(value, field.rules, { bails: field.bails });
   }
 
@@ -144,16 +145,45 @@ interface YupValidationOptions {
   bails: boolean;
 }
 
+function yupToTypedSchema(yupSchema: YupSchema): TypedSchema {
+  const schema: TypedSchema = {
+    __type: 'VVTypedSchema',
+    async validate(values: any) {
+      const errorObjects: TypedSchemaError[] = await yupSchema
+        .validate(values, { abortEarly: false })
+        .then(() => [])
+        .catch((err: TypedSchemaError) => {
+          // Yup errors have a name prop one them.
+          // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
+          if (err.name !== 'ValidationError') {
+            throw err;
+          }
+
+          // list of aggregated errors
+          return err.inner || [];
+        });
+
+      return errorObjects;
+    },
+  } as TypedSchema;
+
+  return schema;
+}
+
 /**
  * Handles yup validation
  */
-async function validateFieldWithYup(value: unknown, validator: YupValidator, opts: Partial<YupValidationOptions>) {
+async function validateFieldWithYup(
+  value: unknown,
+  validator: TypedSchema | YupSchema,
+  opts: Partial<YupValidationOptions>
+) {
   const errors = await validator
     .validate(value, {
       abortEarly: opts.bails ?? true,
     })
     .then(() => [])
-    .catch((err: YupValidationError) => {
+    .catch((err: TypedSchemaError) => {
       // Yup errors have a name prop one them.
       // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
       if (err.name === 'ValidationError') {
@@ -168,7 +198,6 @@ async function validateFieldWithYup(value: unknown, validator: YupValidator, opt
     errors,
   };
 }
-
 /**
  * Tests a single input value against a rule.
  */
@@ -240,23 +269,12 @@ function fillTargetValues(params: unknown[] | Record<string, unknown>, crossTabl
   }, {} as Record<string, unknown>);
 }
 
-export async function validateYupSchema<TValues>(
-  schema: YupValidator<TValues>,
+export async function validateTypedSchema<TValues>(
+  schema: TypedSchema<TValues> | YupSchema<TValues>,
   values: TValues
 ): Promise<FormValidationResult<TValues>> {
-  const errorObjects: YupValidationError[] = await (schema as YupValidator)
-    .validate(values, { abortEarly: false })
-    .then(() => [])
-    .catch((err: YupValidationError) => {
-      // Yup errors have a name prop one them.
-      // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
-      if (err.name !== 'ValidationError') {
-        throw err;
-      }
-
-      // list of aggregated errors
-      return err.inner || [];
-    });
+  const typedSchema = isYupValidator(schema) ? yupToTypedSchema(schema) : schema;
+  const errorObjects = await typedSchema.validate(values);
 
   const results: Partial<Record<keyof TValues, ValidationResult>> = {};
   const errors: Partial<Record<keyof TValues, string>> = {};
