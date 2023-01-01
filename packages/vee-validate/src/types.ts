@@ -8,16 +8,13 @@ export interface ValidationResult {
   valid: boolean;
 }
 
-export interface TypedSchemaError extends Error {
+export interface TypedSchemaError {
   path?: string;
   errors: string[];
-  inner: TypedSchemaError[];
 }
 
 export interface TypedSchema<TInput = any, TOutput = TInput> {
   __type: 'VVTypedSchema';
-  __input: TInput;
-  __output: TOutput;
   validate(values: TInput): Promise<TypedSchemaError[]>;
 }
 

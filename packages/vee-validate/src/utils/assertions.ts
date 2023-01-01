@@ -23,7 +23,7 @@ export function isFileInputNode(tag: string, attrs: Record<string, unknown>) {
 }
 
 export function isTypedSchema(value: unknown): value is TypedSchema {
-  return !!value && (isCallable((value as TypedSchema).validate) || (value as TypedSchema).__type === 'VVTypedSchema');
+  return !!value && isCallable((value as TypedSchema).validate) && (value as TypedSchema).__type === 'VVTypedSchema';
 }
 
 export function isYupValidator(value: unknown): value is YupSchema {

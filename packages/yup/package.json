@@ -1,18 +1,18 @@
 {
-  "name": "@vee-validate/zod",
-  "version": "4.7.4",
-  "description": "vee-validate integration with zod schema validation",
+  "name": "@vee-validate/yup",
+  "version": "4.7.3",
+  "description": "vee-validate integration with yup schema validation",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
-  "module": "dist/vee-validate-zod.esm.js",
-  "unpkg": "dist/vee-validate-zod.js",
-  "main": "dist/vee-validate-zod.js",
-  "types": "dist/vee-validate-zod.d.ts",
+  "module": "dist/vee-validate-yup.esm.js",
+  "unpkg": "dist/vee-validate-yup.js",
+  "main": "dist/vee-validate-yup.js",
+  "types": "dist/vee-validate-yup.d.ts",
   "homepage": "https://vee-validate.logaretm.com/v4/guide/global-validators",
   "repository": {
     "url": "https://github.com/logaretm/vee-validate.git",
     "type": "git",
-    "directory": "packages/zod"
+    "directory": "packages/yup"
   },
   "sideEffects": false,
   "keywords": [
@@ -29,6 +29,6 @@
   ],
   "dependencies": {
     "vee-validate": "4.7.3",
-    "zod": "^3.16.0"
+    "yup": "^0.32.9"
   }
 }
