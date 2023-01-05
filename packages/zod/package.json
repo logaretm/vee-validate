@@ -29,6 +29,6 @@
   ],
   "dependencies": {
     "vee-validate": "4.7.3",
-    "zod": "^3.16.0"
+    "zod": "^3.20.2"
   }
 }
