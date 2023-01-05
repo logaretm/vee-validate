@@ -1,5 +1,5 @@
 import { InferType, TypeOf, BaseSchema, ValidationError } from 'yup';
-import { TypedSchema, TypedSchemaError } from 'vee-validate';
+import { TypedSchema } from 'vee-validate';
 
 export function toTypedSchema<TSchema extends BaseSchema, TInput = TypeOf<TSchema>, TOutput = InferType<TSchema>>(
   yupSchema: TSchema
@@ -7,21 +7,24 @@ export function toTypedSchema<TSchema extends BaseSchema, TInput = TypeOf<TSchem
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
     async validate(values: TInput) {
-      const errorObjects: TypedSchemaError[] = await yupSchema
-        .validate(values, { abortEarly: false })
-        .then(() => [])
-        .catch((err: ValidationError) => {
-          // Yup errors have a name prop one them.
-          // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
-          if (err.name !== 'ValidationError') {
-            throw err;
-          }
+      try {
+        const output = await yupSchema.validate(values, { abortEarly: false });
 
-          // list of aggregated errors
-          return err.inner || [];
-        });
+        return {
+          value: output,
+          errors: [],
+        };
+      } catch (err) {
+        const error = err as ValidationError;
+        // Yup errors have a name prop one them.
+        // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
+        if (error.name !== 'ValidationError') {
+          throw err;
+        }
 
-      return errorObjects;
+        // list of aggregated errors
+        return { errors: error.inner || [] };
+      }
     },
   };
 

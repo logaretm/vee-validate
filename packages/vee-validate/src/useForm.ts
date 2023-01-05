@@ -267,7 +267,12 @@ export function useForm<TValues extends GenericFormValues = GenericFormValues, T
 
             if (result.valid && typeof fn === 'function') {
               const controlled = deepCopy(controlledValues.value) as TOutput;
-              return fn(onlyControlled ? controlled : values, {
+              let submittedValues = onlyControlled ? controlled : values;
+              if (result.values) {
+                submittedValues = result.values;
+              }
+
+              return fn(submittedValues, {
                 evt: e as Event,
                 controlledValues: controlled,
                 setErrors,
@@ -673,7 +678,7 @@ export function useForm<TValues extends GenericFormValues = GenericFormValues, T
     });
   }
 
-  async function validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>> {
+  async function validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues, TOutput>> {
     const mode = opts?.mode || 'force';
     if (mode === 'force') {
       mutateAllFields(f => (f.meta.validated = true));
@@ -755,15 +760,15 @@ export function useForm<TValues extends GenericFormValues = GenericFormValues, T
     setInPath(initialValues.value, path, deepCopy(value));
   }
 
-  async function _validateSchema(): Promise<FormValidationResult<TValues>> {
+  async function _validateSchema(): Promise<FormValidationResult<TValues, TOutput>> {
     const schemaValue = unref(schema);
     if (!schemaValue) {
       return { valid: true, results: {}, errors: {} };
     }
 
     const formResult = isYupValidator(schemaValue)
-      ? await validateTypedSchema(schemaValue, formValues)
-      : await validateObjectSchema(schemaValue as RawFormSchema<TValues>, formValues, {
+      ? await validateTypedSchema<TValues, TOutput>(schemaValue, formValues)
+      : await validateObjectSchema<TValues, TOutput>(schemaValue as RawFormSchema<TValues>, formValues, {
           names: fieldNames.value,
           bailsMap: fieldBailsMap.value,
         });

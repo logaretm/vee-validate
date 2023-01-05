@@ -8,7 +8,6 @@ import {
   FormValidationResult,
   RawFormSchema,
   YupSchema,
-  TypedSchemaError,
 } from './types';
 import { isCallable, FieldValidationMetaInfo } from '../../shared';
 
@@ -145,21 +144,22 @@ function yupToTypedSchema(yupSchema: YupSchema): TypedSchema {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
     async validate(values: any) {
-      const errorObjects: TypedSchemaError[] = await yupSchema
-        .validate(values, { abortEarly: false })
-        .then(() => [])
-        .catch((err: TypedSchemaError & { name: string; inner?: TypedSchemaError[] }) => {
-          // Yup errors have a name prop one them.
-          // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
-          if (err.name !== 'ValidationError') {
-            throw err;
-          }
+      try {
+        const output = await yupSchema.validate(values, { abortEarly: false });
 
-          // list of aggregated errors
-          return err.inner || [];
-        });
+        return {
+          output,
+          errors: [],
+        };
+      } catch (err: any) {
+        // Yup errors have a name prop one them.
+        // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
+        if (err.name !== 'ValidationError') {
+          throw err;
+        }
 
-      return errorObjects;
+        return { errors: err.inner || [] };
+      }
     },
   };
 
@@ -171,10 +171,10 @@ function yupToTypedSchema(yupSchema: YupSchema): TypedSchema {
  */
 async function validateFieldWithTypedSchema(value: unknown, schema: TypedSchema | YupSchema) {
   const typedSchema = isTypedSchema(schema) ? schema : yupToTypedSchema(schema);
-  const errorObjects = await typedSchema.validate(value);
+  const result = await typedSchema.validate(value);
 
   const messages: string[] = [];
-  for (const error of errorObjects) {
+  for (const error of result.errors) {
     if (error.errors.length) {
       messages.push(...error.errors);
     }
@@ -255,16 +255,16 @@ function fillTargetValues(params: unknown[] | Record<string, unknown>, crossTabl
   }, {} as Record<string, unknown>);
 }
 
-export async function validateTypedSchema<TValues>(
+export async function validateTypedSchema<TValues, TOutput = TValues>(
   schema: TypedSchema<TValues> | YupSchema<TValues>,
   values: TValues
-): Promise<FormValidationResult<TValues>> {
+): Promise<FormValidationResult<TValues, TOutput>> {
   const typedSchema = isTypedSchema(schema) ? schema : yupToTypedSchema(schema);
-  const errorObjects = await typedSchema.validate(values);
+  const validationResult = await typedSchema.validate(values);
 
   const results: Partial<Record<keyof TValues, ValidationResult>> = {};
   const errors: Partial<Record<keyof TValues, string>> = {};
-  for (const error of errorObjects) {
+  for (const error of validationResult.errors) {
     const messages = error.errors;
     results[error.path as keyof TValues] = { valid: !messages.length, errors: messages };
     if (messages.length) {
@@ -273,17 +273,18 @@ export async function validateTypedSchema<TValues>(
   }
 
   return {
-    valid: !errorObjects.length,
+    valid: !validationResult.errors.length,
     results,
     errors,
+    values: validationResult.value,
   };
 }
 
-export async function validateObjectSchema<TValues>(
+export async function validateObjectSchema<TValues, TOutput>(
   schema: RawFormSchema<TValues>,
   values: TValues,
   opts?: Partial<{ names: Record<string, { name: string; label: string }>; bailsMap: Record<string, boolean> }>
-): Promise<FormValidationResult<TValues>> {
+): Promise<FormValidationResult<TValues, TOutput>> {
   const paths = keysOf(schema) as string[];
   const validations = paths.map(async path => {
     const strings = opts?.names?.[path];

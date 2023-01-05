@@ -13,14 +13,19 @@ export function toTypedSchema<TSchema extends ZodSchema, TInput = input<TSchema>
     async validate(value: TInput) {
       const result = await zodSchema.safeParseAsync(value);
       if (result.success) {
-        return [];
+        return {
+          value: result.data,
+          errors: [],
+        };
       }
 
       const errors: TypedSchemaError[] = result.error.issues.map<TypedSchemaError>(issue => {
         return { path: joinPath(issue.path), errors: [issue.message] };
       });
 
-      return errors;
+      return {
+        errors,
+      };
     },
   };
 
