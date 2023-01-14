@@ -28,6 +28,7 @@ import regex from './regex';
 import required from './required';
 import size from './size';
 import url from './url';
+import { toTypedSchema } from './toTypedSchema';
 
 export {
   alpha_dash,
@@ -57,6 +58,7 @@ export {
   required,
   size,
   url,
+  toTypedSchema,
 };
 
 const all: Record<string, ValidationRuleFunction<unknown, any>> = {
