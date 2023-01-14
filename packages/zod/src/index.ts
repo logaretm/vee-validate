@@ -2,10 +2,12 @@ import type { input, output, ZodSchema } from 'zod';
 import type { TypedSchema, TypedSchemaError } from 'vee-validate';
 import { isIndex } from '../../shared';
 
+type Optional<T> = T extends Record<string, any> ? Partial<T> : T | undefined;
+
 /**
  * Transforms a Zod object schema to Yup's schema
  */
-export function toTypedSchema<TSchema extends ZodSchema, TInput = input<TSchema>, TOutput = output<TSchema>>(
+export function toTypedSchema<TSchema extends ZodSchema, TInput = Optional<input<TSchema>>, TOutput = output<TSchema>>(
   zodSchema: TSchema
 ): TypedSchema<TInput, TOutput> {
   const schema: TypedSchema = {
