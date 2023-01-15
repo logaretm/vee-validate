@@ -1,8 +1,6 @@
 import type { input, output, ZodSchema } from 'zod';
 import type { TypedSchema, TypedSchemaError } from 'vee-validate';
-import { isIndex } from '../../shared';
-
-type Optional<T> = T extends Record<string, any> ? Partial<T> : T | undefined;
+import { isIndex, Optional } from '../../shared';
 
 /**
  * Transforms a Zod object schema to Yup's schema
@@ -12,7 +10,7 @@ export function toTypedSchema<TSchema extends ZodSchema, TInput = Optional<input
 ): TypedSchema<TInput, TOutput> {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
-    async validate(value: TInput) {
+    async validate(value) {
       const result = await zodSchema.safeParseAsync(value);
       if (result.success) {
         return {

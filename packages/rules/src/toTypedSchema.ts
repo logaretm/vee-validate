@@ -1,7 +1,6 @@
 import { keysOf } from '../../vee-validate/src/utils';
 import { TypedSchema, RawFormSchema, validateObject, TypedSchemaError, validate } from 'vee-validate';
-
-type Optional<T> = T extends Record<string, any> ? Partial<T> : T | undefined;
+import { Optional } from '../../shared';
 
 export function toTypedSchema<TOutput = any, TInput extends Optional<TOutput> = Optional<TOutput>>(
   rawSchema: RawFormSchema<TInput> | string

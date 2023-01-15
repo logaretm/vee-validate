@@ -6,7 +6,7 @@ export function toTypedSchema<TSchema extends BaseSchema, TInput = TypeOf<TSchem
 ): TypedSchema<TInput, TOutput> {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
-    async validate(values: TInput) {
+    async validate(values) {
       try {
         const output = await yupSchema.validate(values, { abortEarly: false });
 
