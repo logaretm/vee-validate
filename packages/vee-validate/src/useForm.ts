@@ -34,6 +34,7 @@ import {
   PrivateFieldArrayContext,
   InvalidSubmissionHandler,
   MapValues,
+  FieldState,
 } from './types';
 import {
   getFromPath,
@@ -270,6 +271,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
                 setValues,
                 setFieldValue,
                 resetForm,
+                resetField,
               });
             }
 
@@ -329,6 +331,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     setFieldTouched,
     setTouched,
     resetForm,
+    resetField,
     handleSubmit,
     stageInitialValue,
     unsetInitialValue,
@@ -484,6 +487,14 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     keysOf(fields).forEach(field => {
       setFieldTouched(field, !!fields[field]);
     });
+  }
+
+  function resetField(field: keyof TValues, state?: Partial<FieldState>) {
+    const fieldInstance = fieldsByPath.value[field];
+
+    if (fieldInstance) {
+      applyFieldMutation(fieldInstance, f => f.resetField(state));
+    }
   }
 
   /**
