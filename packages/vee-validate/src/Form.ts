@@ -1,8 +1,15 @@
 import { h, defineComponent, toRef, resolveDynamicComponent, PropType, VNode, UnwrapRef } from 'vue';
 import { useForm } from './useForm';
-import { SubmissionHandler, InvalidSubmissionHandler } from './types';
+import {
+  SubmissionHandler,
+  InvalidSubmissionHandler,
+  GenericFormValues,
+  FormMeta,
+  FormContext,
+  FormErrors,
+} from './types';
 import { isEvent, isFormSubmitEvent, normalizeChildren } from './utils';
-import { FormContext } from '.';
+import { klona as deepCopy } from 'klona/full';
 
 type FormSlotProps = UnwrapRef<
   Pick<
@@ -28,6 +35,9 @@ type FormSlotProps = UnwrapRef<
 > & {
   handleSubmit: (evt: Event | SubmissionHandler, onSubmit?: SubmissionHandler) => Promise<unknown>;
   submitForm(evt?: Event): void;
+  getValues<TValues extends GenericFormValues = GenericFormValues>(): TValues;
+  getMeta<TValues extends GenericFormValues = GenericFormValues>(): FormMeta<TValues>;
+  getErrors<TValues extends GenericFormValues = GenericFormValues>(): FormErrors<TValues>;
 };
 
 const FormImpl = defineComponent({
@@ -129,6 +139,17 @@ const FormImpl = defineComponent({
       return handleSubmit(onSuccess as SubmissionHandler<Record<string, unknown>>, props.onInvalidSubmit)(evt as Event);
     }
 
+    function getValues<TValues extends GenericFormValues = GenericFormValues>() {
+      return deepCopy(values) as TValues;
+    }
+
+    function getMeta<TValues extends GenericFormValues = GenericFormValues>() {
+      return deepCopy(meta.value) as FormMeta<TValues>;
+    }
+    function getErrors<TValues extends GenericFormValues = GenericFormValues>() {
+      return deepCopy(errors.value) as FormErrors<TValues>;
+    }
+
     function slotProps(): FormSlotProps {
       return {
         meta: meta.value,
@@ -150,6 +171,9 @@ const FormImpl = defineComponent({
         setTouched,
         resetForm,
         resetField,
+        getValues,
+        getMeta,
+        getErrors,
       };
     }
 
@@ -165,6 +189,9 @@ const FormImpl = defineComponent({
       validate,
       validateField,
       resetField,
+      getValues,
+      getMeta,
+      getErrors,
     });
 
     return function renderForm() {
@@ -211,6 +238,9 @@ export const Form = FormImpl as typeof FormImpl & {
     resetField: FormContext['resetField'];
     validate: FormContext['validate'];
     validateField: FormContext['validateField'];
+    getValues: FormSlotProps['getValues'];
+    getMeta: FormSlotProps['getMeta'];
+    getErrors: FormSlotProps['getErrors'];
     $slots: {
       default: (arg: FormSlotProps) => VNode[];
     };
