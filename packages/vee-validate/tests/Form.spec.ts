@@ -1,4 +1,4 @@
-import { defineRule, useField } from '@/vee-validate';
+import { defineRule, useField, Form } from '@/vee-validate';
 import { mountWithHoc, setValue, setChecked, dispatchEvent, flushPromises } from './helpers';
 import * as yup from 'yup';
 import { computed, defineComponent, onErrorCaptured, reactive, ref, Ref } from 'vue';
@@ -2827,6 +2827,37 @@ describe('<Form />', () => {
     expect(error.textContent).toBe('');
     expect(input.value).toBe('test');
     expect(touched.textContent).toBe('true');
+  });
+
+  test('exposes values and meta with getValues and getMeta exposed APIs', async () => {
+    const formRef = ref<InstanceType<typeof Form>>();
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm ref="formRef">
+        <Field name="field" rules="required|min:3" />
+      </VForm>
+    `,
+      setup() {
+        return {
+          formRef,
+        };
+      },
+    });
+
+    const input = wrapper.$el.querySelector('input');
+    setValue(input, '1');
+    dispatchEvent(input, 'blur');
+    await flushPromises();
+
+    expect(formRef.value?.getValues()).toEqual({ field: '1' });
+    expect(formRef.value?.getMeta()).toEqual({
+      touched: true,
+      dirty: true,
+      valid: false,
+      pending: false,
+      initialValues: {},
+    });
+    expect(formRef.value?.getErrors()).toEqual({ field: MIN_MESSAGE });
   });
 });
 
