@@ -2760,6 +2760,74 @@ describe('<Form />', () => {
     await flushPromises();
     expect(value.value).toBe(true);
   });
+
+  test('resets a single field  resetField() to initial state in slot scope props', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm v-slot="{ resetField }">
+        <Field name="field" rules="required" v-slot="{ field, errors, meta }">
+          <input type="text" v-bind="field">
+          <span id="error">{{ errors && errors[0] }}</span>
+          <span id="touched">{{ meta.touched }}</span>
+          <button @click="resetField('field')" type="button">Reset</button>
+        </Field>
+      </VForm>
+    `,
+    });
+
+    const error = wrapper.$el.querySelector('#error');
+    const touched = wrapper.$el.querySelector('#touched');
+    const input = wrapper.$el.querySelector('input');
+
+    expect(error.textContent).toBe('');
+
+    setValue(input, '');
+    await flushPromises();
+    expect(error.textContent).toBe(REQUIRED_MESSAGE);
+    setValue(input, '123');
+    dispatchEvent(input, 'blur');
+    await flushPromises();
+    expect(touched.textContent).toBe('true');
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(error.textContent).toBe('');
+    expect(input.value).toBe('');
+    expect(touched.textContent).toBe('false');
+  });
+
+  test('resets a single field resetField() to specific state in slot scope props', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm v-slot="{ resetField }">
+        <Field name="field" rules="required" v-slot="{ field, errors, meta }">
+          <input type="text" v-bind="field">
+          <span id="error">{{ errors && errors[0] }}</span>
+          <span id="touched">{{ meta.touched }}</span>
+          <button @click="resetField('field', { value: 'test', touched: true })" type="button">Reset</button>
+        </Field>
+      </VForm>
+    `,
+    });
+
+    const error = wrapper.$el.querySelector('#error');
+    const touched = wrapper.$el.querySelector('#touched');
+    const input = wrapper.$el.querySelector('input');
+
+    expect(error.textContent).toBe('');
+
+    setValue(input, '');
+    await flushPromises();
+    expect(error.textContent).toBe(REQUIRED_MESSAGE);
+    setValue(input, '123');
+    dispatchEvent(input, 'blur');
+    await flushPromises();
+    expect(touched.textContent).toBe('true');
+    wrapper.$el.querySelector('button').click();
+    await flushPromises();
+    expect(error.textContent).toBe('');
+    expect(input.value).toBe('test');
+    expect(touched.textContent).toBe('true');
+  });
 });
 
 // #3963

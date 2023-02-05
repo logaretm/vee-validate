@@ -22,6 +22,7 @@ type FormSlotProps = UnwrapRef<
     | 'setFieldTouched'
     | 'setTouched'
     | 'resetForm'
+    | 'resetField'
     | 'controlledValues'
   >
 > & {
@@ -93,6 +94,7 @@ const FormImpl = defineComponent({
       setValues,
       setFieldTouched,
       setTouched,
+      resetField,
     } = useForm({
       validationSchema: validationSchema.value ? validationSchema : undefined,
       initialValues,
@@ -147,6 +149,7 @@ const FormImpl = defineComponent({
         setFieldTouched,
         setTouched,
         resetForm,
+        resetField,
       };
     }
 
@@ -161,6 +164,7 @@ const FormImpl = defineComponent({
       resetForm,
       validate,
       validateField,
+      resetField,
     });
 
     return function renderForm() {
@@ -204,6 +208,7 @@ export const Form = FormImpl as typeof FormImpl & {
     setFieldTouched: FormContext['setFieldTouched'];
     setTouched: FormContext['setTouched'];
     resetForm: FormContext['resetForm'];
+    resetField: FormContext['resetField'];
     validate: FormContext['validate'];
     validateField: FormContext['validateField'];
     $slots: {

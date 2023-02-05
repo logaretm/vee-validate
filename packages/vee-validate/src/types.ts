@@ -129,12 +129,13 @@ export interface SetFieldValueOptions {
 }
 export interface FormActions<TValues extends GenericFormValues> {
   setFieldValue<T extends keyof TValues>(field: T, value: TValues[T], opts?: Partial<SetFieldValueOptions>): void;
-  setFieldError: (field: keyof TValues, message: string | string[] | undefined) => void;
-  setErrors: (fields: FormErrors<TValues>) => void;
+  setFieldError(field: keyof TValues, message: string | string[] | undefined): void;
+  setErrors(fields: FormErrors<TValues>): void;
   setValues<T extends keyof TValues>(fields: Partial<Record<T, TValues[T]>>): void;
-  setFieldTouched: (field: keyof TValues, isTouched: boolean) => void;
-  setTouched: (fields: Partial<Record<keyof TValues, boolean>>) => void;
-  resetForm: (state?: Partial<FormState<TValues>>) => void;
+  setFieldTouched(field: keyof TValues, isTouched: boolean): void;
+  setTouched(fields: Partial<Record<keyof TValues, boolean>>): void;
+  resetForm(state?: Partial<FormState<TValues>>): void;
+  resetField(field: keyof TValues, state?: Partial<FieldState>): void;
 }
 
 export interface FormValidationResult<TValues> {
