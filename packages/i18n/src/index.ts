@@ -1,16 +1,18 @@
 import { isCallable, FieldValidationMetaInfo, ValidationMessageGenerator } from '../../shared';
 import { interpolate, merge } from './utils';
 
-type ValidationMessageTemplate = ValidationMessageGenerator | string;
+export { FieldValidationMetaInfo };
 
-interface PartialI18nDictionary {
+export type ValidationMessageTemplate = ValidationMessageGenerator | string;
+
+export interface PartialI18nDictionary {
   name?: string;
   messages?: Record<string, ValidationMessageTemplate>;
   names?: Record<string, string>;
   fields?: Record<string, Record<string, ValidationMessageTemplate>>;
 }
 
-type RootI18nDictionary = Record<string, PartialI18nDictionary>;
+export type RootI18nDictionary = Record<string, PartialI18nDictionary>;
 
 class Dictionary {
   public locale: string;
