@@ -147,7 +147,8 @@ function _useField<TValue = unknown>(
     }
 
     return validateValue(value.value, normalizedRules.value, {
-      name: unref(label) || unref(name),
+      name: unref(name),
+      label: unref(label),
       values: form?.values ?? {},
       bails,
     });

@@ -75,6 +75,86 @@ test('can define specific messages for specific fields', async () => {
   expect(errors[1].textContent).toContain('The name is required');
 });
 
+// #4097
+test('can define specific messages for specific fields with labels', async () => {
+  configure({
+    generateMessage: localize('en', {
+      fields: {
+        test: {
+          required: '{field} WRONG!',
+        },
+      },
+    }),
+  });
+
+  const wrapper = mountWithHoc({
+    template: `
+        <div>
+          <Field name="test" :validateOnMount="true" rules="required" v-slot="{ field, errors }" label="field">
+            <input v-bind="field" type="text">
+            <span class="error">{{ errors[0] }}</span>
+          </Field>
+
+          <Field name="name" :validateOnMount="true" rules="required" v-slot="{ field, errors }">
+            <input v-bind="field" type="text">
+            <span class="error">{{ errors[0] }}</span>
+          </Field>
+        </div>
+      `,
+  });
+
+  await flushPromises();
+  const errors = wrapper.$el.querySelectorAll('.error');
+  expect(errors).toHaveLength(2);
+
+  expect(errors[0].textContent).toContain('field WRONG!');
+  expect(errors[1].textContent).toContain('The name is required');
+});
+
+// #4097
+test('can define specific messages for specific fields with labels and form schema', async () => {
+  configure({
+    generateMessage: localize('en', {
+      fields: {
+        test: {
+          required: '{field} WRONG!',
+        },
+      },
+    }),
+  });
+
+  const wrapper = mountWithHoc({
+    template: `
+        <VForm :validation-schema="schema">
+          <Field name="test" :validateOnMount="true" v-slot="{ field, errors }" label="field">
+            <input v-bind="field" type="text">
+            <span class="error">{{ errors[0] }}</span>
+          </Field>
+
+          <Field name="name" :validateOnMount="true" v-slot="{ field, errors }">
+            <input v-bind="field" type="text">
+            <span class="error">{{ errors[0] }}</span>
+          </Field>
+        </VForm>
+      `,
+    setup() {
+      return {
+        schema: {
+          test: 'required',
+          name: 'required',
+        },
+      };
+    },
+  });
+
+  await flushPromises();
+  const errors = wrapper.$el.querySelectorAll('.error');
+  expect(errors).toHaveLength(2);
+
+  expect(errors[0].textContent).toContain('field WRONG!');
+  expect(errors[1].textContent).toContain('The name is required');
+});
+
 test('can merge locales without setting the current one', async () => {
   configure({
     generateMessage: localize({

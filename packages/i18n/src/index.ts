@@ -35,18 +35,18 @@ class Dictionary {
 
   public format(locale: string, ctx: FieldValidationMetaInfo) {
     let message!: ValidationMessageTemplate | undefined;
-    const { field, rule, form } = ctx;
-    const fieldName = this.container[locale]?.names?.[field] ?? field;
+    const { rule, form, label, name } = ctx;
+    const fieldName = label || this.container[locale]?.names?.[name] || name;
 
     if (!rule) {
-      message = this.getLocaleDefault(locale, field) || `${fieldName} is not valid`;
+      message = this.getLocaleDefault(locale, name) || `${fieldName} is not valid`;
       return isCallable(message) ? message(ctx) : interpolate(message, { ...form, field: fieldName });
     }
 
     // find if specific message for that field was specified.
-    message = this.container[locale]?.fields?.[field]?.[rule.name] || this.container[locale]?.messages?.[rule.name];
+    message = this.container[locale]?.fields?.[name]?.[rule.name] || this.container[locale]?.messages?.[rule.name];
     if (!message) {
-      message = this.getLocaleDefault(locale, field) || `${fieldName} is not valid`;
+      message = this.getLocaleDefault(locale, name) || `${fieldName} is not valid`;
     }
 
     return isCallable(message)

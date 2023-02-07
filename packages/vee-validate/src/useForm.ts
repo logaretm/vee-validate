@@ -125,11 +125,11 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     return keysOf(fieldsByPath.value).reduce((names, path) => {
       const field = getFirstFieldAtPath(path as string);
       if (field) {
-        names[path as string] = unref(field.label || field.name) || '';
+        names[path as string] = { name: unref(field.name) || '', label: unref(field.label) || '' };
       }
 
       return names;
-    }, {} as Record<string, string>);
+    }, {} as Record<string, { name: string; label: string }>);
   });
 
   const fieldBailsMap = computed(() => {

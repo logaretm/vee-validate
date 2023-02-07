@@ -16,6 +16,7 @@ import { isCallable, FieldValidationMetaInfo } from '../../shared';
  */
 interface FieldValidationContext<TValue = unknown> {
   name: string;
+  label?: string;
   rules:
     | GenericValidateFunction<TValue>
     | GenericValidateFunction<TValue>[]
@@ -28,6 +29,7 @@ interface FieldValidationContext<TValue = unknown> {
 
 interface ValidationOptions {
   name?: string;
+  label?: string;
   values?: Record<string, unknown>;
   bails?: boolean;
 }
@@ -49,6 +51,7 @@ export async function validate<TValue = unknown>(
   const field: FieldValidationContext<TValue> = {
     name: options?.name || '{field}',
     rules,
+    label: options?.label,
     bails: shouldBail ?? true,
     formData: options?.values || {},
   };
@@ -73,7 +76,9 @@ async function _validate<TValue = unknown>(field: FieldValidationContext<TValue>
   // if a generic function or chain of generic functions
   if (isCallable(field.rules) || Array.isArray(field.rules)) {
     const ctx = {
-      field: field.name,
+      field: field.label || field.name,
+      name: field.name,
+      label: field.label,
       form: field.formData,
       value: value,
     };
@@ -179,7 +184,9 @@ async function _test(
 
   const params = fillTargetValues(rule.params, field.formData);
   const ctx: FieldValidationMetaInfo = {
-    field: field.name,
+    field: field.label || field.name,
+    name: field.name,
+    label: field.label,
     value,
     form: field.formData,
     rule: {
@@ -271,12 +278,14 @@ export async function validateYupSchema<TValues>(
 export async function validateObjectSchema<TValues>(
   schema: RawFormSchema<TValues>,
   values: TValues,
-  opts?: Partial<{ names: Record<string, string>; bailsMap: Record<string, boolean> }>
+  opts?: Partial<{ names: Record<string, { name: string; label: string }>; bailsMap: Record<string, boolean> }>
 ): Promise<FormValidationResult<TValues>> {
   const paths = keysOf(schema) as string[];
   const validations = paths.map(async path => {
+    const strings = opts?.names?.[path];
     const fieldResult = await validate(getFromPath(values as any, path), schema[path as keyof TValues], {
-      name: opts?.names?.[path] || path,
+      name: strings?.name || path,
+      label: strings?.label,
       values: values as any,
       bails: opts?.bailsMap?.[path] ?? true,
     });
