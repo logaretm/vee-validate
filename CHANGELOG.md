@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.7.4](https://github.com/logaretm/vee-validate/compare/v4.7.3...v4.7.4) (2023-02-07)
+
+### Bug Fixes
+
+* **docs:** typo in use-form.mdx ([#4073](https://github.com/logaretm/vee-validate/issues/4073)) ([83c2e17](https://github.com/logaretm/vee-validate/commit/83c2e1752b2b020926af3218e7bcd2c03763714e))
+* ext rule regex has wildcard when it should be literal period ([#4045](https://github.com/logaretm/vee-validate/issues/4045)) ([5265af5](https://github.com/logaretm/vee-validate/commit/5265af5c75b7809ebd73b22d4c8319a8a146da5a))
+* pass the field label as a seperate value closes [#4097](https://github.com/logaretm/vee-validate/issues/4097) ([89f8689](https://github.com/logaretm/vee-validate/commit/89f8689b673be27f0fc221d6c096efa11dacd3e6))
+* typo in useFieldArray argument ([#4070](https://github.com/logaretm/vee-validate/issues/4070)) ([eaf1ecb](https://github.com/logaretm/vee-validate/commit/eaf1ecb73ecbd8c356a5b96363ab4054e5bf5f7b))
+* wrong and missing RU translations, incorrect order ([#3987](https://github.com/logaretm/vee-validate/issues/3987)) ([1be36ab](https://github.com/logaretm/vee-validate/commit/1be36aba9add96c199f93f8e74f7c422e7e9ae1f))
+
+### Features
+
+* **#4117:** add resetField on Form/useForm ([#4120](https://github.com/logaretm/vee-validate/issues/4120)) ([87c4278](https://github.com/logaretm/vee-validate/commit/87c42787c0b4de5a09abe0d29deb92b28b59023e)), closes [#4117](https://github.com/logaretm/vee-validate/issues/4117)
+* export i18n types closes [#4106](https://github.com/logaretm/vee-validate/issues/4106) ([c65ead8](https://github.com/logaretm/vee-validate/commit/c65ead874323a0bd58f96461f1037cb150cbdc7d))
+* expose state getters on the form instance via template refs ([#4121](https://github.com/logaretm/vee-validate/issues/4121)) ([7f1c39c](https://github.com/logaretm/vee-validate/commit/7f1c39c0d9a0d1f7b7768b68c6705b5bfda91599))
+
 ## [4.7.3](https://github.com/logaretm/vee-validate/compare/v4.7.2...v4.7.3) (2022-11-13)
 
 ### Bug Fixes

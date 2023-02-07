@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.7.4](https://github.com/logaretm/vee-validate/compare/v4.7.3...v4.7.4) (2023-02-07)
+
+### Bug Fixes
+
+* ext rule regex has wildcard when it should be literal period ([#4045](https://github.com/logaretm/vee-validate/issues/4045)) ([5265af5](https://github.com/logaretm/vee-validate/commit/5265af5c75b7809ebd73b22d4c8319a8a146da5a))
+
 ## [4.7.3](https://github.com/logaretm/vee-validate/compare/v4.7.2...v4.7.3) (2022-11-13)
 
 ### Bug Fixes

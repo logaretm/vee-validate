@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.7.4](https://github.com/logaretm/vee-validate/compare/v4.7.3...v4.7.4) (2023-02-07)
+
+### Bug Fixes
+
+* pass the field label as a seperate value closes [#4097](https://github.com/logaretm/vee-validate/issues/4097) ([89f8689](https://github.com/logaretm/vee-validate/commit/89f8689b673be27f0fc221d6c096efa11dacd3e6))
+* wrong and missing RU translations, incorrect order ([#3987](https://github.com/logaretm/vee-validate/issues/3987)) ([1be36ab](https://github.com/logaretm/vee-validate/commit/1be36aba9add96c199f93f8e74f7c422e7e9ae1f))
+
+### Features
+
+* export i18n types closes [#4106](https://github.com/logaretm/vee-validate/issues/4106) ([c65ead8](https://github.com/logaretm/vee-validate/commit/c65ead874323a0bd58f96461f1037cb150cbdc7d))
+
 ## [4.7.3](https://github.com/logaretm/vee-validate/compare/v4.7.2...v4.7.3) (2022-11-13)
 
 ### Bug Fixes
