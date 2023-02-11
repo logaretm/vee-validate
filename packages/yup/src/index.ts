@@ -26,6 +26,13 @@ export function toTypedSchema<TSchema extends BaseSchema, TInput = TypeOf<TSchem
         return { errors: error.inner || [] };
       }
     },
+    parse(values) {
+      try {
+        return yupSchema.cast(values);
+      } catch {
+        return values;
+      }
+    },
   };
 
   return schema;

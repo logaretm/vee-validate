@@ -132,7 +132,7 @@ test('uses yup for form values transformations and parsing', async () => {
   );
 });
 
-test('uses yup default values for initial values', async () => {
+test('uses yup default values for submitted values', async () => {
   const submitSpy = jest.fn();
   mountWithHoc({
     setup() {
@@ -163,5 +163,40 @@ test('uses yup default values for initial values', async () => {
       age: 11,
     }),
     expect.anything()
+  );
+});
+
+test('uses yup default values for initial values', async () => {
+  const initialSpy = jest.fn();
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema(
+        yup.object({
+          name: yup.string().required().default('test'),
+          age: yup.number().default(11),
+        })
+      );
+
+      const { values } = useForm({
+        validationSchema: schema,
+      });
+
+      // submit now
+      initialSpy(values);
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(initialSpy).toHaveBeenCalledTimes(1);
+  await expect(initialSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      age: 11,
+      name: 'test',
+    })
   );
 });

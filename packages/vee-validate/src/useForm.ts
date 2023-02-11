@@ -51,11 +51,13 @@ import {
   isEmptyContainer,
   withLatest,
   isEqual,
+  isTypedSchema,
 } from './utils';
 import { FormContextKey } from './symbols';
 import { validateTypedSchema, validateObjectSchema } from './validate';
 import { refreshInspector, registerFormWithDevTools } from './devtools';
 import { _useFieldValue } from './useFieldState';
+import { isCallable } from '../../shared';
 
 export interface FormOptions<TValues extends GenericFormValues, TOutput extends TValues = TValues> {
   validationSchema?: MaybeRef<
@@ -72,6 +74,17 @@ export interface FormOptions<TValues extends GenericFormValues, TOutput extends 
 }
 
 let FORM_COUNTER = 0;
+
+function resolveInitialValues<TValues extends GenericFormValues = GenericFormValues>(
+  opts?: FormOptions<TValues>
+): TValues {
+  const providedValues = unref(opts?.initialValues) || {};
+  if (opts?.validationSchema && isTypedSchema(opts.validationSchema) && isCallable(opts.validationSchema.parse)) {
+    return deepCopy(opts.validationSchema.parse(providedValues));
+  }
+
+  return deepCopy(providedValues) as TValues;
+}
 
 export function useForm<TValues extends GenericFormValues = GenericFormValues, TOutput extends TValues = TValues>(
   opts?: FormOptions<TValues, TOutput>
@@ -97,7 +110,7 @@ export function useForm<TValues extends GenericFormValues = GenericFormValues, T
   const fieldArrays: PrivateFieldArrayContext[] = [];
 
   // a private ref for all form values
-  const formValues = reactive(deepCopy(unref(opts?.initialValues) || {})) as TValues;
+  const formValues = reactive(resolveInitialValues(opts));
 
   // the source of errors for the form fields
   const { errorBag, setErrorBag, setFieldErrorBag } = useErrorBag(opts?.initialErrors);
@@ -159,7 +172,7 @@ export function useForm<TValues extends GenericFormValues = GenericFormValues, T
   const { initialValues, originalInitialValues, setInitialValues } = useFormInitialValues<TValues>(
     fieldsByPath,
     formValues,
-    opts?.initialValues
+    opts
   );
 
   // form meta aggregations
@@ -892,16 +905,18 @@ function useFormMeta<TValues extends Record<string, unknown>>(
 function useFormInitialValues<TValues extends GenericFormValues>(
   fields: Ref<FieldPathLookup<TValues>>,
   formValues: TValues,
-  providedValues?: MaybeRef<TValues>
+  opts?: FormOptions<TValues>
 ) {
+  const values = resolveInitialValues(opts);
+  const providedValues = opts?.initialValues;
   // these are the mutable initial values as the fields are mounted/unmounted
-  const initialValues = ref<TValues>(deepCopy(unref(providedValues) as TValues) || ({} as TValues));
+  const initialValues = ref<TValues>(values);
   // these are the original initial value as provided by the user initially, they don't keep track of conditional fields
   // this is important because some conditional fields will overwrite the initial values for other fields who had the same name
   // like array fields, any push/insert operation will overwrite the initial values because they "create new fields"
   // so these are the values that the reset function should use
-  // these only change when the user explicitly chanegs the initial values or when the user resets them with new values.
-  const originalInitialValues = ref<TValues>(deepCopy(unref(providedValues) as TValues) || ({} as TValues));
+  // these only change when the user explicitly changes the initial values or when the user resets them with new values.
+  const originalInitialValues = ref<TValues>(deepCopy(values));
 
   function setInitialValues(values: Partial<TValues>, updateFields = false) {
     initialValues.value = deepCopy(values);

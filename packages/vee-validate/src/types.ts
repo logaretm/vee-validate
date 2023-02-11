@@ -16,6 +16,7 @@ export interface TypedSchemaError {
 export interface TypedSchema<TInput = any, TOutput = TInput> {
   __type: 'VVTypedSchema';
   validate(values: TInput): Promise<{ value?: TOutput; errors: TypedSchemaError[] }>;
+  parse?(values: Partial<TInput>): TInput;
 }
 
 export type YupSchema<TValue = any> = { validate(value: TValue, options: Record<string, any>): Promise<TValue> };
