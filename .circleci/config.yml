@@ -22,9 +22,6 @@ jobs:
           pkg-manager: yarn
       - run:
           name: Build
-          command: yarn lerna bootstrap
-      - run:
-          name: Build
           command: yarn build
       - run:
           name: Generate Coverage
