@@ -1,5 +1,5 @@
-import { isCallable, FieldValidationMetaInfo, ValidationMessageGenerator } from '../../shared';
-import { interpolate, merge } from './utils';
+import { isCallable, FieldValidationMetaInfo, ValidationMessageGenerator, merge } from '../../shared';
+import { interpolate } from './utils';
 
 export { FieldValidationMetaInfo };
 

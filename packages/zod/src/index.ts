@@ -1,6 +1,6 @@
 import { ZodObject, input, output, ZodDefault, ZodSchema } from 'zod';
 import type { TypedSchema, TypedSchemaError } from 'vee-validate';
-import { isIndex, Optional } from '../../shared';
+import { isIndex, Optional, merge } from '../../shared';
 
 /**
  * Transforms a Zod object schema to Yup's schema
@@ -34,10 +34,7 @@ export function toTypedSchema<TSchema extends ZodSchema, TInput = Optional<input
         // Zod does not support "casting" or not validating a value, so next best thing is getting the defaults and merging them with the provided values.
         const defaults = getDefaults(zodSchema);
 
-        return {
-          ...defaults,
-          ...values,
-        };
+        return merge(defaults, values);
       }
     },
   };
