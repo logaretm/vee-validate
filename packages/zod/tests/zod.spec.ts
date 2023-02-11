@@ -132,7 +132,7 @@ test('uses zod for form values transformations and parsing', async () => {
   );
 });
 
-test('uses zod default values', async () => {
+test('uses zod default values for submission', async () => {
   const submitSpy = jest.fn();
 
   mountWithHoc({
@@ -164,5 +164,40 @@ test('uses zod default values', async () => {
       age: 11,
     }),
     expect.anything()
+  );
+});
+
+test('uses zod default values for initial values', async () => {
+  const initialSpy = jest.fn();
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema(
+        zod.object({
+          name: zod.string().default('test'),
+          age: zod.number().default(11),
+        })
+      );
+
+      const { values } = useForm({
+        validationSchema: schema,
+      });
+
+      // submit now
+      initialSpy(values);
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(initialSpy).toHaveBeenCalledTimes(1);
+  await expect(initialSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      age: 11,
+      name: 'test',
+    })
   );
 });

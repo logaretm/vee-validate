@@ -27,6 +27,13 @@ export function toTypedSchema<TSchema extends ZodSchema, TInput = Optional<input
         errors,
       };
     },
+    parse(values) {
+      try {
+        return zodSchema.parse(values);
+      } catch {
+        return values;
+      }
+    },
   };
 
   return schema;
