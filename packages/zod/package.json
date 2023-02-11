@@ -28,7 +28,7 @@
     "dist/*.d.ts"
   ],
   "dependencies": {
-    "vee-validate": "4.7.3",
+    "vee-validate": "*",
     "zod": "^3.20.2"
   }
 }

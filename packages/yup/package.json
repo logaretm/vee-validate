@@ -28,7 +28,7 @@
     "dist/*.d.ts"
   ],
   "dependencies": {
-    "vee-validate": "4.7.3",
+    "vee-validate": "*",
     "yup": "^0.32.9"
   }
 }
