@@ -267,9 +267,14 @@ export async function validateTypedSchema<TValues, TOutput = TValues>(
   const errors: Partial<Record<keyof TValues, string>> = {};
   for (const error of validationResult.errors) {
     const messages = error.errors;
-    results[error.path as keyof TValues] = { valid: !messages.length, errors: messages };
+    // Fixes issue with path mapping with Yup 1.0 including quotes around array indices
+    const path = (error.path || '').replace(/\["(\d+)"\]/g, (_, m) => {
+      return `[${m}]`;
+    });
+
+    results[path as keyof TValues] = { valid: !messages.length, errors: messages };
     if (messages.length) {
-      errors[error.path as keyof TValues] = messages[0];
+      errors[path as keyof TValues] = messages[0];
     }
   }
 

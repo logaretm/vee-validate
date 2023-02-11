@@ -63,7 +63,7 @@
     "tslint-config-standard": "^9.0.0",
     "typescript": "4.6.4",
     "vue": "^3.2.33",
-    "yup": "^0.32.9"
+    "yup": "^1.0.0"
   },
   "peerDependencies": {
     "vue": "^3.0.0"
