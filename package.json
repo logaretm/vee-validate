@@ -24,7 +24,6 @@
   "devDependencies": {
     "@commitlint/cli": "^14.1.0",
     "@commitlint/config-conventional": "^14.1.0",
-    "@lerna-lite/cli": "^1.6.0",
     "@rollup/plugin-replace": "^3.0.0",
     "@types/jest": "^27.5.1",
     "@typescript-eslint/eslint-plugin": "^5.23.0",
@@ -47,6 +46,7 @@
     "husky": "^7.0.0",
     "jest": "^27.0.6",
     "klona": "^2.0.4",
+    "lerna": "^6.4.1",
     "lint-staged": "^12.4.1",
     "prettier": "^2.6.2",
     "prettier-plugin-astro": "^0.5.0",

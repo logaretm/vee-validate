@@ -21,6 +21,9 @@ jobs:
       - node/install-packages:
           pkg-manager: yarn
       - run:
+          name: Bootstrap
+          command: yarn lerna bootstrap
+      - run:
           name: Build
           command: yarn build
       - run:
