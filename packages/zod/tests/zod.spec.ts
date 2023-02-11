@@ -175,6 +175,11 @@ test('uses zod default values for initial values', async () => {
         zod.object({
           name: zod.string().default('test'),
           age: zod.number().default(11),
+          unknownKey: zod.string(),
+          object: zod.object({
+            nestedKey: zod.string(),
+            nestedDefault: zod.string().default('nested'),
+          }),
         })
       );
 
@@ -198,6 +203,9 @@ test('uses zod default values for initial values', async () => {
     expect.objectContaining({
       age: 11,
       name: 'test',
+      object: {
+        nestedDefault: 'nested',
+      },
     })
   );
 });

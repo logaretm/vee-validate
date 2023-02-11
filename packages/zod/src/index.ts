@@ -1,4 +1,4 @@
-import type { input, output, ZodSchema } from 'zod';
+import { ZodObject, input, output, ZodDefault, ZodSchema } from 'zod';
 import type { TypedSchema, TypedSchemaError } from 'vee-validate';
 import { isIndex, Optional } from '../../shared';
 
@@ -31,7 +31,13 @@ export function toTypedSchema<TSchema extends ZodSchema, TInput = Optional<input
       try {
         return zodSchema.parse(values);
       } catch {
-        return values;
+        // Zod does not support "casting" or not validating a value, so next best thing is getting the defaults and merging them with the provided values.
+        const defaults = getDefaults(zodSchema);
+
+        return {
+          ...defaults,
+          ...values,
+        };
       }
     },
   };
@@ -54,4 +60,26 @@ function joinPath(path: (string | number)[]): string {
   }
 
   return fullPath;
+}
+
+// Zod does not support extracting default values so the next best thing is manually extracting them.
+// https://github.com/colinhacks/zod/issues/1944#issuecomment-1406566175
+function getDefaults<Schema extends ZodSchema>(schema: Schema): any {
+  if (!(schema instanceof ZodObject)) {
+    return;
+  }
+
+  return Object.fromEntries(
+    Object.entries(schema.shape).map(([key, value]) => {
+      if (value instanceof ZodDefault) {
+        return [key, value._def.defaultValue()];
+      }
+
+      if (value instanceof ZodObject) {
+        return [key, getDefaults(value)];
+      }
+
+      return [key, undefined];
+    })
+  );
 }

@@ -174,6 +174,11 @@ test('uses yup default values for initial values', async () => {
         yup.object({
           name: yup.string().required().default('test'),
           age: yup.number().default(11),
+          unknownKey: yup.string(),
+          object: yup.object({
+            nestedKey: yup.string(),
+            nestedDefault: yup.string().default('nested'),
+          }),
         })
       );
 
@@ -197,6 +202,9 @@ test('uses yup default values for initial values', async () => {
     expect.objectContaining({
       age: 11,
       name: 'test',
+      object: {
+        nestedDefault: 'nested',
+      },
     })
   );
 });
