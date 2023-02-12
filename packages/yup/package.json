@@ -29,6 +29,7 @@
   ],
   "dependencies": {
     "vee-validate": "*",
-    "yup": "^0.32.9"
+    "yup": "^1.0.0",
+    "type-fest": "^3.5.7"
   }
 }

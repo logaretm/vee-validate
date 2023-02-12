@@ -1,7 +1,8 @@
-import { InferType, TypeOf, BaseSchema, ValidationError } from 'yup';
+import { InferType, Schema, ValidationError } from 'yup';
 import { TypedSchema } from 'vee-validate';
+import { PartialDeep } from 'type-fest';
 
-export function toTypedSchema<TSchema extends BaseSchema, TInput = TypeOf<TSchema>, TOutput = InferType<TSchema>>(
+export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchema>, TInput = PartialDeep<TOutput>>(
   yupSchema: TSchema
 ): TypedSchema<TInput, TOutput> {
   const schema: TypedSchema = {

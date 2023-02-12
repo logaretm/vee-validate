@@ -1,13 +1,16 @@
 import { ZodObject, input, output, ZodDefault, ZodSchema } from 'zod';
+import { PartialDeep } from 'type-fest';
 import type { TypedSchema, TypedSchemaError } from 'vee-validate';
-import { isIndex, Optional, merge } from '../../shared';
+import { isIndex, merge } from '../../shared';
 
 /**
  * Transforms a Zod object schema to Yup's schema
  */
-export function toTypedSchema<TSchema extends ZodSchema, TInput = Optional<input<TSchema>>, TOutput = output<TSchema>>(
-  zodSchema: TSchema
-): TypedSchema<TInput, TOutput> {
+export function toTypedSchema<
+  TSchema extends ZodSchema,
+  TOutput = output<TSchema>,
+  TInput = PartialDeep<input<TSchema>>
+>(zodSchema: TSchema): TypedSchema<TInput, TOutput> {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
     async validate(value) {

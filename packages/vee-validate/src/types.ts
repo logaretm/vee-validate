@@ -19,7 +19,10 @@ export interface TypedSchema<TInput = any, TOutput = TInput> {
   parse?(values: Partial<TInput>): TInput;
 }
 
-export type YupSchema<TValue = any> = { validate(value: TValue, options: Record<string, any>): Promise<TValue> };
+export type YupSchema<TValue = any> = {
+  __isYupSchema__: boolean;
+  validate(value: TValue, options: Record<string, any>): Promise<TValue>;
+};
 
 export type Locator = { __locatorRef: string } & ((values: GenericFormValues) => unknown);
 

@@ -63,7 +63,7 @@ export interface FormOptions<TValues extends GenericFormValues, TOutput extends 
   validationSchema?: MaybeRef<
     | Record<keyof TValues, GenericValidateFunction | string | GenericFormValues>
     | TypedSchema<TValues, TOutput>
-    | YupSchema
+    | YupSchema<TValues>
     | undefined
   >;
   initialValues?: MaybeRef<TValues>;
