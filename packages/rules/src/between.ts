@@ -4,13 +4,6 @@ import { isEmpty } from './utils';
 type BetweenParams = [string | number, string | number] | { min: number | string; max: number | string };
 
 function getParams(params: BetweenParams) {
-  if (!params) {
-    return {
-      min: 0,
-      max: 0,
-    };
-  }
-
   if (Array.isArray(params)) {
     return { min: params[0], max: params[1] };
   }
