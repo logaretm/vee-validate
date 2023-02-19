@@ -25,7 +25,7 @@ const betweenValidator: SimpleValidationRuleFunction<unknown, BetweenParams> = (
 
   const { min, max } = getParams(params);
   if (Array.isArray(value)) {
-    return value.every(val => !!betweenValidator(val, { min, max }));
+    return value.every(val => betweenValidator(val, { min, max }));
   }
 
   const valueAsNumber = Number(value);
