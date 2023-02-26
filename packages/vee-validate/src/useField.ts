@@ -389,7 +389,7 @@ function _useField<TValue = unknown>(
  * Normalizes partial field options to include the full options
  */
 function normalizeOptions<TValue>(name: string, opts: Partial<FieldOptions<TValue>> | undefined): FieldOptions<TValue> {
-  const defaults = (): Partial<FieldOptions> => ({
+  const defaults = (): Partial<FieldOptions<TValue>> => ({
     initialValue: undefined,
     validateOnMount: false,
     bails: true,
@@ -401,8 +401,14 @@ function normalizeOptions<TValue>(name: string, opts: Partial<FieldOptions<TValu
     controlled: true,
   });
 
+  const isVModelSynced = opts?.syncVModel ?? true;
+  const initialValue =
+    isVModelSynced && !('initialValue' in (opts || {}))
+      ? getCurrentModelValue(getCurrentInstance(), opts?.modelPropName || 'modelValue')
+      : opts?.initialValue;
+
   if (!opts) {
-    return defaults() as FieldOptions<TValue>;
+    return { ...defaults(), initialValue } as FieldOptions<TValue>;
   }
 
   // TODO: Deprecate this in next major release
@@ -412,6 +418,7 @@ function normalizeOptions<TValue>(name: string, opts: Partial<FieldOptions<TValu
   return {
     ...defaults(),
     ...(opts || {}),
+    initialValue,
     controlled: controlled ?? true,
     checkedValue,
   } as FieldOptions<TValue>;
@@ -534,6 +541,10 @@ function useVModel<TValue = unknown>({ prop, value, handleChange }: ModelOpts<TV
   );
 }
 
-function getCurrentModelValue<TValue = unknown>(vm: ComponentInternalInstance, propName: string) {
+function getCurrentModelValue<TValue = unknown>(vm: ComponentInternalInstance | null, propName: string) {
+  if (!vm) {
+    return undefined;
+  }
+
   return vm.props[propName] as TValue;
 }

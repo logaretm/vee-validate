@@ -605,6 +605,46 @@ describe('useField()', () => {
     expect(input?.value).toBe('321');
   });
 
+  test('uses initial model value when sync v-model is set', async () => {
+    const model = ref('test');
+    const InputComponent = defineComponent({
+      props: {
+        modelValue: String,
+      },
+      setup() {
+        const { value, errorMessage } = useField('field');
+
+        return {
+          value,
+          errorMessage,
+        };
+      },
+      template: `
+        <input v-model="value" />
+      `,
+    });
+
+    mountWithHoc({
+      components: {
+        InputComponent,
+      },
+      setup() {
+        return {
+          model,
+        };
+      },
+      template: `
+      <InputComponent v-model="model" />
+    `,
+    });
+
+    const input = document.querySelector('input');
+
+    await flushPromises();
+    expect(model.value).toBe('test');
+    expect(input?.value).toBe('test');
+  });
+
   test('can disable model events', async () => {
     const model = ref('');
     const InputComponent = defineComponent({
