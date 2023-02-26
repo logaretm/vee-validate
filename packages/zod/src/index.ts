@@ -83,3 +83,8 @@ function getDefaults<Schema extends ZodSchema>(schema: Schema): any {
     })
   );
 }
+
+const toFieldValidator = toTypedSchema;
+const toFormValidator = toTypedSchema;
+
+export { toFieldValidator, toFormValidator };
