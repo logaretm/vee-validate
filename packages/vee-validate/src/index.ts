@@ -1,4 +1,4 @@
-export { validate } from './validate';
+export { validate, validateObjectSchema as validateObject } from './validate';
 export { defineRule } from './defineRule';
 export { configure } from './config';
 export { Field } from './Field';
@@ -26,6 +26,9 @@ export {
   InvalidSubmissionHandler,
   GenericValidateFunction,
   ValidationOptions,
+  TypedSchema,
+  TypedSchemaError,
+  RawFormSchema,
 } from './types';
 export { useResetForm } from './useResetForm';
 export { useIsFieldDirty } from './useIsFieldDirty';

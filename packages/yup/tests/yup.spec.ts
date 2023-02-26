@@ -1,7 +1,7 @@
 import { useField, useForm } from '@/vee-validate';
-import { toTypedSchema } from '@/zod';
+import { toTypedSchema } from '@/yup';
 import { mountWithHoc, flushPromises, setValue } from 'vee-validate/tests/helpers';
-import * as zod from 'zod';
+import * as yup from 'yup';
 
 const REQUIRED_MSG = 'field is required';
 const MIN_MSG = 'field is too short';
@@ -10,7 +10,7 @@ const EMAIL_MSG = 'field must be a valid email';
 test('validates typed field with yup', async () => {
   const wrapper = mountWithHoc({
     setup() {
-      const rules = toTypedSchema(zod.string().min(1, REQUIRED_MSG).min(8, MIN_MSG));
+      const rules = toTypedSchema(yup.string().required(REQUIRED_MSG).min(8, MIN_MSG));
       const { value, errorMessage } = useField('test', rules);
 
       return {
@@ -44,9 +44,9 @@ test('validates typed schema form with yup', async () => {
   const wrapper = mountWithHoc({
     setup() {
       const schema = toTypedSchema(
-        zod.object({
-          email: zod.string().email(EMAIL_MSG).min(1, REQUIRED_MSG),
-          password: zod.string().min(8, MIN_MSG),
+        yup.object({
+          email: yup.string().email(EMAIL_MSG).required(),
+          password: yup.string().min(8, MIN_MSG),
         })
       );
 
@@ -65,13 +65,13 @@ test('validates typed schema form with yup', async () => {
       };
     },
     template: `
-    <div>
-      <input id="email" name="email" v-model="email" />
-      <span id="emailErr">{{ errors.email }}</span>
+      <div>
+        <input id="email" name="email" v-model="email" />
+        <span id="emailErr">{{ errors.email }}</span>
 
-      <input id="password" name="password" type="password" v-model="password" />
-      <span id="passwordErr">{{ errors.password }}</span>
-    </div>
+        <input id="password" name="password" type="password" v-model="password" />
+        <span id="passwordErr">{{ errors.password }}</span>
+      </div>
     `,
   });
 
@@ -97,19 +97,19 @@ test('validates typed schema form with yup', async () => {
   expect(passwordError.textContent).toBe('');
 });
 
-test('uses zod for form values transformations and parsing', async () => {
+test('uses yup for form values transformations and parsing', async () => {
   const submitSpy = jest.fn();
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(
-        zod.object({
-          age: zod.preprocess(arg => Number(arg), zod.number()),
+        yup.object({
+          age: yup.number().transform(val => Number(val)),
         })
       );
 
       const { handleSubmit } = useForm({
         validationSchema: schema,
-        initialValues: { age: '11' },
+        initialValues: { age: '11' as any },
       });
 
       // submit now
@@ -132,14 +132,13 @@ test('uses zod for form values transformations and parsing', async () => {
   );
 });
 
-test('uses zod default values for submission', async () => {
+test('uses yup default values for submitted values', async () => {
   const submitSpy = jest.fn();
-
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(
-        zod.object({
-          age: zod.number().default(11),
+        yup.object({
+          age: yup.number().default(11),
         })
       );
 
@@ -167,18 +166,18 @@ test('uses zod default values for submission', async () => {
   );
 });
 
-test('uses zod default values for initial values', async () => {
+test('uses yup default values for initial values', async () => {
   const initialSpy = jest.fn();
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(
-        zod.object({
-          name: zod.string().default('test'),
-          age: zod.number().default(11),
-          unknownKey: zod.string(),
-          object: zod.object({
-            nestedKey: zod.string(),
-            nestedDefault: zod.string().default('nested'),
+        yup.object({
+          name: yup.string().required().default('test'),
+          age: yup.number().default(11),
+          unknownKey: yup.string(),
+          object: yup.object({
+            nestedKey: yup.string(),
+            nestedDefault: yup.string().default('nested'),
           }),
         })
       );

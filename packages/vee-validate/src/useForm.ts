@@ -35,6 +35,9 @@ import {
   InvalidSubmissionHandler,
   MapValues,
   FieldState,
+  GenericFormValues,
+  TypedSchema,
+  YupSchema,
 } from './types';
 import {
   getFromPath,
@@ -48,15 +51,20 @@ import {
   isEmptyContainer,
   withLatest,
   isEqual,
+  isTypedSchema,
 } from './utils';
 import { FormContextKey } from './symbols';
-import { validateYupSchema, validateObjectSchema } from './validate';
+import { validateTypedSchema, validateObjectSchema } from './validate';
 import { refreshInspector, registerFormWithDevTools } from './devtools';
 import { _useFieldValue } from './useFieldState';
+import { isCallable } from '../../shared';
 
-export interface FormOptions<TValues extends Record<string, any>> {
+export interface FormOptions<TValues extends GenericFormValues, TOutput extends TValues = TValues> {
   validationSchema?: MaybeRef<
-    Record<keyof TValues, GenericValidateFunction | string | Record<string, any>> | any | undefined
+    | Record<keyof TValues, GenericValidateFunction | string | GenericFormValues>
+    | TypedSchema<TValues, TOutput>
+    | YupSchema<TValues>
+    | undefined
   >;
   initialValues?: MaybeRef<TValues>;
   initialErrors?: Record<keyof TValues, string | undefined>;
@@ -67,9 +75,20 @@ export interface FormOptions<TValues extends Record<string, any>> {
 
 let FORM_COUNTER = 0;
 
-export function useForm<TValues extends Record<string, any> = Record<string, any>>(
+function resolveInitialValues<TValues extends GenericFormValues = GenericFormValues>(
   opts?: FormOptions<TValues>
-): FormContext<TValues> {
+): TValues {
+  const providedValues = unref(opts?.initialValues) || {};
+  if (opts?.validationSchema && isTypedSchema(opts.validationSchema) && isCallable(opts.validationSchema.parse)) {
+    return deepCopy(opts.validationSchema.parse(providedValues));
+  }
+
+  return deepCopy(providedValues) as TValues;
+}
+
+export function useForm<TValues extends GenericFormValues = GenericFormValues, TOutput extends TValues = TValues>(
+  opts?: FormOptions<TValues, TOutput>
+): FormContext<TValues, TOutput> {
   const formId = FORM_COUNTER++;
 
   const controlledModelPaths: Set<string> = new Set();
@@ -91,7 +110,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   const fieldArrays: PrivateFieldArrayContext[] = [];
 
   // a private ref for all form values
-  const formValues = reactive(deepCopy(unref(opts?.initialValues) || {})) as TValues;
+  const formValues = reactive(resolveInitialValues(opts));
 
   // the source of errors for the form fields
   const { errorBag, setErrorBag, setFieldErrorBag } = useErrorBag(opts?.initialErrors);
@@ -153,7 +172,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   const { initialValues, originalInitialValues, setInitialValues } = useFormInitialValues<TValues>(
     fieldsByPath,
     formValues,
-    opts?.initialValues
+    opts
   );
 
   // form meta aggregations
@@ -235,7 +254,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
 
   function makeSubmissionFactory(onlyControlled: boolean) {
     return function submitHandlerFactory<TReturn = unknown>(
-      fn?: SubmissionHandler<TValues, TReturn>,
+      fn?: SubmissionHandler<TValues, TOutput, TReturn>,
       onValidationError?: InvalidSubmissionHandler<TValues>
     ) {
       return function submissionHandler(e: unknown) {
@@ -257,11 +276,16 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
         submitCount.value++;
         return validate()
           .then(result => {
-            const values = deepCopy(formValues);
+            const values = deepCopy(formValues) as TOutput;
 
             if (result.valid && typeof fn === 'function') {
-              const controlled = deepCopy(controlledValues.value);
-              return fn(onlyControlled ? controlled : values, {
+              const controlled = deepCopy(controlledValues.value) as TOutput;
+              let submittedValues = onlyControlled ? controlled : values;
+              if (result.values) {
+                submittedValues = result.values;
+              }
+
+              return fn(submittedValues, {
                 evt: e as Event,
                 controlledValues: controlled,
                 setErrors,
@@ -305,7 +329,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
   const handleSubmit: typeof handleSubmitImpl & { withControlled: typeof handleSubmitImpl } = handleSubmitImpl as any;
   handleSubmit.withControlled = makeSubmissionFactory(true);
 
-  const formCtx: PrivateFormContext<TValues> = {
+  const formCtx: PrivateFormContext<TValues, TOutput> = {
     formId,
     fieldsByPath,
     values: formValues,
@@ -667,7 +691,7 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     });
   }
 
-  async function validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>> {
+  async function validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues, TOutput>> {
     const mode = opts?.mode || 'force';
     if (mode === 'force') {
       mutateAllFields(f => (f.meta.validated = true));
@@ -749,15 +773,15 @@ export function useForm<TValues extends Record<string, any> = Record<string, any
     setInPath(initialValues.value, path, deepCopy(value));
   }
 
-  async function _validateSchema(): Promise<FormValidationResult<TValues>> {
+  async function _validateSchema(): Promise<FormValidationResult<TValues, TOutput>> {
     const schemaValue = unref(schema);
     if (!schemaValue) {
       return { valid: true, results: {}, errors: {} };
     }
 
     const formResult = isYupValidator(schemaValue)
-      ? await validateYupSchema(schemaValue, formValues)
-      : await validateObjectSchema(schemaValue as RawFormSchema<TValues>, formValues, {
+      ? await validateTypedSchema<TValues, TOutput>(schemaValue, formValues)
+      : await validateObjectSchema<TValues, TOutput>(schemaValue as RawFormSchema<TValues>, formValues, {
           names: fieldNames.value,
           bailsMap: fieldBailsMap.value,
         });
@@ -878,19 +902,21 @@ function useFormMeta<TValues extends Record<string, unknown>>(
 /**
  * Manages the initial values prop
  */
-function useFormInitialValues<TValues extends Record<string, any>>(
+function useFormInitialValues<TValues extends GenericFormValues>(
   fields: Ref<FieldPathLookup<TValues>>,
   formValues: TValues,
-  providedValues?: MaybeRef<TValues>
+  opts?: FormOptions<TValues>
 ) {
+  const values = resolveInitialValues(opts);
+  const providedValues = opts?.initialValues;
   // these are the mutable initial values as the fields are mounted/unmounted
-  const initialValues = ref<TValues>(deepCopy(unref(providedValues) as TValues) || ({} as TValues));
+  const initialValues = ref<TValues>(values);
   // these are the original initial value as provided by the user initially, they don't keep track of conditional fields
   // this is important because some conditional fields will overwrite the initial values for other fields who had the same name
   // like array fields, any push/insert operation will overwrite the initial values because they "create new fields"
   // so these are the values that the reset function should use
-  // these only change when the user explicitly chanegs the initial values or when the user resets them with new values.
-  const originalInitialValues = ref<TValues>(deepCopy(unref(providedValues) as TValues) || ({} as TValues));
+  // these only change when the user explicitly changes the initial values or when the user resets them with new values.
+  const originalInitialValues = ref<TValues>(deepCopy(values));
 
   function setInitialValues(values: Partial<TValues>, updateFields = false) {
     initialValues.value = deepCopy(values);
@@ -935,7 +961,7 @@ function useFormInitialValues<TValues extends Record<string, any>>(
   };
 }
 
-function useErrorBag<TValues extends Record<string, any>>(initialErrors?: FormErrors<TValues>) {
+function useErrorBag<TValues extends GenericFormValues>(initialErrors?: FormErrors<TValues>) {
   const errorBag: Ref<FormErrorBag<TValues>> = ref({});
 
   function normalizeErrorItem(message: string | string[]) {

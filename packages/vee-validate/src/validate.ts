@@ -1,13 +1,13 @@
 import { resolveRule } from './defineRule';
-import { isLocator, normalizeRules, isYupValidator, keysOf, getFromPath } from './utils';
+import { isLocator, normalizeRules, keysOf, getFromPath, isTypedSchema, isYupValidator } from './utils';
 import { getConfig } from './config';
 import {
   ValidationResult,
   GenericValidateFunction,
-  YupValidator,
+  TypedSchema,
   FormValidationResult,
   RawFormSchema,
-  YupValidationError,
+  YupSchema,
 } from './types';
 import { isCallable, FieldValidationMetaInfo } from '../../shared';
 
@@ -20,7 +20,7 @@ interface FieldValidationContext<TValue = unknown> {
   rules:
     | GenericValidateFunction<TValue>
     | GenericValidateFunction<TValue>[]
-    | YupValidator<TValue>
+    | TypedSchema<TValue>
     | string
     | Record<string, unknown>;
   bails: boolean;
@@ -44,7 +44,7 @@ export async function validate<TValue = unknown>(
     | Record<string, unknown | unknown[]>
     | GenericValidateFunction<TValue>
     | GenericValidateFunction<TValue>[]
-    | YupValidator,
+    | TypedSchema<TValue>,
   options: ValidationOptions = {}
 ): Promise<ValidationResult> {
   const shouldBail = options?.bails;
@@ -69,8 +69,8 @@ export async function validate<TValue = unknown>(
  * Starts the validation process.
  */
 async function _validate<TValue = unknown>(field: FieldValidationContext<TValue>, value: TValue) {
-  if (isYupValidator(field.rules)) {
-    return validateFieldWithYup(value, field.rules, { bails: field.bails });
+  if (isTypedSchema(field.rules) || isYupValidator(field.rules)) {
+    return validateFieldWithTypedSchema(value, field.rules);
   }
 
   // if a generic function or chain of generic functions
@@ -140,32 +140,48 @@ async function _validate<TValue = unknown>(field: FieldValidationContext<TValue>
   };
 }
 
-interface YupValidationOptions {
-  bails: boolean;
+function yupToTypedSchema(yupSchema: YupSchema): TypedSchema {
+  const schema: TypedSchema = {
+    __type: 'VVTypedSchema',
+    async validate(values: any) {
+      try {
+        const output = await yupSchema.validate(values, { abortEarly: false });
+
+        return {
+          output,
+          errors: [],
+        };
+      } catch (err: any) {
+        // Yup errors have a name prop one them.
+        // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
+        if (err.name !== 'ValidationError') {
+          throw err;
+        }
+
+        return { errors: err.inner || [] };
+      }
+    },
+  };
+
+  return schema;
 }
 
 /**
  * Handles yup validation
  */
-async function validateFieldWithYup(value: unknown, validator: YupValidator, opts: Partial<YupValidationOptions>) {
-  const errors = await validator
-    .validate(value, {
-      abortEarly: opts.bails ?? true,
-    })
-    .then(() => [])
-    .catch((err: YupValidationError) => {
-      // Yup errors have a name prop one them.
-      // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
-      if (err.name === 'ValidationError') {
-        return err.errors;
-      }
+async function validateFieldWithTypedSchema(value: unknown, schema: TypedSchema | YupSchema) {
+  const typedSchema = isTypedSchema(schema) ? schema : yupToTypedSchema(schema);
+  const result = await typedSchema.validate(value);
 
-      // re-throw the error so we don't hide it
-      throw err;
-    });
+  const messages: string[] = [];
+  for (const error of result.errors) {
+    if (error.errors.length) {
+      messages.push(...error.errors);
+    }
+  }
 
   return {
-    errors,
+    errors: messages,
   };
 }
 
@@ -240,46 +256,41 @@ function fillTargetValues(params: unknown[] | Record<string, unknown>, crossTabl
   }, {} as Record<string, unknown>);
 }
 
-export async function validateYupSchema<TValues>(
-  schema: YupValidator<TValues>,
+export async function validateTypedSchema<TValues, TOutput = TValues>(
+  schema: TypedSchema<TValues> | YupSchema<TValues>,
   values: TValues
-): Promise<FormValidationResult<TValues>> {
-  const errorObjects: YupValidationError[] = await (schema as YupValidator)
-    .validate(values, { abortEarly: false })
-    .then(() => [])
-    .catch((err: YupValidationError) => {
-      // Yup errors have a name prop one them.
-      // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
-      if (err.name !== 'ValidationError') {
-        throw err;
-      }
-
-      // list of aggregated errors
-      return err.inner || [];
-    });
+): Promise<FormValidationResult<TValues, TOutput>> {
+  const typedSchema = isTypedSchema(schema) ? schema : yupToTypedSchema(schema);
+  const validationResult = await typedSchema.validate(values);
 
   const results: Partial<Record<keyof TValues, ValidationResult>> = {};
   const errors: Partial<Record<keyof TValues, string>> = {};
-  for (const error of errorObjects) {
+  for (const error of validationResult.errors) {
     const messages = error.errors;
-    results[error.path as keyof TValues] = { valid: !messages.length, errors: messages };
+    // Fixes issue with path mapping with Yup 1.0 including quotes around array indices
+    const path = (error.path || '').replace(/\["(\d+)"\]/g, (_, m) => {
+      return `[${m}]`;
+    });
+
+    results[path as keyof TValues] = { valid: !messages.length, errors: messages };
     if (messages.length) {
-      errors[error.path as keyof TValues] = messages[0];
+      errors[path as keyof TValues] = messages[0];
     }
   }
 
   return {
-    valid: !errorObjects.length,
+    valid: !validationResult.errors.length,
     results,
     errors,
+    values: validationResult.value,
   };
 }
 
-export async function validateObjectSchema<TValues>(
+export async function validateObjectSchema<TValues, TOutput>(
   schema: RawFormSchema<TValues>,
   values: TValues,
   opts?: Partial<{ names: Record<string, { name: string; label: string }>; bailsMap: Record<string, boolean> }>
-): Promise<FormValidationResult<TValues>> {
+): Promise<FormValidationResult<TValues, TOutput>> {
   const paths = keysOf(schema) as string[];
   const validations = paths.map(async path => {
     const strings = opts?.names?.[path];

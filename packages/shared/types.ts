@@ -22,3 +22,5 @@ export type SimpleValidationRuleFunction<TValue = unknown, TParams = unknown[] |
 ) => boolean | string | Promise<boolean | string>;
 
 export type ValidationMessageGenerator = (ctx: FieldValidationMetaInfo) => string;
+
+export type Optional<T> = T extends Record<string, any> ? Partial<T> : T | undefined;

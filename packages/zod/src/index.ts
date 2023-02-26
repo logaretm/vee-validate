@@ -1,62 +1,48 @@
-import type { ZodObject, ZodType, ZodTypeDef, TypeOf as ZodTypeOf, ZodRawShape, ZodEffects } from 'zod';
-import { isIndex } from '../../shared';
-
-/**
- * Transforms a Zod's base type schema to yup's base type schema
- */
-export function toFieldValidator<TValue = unknown, TDef extends ZodTypeDef = ZodTypeDef, TInput = TValue>(
-  zodSchema: ZodType<TValue, TDef, TInput> | ZodEffects<ZodType<TValue, TDef, TInput>>
-): any {
-  return {
-    async validate(value: TValue) {
-      const result = await zodSchema.safeParseAsync(value);
-      if (result.success) {
-        return true;
-      }
-
-      const error: Error & { errors?: string[] } = new Error(result.error.message);
-      error.name = 'ValidationError';
-      error.errors = result.error.formErrors.formErrors;
-
-      throw error;
-    },
-  } as any;
-}
-
-interface AggregatedZodError {
-  path: string;
-  errors: string[];
-}
-
-type ToBaseTypes<TShape extends ZodRawShape> = {
-  [P in keyof TShape]: ZodTypeOf<TShape[P]>;
-};
+import { ZodObject, input, output, ZodDefault, ZodSchema } from 'zod';
+import { PartialDeep } from 'type-fest';
+import type { TypedSchema, TypedSchemaError } from 'vee-validate';
+import { isIndex, merge } from '../../shared';
 
 /**
  * Transforms a Zod object schema to Yup's schema
  */
-export function toFormValidator<
-  TShape extends ZodRawShape,
-  TValues extends Record<string, unknown> = ToBaseTypes<TShape>
->(zodSchema: ZodObject<TShape> | ZodEffects<ZodObject<TShape>>) {
-  return {
-    async validate(value: TValues) {
+export function toTypedSchema<
+  TSchema extends ZodSchema,
+  TOutput = output<TSchema>,
+  TInput = PartialDeep<input<TSchema>>
+>(zodSchema: TSchema): TypedSchema<TInput, TOutput> {
+  const schema: TypedSchema = {
+    __type: 'VVTypedSchema',
+    async validate(value) {
       const result = await zodSchema.safeParseAsync(value);
       if (result.success) {
-        return true;
+        return {
+          value: result.data,
+          errors: [],
+        };
       }
 
-      const errors = result.error.issues.map(issue => {
+      const errors: TypedSchemaError[] = result.error.issues.map<TypedSchemaError>(issue => {
         return { path: joinPath(issue.path), errors: [issue.message] };
       });
 
-      const error: Error & { inner?: AggregatedZodError[] } = new Error(result.error.message);
-      error.name = 'ValidationError';
-      error.inner = errors;
-
-      throw error;
+      return {
+        errors,
+      };
     },
-  } as any;
+    parse(values) {
+      try {
+        return zodSchema.parse(values);
+      } catch {
+        // Zod does not support "casting" or not validating a value, so next best thing is getting the defaults and merging them with the provided values.
+        const defaults = getDefaults(zodSchema);
+
+        return merge(defaults, values);
+      }
+    },
+  };
+
+  return schema;
 }
 
 /**
@@ -74,4 +60,26 @@ function joinPath(path: (string | number)[]): string {
   }
 
   return fullPath;
+}
+
+// Zod does not support extracting default values so the next best thing is manually extracting them.
+// https://github.com/colinhacks/zod/issues/1944#issuecomment-1406566175
+function getDefaults<Schema extends ZodSchema>(schema: Schema): any {
+  if (!(schema instanceof ZodObject)) {
+    return;
+  }
+
+  return Object.fromEntries(
+    Object.entries(schema.shape).map(([key, value]) => {
+      if (value instanceof ZodDefault) {
+        return [key, value._def.defaultValue()];
+      }
+
+      if (value instanceof ZodObject) {
+        return [key, getDefaults(value)];
+      }
+
+      return [key, undefined];
+    })
+  );
 }

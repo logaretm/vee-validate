@@ -22,3 +22,20 @@ export function toNumber(value: string): number | string {
 
   return isNaN(n) ? value : n;
 }
+
+export function merge(target: any, source: any) {
+  Object.keys(source).forEach(key => {
+    if (isObject(source[key])) {
+      if (!target[key]) {
+        target[key] = {};
+      }
+
+      merge(target[key], source[key]);
+      return;
+    }
+
+    target[key] = source[key];
+  });
+
+  return target;
+}

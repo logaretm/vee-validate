@@ -78,6 +78,10 @@ async function build(pkg) {
     await build('zod');
   }
 
+  if (arg === 'yup' || !arg) {
+    await build('yup');
+  }
+
   if (arg === 'i18n' || !arg) {
     await build('i18n');
     await buildLocales();

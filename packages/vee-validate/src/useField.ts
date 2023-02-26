@@ -17,7 +17,7 @@ import { validate as validateValue } from './validate';
 import {
   MaybeRef,
   GenericValidateFunction,
-  YupValidator,
+  TypedSchema,
   FieldContext,
   FieldState,
   PrivateFieldContext,
@@ -25,6 +25,7 @@ import {
   ValidationOptions,
   FormContext,
   PrivateFormContext,
+  YupSchema,
 } from './types';
 import {
   normalizeRules,
@@ -38,6 +39,7 @@ import {
   applyModelModifiers,
   withLatest,
   isEqual,
+  isTypedSchema,
 } from './utils';
 import { isCallable } from '../../shared';
 import { FieldContextKey, FormContextKey, IS_ABSENT } from './symbols';
@@ -67,7 +69,8 @@ export type RuleExpression<TValue> =
   | Record<string, unknown>
   | GenericValidateFunction<TValue>
   | GenericValidateFunction<TValue>[]
-  | YupValidator<TValue>
+  | TypedSchema<TValue>
+  | YupSchema<TValue>
   | undefined;
 
 /**
@@ -130,11 +133,16 @@ function _useField<TValue = unknown>(
   const normalizedRules = computed(() => {
     let rulesValue = unref(rules);
     const schema = unref(form?.schema);
-    if (schema && !isYupValidator(schema)) {
+    if (schema && !isYupValidator(schema) && !isTypedSchema(schema)) {
       rulesValue = extractRuleFromSchema<TValue>(schema, unref(name)) || rulesValue;
     }
 
-    if (isYupValidator(rulesValue) || isCallable(rulesValue) || Array.isArray(rulesValue)) {
+    if (
+      isYupValidator(rulesValue) ||
+      isTypedSchema(rulesValue) ||
+      isCallable(rulesValue) ||
+      Array.isArray(rulesValue)
+    ) {
       return rulesValue;
     }
 
@@ -346,7 +354,13 @@ function _useField<TValue = unknown>(
   const dependencies = computed(() => {
     const rulesVal = normalizedRules.value;
     // is falsy, a function schema or a yup schema
-    if (!rulesVal || isCallable(rulesVal) || isYupValidator(rulesVal) || Array.isArray(rulesVal)) {
+    if (
+      !rulesVal ||
+      isCallable(rulesVal) ||
+      isYupValidator(rulesVal) ||
+      isTypedSchema(rulesVal) ||
+      Array.isArray(rulesVal)
+    ) {
       return {};
     }
 

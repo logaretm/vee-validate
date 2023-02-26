@@ -1,21 +1,28 @@
 import { ComputedRef, Ref } from 'vue';
 import { FieldValidationMetaInfo } from '../../shared';
 
-export type GenericFormValues = Record<string, unknown>;
+export type GenericFormValues = Record<string, any>;
 
 export interface ValidationResult {
   errors: string[];
   valid: boolean;
 }
 
-export type YupValidator<TValue = any> = { validate(value: TValue, options: Record<string, any>): Promise<TValue> };
-
-export interface YupValidationError extends Error {
-  value: any;
+export interface TypedSchemaError {
   path?: string;
   errors: string[];
-  inner: YupValidationError[];
 }
+
+export interface TypedSchema<TInput = any, TOutput = TInput> {
+  __type: 'VVTypedSchema';
+  validate(values: TInput): Promise<{ value?: TOutput; errors: TypedSchemaError[] }>;
+  parse?(values: Partial<TInput>): TInput;
+}
+
+export type YupSchema<TValue = any> = {
+  __isYupSchema__: boolean;
+  validate(value: TValue, options: Record<string, any>): Promise<TValue>;
+};
 
 export type Locator = { __locatorRef: string } & ((values: GenericFormValues) => unknown);
 
@@ -127,7 +134,7 @@ export type FormErrorBag<TValues extends GenericFormValues> = Partial<Record<key
 export interface SetFieldValueOptions {
   force: boolean;
 }
-export interface FormActions<TValues extends GenericFormValues> {
+export interface FormActions<TValues extends GenericFormValues, TOutput extends TValues = TValues> {
   setFieldValue<T extends keyof TValues>(field: T, value: TValues[T], opts?: Partial<SetFieldValueOptions>): void;
   setFieldError(field: keyof TValues, message: string | string[] | undefined): void;
   setErrors(fields: FormErrors<TValues>): void;
@@ -138,10 +145,11 @@ export interface FormActions<TValues extends GenericFormValues> {
   resetField(field: keyof TValues, state?: Partial<FieldState>): void;
 }
 
-export interface FormValidationResult<TValues> {
+export interface FormValidationResult<TValues, TOutput = TValues> {
   valid: boolean;
   results: Partial<Record<keyof TValues, ValidationResult>>;
   errors: Partial<Record<keyof TValues, string>>;
+  values?: TOutput;
 }
 
 export interface SubmissionContext<TValues extends GenericFormValues = GenericFormValues> extends FormActions<TValues> {
@@ -149,10 +157,11 @@ export interface SubmissionContext<TValues extends GenericFormValues = GenericFo
   controlledValues: Partial<TValues>;
 }
 
-export type SubmissionHandler<TValues extends GenericFormValues = GenericFormValues, TReturn = unknown> = (
-  values: TValues,
-  ctx: SubmissionContext<TValues>
-) => TReturn;
+export type SubmissionHandler<
+  TValues extends GenericFormValues = GenericFormValues,
+  TOutput extends TValues = TValues,
+  TReturn = unknown
+> = (values: TOutput, ctx: SubmissionContext<TValues>) => TReturn;
 
 export interface InvalidSubmissionContext<TValues extends GenericFormValues = GenericFormValues> {
   values: TValues;
@@ -179,26 +188,28 @@ export type MapValues<T, TValues extends Record<string, any>> = {
     : Ref<unknown>;
 };
 
-type HandleSubmitFactory<TValues extends GenericFormValues> = <TReturn = unknown>(
-  cb: SubmissionHandler<TValues, TReturn>,
+type HandleSubmitFactory<TValues extends GenericFormValues, TOutput extends TValues = TValues> = <TReturn = unknown>(
+  cb: SubmissionHandler<TValues, TOutput, TReturn>,
   onSubmitValidationErrorCb?: InvalidSubmissionHandler<TValues>
 ) => (e?: Event) => Promise<TReturn | undefined>;
 
-export interface PrivateFormContext<TValues extends Record<string, any> = Record<string, any>>
-  extends FormActions<TValues> {
+export interface PrivateFormContext<
+  TValues extends GenericFormValues = GenericFormValues,
+  TOutput extends TValues = TValues
+> extends FormActions<TValues> {
   formId: number;
   values: TValues;
   controlledValues: Ref<TValues>;
   fieldsByPath: Ref<FieldPathLookup>;
   fieldArrays: PrivateFieldArrayContext[];
   submitCount: Ref<number>;
-  schema?: MaybeRef<RawFormSchema<TValues> | YupValidator<TValues> | undefined>;
+  schema?: MaybeRef<RawFormSchema<TValues> | TypedSchema<TValues, TOutput> | YupSchema<TValues> | undefined>;
   errorBag: Ref<FormErrorBag<TValues>>;
   errors: ComputedRef<FormErrors<TValues>>;
   meta: ComputedRef<FormMeta<TValues>>;
   isSubmitting: Ref<boolean>;
   keepValuesOnUnmount: MaybeRef<boolean>;
-  validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues>>;
+  validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues, TOutput>>;
   validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>>;
   validateField(field: keyof TValues): Promise<ValidationResult>;
   setFieldErrorBag(field: string, messages: string | string[]): void;
@@ -206,15 +217,17 @@ export interface PrivateFormContext<TValues extends Record<string, any> = Record
   unsetInitialValue(path: string): void;
   register(field: PrivateFieldContext): void;
   unregister(field: PrivateFieldContext): void;
-  handleSubmit: HandleSubmitFactory<TValues> & { withControlled: HandleSubmitFactory<TValues> };
+  handleSubmit: HandleSubmitFactory<TValues, TOutput> & { withControlled: HandleSubmitFactory<TValues, TOutput> };
   setFieldInitialValue(path: string, value: unknown): void;
   useFieldModel<TPath extends keyof TValues>(path: MaybeRef<TPath>): Ref<TValues[TPath]>;
   useFieldModel<TPath extends keyof TValues>(paths: [...MaybeRef<TPath>[]]): MapValues<typeof paths, TValues>;
 }
 
-export interface FormContext<TValues extends Record<string, any> = Record<string, any>>
-  extends Omit<
-    PrivateFormContext<TValues>,
+export interface FormContext<
+  TValues extends Record<string, any> = Record<string, any>,
+  TOutput extends TValues = TValues
+> extends Omit<
+    PrivateFormContext<TValues, TOutput>,
     | 'formId'
     | 'register'
     | 'unregister'

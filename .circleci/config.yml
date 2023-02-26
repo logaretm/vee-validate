@@ -21,8 +21,14 @@ jobs:
       - node/install-packages:
           pkg-manager: yarn
       - run:
+          name: Bootstrap
+          command: yarn lerna bootstrap
+      - run:
+          name: Build
+          command: yarn build
+      - run:
           name: Generate Coverage
-          command: npm run cover:ci
+          command: yarn cover:ci
       - run:
           name: Upload Coverage
           command: bash <(curl -s https://codecov.io/bash)
