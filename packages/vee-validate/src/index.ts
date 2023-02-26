@@ -14,6 +14,7 @@ export {
   FormState,
   FormValidationResult,
   FormContext,
+  FieldState,
   FieldContext,
   FieldEntry,
   FieldArrayContext,
