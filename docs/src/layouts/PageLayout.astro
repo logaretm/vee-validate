@@ -94,9 +94,23 @@ const menu = [
       </aside>
 
       <aside class="rside hidden xl:block">
-        <DocToc headings={headings} class="sticky top-24" />
+        <div class="sticky top-24 flex flex-col">
+          <div class="relative flex-auto">
+            <div
+              class="bg-gradient-to-b from-white dark:from-dark to-transparent h-4 absolute -top-px lg:top-0 inset-x-0"
+            >
+            </div>
 
-        <Ad client:idle />
+            <DocToc headings={headings} />
+
+            <div
+              class="bg-gradient-to-b from-transparent to-white dark:to-dark h-4 absolute -bottom-px lg:bottom-0 inset-x-0"
+            >
+            </div>
+          </div>
+
+          <Ad client:idle />
+        </div>
       </aside>
     </div>
     <script src="@/ga.ts"></script>

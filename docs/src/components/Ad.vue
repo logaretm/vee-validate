@@ -23,7 +23,7 @@ onMounted(loadScript);
 
 <style lang="postcss">
 #ad {
-  @apply static text-gray-400 mb-8;
+  @apply static text-gray-400 mt-4;
   z-index: 1;
 
   #carbonads {
@@ -75,11 +75,11 @@ onMounted(loadScript);
 
 @screen lg {
   #ad {
-    @apply fixed rounded-md ml-0;
+    @apply rounded-md ml-0;
+    left: unset;
+    float: unset;
     width: 160px;
     z-index: 19;
-    bottom: 0;
-    left: calc((100% - 45rem - 100px) / 2 - 140px);
     background-color: #fff;
     font-size: 13px;
     #carbonads {
@@ -113,17 +113,7 @@ onMounted(loadScript);
 
     &.placement-home {
       left: unset;
-      right: 4rem;
     }
-  }
-}
-
-@screen xl {
-  #ad {
-    margin-left: 0;
-    left: unset;
-    float: unset;
-    right: calc((100% - 45rem) / 2 - 230px);
   }
 }
 
