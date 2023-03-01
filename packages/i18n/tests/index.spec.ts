@@ -155,6 +155,40 @@ test('can define specific messages for specific fields with labels and form sche
   expect(errors[1].textContent).toContain('The name is required');
 });
 
+test('can define labels or names for fields', async () => {
+  configure({
+    generateMessage: localize('en', {
+      names: {
+        first: 'First test',
+        second: 'Second test',
+      },
+    }),
+  });
+
+  const wrapper = mountWithHoc({
+    template: `
+        <div>
+          <Field name="first" :validateOnMount="true" rules="required" v-slot="{ field, errors }">
+            <input v-bind="field" type="text">
+            <span class="error">{{ errors[0] }}</span>
+          </Field>
+
+          <Field name="second" :validateOnMount="true" rules="required" v-slot="{ field, errors }">
+            <input v-bind="field" type="text">
+            <span class="error">{{ errors[0] }}</span>
+          </Field>
+        </div>
+      `,
+  });
+
+  await flushPromises();
+  const errors = wrapper.$el.querySelectorAll('.error');
+  expect(errors).toHaveLength(2);
+
+  expect(errors[0].textContent).toContain('The First test is required');
+  expect(errors[1].textContent).toContain('The Second test is required');
+});
+
 test('can merge locales without setting the current one', async () => {
   configure({
     generateMessage: localize({
