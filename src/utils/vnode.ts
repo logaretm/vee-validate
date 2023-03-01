@@ -182,7 +182,7 @@ export function getInputEventName(vnode: VNode, model?: VNodeDirective): string 
   if (vnode.componentOptions) {
     const { event } = findModelConfig(vnode) || { event: 'input' };
 
-    return event;
+    return event || 'input';
   }
 
   // Lazy Models typically use change event

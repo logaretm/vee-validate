@@ -453,6 +453,47 @@ test('validates components on configured model event', async () => {
   expect(error.text()).toBe('');
 });
 
+// #4160
+test('validates components on configured model prop', async () => {
+  const wrapper = mount(
+    {
+      data: () => ({
+        value: ''
+      }),
+      components: {
+        TextInput: {
+          model: {
+            prop: 'test'
+          },
+          props: ['test'],
+          template: `<input :value="test" @change="$emit('input', $event.target.value)">`
+        }
+      },
+      template: `
+        <div>
+          <ValidationProvider rules="required" v-slot="{ errors }">
+            <TextInput v-model="value" ref="input"></TextInput>
+            <span ref="error">{{ errors[0] }}</span>
+          </ValidationProvider>
+        </div>
+      `
+    },
+    { localVue: Vue, sync: false }
+  );
+
+  const error = wrapper.findComponent({ ref: 'error' });
+  const input = wrapper.findComponent({ ref: 'input' });
+
+  expect(error.text()).toBe('');
+  input.vm.$emit('input', '');
+  await flushPromises();
+  expect(error.text()).toBe(DEFAULT_REQUIRED_MESSAGE);
+
+  input.vm.$emit('input', 'txt');
+  await flushPromises();
+  expect(error.text()).toBe('');
+});
+
 test('validates target dependant fields using targeted params', async () => {
   const wrapper = mount(
     {
