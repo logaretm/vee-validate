@@ -1,8 +1,8 @@
-import { Ref, unref, ref, onBeforeUnmount } from 'vue';
+import { Ref, unref, ref, onBeforeUnmount, watch } from 'vue';
 import { isNullOrUndefined } from '../../shared';
 import { FormContextKey } from './symbols';
 import { FieldArrayContext, FieldEntry, MaybeRef, PrivateFieldArrayContext } from './types';
-import { computedDeep, getFromPath, injectWithSelf, warn } from './utils';
+import { computedDeep, getFromPath, injectWithSelf, warn, isEqual } from './utils';
 
 export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): FieldArrayContext<TValue> {
   const form = injectWithSelf(FormContextKey, undefined);
@@ -42,8 +42,13 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
   }
 
   let entryCounter = 0;
+
+  function getCurrentValues() {
+    return getFromPath<TValue[]>(form?.values, unref(arrayPath), []) || [];
+  }
+
   function initFields() {
-    const currentValues = getFromPath<TValue[]>(form?.values, unref(arrayPath), []) || [];
+    const currentValues = getCurrentValues();
     fields.value = currentValues.map(createEntry);
     updateEntryFlags();
   }
@@ -238,6 +243,16 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     const idx = form.fieldArrays.findIndex(i => unref(i.path) === unref(arrayPath));
     if (idx >= 0) {
       form.fieldArrays.splice(idx, 1);
+    }
+  });
+
+  // Makes sure to sync the form values with the array value if they go out of sync
+  // #4153
+  watch(getCurrentValues, formValues => {
+    const fieldsValues = fields.value.map(f => f.value);
+    // If form values are not the same as the current values then something overrode them.
+    if (!isEqual(formValues, fieldsValues)) {
+      initFields();
     }
   });
 
