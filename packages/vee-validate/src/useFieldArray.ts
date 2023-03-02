@@ -93,6 +93,12 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     return entry;
   }
 
+  function afterMutation() {
+    updateEntryFlags();
+    // Should trigger a silent validation since a field may not do that #4096
+    form?.validate({ mode: 'silent' });
+  }
+
   function remove(idx: number) {
     const pathName = unref(arrayPath);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
@@ -105,7 +111,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     form?.unsetInitialValue(pathName + `[${idx}]`);
     form?.setFieldValue(pathName, newValue);
     fields.value.splice(idx, 1);
-    updateEntryFlags();
+    afterMutation();
   }
 
   function push(value: TValue) {
@@ -121,7 +127,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     form?.stageInitialValue(pathName + `[${newValue.length - 1}]`, value);
     form?.setFieldValue(pathName, newValue);
     fields.value.push(createEntry(value));
-    updateEntryFlags();
+    afterMutation();
   }
 
   function swap(indexA: number, indexB: number) {
@@ -162,13 +168,14 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     newFields.splice(idx, 0, createEntry(value));
     form?.setFieldValue(pathName, newValue);
     fields.value = newFields;
-    updateEntryFlags();
+    afterMutation();
   }
 
   function replace(arr: TValue[]) {
     const pathName = unref(arrayPath);
     form?.setFieldValue(pathName, arr);
     initFields();
+    afterMutation();
   }
 
   function update(idx: number, value: TValue) {
@@ -194,7 +201,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     form?.stageInitialValue(pathName + `[${newValue.length - 1}]`, value);
     form?.setFieldValue(pathName, newValue);
     fields.value.unshift(createEntry(value));
-    updateEntryFlags();
+    afterMutation();
   }
 
   function move(oldIdx: number, newIdx: number) {
@@ -218,7 +225,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
 
     form?.setFieldValue(pathName, newValue);
     fields.value = newFields;
-    updateEntryFlags();
+    afterMutation();
   }
 
   const fieldArrayCtx: FieldArrayContext<TValue> = {

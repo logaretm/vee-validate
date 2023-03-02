@@ -1,5 +1,5 @@
-import { useForm, useFieldArray, FieldEntry } from '@/vee-validate';
-import { onMounted, Ref } from 'vue';
+import { useForm, useFieldArray, FieldEntry, FormContext, FieldArrayContext } from '@/vee-validate';
+import { nextTick, onMounted, Ref } from 'vue';
 import * as yup from 'yup';
 import { mountWithHoc, flushPromises } from './helpers';
 
@@ -139,4 +139,91 @@ test('duplicate calls yields the same instance', async () => {
   await flushPromises();
   expect(document.querySelector('#arr1')?.innerHTML).toBe('two');
   expect(document.querySelector('#arr2')?.innerHTML).toBe('two');
+});
+
+// #4096
+test('array push should trigger a silent validation', async () => {
+  let form!: FormContext;
+  let arr!: FieldArrayContext;
+  mountWithHoc({
+    setup() {
+      form = useForm<any>({
+        initialValues: {
+          users: ['one'],
+        },
+        validationSchema: yup.object({
+          users: yup.array().of(yup.string().required().min(1)),
+        }),
+      });
+
+      arr = useFieldArray('users');
+    },
+    template: `
+      <div></div>
+    `,
+  });
+
+  await flushPromises();
+  expect(form.meta.value.valid).toBe(true);
+  arr.push('');
+  await flushPromises();
+  expect(form.meta.value.valid).toBe(false);
+});
+
+// #4096
+test('array prepend should trigger a silent validation', async () => {
+  let form!: FormContext;
+  let arr!: FieldArrayContext;
+  mountWithHoc({
+    setup() {
+      form = useForm<any>({
+        initialValues: {
+          users: ['one'],
+        },
+        validationSchema: yup.object({
+          users: yup.array().of(yup.string().required().min(1)),
+        }),
+      });
+
+      arr = useFieldArray('users');
+    },
+    template: `
+      <div></div>
+    `,
+  });
+
+  await flushPromises();
+  expect(form.meta.value.valid).toBe(true);
+  arr.prepend('');
+  await flushPromises();
+  expect(form.meta.value.valid).toBe(false);
+});
+
+// #4096
+test('array insert should trigger a silent validation', async () => {
+  let form!: FormContext;
+  let arr!: FieldArrayContext;
+  mountWithHoc({
+    setup() {
+      form = useForm<any>({
+        initialValues: {
+          users: ['one', 'two'],
+        },
+        validationSchema: yup.object({
+          users: yup.array().of(yup.string().required().min(1)),
+        }),
+      });
+
+      arr = useFieldArray('users');
+    },
+    template: `
+      <div></div>
+    `,
+  });
+
+  await flushPromises();
+  expect(form.meta.value.valid).toBe(true);
+  arr.insert(1, '');
+  await flushPromises();
+  expect(form.meta.value.valid).toBe(false);
 });
