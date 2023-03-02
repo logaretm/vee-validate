@@ -72,7 +72,7 @@ Note that `slim` will take effect only when you have **one child element** in th
 
 ## Methods
 
-Those are the only methods meant for public usage, other methods that may exist on the ValidationObserver are strictly internal.
+These are the only methods meant for public usage, other methods that may exist on the ValidationObserver but they are strictly internal.
 
 | Method    |                Args                 |    Return Value    | Description                                                                                             |
 | --------- | :---------------------------------: | :----------------: | ------------------------------------------------------------------------------------------------------- |
