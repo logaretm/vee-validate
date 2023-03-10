@@ -1,3 +1,4 @@
+import { Ref } from 'vue';
 import { useField, useForm } from '@/vee-validate';
 import { toTypedSchema } from '@/yup';
 import { mountWithHoc, flushPromises, setValue } from 'vee-validate/tests/helpers';
@@ -38,6 +39,60 @@ test('validates typed field with yup', async () => {
   setValue(input, '12345678');
   await flushPromises();
   expect(error.textContent).toBe('');
+});
+
+test('generates multiple errors when configured to not abort early', async () => {
+  let errors!: Ref<string[]>;
+  const wrapper = mountWithHoc({
+    setup() {
+      const rules = toTypedSchema(yup.string().required(REQUIRED_MSG).min(8, MIN_MSG), { abortEarly: false });
+      const { value, errors: fieldErrors } = useField('test', rules);
+
+      errors = fieldErrors;
+      return {
+        value,
+      };
+    },
+    template: `
+      <div>
+          <input v-model="value" type="text">
+      </div>
+    `,
+  });
+
+  const input = wrapper.$el.querySelector('input');
+
+  setValue(input, '');
+  await flushPromises();
+  expect(errors.value).toHaveLength(2);
+  expect(errors.value).toEqual([REQUIRED_MSG, MIN_MSG]);
+});
+
+test('generates a single error when configured to abort early', async () => {
+  let errors!: Ref<string[]>;
+  const wrapper = mountWithHoc({
+    setup() {
+      const rules = toTypedSchema(yup.string().required(REQUIRED_MSG).min(8, MIN_MSG), { abortEarly: true });
+      const { value, errors: fieldErrors } = useField('test', rules);
+
+      errors = fieldErrors;
+      return {
+        value,
+      };
+    },
+    template: `
+      <div>
+          <input v-model="value" type="text">
+      </div>
+    `,
+  });
+
+  const input = wrapper.$el.querySelector('input');
+
+  setValue(input, '');
+  await flushPromises();
+  expect(errors.value).toHaveLength(1);
+  expect(errors.value).toEqual([REQUIRED_MSG]);
 });
 
 test('validates typed schema form with yup', async () => {
