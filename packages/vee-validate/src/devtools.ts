@@ -222,7 +222,7 @@ function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorN
       return {
         id: `${path.join('.')}`,
         label: key || '',
-        children: Object.keys(tree).map(key => buildFormTree(tree[key], [...path, key])),
+        children: Object.keys(tree).map(key => buildFormTree(tree[key] as any, [...path, key])),
       };
     }
 

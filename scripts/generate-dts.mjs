@@ -1,13 +1,17 @@
-const ts = require('typescript');
-const chalk = require('chalk');
-const path = require('path');
-const fs = require('fs-extra');
-const { rollup } = require('rollup');
-const { default: dts } = require('rollup-plugin-dts');
-const tsconfig = require('../tsconfig.json');
-const { pkgNameMap } = require('./config');
+import ts from 'typescript';
+import chalk from 'chalk';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs-extra';
+import { rollup } from 'rollup';
+import dts from 'rollup-plugin-dts';
+import tsconfig from '../tsconfig.json' assert { type: 'json' };
+import { pkgNameMap } from './config.mjs';
 
-exports.generateDts = async function generateDts(pkg) {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+export async function generateDts(pkg) {
   console.log(chalk.cyan(`Generating Declaration Files for ${pkg} ...`));
   const declarationDir = `../packages/${pkg}/dist/types`;
 
@@ -33,7 +37,7 @@ exports.generateDts = async function generateDts(pkg) {
   }
 
   await bundleDts(declarationDir, pkg);
-};
+}
 
 async function bundleDts(declarationDir, pkg) {
   let entry = path.join(__dirname, declarationDir, 'index.d.ts');

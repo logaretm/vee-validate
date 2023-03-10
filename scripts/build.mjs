@@ -1,11 +1,15 @@
-const path = require('path');
-const fs = require('fs-extra');
-const { rollup } = require('rollup');
-const chalk = require('chalk');
-const Terser = require('terser');
-const { createConfig } = require('./config');
-const { reportSize } = require('./info');
-const { generateDts } = require('./generate-dts');
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs-extra';
+import { rollup } from 'rollup';
+import chalk from 'chalk';
+import * as Terser from 'terser';
+import { createConfig } from './config.mjs';
+import { reportSize } from './info.mjs';
+import { generateDts } from './generate-dts.mjs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 async function buildLocales() {
   const localesDir = path.join(__dirname, '../packages/i18n/src/locale');
@@ -41,7 +45,7 @@ async function build(pkg) {
   console.log(chalk.magenta(`Generating bundle for ${pkg}`));
   const pkgout = path.join(__dirname, `../packages/${pkg}/dist`);
   for (const format of ['es', 'umd']) {
-    const { input, output, bundleName } = createConfig(pkg, format);
+    const { input, output, bundleName } = await createConfig(pkg, format);
     const bundle = await rollup(input);
     const {
       output: [{ code }],

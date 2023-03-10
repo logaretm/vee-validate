@@ -742,7 +742,7 @@ export function useForm<TValues extends GenericFormValues = GenericFormValues, T
   async function validateField(field: keyof TValues): Promise<ValidationResult> {
     const fieldInstance = fieldsByPath.value[field];
     if (!fieldInstance) {
-      warn(`field with name ${field} was not found`);
+      warn(`field with name ${field as string} was not found`);
 
       return Promise.resolve({ errors: [], valid: true });
     }
