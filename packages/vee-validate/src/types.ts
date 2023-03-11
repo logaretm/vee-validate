@@ -234,7 +234,6 @@ export interface FormContext<
     | 'fieldsByPath'
     | 'schema'
     | 'validateSchema'
-    | 'errorBag'
     | 'setFieldErrorBag'
     | 'stageInitialValue'
     | 'setFieldInitialValue'

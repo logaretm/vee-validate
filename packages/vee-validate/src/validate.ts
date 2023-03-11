@@ -8,6 +8,7 @@ import {
   FormValidationResult,
   RawFormSchema,
   YupSchema,
+  TypedSchemaError,
 } from './types';
 import { isCallable, FieldValidationMetaInfo } from '../../shared';
 
@@ -158,7 +159,21 @@ function yupToTypedSchema(yupSchema: YupSchema): TypedSchema {
           throw err;
         }
 
-        return { errors: err.inner || [] };
+        const errors: Record<string, TypedSchemaError> = err.inner.reduce((acc: any, curr: any) => {
+          if (!curr.path) {
+            return acc;
+          }
+
+          if (!acc[curr.path]) {
+            acc[curr.path] = { errors: [], path: curr.path };
+          }
+
+          acc[curr.path].errors.push(...curr.errors);
+
+          return acc;
+        }, {} as Record<string, TypedSchemaError>);
+
+        return { errors: Object.values(errors) };
       }
     },
   };

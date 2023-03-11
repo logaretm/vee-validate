@@ -152,6 +152,63 @@ test('validates typed schema form with yup', async () => {
   expect(passwordError.textContent).toBe('');
 });
 
+test('shows multiple errors using error bag', async () => {
+  const wrapper = mountWithHoc({
+    setup() {
+      const schema = toTypedSchema(
+        yup.object({
+          email: yup.string().email(EMAIL_MSG).min(7, MIN_MSG),
+          password: yup.string().min(8, MIN_MSG),
+        })
+      );
+
+      const { useFieldModel, errorBag } = useForm({
+        validationSchema: schema,
+        validateOnMount: true,
+      });
+
+      const [email, password] = useFieldModel(['email', 'password']);
+
+      return {
+        schema,
+        email,
+        password,
+        errorBag,
+      };
+    },
+    template: `
+      <div>
+        <input id="email" name="email" v-model="email" />
+        <span id="emailErr">{{ errorBag.email?.join(',') }}</span>
+
+        <input id="password" name="password" type="password" v-model="password" />
+        <span id="passwordErr">{{ errorBag.password?.join(',') }}</span>
+      </div>
+    `,
+  });
+
+  const email = wrapper.$el.querySelector('#email');
+  const password = wrapper.$el.querySelector('#password');
+  const emailError = wrapper.$el.querySelector('#emailErr');
+  const passwordError = wrapper.$el.querySelector('#passwordErr');
+
+  await flushPromises();
+
+  setValue(email, 'hello@');
+  setValue(password, '1234');
+  await flushPromises();
+
+  expect(emailError.textContent).toBe([EMAIL_MSG, MIN_MSG].join(','));
+  expect(passwordError.textContent).toBe([MIN_MSG].join(','));
+
+  setValue(email, 'hello@email.com');
+  setValue(password, '12346789');
+  await flushPromises();
+
+  expect(emailError.textContent).toBe('');
+  expect(passwordError.textContent).toBe('');
+});
+
 test('uses yup for form values transformations and parsing', async () => {
   const submitSpy = jest.fn();
   mountWithHoc({

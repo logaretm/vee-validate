@@ -1,5 +1,5 @@
 import { InferType, Schema, ValidateOptions, ValidationError } from 'yup';
-import { TypedSchema } from 'vee-validate';
+import { TypedSchema, TypedSchemaError } from 'vee-validate';
 import { PartialDeep } from 'type-fest';
 
 export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchema>, TInput = PartialDeep<TOutput>>(
@@ -10,7 +10,8 @@ export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchem
     __type: 'VVTypedSchema',
     async validate(values) {
       try {
-        const output = await yupSchema.validate(values, opts);
+        // we spread the options because yup mutates the opts object passed
+        const output = await yupSchema.validate(values, { ...opts });
 
         return {
           value: output,
@@ -28,8 +29,22 @@ export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchem
           return { errors: [{ path: error.path, errors: error.errors }] };
         }
 
+        const errors: Record<string, TypedSchemaError> = error.inner.reduce((acc, curr) => {
+          if (!curr.path) {
+            return acc;
+          }
+
+          if (!acc[curr.path]) {
+            acc[curr.path] = { errors: [], path: curr.path };
+          }
+
+          acc[curr.path].errors.push(...curr.errors);
+
+          return acc;
+        }, {} as Record<string, TypedSchemaError>);
+
         // list of aggregated errors
-        return { errors: error.inner || [] };
+        return { errors: Object.values(errors) };
       }
     },
     parse(values) {
