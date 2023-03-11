@@ -155,7 +155,7 @@ function isYupError(err: unknown): err is YupError {
 function yupToTypedSchema(yupSchema: YupSchema): TypedSchema {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
-    async validate(values: any) {
+    async parse(values: any) {
       try {
         const output = await yupSchema.validate(values, { abortEarly: false });
 
@@ -198,7 +198,7 @@ function yupToTypedSchema(yupSchema: YupSchema): TypedSchema {
  */
 async function validateFieldWithTypedSchema(value: unknown, schema: TypedSchema | YupSchema) {
   const typedSchema = isTypedSchema(schema) ? schema : yupToTypedSchema(schema);
-  const result = await typedSchema.validate(value);
+  const result = await typedSchema.parse(value);
 
   const messages: string[] = [];
   for (const error of result.errors) {
@@ -288,7 +288,7 @@ export async function validateTypedSchema<TValues, TOutput = TValues>(
   values: TValues
 ): Promise<FormValidationResult<TValues, TOutput>> {
   const typedSchema = isTypedSchema(schema) ? schema : yupToTypedSchema(schema);
-  const validationResult = await typedSchema.validate(values);
+  const validationResult = await typedSchema.parse(values);
 
   const results: Partial<Record<keyof TValues, ValidationResult>> = {};
   const errors: Partial<Record<keyof TValues, string>> = {};

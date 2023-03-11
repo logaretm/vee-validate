@@ -61,9 +61,9 @@ import { isCallable } from '../../shared';
 
 export interface FormOptions<TValues extends GenericFormValues, TOutput extends TValues = TValues> {
   validationSchema?: MaybeRef<
-    | Record<keyof TValues, GenericValidateFunction | string | GenericFormValues>
-    | TypedSchema<TValues, TOutput>
     | YupSchema<TValues>
+    | TypedSchema<TValues, TOutput>
+    | Record<keyof TValues, GenericValidateFunction | string | GenericFormValues>
     | undefined
   >;
   initialValues?: MaybeRef<TValues>;
@@ -79,8 +79,8 @@ function resolveInitialValues<TValues extends GenericFormValues = GenericFormVal
   opts?: FormOptions<TValues>
 ): TValues {
   const providedValues = unref(opts?.initialValues) || {};
-  if (opts?.validationSchema && isTypedSchema(opts.validationSchema) && isCallable(opts.validationSchema.parse)) {
-    return deepCopy(opts.validationSchema.parse(providedValues));
+  if (opts?.validationSchema && isTypedSchema(opts.validationSchema) && isCallable(opts.validationSchema.cast)) {
+    return deepCopy(opts.validationSchema.cast(providedValues));
   }
 
   return deepCopy(providedValues) as TValues;
@@ -779,12 +779,13 @@ export function useForm<TValues extends GenericFormValues = GenericFormValues, T
       return { valid: true, results: {}, errors: {} };
     }
 
-    const formResult = isYupValidator(schemaValue)
-      ? await validateTypedSchema<TValues, TOutput>(schemaValue, formValues)
-      : await validateObjectSchema<TValues, TOutput>(schemaValue as RawFormSchema<TValues>, formValues, {
-          names: fieldNames.value,
-          bailsMap: fieldBailsMap.value,
-        });
+    const formResult =
+      isYupValidator(schemaValue) || isTypedSchema(schemaValue)
+        ? await validateTypedSchema<TValues, TOutput>(schemaValue, formValues)
+        : await validateObjectSchema<TValues, TOutput>(schemaValue as RawFormSchema<TValues>, formValues, {
+            names: fieldNames.value,
+            bailsMap: fieldBailsMap.value,
+          });
 
     return formResult;
   }

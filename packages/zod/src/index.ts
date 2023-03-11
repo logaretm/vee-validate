@@ -13,7 +13,7 @@ export function toTypedSchema<
 >(zodSchema: TSchema, opts?: Partial<ParseParams>): TypedSchema<TInput, TOutput> {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
-    async validate(value) {
+    async parse(value) {
       const result = await zodSchema.safeParseAsync(value, opts);
       if (result.success) {
         return {
@@ -37,7 +37,7 @@ export function toTypedSchema<
         errors: Object.values(errors),
       };
     },
-    parse(values) {
+    cast(values) {
       try {
         return zodSchema.parse(values);
       } catch {

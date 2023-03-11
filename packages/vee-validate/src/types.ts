@@ -15,13 +15,13 @@ export interface TypedSchemaError {
 
 export interface TypedSchema<TInput = any, TOutput = TInput> {
   __type: 'VVTypedSchema';
-  validate(values: TInput): Promise<{ value?: TOutput; errors: TypedSchemaError[] }>;
-  parse?(values: Partial<TInput>): TInput;
+  parse(values: TInput): Promise<{ value?: TOutput; errors: TypedSchemaError[] }>;
+  cast?(values: Partial<TInput>): TInput;
 }
 
-export type YupSchema<TValue = any> = {
+export type YupSchema<TValues = any> = {
   __isYupSchema__: boolean;
-  validate(value: TValue, options: Record<string, any>): Promise<TValue>;
+  validate(value: any, options: Record<string, any>): Promise<any>;
 };
 
 export type Locator = { __locatorRef: string } & ((values: GenericFormValues) => unknown);

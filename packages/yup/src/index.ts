@@ -8,7 +8,7 @@ export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchem
 ): TypedSchema<TInput, TOutput> {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
-    async validate(values) {
+    async parse(values) {
       try {
         // we spread the options because yup mutates the opts object passed
         const output = await yupSchema.validate(values, { ...opts });
@@ -44,7 +44,7 @@ export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchem
         return { errors: Object.values(errors) };
       }
     },
-    parse(values) {
+    cast(values) {
       try {
         return yupSchema.cast(values);
       } catch {

@@ -7,7 +7,7 @@ export function toTypedSchema<TOutput = any, TInput extends Optional<TOutput> = 
 ): TypedSchema<TInput, TOutput> {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
-    async validate(values: TInput) {
+    async parse(values: TInput) {
       // single field
       if (typeof rawSchema === 'string') {
         const result = await validate(values, rawSchema);
