@@ -1,6 +1,6 @@
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import typescript from 'rollup-plugin-typescript2';
+import typescript from '@rollup/plugin-typescript';
 import replace from '@rollup/plugin-replace';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
@@ -31,12 +31,7 @@ const formatMap = {
 
 async function createConfig(pkg, format) {
   const tsPlugin = typescript({
-    tsconfig: path.resolve(__dirname, '../tsconfig.json'),
-    cacheRoot: path.resolve(__dirname, '../node_modules/.rts2_cache'),
-    useTsconfigDeclarationDir: true,
-    tsconfigOverride: {
-      exclude: ['**/tests'],
-    },
+    declarationDir: path.resolve(__dirname, `../packages/${pkg}/dist`),
   });
 
   // An import assertion in a dynamic import

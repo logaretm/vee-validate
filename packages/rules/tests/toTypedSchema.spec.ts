@@ -1,6 +1,6 @@
 import { defineRule, useField, useForm } from 'vee-validate';
 import { toTypedSchema } from '../src/toTypedSchema';
-import { mountWithHoc, flushPromises, setValue } from 'vee-validate/tests/helpers';
+import { mountWithHoc, flushPromises, setValue } from '../../vee-validate/tests/helpers';
 import required from '../src/required';
 import email from '../src/email';
 import min from '../src/min';

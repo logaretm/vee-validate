@@ -19,16 +19,16 @@ jobs:
       # Next, the node orb's install-packages step will install the dependencies from a package.json.
       # The orb install-packages step will also automatically cache them for faster future runs.
       - node/install-packages:
-          pkg-manager: yarn
+          pkg-manager: pnpm
       - run:
           name: Bootstrap
-          command: yarn lerna bootstrap
+          command: pnpm lerna bootstrap
       - run:
           name: Build
-          command: yarn build
+          command: pnpm build
       - run:
           name: Generate Coverage
-          command: yarn cover:ci
+          command: pnpm cover:ci
       - run:
           name: Upload Coverage
           command: bash <(curl -s https://codecov.io/bash)

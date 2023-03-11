@@ -26,5 +26,8 @@
   "files": [
     "dist/*.js",
     "dist/*.d.ts"
-  ]
+  ],
+  "dependencies": {
+    "vee-validate": "*"
+  }
 }

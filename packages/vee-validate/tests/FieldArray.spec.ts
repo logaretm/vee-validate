@@ -1,6 +1,5 @@
 import { defineRule, useField } from '@/vee-validate';
-import { defineComponent } from '@vue/runtime-core';
-import { toRef, ref } from 'vue';
+import { toRef, ref, defineComponent } from 'vue';
 import * as yup from 'yup';
 import { mountWithHoc, setValue, getValue, dispatchEvent, flushPromises } from './helpers';
 
@@ -59,7 +58,7 @@ test('adds items to the end of the array with push()', async () => {
             <ErrorMessage :name="'users[' + idx + '].name'" />
 
             <button class="remove" type="button" @click="remove(idx)">X</button>
-          </fieldset>  
+          </fieldset>
 
           <button class="add" type="button" @click="push({ name: 'new' })">Add User +</button>
         </FieldArray>
@@ -545,7 +544,7 @@ test('adds items to the start of the array with prepend()', async () => {
             <ErrorMessage :name="'users[' + idx + '].name'" />
 
             <button class="remove" type="button" @click="remove(idx)">X</button>
-          </fieldset>  
+          </fieldset>
 
           <button class="prepend" type="button" @click="prepend({ name: 'new' })">Add User +</button>
         </FieldArray>
@@ -603,7 +602,7 @@ test('clears old errors path when item is removed when no form schema is present
             <ErrorMessage :name="'users[' + idx + '].name'" />
 
             <button class="remove" type="button" @click="remove(idx)">X</button>
-          </fieldset>  
+          </fieldset>
         </FieldArray>
 
 
@@ -692,7 +691,7 @@ test('clears old errors path when last item is removed and value update validati
             <InputField :name="'users[' + idx + ']'" rules="required" />
 
             <button class="remove" type="button" @click="remove(idx)">X</button>
-          </fieldset>  
+          </fieldset>
         </FieldArray>
 
 
@@ -742,7 +741,7 @@ test('moves items around the array with move()', async () => {
             <ErrorMessage :name="'users[' + idx + '].name'" />
 
             <button class="move" type="button" @click="move(idx, 0)">Move</button>
-          </fieldset>  
+          </fieldset>
         </FieldArray>
 
         <button class="submit" type="submit">Submit</button>
@@ -798,7 +797,7 @@ test('removing an item marks the form as dirty', async () => {
             <Field :id="'name_' + idx" :name="'users[' + idx + '].name'" />
 
             <button class="remove" type="button" @click="remove(idx)">X</button>
-          </fieldset>  
+          </fieldset>
         </FieldArray>
 
         <pre>{{ meta.dirty }}</pre>
@@ -838,7 +837,7 @@ test('clean up form registration on unmount', async () => {
             <label :for="'name_' + idx">Name</label>
             <Field :id="'name_' + idx" :name="'users[' + idx + '].name'" />
 
-          </fieldset>  
+          </fieldset>
         </FieldArray>
       </VForm>
     `,
@@ -870,9 +869,9 @@ test('adding or removing fields should update form dirty correctly', async () =>
             <label :for="'name_' + idx">Name</label>
             <Field :id="'name_' + idx" :name="'users[' + idx + ']'" />
 
-            </fieldset>  
-            <button id="push" type="button" @click="push('')"></button> 
-            <button id="remove"  type="button"  @click="remove(1)"></button> 
+            </fieldset>
+            <button id="push" type="button" @click="push('')"></button>
+            <button id="remove"  type="button"  @click="remove(1)"></button>
         </FieldArray>
 
         <pre id="dirty">{{ meta.dirty }}</pre>
