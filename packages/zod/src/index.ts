@@ -1,4 +1,4 @@
-import { ZodObject, input, output, ZodDefault, ZodSchema } from 'zod';
+import { ZodObject, input, output, ZodDefault, ZodSchema, ParseParams } from 'zod';
 import { PartialDeep } from 'type-fest';
 import type { TypedSchema, TypedSchemaError } from 'vee-validate';
 import { isIndex, merge } from '../../shared';
@@ -10,11 +10,11 @@ export function toTypedSchema<
   TSchema extends ZodSchema,
   TOutput = output<TSchema>,
   TInput = PartialDeep<input<TSchema>>
->(zodSchema: TSchema): TypedSchema<TInput, TOutput> {
+>(zodSchema: TSchema, opts?: Partial<ParseParams>): TypedSchema<TInput, TOutput> {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
     async validate(value) {
-      const result = await zodSchema.safeParseAsync(value);
+      const result = await zodSchema.safeParseAsync(value, opts);
       if (result.success) {
         return {
           value: result.data,
@@ -22,12 +22,19 @@ export function toTypedSchema<
         };
       }
 
-      const errors: TypedSchemaError[] = result.error.issues.map<TypedSchemaError>(issue => {
-        return { path: joinPath(issue.path), errors: [issue.message] };
-      });
+      const errors: Record<string, TypedSchemaError> = result.error.issues.reduce((acc, issue) => {
+        const path = joinPath(issue.path);
+        if (!acc[path]) {
+          acc[path] = { errors: [], path };
+        }
+
+        acc[path].errors.push(issue.message);
+
+        return acc;
+      }, {} as Record<string, TypedSchemaError>);
 
       return {
-        errors,
+        errors: Object.values(errors),
       };
     },
     parse(values) {

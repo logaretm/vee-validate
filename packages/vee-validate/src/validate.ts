@@ -81,7 +81,7 @@ async function _validate<TValue = unknown>(field: FieldValidationContext<TValue>
       name: field.name,
       label: field.label,
       form: field.formData,
-      value: value,
+      value,
     };
 
     // Normalize the pipeline
@@ -141,6 +141,17 @@ async function _validate<TValue = unknown>(field: FieldValidationContext<TValue>
   };
 }
 
+interface YupError {
+  name: 'ValidationError';
+  path?: string;
+  errors: string[];
+  inner: { path?: string; errors: string[] }[];
+}
+
+function isYupError(err: unknown): err is YupError {
+  return !!err && (err as any).name === 'ValidationError';
+}
+
 function yupToTypedSchema(yupSchema: YupSchema): TypedSchema {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
@@ -152,23 +163,24 @@ function yupToTypedSchema(yupSchema: YupSchema): TypedSchema {
           output,
           errors: [],
         };
-      } catch (err: any) {
+      } catch (err: unknown) {
         // Yup errors have a name prop one them.
         // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
-        if (err.name !== 'ValidationError') {
+        if (!isYupError(err)) {
           throw err;
         }
 
-        const errors: Record<string, TypedSchemaError> = err.inner.reduce((acc: any, curr: any) => {
-          if (!curr.path) {
-            return acc;
+        if (!err.inner?.length && err.errors.length) {
+          return { errors: [{ path: err.path, errors: err.errors }] };
+        }
+
+        const errors: Record<string, TypedSchemaError> = err.inner.reduce((acc, curr) => {
+          const path = curr.path || '';
+          if (!acc[path]) {
+            acc[path] = { errors: [], path };
           }
 
-          if (!acc[curr.path]) {
-            acc[curr.path] = { errors: [], path: curr.path };
-          }
-
-          acc[curr.path].errors.push(...curr.errors);
+          acc[path].errors.push(...curr.errors);
 
           return acc;
         }, {} as Record<string, TypedSchemaError>);

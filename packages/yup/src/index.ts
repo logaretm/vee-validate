@@ -30,15 +30,12 @@ export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchem
         }
 
         const errors: Record<string, TypedSchemaError> = error.inner.reduce((acc, curr) => {
-          if (!curr.path) {
-            return acc;
+          const path = curr.path || '';
+          if (!acc[path]) {
+            acc[path] = { errors: [], path };
           }
 
-          if (!acc[curr.path]) {
-            acc[curr.path] = { errors: [], path: curr.path };
-          }
-
-          acc[curr.path].errors.push(...curr.errors);
+          acc[path].errors.push(...curr.errors);
 
           return acc;
         }, {} as Record<string, TypedSchemaError>);
