@@ -34,9 +34,6 @@ jobs:
           paths:
             - node_modules
       - run:
-          name: Bootstrap
-          command: pnpm lerna bootstrap
-      - run:
           name: Build
           command: pnpm build
       - run:
