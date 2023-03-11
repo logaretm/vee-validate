@@ -29,8 +29,6 @@ const formatMap = {
   umd: '',
 };
 
-console.log(path.resolve(__dirname, '../tsconfig.json'));
-
 async function createConfig(pkg, format) {
   const tsPlugin = typescript({
     tsconfig: path.resolve(__dirname, '../tsconfig.json'),

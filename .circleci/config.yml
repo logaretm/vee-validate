@@ -12,7 +12,7 @@ jobs:
   # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
   test:
     docker:
-      - image: cimg/node:16.11
+      - image: cimg/node:19.7
     steps:
       # Checkout the code as the first step.
       - checkout
