@@ -37,7 +37,6 @@ import {
   FieldState,
   GenericFormValues,
   TypedSchema,
-  YupSchema,
 } from './types';
 import {
   getFromPath,
@@ -61,10 +60,10 @@ import { isCallable } from '../../shared';
 
 export interface FormOptions<TValues extends GenericFormValues, TOutput extends TValues = TValues> {
   validationSchema?: MaybeRef<
-    | YupSchema<TValues>
     | TypedSchema<TValues, TOutput>
     | Record<keyof TValues, GenericValidateFunction | string | GenericFormValues>
     | undefined
+    | any
   >;
   initialValues?: MaybeRef<TValues>;
   initialErrors?: Record<keyof TValues, string | undefined>;
