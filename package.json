@@ -55,7 +55,6 @@
     "rollup-plugin-dts": "^5.2.0",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-typescript2": "0.34.1",
     "terser": "^5.16.6",
     "ts-jest": "^29.0.5",
     "tslint-config-prettier": "^1.18.0",
