@@ -1,9 +1,6 @@
 {
   "name": "vee-validate-monorepo",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "description": "Form Validation for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
