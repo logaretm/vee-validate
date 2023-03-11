@@ -133,8 +133,7 @@ function setupApiHooks(api: DevtoolsPluginApi<Record<string, any>>) {
             return;
           }
 
-          const result = await SELECTED_NODE.validate();
-          console.log(result);
+          await SELECTED_NODE.validate();
         },
       },
       {
