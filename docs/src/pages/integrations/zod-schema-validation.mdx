@@ -165,29 +165,6 @@ const onSubmit = handleSubmit(values => {
 
 <DocTip title="TypeScript Form Values Inference">
 
-vee-validate will try to do its best to infer the types of the form values if you are using the composition API, vee-validate can infer the types of the form values when you provide either a `yup` or a converted `zod` validation schema.
-
-```ts
-const validationSchema = toFormValidator(
-  zod.object({
-    email: zod.string().nonempty('This is required').email({ message: 'Must be a valid email' }),
-    age: zod.number().min(8, { message: 'Too smol' }),
-  })
-);
-
-const { handleSubmit, errors } = useForm({
-  validationSchema,
-  initialValues: {
-    // You get auto-completion and type check for `email` and `age` properties
-  },
-});
-
-// You will get auto-completion for possible errors for `email` and `age`
-errors.email;
-
-const onSubmit = handleSubmit(values => {
-  // Values will be typed as { email: string; age: number; }
-});
-```
+To infer the form values you need to use the `toTypedSchema` helper, you can find more information [here](/guide/composition-api/typed-schema#zod)
 
 </DocTip>
