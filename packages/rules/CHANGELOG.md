@@ -3,17 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.8.0](https://github.com/logaretm/vee-validate/compare/v4.7.4...v4.8.0) (2023-03-12)
+
+### Bug Fixes
+
+- remove dead code closes [#4145](https://github.com/logaretm/vee-validate/issues/4145) closes [#4143](https://github.com/logaretm/vee-validate/issues/4143) ([04338f5](https://github.com/logaretm/vee-validate/commit/04338f53336ddc053c88b00c1ec6b1fe6935374d))
+- remove extra double negation from between rule closes [#4144](https://github.com/logaretm/vee-validate/issues/4144) ([192d23f](https://github.com/logaretm/vee-validate/commit/192d23fb07de2c2d9872961e6f242e105a6bb8ea))
+
+### Features
+
+- Better Yup and Zod typing with output types and input inference ([#4064](https://github.com/logaretm/vee-validate/issues/4064)) ([3820a5b](https://github.com/logaretm/vee-validate/commit/3820a5b8eb3f8c6cd9239057746ccfb4b2e57e76))
+
 ## [4.7.4](https://github.com/logaretm/vee-validate/compare/v4.7.3...v4.7.4) (2023-02-07)
 
 ### Bug Fixes
 
-* ext rule regex has wildcard when it should be literal period ([#4045](https://github.com/logaretm/vee-validate/issues/4045)) ([5265af5](https://github.com/logaretm/vee-validate/commit/5265af5c75b7809ebd73b22d4c8319a8a146da5a))
+- ext rule regex has wildcard when it should be literal period ([#4045](https://github.com/logaretm/vee-validate/issues/4045)) ([5265af5](https://github.com/logaretm/vee-validate/commit/5265af5c75b7809ebd73b22d4c8319a8a146da5a))
 
 ## [4.7.3](https://github.com/logaretm/vee-validate/compare/v4.7.2...v4.7.3) (2022-11-13)
 
 ### Bug Fixes
 
-* rename old excluded with not_one_of closes [#3993](https://github.com/logaretm/vee-validate/issues/3993) ([7fc5077](https://github.com/logaretm/vee-validate/commit/7fc50773275c9c65cdbb0735d0b14dfe7ffca227))
+- rename old excluded with not_one_of closes [#3993](https://github.com/logaretm/vee-validate/issues/3993) ([7fc5077](https://github.com/logaretm/vee-validate/commit/7fc50773275c9c65cdbb0735d0b14dfe7ffca227))
 
 ## [4.7.2](https://github.com/logaretm/vee-validate/compare/v4.7.1...v4.7.2) (2022-11-02)
 

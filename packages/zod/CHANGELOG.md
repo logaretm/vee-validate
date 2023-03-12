@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.8.0](https://github.com/logaretm/vee-validate/compare/v4.7.4...v4.8.0) (2023-03-12)
+
+### Bug Fixes
+
+- alias toFieldValidator and toFormValidator for backward compat ([a966d29](https://github.com/logaretm/vee-validate/commit/a966d291025d3e8b58cb83e423866930f997de5c))
+- render zod multiple errors in nested objects closes [#4078](https://github.com/logaretm/vee-validate/issues/4078) ([f74fb69](https://github.com/logaretm/vee-validate/commit/f74fb69977d17ef8fab4c22734ffd76ca1c02a48))
+
+### Features
+
+- Better Yup and Zod typing with output types and input inference ([#4064](https://github.com/logaretm/vee-validate/issues/4064)) ([3820a5b](https://github.com/logaretm/vee-validate/commit/3820a5b8eb3f8c6cd9239057746ccfb4b2e57e76))
+
 ## [4.7.4](https://github.com/logaretm/vee-validate/compare/v4.7.3...v4.7.4) (2023-02-07)
 
 **Note:** Version bump only for package @vee-validate/zod
@@ -67,7 +78,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* Remove yup type dependency ([#3704](https://github.com/logaretm/vee-validate/issues/3704)) ([e772f9a](https://github.com/logaretm/vee-validate/commit/e772f9a7b9f0e45680a65dfae249ee2092ca850e))
+- Remove yup type dependency ([#3704](https://github.com/logaretm/vee-validate/issues/3704)) ([e772f9a](https://github.com/logaretm/vee-validate/commit/e772f9a7b9f0e45680a65dfae249ee2092ca850e))
 
 ## [4.5.11](https://github.com/logaretm/vee-validate/compare/v4.5.10...v4.5.11) (2022-04-10)
 

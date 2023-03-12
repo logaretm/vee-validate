@@ -3,22 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.8.0](https://github.com/logaretm/vee-validate/compare/v4.7.4...v4.8.0) (2023-03-12)
+
+### Features
+
+- Better Yup and Zod typing with output types and input inference ([#4064](https://github.com/logaretm/vee-validate/issues/4064)) ([3820a5b](https://github.com/logaretm/vee-validate/commit/3820a5b8eb3f8c6cd9239057746ccfb4b2e57e76))
+
 ## [4.7.4](https://github.com/logaretm/vee-validate/compare/v4.7.3...v4.7.4) (2023-02-07)
 
 ### Bug Fixes
 
-* pass the field label as a seperate value closes [#4097](https://github.com/logaretm/vee-validate/issues/4097) ([89f8689](https://github.com/logaretm/vee-validate/commit/89f8689b673be27f0fc221d6c096efa11dacd3e6))
-* wrong and missing RU translations, incorrect order ([#3987](https://github.com/logaretm/vee-validate/issues/3987)) ([1be36ab](https://github.com/logaretm/vee-validate/commit/1be36aba9add96c199f93f8e74f7c422e7e9ae1f))
+- pass the field label as a seperate value closes [#4097](https://github.com/logaretm/vee-validate/issues/4097) ([89f8689](https://github.com/logaretm/vee-validate/commit/89f8689b673be27f0fc221d6c096efa11dacd3e6))
+- wrong and missing RU translations, incorrect order ([#3987](https://github.com/logaretm/vee-validate/issues/3987)) ([1be36ab](https://github.com/logaretm/vee-validate/commit/1be36aba9add96c199f93f8e74f7c422e7e9ae1f))
 
 ### Features
 
-* export i18n types closes [#4106](https://github.com/logaretm/vee-validate/issues/4106) ([c65ead8](https://github.com/logaretm/vee-validate/commit/c65ead874323a0bd58f96461f1037cb150cbdc7d))
+- export i18n types closes [#4106](https://github.com/logaretm/vee-validate/issues/4106) ([c65ead8](https://github.com/logaretm/vee-validate/commit/c65ead874323a0bd58f96461f1037cb150cbdc7d))
 
 ## [4.7.3](https://github.com/logaretm/vee-validate/compare/v4.7.2...v4.7.3) (2022-11-13)
 
 ### Bug Fixes
 
-* rename old excluded with not_one_of closes [#3993](https://github.com/logaretm/vee-validate/issues/3993) ([7fc5077](https://github.com/logaretm/vee-validate/commit/7fc50773275c9c65cdbb0735d0b14dfe7ffca227))
+- rename old excluded with not_one_of closes [#3993](https://github.com/logaretm/vee-validate/issues/3993) ([7fc5077](https://github.com/logaretm/vee-validate/commit/7fc50773275c9c65cdbb0735d0b14dfe7ffca227))
 
 ## [4.7.2](https://github.com/logaretm/vee-validate/compare/v4.7.1...v4.7.2) (2022-11-02)
 
@@ -28,7 +34,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* wrong placeholder in CS localization ([#3959](https://github.com/logaretm/vee-validate/issues/3959)) ([a4603fa](https://github.com/logaretm/vee-validate/commit/a4603fab9647918b6776072b3450aa6e0378660a))
+- wrong placeholder in CS localization ([#3959](https://github.com/logaretm/vee-validate/issues/3959)) ([a4603fa](https://github.com/logaretm/vee-validate/commit/a4603fab9647918b6776072b3450aa6e0378660a))
 
 # [4.7.0](https://github.com/logaretm/vee-validate/compare/v4.6.10...v4.7.0) (2022-10-09)
 
@@ -78,12 +84,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* added argument order for digits rule in ja.json closes [#3780](https://github.com/logaretm/vee-validate/issues/3780) ([9385457](https://github.com/logaretm/vee-validate/commit/938545765c825eead8182202faebfafdebd400c8))
-* sk interpolation for min and digits rules closes [#3788](https://github.com/logaretm/vee-validate/issues/3788) ([778c52e](https://github.com/logaretm/vee-validate/commit/778c52e90afa7b89c6ede07214264b92dec0112a))
+- added argument order for digits rule in ja.json closes [#3780](https://github.com/logaretm/vee-validate/issues/3780) ([9385457](https://github.com/logaretm/vee-validate/commit/938545765c825eead8182202faebfafdebd400c8))
+- sk interpolation for min and digits rules closes [#3788](https://github.com/logaretm/vee-validate/issues/3788) ([778c52e](https://github.com/logaretm/vee-validate/commit/778c52e90afa7b89c6ede07214264b92dec0112a))
 
 ### Features
 
-* **locale:** add km (khmer) locale ([#3812](https://github.com/logaretm/vee-validate/issues/3812)) ([b1ee664](https://github.com/logaretm/vee-validate/commit/b1ee664a21db211089a96f76966a6db21c9c7920))
+- **locale:** add km (khmer) locale ([#3812](https://github.com/logaretm/vee-validate/issues/3812)) ([b1ee664](https://github.com/logaretm/vee-validate/commit/b1ee664a21db211089a96f76966a6db21c9c7920))
 
 ## [4.5.11](https://github.com/logaretm/vee-validate/compare/v4.5.10...v4.5.11) (2022-04-10)
 
@@ -109,7 +115,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* improved et locale ([#3584](https://github.com/logaretm/vee-validate/issues/3584)) ([60e6f30](https://github.com/logaretm/vee-validate/commit/60e6f307a4039e84721741e31f0148e5b0628696))
+- improved et locale ([#3584](https://github.com/logaretm/vee-validate/issues/3584)) ([60e6f30](https://github.com/logaretm/vee-validate/commit/60e6f307a4039e84721741e31f0148e5b0628696))
 
 ## [4.5.5](https://github.com/logaretm/vee-validate/compare/v4.5.4...v4.5.5) (2021-11-01)
 
@@ -131,13 +137,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* **i18n:** field name in default error message ([#3506](https://github.com/logaretm/vee-validate/issues/3506)) ([f1f5127](https://github.com/logaretm/vee-validate/commit/f1f51279d7cc343e7d3226fda025259e59945cfa))
+- **i18n:** field name in default error message ([#3506](https://github.com/logaretm/vee-validate/issues/3506)) ([f1f5127](https://github.com/logaretm/vee-validate/commit/f1f51279d7cc343e7d3226fda025259e59945cfa))
 
 # [4.5.0](https://github.com/logaretm/vee-validate/compare/v4.4.11...v4.5.0) (2021-09-26)
 
 ### Features
 
-* added language specific default ([#3501](https://github.com/logaretm/vee-validate/issues/3501)) ([debdee0](https://github.com/logaretm/vee-validate/commit/debdee032030a3209af8df34f710361150c924c2))
+- added language specific default ([#3501](https://github.com/logaretm/vee-validate/issues/3501)) ([debdee0](https://github.com/logaretm/vee-validate/commit/debdee032030a3209af8df34f710361150c924c2))
 
 ## [4.4.11](https://github.com/logaretm/vee-validate/compare/v4.4.10...v4.4.11) (2021-09-11)
 
