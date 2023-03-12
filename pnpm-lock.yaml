@@ -140,7 +140,7 @@ importers:
 
   packages/rules:
     specifiers:
-      vee-validate: ^4.8.0
+      vee-validate: ^4.8.1
     dependencies:
       vee-validate: link:../vee-validate
 
@@ -153,7 +153,7 @@ importers:
   packages/yup:
     specifiers:
       type-fest: ^3.6.1
-      vee-validate: ^4.8.0
+      vee-validate: ^4.8.1
       yup: ^1.0.2
     dependencies:
       type-fest: 3.6.1
@@ -163,7 +163,7 @@ importers:
   packages/zod:
     specifiers:
       type-fest: ^3.6.1
-      vee-validate: ^4.8.0
+      vee-validate: ^4.8.1
       zod: ^3.21.4
     dependencies:
       type-fest: 3.6.1

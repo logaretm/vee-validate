@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.8.1](https://github.com/logaretm/vee-validate/compare/v4.8.0...v4.8.1) (2023-03-12)
+
+**Note:** Version bump only for package @vee-validate/zod
+
 # [4.8.0](https://github.com/logaretm/vee-validate/compare/v4.7.4...v4.8.0) (2023-03-12)
 
 ### Bug Fixes

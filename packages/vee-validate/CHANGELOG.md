@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.8.1](https://github.com/logaretm/vee-validate/compare/v4.8.0...v4.8.1) (2023-03-12)
+
+### Bug Fixes
+
+- make sure to have a fallback for undefined casts closes [#4186](https://github.com/logaretm/vee-validate/issues/4186) ([9f1c63b](https://github.com/logaretm/vee-validate/commit/9f1c63b4dbc59f30c17bfe427020586db36cbdec))
+
+### Features
+
+- expose errorBag to <Form /> slot props ([371744e](https://github.com/logaretm/vee-validate/commit/371744eea3d3cb0a244dcd9788f4f3f2a7714132))
+
 # [4.8.0](https://github.com/logaretm/vee-validate/compare/v4.7.4...v4.8.0) (2023-03-12)
 
 ### Bug Fixes
