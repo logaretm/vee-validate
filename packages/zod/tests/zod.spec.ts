@@ -294,3 +294,33 @@ test('uses zod default values for initial values', async () => {
     })
   );
 });
+
+// #4186
+test('default values should not be undefined', async () => {
+  const initialSpy = jest.fn();
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema(
+        zod.object({
+          email: zod.string().min(1),
+        })
+      );
+
+      const { values } = useForm({
+        validationSchema: schema,
+      });
+
+      // submit now
+      initialSpy(values);
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(initialSpy).toHaveBeenCalledTimes(1);
+  await expect(initialSpy).toHaveBeenLastCalledWith(expect.objectContaining({}));
+});
