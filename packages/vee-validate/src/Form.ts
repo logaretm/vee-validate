@@ -16,6 +16,7 @@ type FormSlotProps = UnwrapRef<
     FormContext,
     | 'meta'
     | 'errors'
+    | 'errorBag'
     | 'values'
     | 'isSubmitting'
     | 'submitCount'
@@ -88,6 +89,7 @@ const FormImpl = defineComponent({
 
     const {
       errors,
+      errorBag,
       values,
       meta,
       isSubmitting,
@@ -146,6 +148,7 @@ const FormImpl = defineComponent({
     function getMeta<TValues extends GenericFormValues = GenericFormValues>() {
       return deepCopy(meta.value) as FormMeta<TValues>;
     }
+
     function getErrors<TValues extends GenericFormValues = GenericFormValues>() {
       return deepCopy(errors.value) as FormErrors<TValues>;
     }
@@ -154,7 +157,8 @@ const FormImpl = defineComponent({
       return {
         meta: meta.value,
         errors: errors.value,
-        values: values,
+        errorBag: errorBag.value,
+        values,
         isSubmitting: isSubmitting.value,
         submitCount: submitCount.value,
         controlledValues: controlledValues.value,
