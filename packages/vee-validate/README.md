@@ -75,6 +75,55 @@ The main v4 version supports Vue 3.x only, for previous versions of Vue, check t
 
 vee-validate offers two styles to integrate form validation into your Vue.js apps.
 
+#### Composition API
+
+If you want more fine grained control, you can use `useField` function to compose validation logic into your component:
+
+```vue
+<script setup>
+// MyInputComponent.vue
+import { useField } from 'vee-validate';
+
+const props = defineProps<{
+  name: string;
+}>();
+
+// Validator function
+const isRequired = value => (value ? true : 'This field is required');
+
+const { value, errorMessage } = useField(props.name, isRequired);
+</script>
+
+<template>
+  <input v-model="value" />
+  <span>{{ errorMessage }}</span>
+</template>
+```
+
+Then you can you can use `useForm` to make your form component automatically pick up your input fields declared with `useField` and manage them:
+
+```vue
+<script setup>
+import { useForm } from 'vee-validate';
+import MyInputComponent from '@/components/MyInputComponent.vue';
+
+const { handleSubmit } = useForm();
+
+const onSubmit = handleSubmit(values => {
+  // Submit to API
+  console.log(values); // { email: 'email@gmail.com' }
+});
+</script>
+
+<template>
+  <form @submit="onSubmit">
+    <MyInputComponent name="email" />
+  </form>
+</template>
+```
+
+You can do so much more than this, for more info [check the composition API documentation](https://vee-validate.logaretm.com/v4/guide/composition-api/validation/).
+
 #### Declarative Components
 
 Higher-order components are better suited for most of your cases. Register the `Field` and `Form` components and create a simple `required` validator:
@@ -99,41 +148,13 @@ Then use the `Form` and `Field` components to render your form:
 
 ```vue
 <Form v-slot="{ errors }">
-  <Field name="field" :rules="isRequired" />
+  <Field name="email" :rules="isRequired" />
 
-  <span>{{ errors.field }}</span>
+  <span>{{ errors.email }}</span>
 </Form>
 ```
 
 The `Field` component renders an `input` of type `text` by default but you can [control that](https://vee-validate.logaretm.com/v4/api/field#rendering-fields)
-
-#### Composition API
-
-If you want more fine grained control, you can use `useField` function to compose validation logic into your component:
-
-```js
-import { useField } from 'vee-validate';
-
-export default {
-  setup() {
-    // Validator function
-    const isRequired = value => (value ? true : 'This field is required');
-    const { value, errorMessage } = useField('field', isRequired);
-
-    return {
-      value,
-      errorMessage,
-    };
-  },
-};
-```
-
-Then in your template, use `v-model` to bind the `value` to your input and display the errors using `errorMessage`:
-
-```vue
-<input name="field" v-model="value" />
-<span>{{ errorMessage }}</span>
-```
 
 ## 📚 Documentation
 
