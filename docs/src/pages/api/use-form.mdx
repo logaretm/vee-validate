@@ -184,6 +184,7 @@ type useForm = (opts?: FormOptions) => {
   values: TValues; // current form values
   submitCount: Ref<number>; // the number of submission attempts
   errors: ComputedRef<FormErrors<TValues>>; // first error message for each field
+  errorBag: ComputedRef<Partial<Record<string, string[]>>>; // all error messages for each field
   meta: ComputedRef<FormMeta<TValues>>; // aggregate of the field's meta information
   isSubmitting: Ref<boolean>; // if the form submission function is being run
   setFieldValue<T extends keyof TValues>(field: T, value: TValues[T]): void; // Sets a field value
@@ -290,11 +291,25 @@ const { errors } = useForm();
 errors.value; // access the errors value
 ```
 
+<CodeTitle level="4">
+
+`errorBag: Ref<Record<string, string>>`
+
+</CodeTitle>
+
+An object that maps field names to all of their error messages.
+
+```js
+const { errorBag } = useForm();
+
+errorBag.value.email; // email field errors
+```
+
 Here is an example of its shape:
 
 ```js
 {
-  email: "this field must be a valid email",
+  email: ["this field is required", "this field must be a valid email"],
   password: "too short"
 }
 ```

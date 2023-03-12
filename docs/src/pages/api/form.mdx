@@ -140,6 +140,25 @@ Any fields without error messages will not be included in the object. So you can
 
 <CodeTitle level="4">
 
+`errorBag: Record<string, string>`
+
+</CodeTitle>
+
+An object that maps field names to all of their error messages.
+
+Here is an example of its shape:
+
+```js
+{
+  email: ["this field is required", "this field must be a valid email"],
+  password: "too short"
+}
+```
+
+Any fields without error messages will not be included in the object. So be careful when accessing the errors array for each field
+
+<CodeTitle level="4">
+
 `isSubmitting: boolean`
 
 </CodeTitle>
