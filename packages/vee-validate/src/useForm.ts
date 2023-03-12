@@ -59,13 +59,16 @@ import { refreshInspector, registerFormWithDevTools } from './devtools';
 import { _useFieldValue } from './useFieldState';
 import { isCallable } from '../../shared';
 
-export interface FormOptions<TValues extends GenericFormValues, TOutput extends TValues = TValues> {
-  validationSchema?: MaybeRef<
-    | Record<keyof TValues, GenericValidateFunction | string | GenericFormValues>
+type FormSchema<TValues> = Record<keyof TValues, GenericValidateFunction | string | GenericFormValues> | undefined;
+
+export interface FormOptions<
+  TValues extends GenericFormValues,
+  TOutput extends TValues = TValues,
+  TSchema extends TypedSchema<TValues, TOutput> | FormSchema<TValues> =
+    | FormSchema<TValues>
     | TypedSchema<TValues, TOutput>
-    | YupSchema<TValues>
-    | undefined
-  >;
+> {
+  validationSchema?: MaybeRef<TSchema extends TypedSchema ? TypedSchema<TValues, TOutput> : any>;
   initialValues?: MaybeRef<TValues>;
   initialErrors?: Record<keyof TValues, string | undefined>;
   initialTouched?: Record<keyof TValues, boolean>;
@@ -86,9 +89,13 @@ function resolveInitialValues<TValues extends GenericFormValues = GenericFormVal
   return deepCopy(providedValues) as TValues;
 }
 
-export function useForm<TValues extends GenericFormValues = GenericFormValues, TOutput extends TValues = TValues>(
-  opts?: FormOptions<TValues, TOutput>
-): FormContext<TValues, TOutput> {
+export function useForm<
+  TValues extends GenericFormValues = GenericFormValues,
+  TOutput extends TValues = TValues,
+  TSchema extends FormSchema<TValues> | TypedSchema<TValues, TOutput> =
+    | FormSchema<TValues>
+    | TypedSchema<TValues, TOutput>
+>(opts?: FormOptions<TValues, TOutput, TSchema>): FormContext<TValues, TOutput> {
   const formId = FORM_COUNTER++;
 
   const controlledModelPaths: Set<string> = new Set();
