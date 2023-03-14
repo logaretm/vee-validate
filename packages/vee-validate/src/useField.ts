@@ -407,7 +407,7 @@ function normalizeOptions<TValue>(name: string, opts: Partial<FieldOptions<TValu
     initialValue: undefined,
     validateOnMount: false,
     bails: true,
-    label: name,
+    label: undefined,
     validateOnValueUpdate: true,
     keepValueOnUnmount: undefined,
     modelPropName: 'modelValue',

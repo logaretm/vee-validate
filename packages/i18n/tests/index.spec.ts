@@ -1,15 +1,18 @@
-import { defineRule, configure } from '@/vee-validate';
+import { defineRule, configure, FieldContext, useField } from '@/vee-validate';
 import { required, between } from '@/rules';
 import { localize, setLocale } from '@/i18n';
 import { mountWithHoc, setValue, flushPromises } from '../../vee-validate/tests/helpers';
+import { Ref } from 'vue';
 
 defineRule('required', required);
 defineRule('between', between);
 
-localize('en', {
-  messages: {
-    required: 'The {field} is required',
-  },
+beforeEach(() => {
+  localize('en', {
+    messages: {
+      required: 'The {field} is required',
+    },
+  });
 });
 
 test('can define new locales', async () => {
@@ -158,6 +161,7 @@ test('can define specific messages for specific fields with labels and form sche
 test('can define labels or names for fields', async () => {
   configure({
     generateMessage: localize('en', {
+      messages: { required: '{field} is required' },
       names: {
         first: 'First test',
         second: 'Second test',
@@ -185,8 +189,36 @@ test('can define labels or names for fields', async () => {
   const errors = wrapper.$el.querySelectorAll('.error');
   expect(errors).toHaveLength(2);
 
-  expect(errors[0].textContent).toContain('The First test is required');
-  expect(errors[1].textContent).toContain('The Second test is required');
+  expect(errors[0].textContent).toContain('First test is required');
+  expect(errors[1].textContent).toContain('Second test is required');
+});
+
+// #4164
+test('can define labels or names for fields with useField', async () => {
+  let errorMessage!: Ref<string | undefined>;
+  configure({
+    generateMessage: localize('en', {
+      messages: { required: '{field} is required' },
+      names: {
+        first: 'First test',
+        second: 'Second test',
+      },
+    }),
+  });
+
+  mountWithHoc({
+    setup() {
+      const field = useField('first', 'required', { validateOnMount: true });
+      errorMessage = field.errorMessage;
+    },
+    template: `
+        <div>
+        </div>
+      `,
+  });
+
+  await flushPromises();
+  expect(errorMessage.value).toBe('First test is required');
 });
 
 test('can merge locales without setting the current one', async () => {
