@@ -197,8 +197,8 @@ This makes the form values and submitted values typed automatically and caters f
 
 ```ts
 import { useForm } from 'vee-validate';
-import { object, string } from 'yup';
-import { toTypedSchema } from '@vee-validate/yup';
+import { object, number } from "zod";
+import { toTypedSchema } from '@vee-validate/zod';
 
 const { values, handleSubmit } = useForm({
   validationSchema: toTypedSchema(
@@ -229,8 +229,8 @@ You can also define default values on your zod schema directly and it will be pi
 
 ```ts
 import { useForm } from 'vee-validate';
-import { object, string } from 'yup';
-import { toTypedSchema } from '@vee-validate/yup';
+import { object, string } from 'zod';
+import { toTypedSchema } from '@vee-validate/zod';
 
 const { values, handleSubmit } = useForm({
   validationSchema: toTypedSchema(
@@ -250,8 +250,8 @@ You can also define preprocessors to cast your fields before submission:
 
 ```ts
 import { useForm } from 'vee-validate';
-import { object, number, preprocess } from 'yup';
-import { toTypedSchema } from '@vee-validate/yup';
+import { object, number, preprocess } from 'zod';
+import { toTypedSchema } from '@vee-validate/zod';
 
 const { values, handleSubmit } = useForm({
   validationSchema: toTypedSchema(
