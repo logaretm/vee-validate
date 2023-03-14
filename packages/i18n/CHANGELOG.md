@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.8.2](https://github.com/logaretm/vee-validate/compare/v4.8.1...v4.8.2) (2023-03-14)
+
+### Bug Fixes
+
+- do not use name as a default label for useField closes [#4164](https://github.com/logaretm/vee-validate/issues/4164) ([d5acff7](https://github.com/logaretm/vee-validate/commit/d5acff719797c77ba4ff3be5f78c4a45374f9809))
+
 ## [4.8.1](https://github.com/logaretm/vee-validate/compare/v4.8.0...v4.8.1) (2023-03-12)
 
 **Note:** Version bump only for package @vee-validate/i18n
