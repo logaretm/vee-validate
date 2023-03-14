@@ -197,16 +197,16 @@ This makes the form values and submitted values typed automatically and caters f
 
 ```ts
 import { useForm } from 'vee-validate';
-import { z } from "zod";
+import { object, number } from "zod";
 import { toTypedSchema } from '@vee-validate/zod';
 
 const { values, handleSubmit } = useForm({
   validationSchema: toTypedSchema(
-    z.object({
-      email: z.string().min(1),
-      password: z.string().min(1),
-      name: z.string(),
-    }).partial(name: true)
+    object({
+      email: string().min(1),
+      password: string().min(1),
+      name: string().optional(),
+    })
   ),
 });
 
@@ -229,14 +229,14 @@ You can also define default values on your zod schema directly and it will be pi
 
 ```ts
 import { useForm } from 'vee-validate';
-import { z } from 'zod';
+import { object, string } from 'zod';
 import { toTypedSchema } from '@vee-validate/zod';
 
 const { values, handleSubmit } = useForm({
   validationSchema: toTypedSchema(
-    z.object({
-      email: z.string().default('something@email.com'),
-      password: z.string().default(''),
+    object({
+      email: string().default('something@email.com'),
+      password: string().default(''),
     })
   ),
 });
@@ -250,13 +250,13 @@ You can also define preprocessors to cast your fields before submission:
 
 ```ts
 import { useForm } from 'vee-validate';
-import { z } from 'zod';
+import { object, number, preprocess } from 'zod';
 import { toTypedSchema } from '@vee-validate/zod';
 
 const { values, handleSubmit } = useForm({
   validationSchema: toTypedSchema(
     object({
-      age: z.preprocess(val => Number(val), z.number()),
+      age: preprocess(val => Number(val), number()),
     })
   ),
 });
