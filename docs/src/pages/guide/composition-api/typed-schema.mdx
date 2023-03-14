@@ -203,8 +203,8 @@ import { toTypedSchema } from '@vee-validate/zod';
 const { values, handleSubmit } = useForm({
   validationSchema: toTypedSchema(
     object({
-      email: string().min(1),
-      password: string().min(1),
+      email: string().min(1, 'required'),
+      password: string().min(1, 'required'),
       name: string().optional(),
     })
   ),
