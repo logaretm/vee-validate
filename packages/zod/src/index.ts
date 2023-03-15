@@ -1,7 +1,7 @@
 import { ZodObject, input, output, ZodDefault, ZodSchema, ParseParams } from 'zod';
 import { PartialDeep } from 'type-fest';
 import type { TypedSchema, TypedSchemaError } from 'vee-validate';
-import { isIndex, merge } from '../../shared';
+import { isIndex, isObject, merge } from '../../shared';
 
 /**
  * Transforms a Zod object schema to Yup's schema
@@ -43,8 +43,11 @@ export function toTypedSchema<
       } catch {
         // Zod does not support "casting" or not validating a value, so next best thing is getting the defaults and merging them with the provided values.
         const defaults = getDefaults(zodSchema);
+        if (isObject(defaults) && isObject(values)) {
+          return merge(defaults, values);
+        }
 
-        return merge(defaults, values);
+        return values;
       }
     },
   };
@@ -71,9 +74,9 @@ function joinPath(path: (string | number)[]): string {
 
 // Zod does not support extracting default values so the next best thing is manually extracting them.
 // https://github.com/colinhacks/zod/issues/1944#issuecomment-1406566175
-function getDefaults<Schema extends ZodSchema>(schema: Schema): any {
+function getDefaults<Schema extends ZodSchema>(schema: Schema): unknown {
   if (!(schema instanceof ZodObject)) {
-    return;
+    return undefined;
   }
 
   return Object.fromEntries(
