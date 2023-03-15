@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.8.3](https://github.com/logaretm/vee-validate/compare/v4.8.2...v4.8.3) (2023-03-15)
+
+### Bug Fixes
+
+- avoid merging zod defaults neither is not an object closes [#4186](https://github.com/logaretm/vee-validate/issues/4186) ([e008e50](https://github.com/logaretm/vee-validate/commit/e008e50d94c5579a8ebcaade5131f8fe33f659a4))
+
 ## [4.8.2](https://github.com/logaretm/vee-validate/compare/v4.8.1...v4.8.2) (2023-03-14)
 
 ### Bug Fixes
