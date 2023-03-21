@@ -1,5 +1,5 @@
 import { FieldContext, FormContext, useField, useForm } from '@/vee-validate';
-import { defineComponent, nextTick, onMounted, ref } from 'vue';
+import { defineComponent, onMounted, ref } from 'vue';
 import { mountWithHoc, setValue, flushPromises } from './helpers';
 
 describe('useField()', () => {
@@ -815,5 +815,29 @@ describe('useField()', () => {
 
     expect(form1.values.field).toBe('1');
     expect(form2.values.field).toBe('2');
+  });
+
+  test('allows lazy name expressions', async () => {
+    const nameRef = ref('first');
+    mountWithHoc({
+      setup() {
+        const { name } = useField(() => nameRef.value);
+
+        return {
+          name,
+        };
+      },
+      template: `
+      <span>{{ name }}</span>
+    `,
+    });
+
+    const name = document.querySelector('span');
+
+    await flushPromises();
+    expect(name?.textContent).toBe('first');
+    nameRef.value = 'second';
+    await flushPromises();
+    expect(name?.textContent).toBe('second');
   });
 });

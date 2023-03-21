@@ -30,6 +30,8 @@ export type MaybeRef<T> = Ref<T> | T;
 
 export type MaybeArray<T> = T | T[];
 
+export type MaybeRefOrLazy<T> = MaybeRef<T> | (() => T);
+
 export interface FieldMeta<TValue> {
   touched: boolean;
   dirty: boolean;

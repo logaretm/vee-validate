@@ -26,6 +26,7 @@ import {
   FormContext,
   PrivateFormContext,
   YupSchema,
+  MaybeRefOrLazy,
 } from './types';
 import {
   normalizeRules,
@@ -40,6 +41,7 @@ import {
   withLatest,
   isEqual,
   isTypedSchema,
+  lazyToRef,
 } from './utils';
 import { isCallable } from '../../shared';
 import { FieldContextKey, FormContextKey, IS_ABSENT } from './symbols';
@@ -77,19 +79,19 @@ export type RuleExpression<TValue> =
  * Creates a field composite.
  */
 export function useField<TValue = unknown>(
-  name: MaybeRef<string>,
+  path: MaybeRefOrLazy<string>,
   rules?: MaybeRef<RuleExpression<TValue>>,
   opts?: Partial<FieldOptions<TValue>>
 ): FieldContext<TValue> {
   if (hasCheckedAttr(opts?.type)) {
-    return useCheckboxField(name, rules, opts);
+    return useCheckboxField(path, rules, opts);
   }
 
-  return _useField(name, rules, opts);
+  return _useField(path, rules, opts);
 }
 
 function _useField<TValue = unknown>(
-  name: MaybeRef<string>,
+  path: MaybeRefOrLazy<string>,
   rules?: MaybeRef<RuleExpression<TValue>>,
   opts?: Partial<FieldOptions<TValue>>
 ): FieldContext<TValue> {
@@ -107,10 +109,11 @@ function _useField<TValue = unknown>(
     modelPropName,
     syncVModel,
     form: controlForm,
-  } = normalizeOptions(unref(name), opts);
+  } = normalizeOptions(opts);
 
   const injectedForm = controlled ? injectWithSelf(FormContextKey) : undefined;
   const form = (controlForm as PrivateFormContext | undefined) || injectedForm;
+  const name = lazyToRef(path);
 
   // a flag indicating if the field is about to be removed/unmounted.
   let markedForRemoval = false;
@@ -402,7 +405,7 @@ function _useField<TValue = unknown>(
 /**
  * Normalizes partial field options to include the full options
  */
-function normalizeOptions<TValue>(name: string, opts: Partial<FieldOptions<TValue>> | undefined): FieldOptions<TValue> {
+function normalizeOptions<TValue>(opts: Partial<FieldOptions<TValue>> | undefined): FieldOptions<TValue> {
   const defaults = (): Partial<FieldOptions<TValue>> => ({
     initialValue: undefined,
     validateOnMount: false,
@@ -455,7 +458,7 @@ export function extractRuleFromSchema<TValue>(
 }
 
 function useCheckboxField<TValue = unknown>(
-  name: MaybeRef<string>,
+  name: MaybeRefOrLazy<string>,
   rules?: MaybeRef<RuleExpression<TValue>>,
   opts?: Partial<FieldOptions<TValue>>
 ): FieldContext<TValue> {
