@@ -290,7 +290,7 @@ describe('<Form />', () => {
   });
 
   test('having no submit listener will submit the form natively', async () => {
-    const submitMock = jest.fn();
+    const submitMock = vi.fn();
     const wrapper = mountWithHoc({
       template: `
       <VForm v-slot="{ errors }">
@@ -319,7 +319,7 @@ describe('<Form />', () => {
   });
 
   test('can be renderless', async () => {
-    const submitMock = jest.fn();
+    const submitMock = vi.fn();
     const wrapper = mountWithHoc({
       template: `
       <div>
@@ -773,7 +773,7 @@ describe('<Form />', () => {
 
   test('unmounted fields gets unregistered and submitted values do not include them', async () => {
     let showFields!: Ref<boolean>;
-    const spy = jest.fn();
+    const spy = vi.fn();
     const wrapper = mountWithHoc({
       setup() {
         showFields = ref(true);
@@ -898,7 +898,7 @@ describe('<Form />', () => {
 
   test('unmounted fields gets unregistered and their submitted values are kept if configured on the form level', async () => {
     let showFields!: Ref<boolean>;
-    const spy = jest.fn();
+    const spy = vi.fn();
     const wrapper = mountWithHoc({
       setup() {
         showFields = ref(true);
@@ -1028,7 +1028,7 @@ describe('<Form />', () => {
 
   test('unmounted fields gets unregistered and their submitted values are kept if configured on the field level', async () => {
     let showFields!: Ref<boolean>;
-    const spy = jest.fn();
+    const spy = vi.fn();
     const wrapper = mountWithHoc({
       setup() {
         showFields = ref(true);
@@ -1343,7 +1343,7 @@ describe('<Form />', () => {
     submit.click();
     await flushPromises();
     expect(submitting.textContent).toBe('true');
-    jest.advanceTimersByTime(1001);
+    vi.advanceTimersByTime(1001);
     await flushPromises();
     expect(submitting.textContent).toBe('false');
 
@@ -1351,7 +1351,7 @@ describe('<Form />', () => {
     submit.click();
     await flushPromises();
     expect(submitting.textContent).toBe('true');
-    jest.advanceTimersByTime(501);
+    vi.advanceTimersByTime(501);
     await flushPromises();
     expect(submitting.textContent).toBe('false');
   });
@@ -1377,7 +1377,7 @@ describe('<Form />', () => {
   });
 
   test('nested object fields', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const wrapper = mountWithHoc({
       setup() {
         return {
@@ -1411,7 +1411,7 @@ describe('<Form />', () => {
   });
 
   test('nested object fields validation with yup nested objects', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const wrapper = mountWithHoc({
       setup() {
         return {
@@ -1461,7 +1461,7 @@ describe('<Form />', () => {
   });
 
   test('can opt out of nested object fields', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const wrapper = mountWithHoc({
       setup() {
         return {
@@ -1635,7 +1635,7 @@ describe('<Form />', () => {
   });
 
   test('handles submit with handleSubmit and passing the event object', async () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     const wrapper = mountWithHoc({
       setup() {
         const schema = yup.object({
@@ -1687,7 +1687,7 @@ describe('<Form />', () => {
   });
 
   test('handles submit with handleSubmit without the event object', async () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     const wrapper = mountWithHoc({
       setup() {
         const schema = yup.object({
@@ -1814,7 +1814,7 @@ describe('<Form />', () => {
   });
 
   test('counts the number of submission attempts', async () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     const wrapper = mountWithHoc({
       setup() {
         return {
@@ -1847,7 +1847,7 @@ describe('<Form />', () => {
     const wrapper = mountWithHoc({
       setup() {
         return {
-          onSubmit: jest.fn(),
+          onSubmit: vi.fn(),
         };
       },
       template: `
@@ -2182,7 +2182,7 @@ describe('<Form />', () => {
     const wrapper = mountWithHoc({
       setup() {
         return {
-          onSubmit: jest.fn(),
+          onSubmit: vi.fn(),
         };
       },
       template: `
@@ -2219,7 +2219,7 @@ describe('<Form />', () => {
         });
 
         return {
-          onSubmit: jest.fn(),
+          onSubmit: vi.fn(),
           schema,
         };
       },
@@ -2242,7 +2242,7 @@ describe('<Form />', () => {
   });
 
   test('non-rendered fields defined in schema are not ignored', async () => {
-    const submit = jest.fn();
+    const submit = vi.fn();
     const wrapper = mountWithHoc({
       setup() {
         const schema = {
@@ -2547,8 +2547,8 @@ describe('<Form />', () => {
   });
 
   test('handles invalid submissions', async () => {
-    const invalidSpy = jest.fn();
-    const validSpy = jest.fn();
+    const invalidSpy = vi.fn();
+    const validSpy = vi.fn();
     const wrapper = mountWithHoc({
       setup() {
         const schema = yup.object({
@@ -2606,8 +2606,8 @@ describe('<Form />', () => {
   });
 
   test('handles invalid submissions with submitForm', async () => {
-    const invalidSpy = jest.fn();
-    const validSpy = jest.fn();
+    const invalidSpy = vi.fn();
+    const validSpy = vi.fn();
     const wrapper = mountWithHoc({
       setup() {
         const schema = yup.object({
@@ -2864,7 +2864,7 @@ describe('<Form />', () => {
 // #3963
 test('unmounted radio fields gets unregistered and their submitted values are kept if configured on the form level', async () => {
   let showFields!: Ref<boolean>;
-  const spy = jest.fn();
+  const spy = vi.fn();
   const wrapper = mountWithHoc({
     setup() {
       showFields = ref(true);
@@ -2921,7 +2921,7 @@ test('unmounted radio fields gets unregistered and their submitted values are ke
 // #3963
 test('unmounted radio fields gets unregistered and their submitted values are removed', async () => {
   let showFields!: Ref<boolean>;
-  const spy = jest.fn();
+  const spy = vi.fn();
   const wrapper = mountWithHoc({
     setup() {
       showFields = ref(true);

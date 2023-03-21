@@ -35,13 +35,15 @@ describe('useIsSubmitting()', () => {
 
     await flushPromises();
     expect(submitText?.textContent).toBe('true');
-    jest.runAllTimers();
+    vi.runAllTimers();
     await flushPromises();
     expect(submitText?.textContent).toBe('false');
   });
 
   test('returns false and warns if form is not found', async () => {
-    const spy = jest.spyOn(console, 'warn').mockImplementation();
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // NOOP
+    });
     mountWithHoc({
       setup() {
         const isSubmitting = useIsSubmitting();

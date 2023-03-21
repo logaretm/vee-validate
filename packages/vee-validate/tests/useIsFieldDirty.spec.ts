@@ -103,7 +103,9 @@ describe('useIsFieldDirty()', () => {
   });
 
   test('returns false and warns if field does not exist', async () => {
-    const spy = jest.spyOn(console, 'warn').mockImplementation();
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // NOOP
+    });
 
     mountWithHoc({
       setup() {
@@ -127,7 +129,9 @@ describe('useIsFieldDirty()', () => {
   });
 
   test('returns false and warns if form does not exist', async () => {
-    const spy = jest.spyOn(console, 'warn').mockImplementation();
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // NOOP
+    });
 
     mountWithHoc({
       setup() {

@@ -3,16 +3,10 @@
   "env": {
     "browser": true,
     "commonjs": true,
-    "es6": true,
-    "jest/globals": true
+    "es6": true
   },
-  "extends": [
-    "standard",
-    "plugin:jest/recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended"
-  ],
-  "plugins": ["jest", "prettier", "@typescript-eslint"],
+  "extends": ["standard", "plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
+  "plugins": ["prettier", "@typescript-eslint"],
   "rules": {
     "@typescript-eslint/camelcase": "off",
     "@typescript-eslint/explicit-function-return-type": "off",

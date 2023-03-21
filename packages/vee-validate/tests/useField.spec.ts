@@ -780,7 +780,7 @@ describe('useField()', () => {
     await flushPromises();
     setValue(input as any, 'b');
     await flushPromises();
-    jest.advanceTimersByTime(200);
+    vi.advanceTimersByTime(200);
     await flushPromises();
     expect(error?.textContent).toBe('not b');
   });

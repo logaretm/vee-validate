@@ -73,7 +73,7 @@ export function dispatchEvent(node: ComponentPublicInstance | HTMLElement | stri
  */
 export async function flushPromises() {
   await flushP();
-  jest.advanceTimersByTime(5);
+  vi.advanceTimersByTime(5);
   await flushP();
 }
 

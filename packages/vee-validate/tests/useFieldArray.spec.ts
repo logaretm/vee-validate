@@ -75,7 +75,9 @@ test('can update a field entry deep model directly and validate it', async () =>
 });
 
 test('warns when updating a no-longer existing item', async () => {
-  const spy = jest.spyOn(console, 'warn').mockImplementation();
+  const spy = vi.spyOn(console, 'warn').mockImplementation(() => {
+    // NOOP
+  });
   mountWithHoc({
     setup() {
       useForm({

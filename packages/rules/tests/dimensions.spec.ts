@@ -4,19 +4,17 @@ import helpers from './helpers';
 let fails = false;
 
 beforeEach(() => {
-  (globalThis as any).window.URL = {
+  window.URL.createObjectURL = () => {
+    return 'data:image/png;base64,AAAAAAA';
+  };
+
+  (window as any).webkitURL = {
     createObjectURL() {
       return 'data:image/png;base64,AAAAAAA';
     },
   };
 
-  (globalThis as any).window.webkitURL = {
-    createObjectURL() {
-      return 'data:image/png;base64,AAAAAAA';
-    },
-  };
-
-  (globalThis as any).Image = class Image {
+  (window as any).Image = class Image {
     get src() {
       return 'test';
     }
@@ -49,7 +47,7 @@ test('validates image dimensions', async () => {
   result = await validate([helpers.file('file.jpg', 'image/jpeg', 10)], { width: 15, height: 10 });
   expect(result).toBe(false);
 
-  (globalThis as any).URL = undefined; // test webkit fallback.
+  (window as any).URL = undefined; // test webkit fallback.
   result = await validate([helpers.file('file.jpg', 'image/jpeg', 10)], { width: 150, height: 100 });
   expect(result).toBe(true);
 });

@@ -22,8 +22,8 @@
     "resolveJsonModule": true,
     "paths": {
       "@/*": ["packages/*/src"]
-    }
+    },
+    "types": ["vitest/globals"]
   },
-  "include": ["packages/*/src", "packages/*/tests"],
-  "exclude": ["jest.config.js"]
+  "include": ["packages/*/src", "packages/*/tests", "vitest.setup.ts", "vitest.setup.ts"]
 }

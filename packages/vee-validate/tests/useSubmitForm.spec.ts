@@ -6,7 +6,7 @@ describe('useSubmitForm()', () => {
   const validate = (val: any) => (val ? true : REQUIRED_MESSAGE);
 
   test('executes a form submission callback', async () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     mountWithHoc({
       setup() {
         useForm();
@@ -46,7 +46,9 @@ describe('useSubmitForm()', () => {
   });
 
   test('warns if the form does not exist', async () => {
-    const spy = jest.spyOn(console, 'warn').mockImplementation();
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // NOOP
+    });
 
     mountWithHoc({
       setup() {

@@ -183,7 +183,7 @@ test('validates typed schema form with yup', async () => {
 });
 
 test('uses zod for form values transformations and parsing', async () => {
-  const submitSpy = jest.fn();
+  const submitSpy = vi.fn();
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(
@@ -218,7 +218,7 @@ test('uses zod for form values transformations and parsing', async () => {
 });
 
 test('uses zod default values for submission', async () => {
-  const submitSpy = jest.fn();
+  const submitSpy = vi.fn();
 
   mountWithHoc({
     setup() {
@@ -253,7 +253,7 @@ test('uses zod default values for submission', async () => {
 });
 
 test('uses zod default values for initial values', async () => {
-  const initialSpy = jest.fn();
+  const initialSpy = vi.fn();
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(
@@ -297,7 +297,7 @@ test('uses zod default values for initial values', async () => {
 
 // #4186
 test('default values should not be undefined', async () => {
-  const initialSpy = jest.fn();
+  const initialSpy = vi.fn();
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(

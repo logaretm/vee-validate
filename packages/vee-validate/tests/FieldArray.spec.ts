@@ -6,7 +6,9 @@ import { mountWithHoc, setValue, getValue, dispatchEvent, flushPromises } from '
 const REQUIRED_MESSAGE = 'REQUIRED';
 
 test('warns if no form is detected', async () => {
-  const spy = jest.spyOn(console, 'warn').mockImplementation();
+  const spy = vi.spyOn(console, 'warn').mockImplementation(() => {
+    // NOOP
+  });
 
   mountWithHoc({
     template: `
@@ -20,7 +22,9 @@ test('warns if no form is detected', async () => {
 });
 
 test('warns if no name path is provided', async () => {
-  const spy = jest.spyOn(console, 'warn').mockImplementation();
+  const spy = vi.spyOn(console, 'warn').mockImplementation(() => {
+    // NOOP
+  });
 
   mountWithHoc({
     template: `
@@ -36,7 +40,7 @@ test('warns if no name path is provided', async () => {
 });
 
 test('adds items to the end of the array with push()', async () => {
-  const onSubmit = jest.fn();
+  const onSubmit = vi.fn();
   mountWithHoc({
     setup() {
       const initialValues = {
@@ -151,7 +155,7 @@ test('array fields should update their values when swapped', async () => {
 });
 
 test('can swap array fields with swap helper', async () => {
-  const onSubmit = jest.fn();
+  const onSubmit = vi.fn();
   mountWithHoc({
     setup() {
       const schema = yup.object({
@@ -470,7 +474,7 @@ test('can update an item value at a given array index', async () => {
 });
 
 test('can update an item value directly with .value setter', async () => {
-  const onSubmit = jest.fn();
+  const onSubmit = vi.fn();
   mountWithHoc({
     setup() {
       const initial = {
@@ -522,7 +526,7 @@ test('can update an item value directly with .value setter', async () => {
 });
 
 test('adds items to the start of the array with prepend()', async () => {
-  const onSubmit = jest.fn();
+  const onSubmit = vi.fn();
   mountWithHoc({
     setup() {
       const initialValues = {
@@ -577,7 +581,7 @@ test('adds items to the start of the array with prepend()', async () => {
 
 // #3664
 test('clears old errors path when item is removed when no form schema is present', async () => {
-  const onSubmit = jest.fn();
+  const onSubmit = vi.fn();
   mountWithHoc({
     setup() {
       const initialValues = {
@@ -631,7 +635,7 @@ test('clears old errors path when item is removed when no form schema is present
 
 // #3748
 test('clears old errors path when last item is removed and value update validation is on', async () => {
-  const onSubmit = jest.fn();
+  const onSubmit = vi.fn();
   defineRule('required', (v: any) => (v ? true : REQUIRED_MESSAGE));
   const InputField = defineComponent({
     props: {
@@ -719,7 +723,7 @@ test('clears old errors path when last item is removed and value update validati
 });
 
 test('moves items around the array with move()', async () => {
-  const onSubmit = jest.fn();
+  const onSubmit = vi.fn();
   mountWithHoc({
     setup() {
       const initialValues = {
@@ -776,7 +780,7 @@ test('moves items around the array with move()', async () => {
 
 // #3782
 test('removing an item marks the form as dirty', async () => {
-  const onSubmit = jest.fn();
+  const onSubmit = vi.fn();
   mountWithHoc({
     setup() {
       const initialValues = {

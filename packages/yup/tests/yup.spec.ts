@@ -210,7 +210,7 @@ test('shows multiple errors using error bag', async () => {
 });
 
 test('uses yup for form values transformations and parsing', async () => {
-  const submitSpy = jest.fn();
+  const submitSpy = vi.fn();
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(
@@ -245,7 +245,7 @@ test('uses yup for form values transformations and parsing', async () => {
 });
 
 test('uses yup default values for submitted values', async () => {
-  const submitSpy = jest.fn();
+  const submitSpy = vi.fn();
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(
@@ -279,7 +279,7 @@ test('uses yup default values for submitted values', async () => {
 });
 
 test('uses yup default values for initial values', async () => {
-  const initialSpy = jest.fn();
+  const initialSpy = vi.fn();
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(

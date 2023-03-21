@@ -49,7 +49,9 @@ describe('useResetForm()', () => {
   });
 
   test('warns if the form does not exist', async () => {
-    const spy = jest.spyOn(console, 'warn').mockImplementation();
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // NOOP
+    });
     let resetForm: any;
 
     mountWithHoc({

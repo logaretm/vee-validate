@@ -3,7 +3,7 @@ import { mountWithHoc, setValue, dispatchEvent, setChecked, flushPromises, dispa
 import * as yup from 'yup';
 import { computed, reactive, ref, Ref } from 'vue';
 
-jest.useFakeTimers();
+vi.useFakeTimers();
 
 beforeEach(() => {
   configure({
@@ -117,7 +117,7 @@ describe('<Field />', () => {
           <input v-bind="field" type="text">
           <span id="fieldError">{{ errors[0] }}</span>
         </Field>
-    
+
         <Field name="other" rules="required" v-slot="{ errors, field }">
           <input v-bind="field" type="text">
           <span>{{ errors[0] }}</span>
@@ -368,7 +368,7 @@ describe('<Field />', () => {
   });
 
   test('file values are normalized depending', async () => {
-    const onSubmit = jest.fn();
+    const onSubmit = vi.fn();
 
     const wrapper = mountWithHoc({
       template: `
@@ -487,7 +487,7 @@ describe('<Field />', () => {
     setValue(input, '123');
     setValue(input, '12');
     setValue(input, '');
-    jest.advanceTimersByTime(100);
+    vi.advanceTimersByTime(100);
     await flushPromises();
     // LAST message should be the required one.
     expect(error.textContent).toBe(REQUIRED_MESSAGE);
@@ -820,7 +820,7 @@ describe('<Field />', () => {
 
   // #3048
   test('proxies native listeners', async () => {
-    const onBlur = jest.fn();
+    const onBlur = vi.fn();
     mountWithHoc({
       setup() {
         return {
@@ -839,7 +839,7 @@ describe('<Field />', () => {
   });
 
   test('can customize checkboxes unchecked value', async () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     const wrapper = mountWithHoc({
       setup() {
         return { onSubmit: spy };
@@ -1167,10 +1167,10 @@ describe('<Field />', () => {
   });
 
   test('should have correct field object binding properties based on file type', async () => {
-    const textualType = jest.fn();
-    const fileType = jest.fn();
-    const checkboxType = jest.fn();
-    const radioType = jest.fn();
+    const textualType = vi.fn();
+    const fileType = vi.fn();
+    const checkboxType = vi.fn();
+    const radioType = vi.fn();
 
     mountWithHoc({
       template: `
@@ -1200,7 +1200,7 @@ describe('<Field />', () => {
     });
 
     await flushPromises();
-    const lastCallOf = (fn: ReturnType<typeof jest.fn>) => fn.mock.calls[fn.mock.calls.length - 1][0];
+    const lastCallOf = (fn: ReturnType<typeof vi.fn>) => fn.mock.calls[fn.mock.calls.length - 1][0];
     expect(lastCallOf(textualType)).toHaveProperty('value');
     expect(lastCallOf(fileType)).not.toHaveProperty('value');
     expect(lastCallOf(checkboxType)).toHaveProperty('checked');

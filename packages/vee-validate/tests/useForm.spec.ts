@@ -261,7 +261,9 @@ describe('useForm()', () => {
   });
 
   test('warns when validateField() is called on a non-existent field', async () => {
-    const spy = jest.spyOn(console, 'warn').mockImplementation();
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // NOOP
+    });
 
     let validateField: any;
     mountWithHoc({
@@ -504,14 +506,14 @@ describe('useForm()', () => {
     await flushPromises();
     setValue(input as any, 'b');
     await flushPromises();
-    jest.advanceTimersByTime(200);
+    vi.advanceTimersByTime(200);
     await flushPromises();
     expect(error?.textContent).toBe('not b');
   });
 
   // #3862
   test('exposes controlled only values', async () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     const initial = {
       field: '111',
       createdAt: Date.now(),
@@ -549,7 +551,7 @@ describe('useForm()', () => {
 
   // #3862
   test('exposes controlled only via submission handler withControlled', async () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     const initial = {
       field: '111',
       createdAt: Date.now(),
@@ -585,7 +587,7 @@ describe('useForm()', () => {
   });
 
   test('useFieldModel marks the field as controlled', async () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
     const initial = {
       field: '111',
       field2: '222',

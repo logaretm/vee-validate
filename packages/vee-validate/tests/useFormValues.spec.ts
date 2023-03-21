@@ -33,7 +33,9 @@ describe('useFormValues()', () => {
   });
 
   test('returns empty object and warns if form is not found', async () => {
-    const spy = jest.spyOn(console, 'warn').mockImplementation();
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // NOOP
+    });
 
     mountWithHoc({
       setup() {
