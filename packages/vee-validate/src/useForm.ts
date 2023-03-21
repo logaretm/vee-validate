@@ -37,7 +37,6 @@ import {
   FieldState,
   GenericFormValues,
   TypedSchema,
-  YupSchema,
 } from './types';
 import {
   getFromPath,
@@ -69,7 +68,7 @@ export interface FormOptions<
     | TypedSchema<TValues, TOutput>
 > {
   validationSchema?: MaybeRef<TSchema extends TypedSchema ? TypedSchema<TValues, TOutput> : any>;
-  initialValues?: MaybeRef<TValues>;
+  initialValues?: MaybeRef<Partial<TValues>>;
   initialErrors?: Record<keyof TValues, string | undefined>;
   initialTouched?: Record<keyof TValues, boolean>;
   validateOnMount?: boolean;
@@ -865,7 +864,7 @@ export function useForm<
 function useFormMeta<TValues extends Record<string, unknown>>(
   fieldsByPath: Ref<FieldPathLookup<TValues>>,
   currentValues: TValues,
-  initialValues: MaybeRef<TValues>,
+  initialValues: MaybeRef<Partial<TValues>>,
   errors: Ref<FormErrors<TValues>>
 ) {
   const MERGE_STRATEGIES: Record<keyof Pick<FieldMeta<unknown>, 'touched' | 'pending' | 'valid'>, 'every' | 'some'> = {
@@ -899,7 +898,7 @@ function useFormMeta<TValues extends Record<string, unknown>>(
 
   return computed(() => {
     return {
-      initialValues: unref(initialValues) as TValues,
+      initialValues: unref(initialValues) as Partial<TValues>,
       ...flags,
       valid: flags.valid && !keysOf(errors.value as any).length,
       dirty: isDirty.value,
@@ -918,13 +917,13 @@ function useFormInitialValues<TValues extends GenericFormValues>(
   const values = resolveInitialValues(opts);
   const providedValues = opts?.initialValues;
   // these are the mutable initial values as the fields are mounted/unmounted
-  const initialValues = ref<TValues>(values);
+  const initialValues = ref<Partial<TValues>>(values);
   // these are the original initial value as provided by the user initially, they don't keep track of conditional fields
   // this is important because some conditional fields will overwrite the initial values for other fields who had the same name
   // like array fields, any push/insert operation will overwrite the initial values because they "create new fields"
   // so these are the values that the reset function should use
   // these only change when the user explicitly changes the initial values or when the user resets them with new values.
-  const originalInitialValues = ref<TValues>(deepCopy(values));
+  const originalInitialValues = ref<Partial<TValues>>(deepCopy(values)) as Ref<Partial<TValues>>;
 
   function setInitialValues(values: Partial<TValues>, updateFields = false) {
     initialValues.value = deepCopy(values);

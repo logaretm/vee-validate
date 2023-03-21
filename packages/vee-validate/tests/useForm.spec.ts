@@ -682,19 +682,19 @@ describe('useForm()', () => {
     });
 
     await flushPromises();
-    expect(formMeta.value.initialValues?.field.name).toBe('1');
+    expect(formMeta.value.initialValues?.field?.name).toBe('1');
     model.value.name = 'test';
     await flushPromises();
     expect(model.value).toEqual({ name: 'test' });
-    expect(formMeta.value.initialValues?.field.name).toBe('1');
+    expect(formMeta.value.initialValues?.field?.name).toBe('1');
     reset();
     await flushPromises();
     expect(model.value).toEqual({ name: '1' });
-    expect(formMeta.value.initialValues?.field.name).toBe('1');
+    expect(formMeta.value.initialValues?.field?.name).toBe('1');
 
     model.value.name = 'test';
     await flushPromises();
     expect(model.value).toEqual({ name: 'test' });
-    expect(formMeta.value.initialValues?.field.name).toBe('1');
+    expect(formMeta.value.initialValues?.field?.name).toBe('1');
   });
 });

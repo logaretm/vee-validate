@@ -45,7 +45,7 @@ export interface FormMeta<TValues extends Record<string, any>> {
   valid: boolean;
   validated: boolean;
   pending: boolean;
-  initialValues?: TValues;
+  initialValues?: Partial<TValues>;
 }
 
 export interface FieldState<TValue = unknown> {
