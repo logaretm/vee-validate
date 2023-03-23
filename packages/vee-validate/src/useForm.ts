@@ -81,8 +81,9 @@ function resolveInitialValues<TValues extends GenericFormValues = GenericFormVal
   opts?: FormOptions<TValues>
 ): TValues {
   const providedValues = unref(opts?.initialValues) || {};
-  if (opts?.validationSchema && isTypedSchema(opts.validationSchema) && isCallable(opts.validationSchema.cast)) {
-    return deepCopy(opts.validationSchema.cast(providedValues) || {});
+  const schema = unref(opts?.validationSchema);
+  if (schema && isTypedSchema(schema) && isCallable(schema.cast)) {
+    return deepCopy(schema.cast(providedValues) || {});
   }
 
   return deepCopy(providedValues) as TValues;
