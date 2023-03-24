@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.8.4](https://github.com/logaretm/vee-validate/compare/v4.8.3...v4.8.4) (2023-03-24)
+
+### Bug Fixes
+
+- make initial values partial closes [#4195](https://github.com/logaretm/vee-validate/issues/4195) ([eeccd0c](https://github.com/logaretm/vee-validate/commit/eeccd0c55814408670eced3717d0347590da3488))
+- properly unref the schema before checking for default values closes [#4196](https://github.com/logaretm/vee-validate/issues/4196) ([8e3663d](https://github.com/logaretm/vee-validate/commit/8e3663d18357574ea4d394197f2c66889eeef6fa))
+
+### Features
+
+- allow name ref to be a lazy function ([8fb543a](https://github.com/logaretm/vee-validate/commit/8fb543a6e91c17d8541389e29c7014dc1f804c91))
+
 ## [4.8.3](https://github.com/logaretm/vee-validate/compare/v4.8.2...v4.8.3) (2023-03-15)
 
 **Note:** Version bump only for package vee-validate
