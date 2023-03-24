@@ -12,12 +12,11 @@ new: true
 
 When using the composition API, there are a few things that are not clear when first starting to use it. This page will contain these topics and help you understand how to workaround or address them.
 
-## Reactive Field Names with `useField`
+## Function Field Names with `useField`
 
-You might've noticed that some examples in the docs call `toRef` when assigning a field name to `useField`:
+You might've noticed that some examples in the docs pass the field name as a function to `useField`:
 
 ```js
-import { toRef } from 'vue';
 import { useField } from 'vee-validate';
 
 export default {
@@ -25,7 +24,7 @@ export default {
     name: String,
   },
   setup(props) {
-    const { value, errorMessage } = useField(toRef(props, 'name'));
+    const { value, errorMessage } = useField(() => props.name);
   },
 };
 ```
@@ -62,6 +61,9 @@ To address this issue, you need to get a reactive reference to the `name` proper
 
 ```js
 import { toRef, toRefs, computed } from 'vue';
+
+// ✅ using a function that returns the name
+const { value, errorMessage } = useField(() => props.name);
 
 // ✅ using `toRef`
 const { value, errorMessage } = useField(toRef(props, 'name'));

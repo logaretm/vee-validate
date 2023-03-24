@@ -39,7 +39,7 @@ You can define validation rules for your fields using the `useField` composition
 
 <script setup>
 import { useField } from 'vee-validate';
-import { defineProps, toRef } from 'vue';
+import { defineProps } from 'vue';
 
 const props = defineProps({
   name: {
@@ -56,10 +56,9 @@ function isRequired(value) {
   return 'This is required';
 }
 
-// make sure to convert the name prop to a ref to maintain its reactivity
+// make sure to wrap the name in a function to maintain its reactivity
 // this way vee-validate can react to the field name changing
-const nameRef = toRef(props, 'name');
-const { errorMessage, value } = useField(nameRef, isRequired);
+const { errorMessage, value } = useField(() => props.name, isRequired);
 </script>
 ```
 
@@ -78,7 +77,7 @@ yup is a very popular, simple and powerful data validation library for JavaScrip
 </template>
 
 <script setup>
-import { defineProps, toRef } from 'vue';
+import { defineProps } from 'vue';
 import { useField } from 'vee-validate';
 import * as yup from 'yup';
 
@@ -89,10 +88,9 @@ const props = defineProps({
   },
 });
 
-// make sure to convert the name prop to a ref to maintain its reactivity
+// make sure to wrap the name in a function to maintain its reactivity
 // this way vee-validate can react to the field name changing
-const nameRef = toRef(props, 'name');
-const { errorMessage, value } = useField(nameRef, yup.string().required().min(8));
+const { errorMessage, value } = useField(() => props.name, yup.string().required().min(8));
 </script>
 ```
 
@@ -530,7 +528,7 @@ const { value, meta } = useField('fieldName', undefined, {
 ```
 
 <DocTip title="Field Dirty Flag and Initial Values">
-  
+
 Notice in the previous example, we passed an `initialValue`, this is because the default field value is `undefined` which may cause unexpected `meta.dirty` results.
 
 To get accurate results for the `meta.dirty` flag, you must provide an initial value to your field even if the values are empty.
@@ -540,7 +538,7 @@ To reduce the verbosity of adding an `initialValue` prop to each field, you coul
 </DocTip>
 
 <DocTip title="Valid Flag Combinations">
-  
+
 Since the `meta.valid` flag is initially `true` (because it just means there are no errors yet), it would cause problems if you have a "success" UI state an indicator.
 
 To avoid this case you should combine the `valid` flag with either `meta.dirty` or `meta.touched` to get an accurate representation.
