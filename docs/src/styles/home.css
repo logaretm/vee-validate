@@ -16,3 +16,7 @@
     @apply px-0;
   }
 }
+
+#ad {
+  @apply !fixed bottom-4 right-4;
+}
