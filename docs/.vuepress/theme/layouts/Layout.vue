@@ -17,6 +17,7 @@
     <Home v-if="$page.frontmatter.home" />
 
     <Ad />
+    <Analytics />
 
     <Page v-if="!$page.frontmatter.home" :sidebar-items="sidebarItems">
       <slot name="page-top" slot="top" />
@@ -26,19 +27,19 @@
 </template>
 
 <script>
-  import galite from 'ga-lite/dist/ga-lite.js';
 import Home from "@parent-theme/components/Home.vue";
 import Navbar from "@parent-theme/components/Navbar.vue";
 import UpgradeNotice from "@theme/components/UpgradeNotice.vue";
 import Page from "@parent-theme/components/Page.vue";
 import Sidebar from "@parent-theme/components/Sidebar.vue";
 import Ad from '@theme/components/Ad.vue';
+import Analytics from '@theme/components/Analytics.vue';
 import { resolveSidebarItems } from "@parent-theme/util";
 
 let isLoaded = false;
 
 export default {
-  components: { Home, Page, Sidebar, Navbar, UpgradeNotice, Ad },
+  components: { Home, Page, Sidebar, Navbar, UpgradeNotice, Ad, Analytics },
   data() {
     return {
       isSidebarOpen: false
@@ -93,11 +94,8 @@ export default {
   },
 
   mounted() {
-    galite('create', 'UA-100131478-1', 'auto');
-    galite('send', 'pageview');
     this.$router.afterEach(() => {
       this.isSidebarOpen = false;
-      galite('send', 'pageview');
     });
   },
 
