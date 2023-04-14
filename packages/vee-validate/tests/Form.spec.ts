@@ -2546,6 +2546,29 @@ describe('<Form />', () => {
     expect(input.value).toBe(value.value);
   });
 
+  // #4200
+  test('Falsy model value should still have priority over form value', async () => {
+    const value = ref(0);
+    mountWithHoc({
+      setup() {
+        const initials = { age: 2 };
+        return {
+          value,
+          initials,
+        };
+      },
+      template: `
+      <VForm :initial-values="initials">
+        <Field name="age" type="number" v-model="value" />
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const input = document.querySelector('input') as HTMLInputElement;
+    expect(input.value).toBe('0');
+  });
+
   test('handles invalid submissions', async () => {
     const invalidSpy = vi.fn();
     const validSpy = vi.fn();

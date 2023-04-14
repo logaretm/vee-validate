@@ -1,4 +1,4 @@
-import { computed, reactive, ref, Ref, unref, watch } from 'vue';
+import { computed, isRef, reactive, ref, Ref, unref, watch } from 'vue';
 import { FieldMeta, FieldState, MaybeRef, PrivateFormContext } from './types';
 import { getFromPath, isEqual } from './utils';
 
@@ -113,7 +113,7 @@ export function _useFieldValue<TValue = unknown>(
   // otherwise use the configured initial value if it exists.
   // prioritize model value over form values
   // #3429
-  const currentValue = modelValue ? unref(modelValue) : getFromPath(form.values, unref(path), unref(initialValue));
+  const currentValue = resolveModelValue(modelValue, form, initialValue, path);
   form.stageInitialValue(unref(path), currentValue, true);
   // otherwise use a computed setter that triggers the `setFieldValue`
   const value = computed<TValue>({
@@ -130,6 +130,29 @@ export function _useFieldValue<TValue = unknown>(
     initialValue,
     setInitialValue,
   };
+}
+
+/*
+  to set the initial value, first check if there is a current value, if there is then use it.
+  otherwise use the configured initial value if it exists.
+  prioritize model value over form values
+  #3429
+*/
+function resolveModelValue<TValue>(
+  modelValue: MaybeRef<TValue> | undefined,
+  form: PrivateFormContext,
+  initialValue: MaybeRef<TValue> | undefined,
+  path: MaybeRef<string>
+): TValue {
+  if (isRef(modelValue)) {
+    return unref(modelValue);
+  }
+
+  if (modelValue !== undefined) {
+    return modelValue;
+  }
+
+  return getFromPath(form.values, unref(path), unref(initialValue)) as TValue;
 }
 
 /**
