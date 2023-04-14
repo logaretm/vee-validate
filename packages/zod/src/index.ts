@@ -94,7 +94,14 @@ function getDefaults<Schema extends ZodSchema>(schema: Schema): unknown {
   );
 }
 
+/**
+ * @deprecated use toTypedSchema instead.
+ */
 const toFieldValidator = toTypedSchema;
+
+/**
+ * @deprecated use toTypedSchema instead.
+ */
 const toFormValidator = toTypedSchema;
 
 export { toFieldValidator, toFormValidator };

@@ -68,7 +68,7 @@
     "*.ts": [
       "eslint --fix",
       "prettier --write",
-      "vitest run related"
+      "vitest run related --passWithNoTests"
     ],
     "*.js": [
       "eslint --fix",

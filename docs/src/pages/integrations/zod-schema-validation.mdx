@@ -39,11 +39,11 @@ pnpm add vee-validate zod @vee-validate/zod
 
 ## Validating with Zod
 
-You can create validation schemas for either field-level validation or form-level validation, the `@vee-validate/zod` exposes two functions that transform Zod's schemas into something that can be understood by `vee-validate` main core and use them to perform validation.
+You can create validation schemas for either field-level validation or form-level validation, the `@vee-validate/zod` exposes a `toTypedSchema` function that transform Zod's schemas into something that can be understood by `vee-validate` main core and use them to perform validation. It also allows vee-validate to figure out the types for both the input values and the submitted values.
 
 ## Field-level Validation
 
-The first function is `toFieldValidator`, which accepts a Zod schema. You can use the converted schema by passing it to the `rules` prop present on the `<Field />` component:
+The `toTypedSchema` function accepts a Zod schema. You can use the converted schema by passing it to the `rules` prop present on the `<Field />` component:
 
 ```vue
 <template>
@@ -55,10 +55,10 @@ The first function is `toFieldValidator`, which accepts a Zod schema. You can us
 
 <script setup>
 import { Field, Form, ErrorMessage } from 'vee-validate';
-import { toFieldValidator } from '@vee-validate/zod';
+import { toTypedSchema } from '@vee-validate/zod';
 import * as zod from 'zod';
 
-const fieldSchema = toFieldValidator(zod.string().nonempty('Field is required').email('Must be a valid email'));
+const fieldSchema = toTypedSchema(zod.string().nonempty('Field is required').email('Must be a valid email'));
 </script>
 ```
 
@@ -72,10 +72,10 @@ If you prefer to use the Composition API, then you can pass the converted schema
 
 <script setup>
 import { useField } from 'vee-validate';
-import { toFieldValidator } from '@vee-validate/zod';
+import { toTypedSchema } from '@vee-validate/zod';
 import * as zod from 'zod';
 
-const fieldSchema = toFieldValidator(
+const fieldSchema = toTypedSchema(
   zod.string().nonempty('Field is required').email({ message: 'Must be a valid email' })
 );
 const { value, errorMessage } = useField('email', fieldSchema);
@@ -86,9 +86,7 @@ const { value, errorMessage } = useField('email', fieldSchema);
 
 You can also use Zod's `zod.object` to create validation schemas for your forms instead of individually passing it for each field, this is covered in general in the [form-level validation section](/guide/components/validation).
 
-To be able to use `zod.object` to define form schemas, you need to use another function with is appropriately named `toFormValidator`.
-
-The `toFormValidator` function accepts a Zod object schema and prepares it to be consumed by the vee-validate validation logic.
+To be able to use `zod.object` to define form schemas, you will be using the same `toTypedSchema` function.
 
 You can pass the converted schema to the `validation-schema` prop present on the `<Form />` component:
 
@@ -107,10 +105,10 @@ You can pass the converted schema to the `validation-schema` prop present on the
 
 <script setup>
 import { Form, Field, ErrorMessage } from 'vee-validate';
-import { toFormValidator } from '@vee-validate/zod';
+import { toTypedSchema } from '@vee-validate/zod';
 import * as zod from 'zod';
 
-const validationSchema = toFormValidator(
+const validationSchema = toTypedSchema(
   zod.object({
     email: zod.string().nonempty('This is required').email({ message: 'Must be a valid email' }),
     password: zod.string().nonempty('This is required').min(8, { message: 'Too short' }),
@@ -140,10 +138,10 @@ Alternatively, if you prefer to use the composition API, you can pass the conver
 
 <script setup>
 import { useField, useForm } from 'vee-validate';
-import { toFormValidator } from '@vee-validate/zod';
+import { toTypedSchema } from '@vee-validate/zod';
 import * as zod from 'zod';
 
-const validationSchema = toFormValidator(
+const validationSchema = toTypedSchema(
   zod.object({
     email: zod.string().nonempty('This is required').email({ message: 'Must be a valid email' }),
     password: zod.string().nonempty('This is required').min(8, { message: 'Too short' }),
@@ -165,6 +163,6 @@ const onSubmit = handleSubmit(values => {
 
 <DocTip title="TypeScript Form Values Inference">
 
-To infer the form values you need to use the `toTypedSchema` helper, you can find more information [here](/guide/composition-api/typed-schema#zod)
+You can find more information on how typed schemas work in vee-validate [here](/guide/composition-api/typed-schema#zod)
 
 </DocTip>
