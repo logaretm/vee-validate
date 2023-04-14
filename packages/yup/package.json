@@ -8,7 +8,7 @@
   "unpkg": "dist/vee-validate-yup.js",
   "main": "dist/vee-validate-yup.js",
   "types": "dist/vee-validate-yup.d.ts",
-  "homepage": "https://vee-validate.logaretm.com/v4/guide/global-validators",
+  "homepage": "https://vee-validate.logaretm.com/v4/guide/composition-api/typed-schema/",
   "repository": {
     "url": "https://github.com/logaretm/vee-validate.git",
     "type": "git",

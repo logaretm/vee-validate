@@ -8,7 +8,7 @@
   "unpkg": "dist/vee-validate-zod.js",
   "main": "dist/vee-validate-zod.js",
   "types": "dist/vee-validate-zod.d.ts",
-  "homepage": "https://vee-validate.logaretm.com/v4/guide/global-validators",
+  "homepage": "https://vee-validate.logaretm.com/v4/integrations/zod-schema-validation/",
   "repository": {
     "url": "https://github.com/logaretm/vee-validate.git",
     "type": "git",
