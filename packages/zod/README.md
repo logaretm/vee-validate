@@ -1,11 +1,11 @@
 # @vee-validate/zod
 
 <p align="center">
-  <a href="https://vee-validate.logaretm.com/v4/guide/global-validators" target="_blank">
+  <a href="https://vee-validate.logaretm.com/v4/integrations/zod-schema-validation/" target="_blank">
     <img width="150" src="https://github.com/logaretm/vee-validate/raw/main/logo.png">
   </a>
 
-  <a href="https://vee-validate.logaretm.com/v4/guide/global-validators" target="_blank">
+  <a href="https://github.com/colinhacks/zod/" target="_blank">
     <img width="150" src="https://github.com/colinhacks/zod/raw/master/logo.svg">
   </a>
 </p>
@@ -18,88 +18,100 @@
   </a>
 </p>
 
-## Getting Started
+## Guide
 
-This official vee-validate plugin allows you to use zod schemas as a drop-in replacement for [yup](https://github.com/jquense/yup).
+[Zod](https://github.com/colinhacks/zod/) is an excellent library for value validation which mirrors static typing APIs.
 
-### Install
+In their own words it is a:
 
-Install these packages `vee-validate`, `zod` and `@vee-validate/zod`.
+> TypeScript-first schema validation with static type inference
+
+You can use zod as a typed schema with the `@vee-validate/zod` package:
 
 ```sh
-yarn add vee-validate zod @vee-validate/zod
-
-# or with NPM
-
-npm install vee-validate zod @vee-validate/zod
+# npm
+npm install @vee-validate/zod
+# yarn
+yarn add @vee-validate/zod
+# pnpm
+pnpm add @vee-validate/zod
 ```
 
-### Usage
+The `@vee-valdiate/zod` package exposes a `toTypedSchema` function that accepts any zod schema. Which then you can pass along to `validationSchema` option on `useForm`.
 
-#### Field-level schema
+This makes the form values and submitted values typed automatically and caters for both input and output types of that schema.
 
-```js
-import { toFieldValidator } from '@vee-validate/zod';
-import * as zod from 'zod';
+```ts
+import { useForm } from 'vee-validate';
+import { object, string } from 'zod';
+import { toTypedSchema } from '@vee-validate/zod';
 
-const fieldSchema = toFieldValidator(zod.string().nonempty(REQUIRED_MSG).min(8, MIN_MSG));
-```
-
-Then use it with `<Field />` component or `useField` function:
-
-```vue
-<Field name="field" :rules="fieldSchema" />
-```
-
-```js
-const { value, errorMessage } = useField('field', fieldSchema);
-```
-
-#### Form-level schema
-
-```js
-import { toFormValidator } from '@vee-validate/zod';
-import * as zod from 'zod';
-
-const schema = toFormValidator(
-  zod
-    .object({
-      password: zod.string(),
-      confirmation: zod.string(),
+const { values, handleSubmit } = useForm({
+  validationSchema: toTypedSchema(
+    object({
+      email: string().min(1, 'required'),
+      password: string().min(1, 'required'),
+      name: string().optional(),
     })
-    .refine(data => data.confirmation === data.password, {
-      message: CONFIRM_MSG,
-      path: ['confirmation'],
-    })
-);
-```
+  ),
+});
 
-Then use it with `<Form />` component or `useForm` function:
+// ❌ Type error, which means `values` is type-safe
+values.email.endsWith('@gmail.com');
 
-```vue
-<Form :validation-schema="schema">
-  ...
-</Form>
-```
+handleSubmit(submitted => {
+  // No errors, because email is required!
+  submitted.email.endsWith('@gmail.com');
 
-```js
-const { errors } = useForm({
-  validationSchema: schema,
+  // ❌ Type error, because `name` is not required so it could be undefined
+  // Means that your fields are now type safe!
+  submitted.name.length;
 });
 ```
 
-### Limitations
+### Zod default values
 
-Under the hood, this plugin converts zod schemas to `yup` schemas by wrapping them with a similar API, this means there are some limitations, if you encounter unexpected behaviors or type issues please report them.
+You can also define default values on your zod schema directly and it will be picked up by the form:
 
-At the moment there are no known limitations.
+```ts
+import { useForm } from 'vee-validate';
+import { object, string } from 'zod';
+import { toTypedSchema } from '@vee-validate/zod';
 
-### Documentation
+const { values, handleSubmit } = useForm({
+  validationSchema: toTypedSchema(
+    object({
+      email: string().default('something@email.com'),
+      password: string().default(''),
+    })
+  ),
+});
+```
 
-You can find more information over at [vee-validate documentation here](https://vee-validate.logaretm.com/v4).
+Your initial values will be using the schema defaults, and also the defaults will be used if the values submitted is missing these fields.
 
-For how to use zod, check [their repository](https://github.com/colinhacks/zod).
+### Zod preprocess
 
-### License
+You can also define preprocessors to cast your fields before submission:
 
-MIT
+```ts
+import { useForm } from 'vee-validate';
+import { object, number, preprocess } from 'zod';
+import { toTypedSchema } from '@vee-validate/zod';
+
+const { values, handleSubmit } = useForm({
+  validationSchema: toTypedSchema(
+    object({
+      age: preprocess(val => Number(val), number()),
+    })
+  ),
+});
+
+// typed as `unknown` since the source value can be anything
+values.age;
+
+handleSubmit(submitted => {
+  // will be typed as number because zod made sure it is!
+  values.age;
+});
+```
