@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.8.5
+
+### Patch Changes
+
+- 9048a238: fixed zod union issues not showing up as errors closes #4204
+
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 

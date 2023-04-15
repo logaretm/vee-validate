@@ -1,6 +1,6 @@
 {
   "name": "@vee-validate/yup",
-  "version": "4.8.4",
+  "version": "4.8.5",
   "description": "vee-validate integration with yup schema validation",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
@@ -29,7 +29,7 @@
   ],
   "dependencies": {
     "type-fest": "^3.6.1",
-    "vee-validate": "^4.8.4",
+    "vee-validate": "^4.8.5",
     "yup": "^1.0.2"
   },
   "publishConfig": {

@@ -193,7 +193,7 @@ importers:
   packages/rules:
     dependencies:
       vee-validate:
-        specifier: ^4.8.4
+        specifier: ^4.8.5
         version: link:../vee-validate
 
   packages/vee-validate:
@@ -211,7 +211,7 @@ importers:
         specifier: ^3.6.1
         version: 3.6.1
       vee-validate:
-        specifier: ^4.8.4
+        specifier: ^4.8.5
         version: link:../vee-validate
       yup:
         specifier: ^1.0.2
@@ -223,7 +223,7 @@ importers:
         specifier: ^3.6.1
         version: 3.6.1
       vee-validate:
-        specifier: ^4.8.4
+        specifier: ^4.8.5
         version: link:../vee-validate
       zod:
         specifier: ^3.21.4
