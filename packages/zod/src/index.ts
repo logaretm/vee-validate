@@ -1,4 +1,4 @@
-import { ZodObject, input, output, ZodDefault, ZodSchema, ParseParams } from 'zod';
+import { ZodObject, input, output, ZodDefault, ZodSchema, ParseParams, ZodIssue } from 'zod';
 import { PartialDeep } from 'type-fest';
 import type { TypedSchema, TypedSchemaError } from 'vee-validate';
 import { isIndex, isObject, merge } from '../../shared';
@@ -22,16 +22,8 @@ export function toTypedSchema<
         };
       }
 
-      const errors: Record<string, TypedSchemaError> = result.error.issues.reduce((acc, issue) => {
-        const path = joinPath(issue.path);
-        if (!acc[path]) {
-          acc[path] = { errors: [], path };
-        }
-
-        acc[path].errors.push(issue.message);
-
-        return acc;
-      }, {} as Record<string, TypedSchemaError>);
+      const errors: Record<string, TypedSchemaError> = {};
+      processIssues(result.error.issues, errors);
 
       return {
         errors: Object.values(errors),
@@ -55,10 +47,36 @@ export function toTypedSchema<
   return schema;
 }
 
+function processIssues(issues: ZodIssue[], errors: Record<string, TypedSchemaError>): void {
+  issues.forEach(issue => {
+    const path = joinPath(issue.path);
+    if (issue.code === 'invalid_union') {
+      processIssues(
+        issue.unionErrors.flatMap(ue => ue.issues),
+        errors
+      );
+
+      if (!path) {
+        return;
+      }
+    }
+
+    if (!errors[path]) {
+      errors[path] = { errors: [], path };
+    }
+
+    errors[path].errors.push(issue.message);
+  });
+}
+
 /**
  * Constructs a path with brackets to be compatible with vee-validate path syntax
  */
 function joinPath(path: (string | number)[]): string {
+  if (!path.length) {
+    return '';
+  }
+
   let fullPath = String(path[0]);
   for (let i = 1; i < path.length; i++) {
     if (isIndex(path[i])) {

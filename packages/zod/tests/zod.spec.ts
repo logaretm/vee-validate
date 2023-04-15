@@ -2,16 +2,16 @@ import { useField, useForm } from '@/vee-validate';
 import { toTypedSchema } from '@/zod';
 import { mountWithHoc, flushPromises, setValue } from 'vee-validate/tests/helpers';
 import { Ref } from 'vue';
-import * as zod from 'zod';
+import { z } from 'zod';
 
 const REQUIRED_MSG = 'field is required';
 const MIN_MSG = 'field is too short';
 const EMAIL_MSG = 'field must be a valid email';
 
-test('validates typed field with yup', async () => {
+test('validates typed field with zod', async () => {
   const wrapper = mountWithHoc({
     setup() {
-      const rules = toTypedSchema(zod.string().min(1, REQUIRED_MSG).min(8, MIN_MSG));
+      const rules = toTypedSchema(z.string().min(1, REQUIRED_MSG).min(8, MIN_MSG));
       const { value, errorMessage } = useField('test', rules);
 
       return {
@@ -45,7 +45,7 @@ test('generates multiple errors for any given field', async () => {
   let errors!: Ref<string[]>;
   const wrapper = mountWithHoc({
     setup() {
-      const rules = toTypedSchema(zod.string().min(1, REQUIRED_MSG).min(8, MIN_MSG));
+      const rules = toTypedSchema(z.string().min(1, REQUIRED_MSG).min(8, MIN_MSG));
       const { value, errors: fieldErrors } = useField('test', rules);
 
       errors = fieldErrors;
@@ -72,9 +72,9 @@ test('shows multiple errors using error bag', async () => {
   const wrapper = mountWithHoc({
     setup() {
       const schema = toTypedSchema(
-        zod.object({
-          email: zod.string().email(EMAIL_MSG).min(7, MIN_MSG),
-          password: zod.string().min(8, MIN_MSG),
+        z.object({
+          email: z.string().email(EMAIL_MSG).min(7, MIN_MSG),
+          password: z.string().min(8, MIN_MSG),
         })
       );
 
@@ -125,13 +125,13 @@ test('shows multiple errors using error bag', async () => {
   expect(passwordError.textContent).toBe('');
 });
 
-test('validates typed schema form with yup', async () => {
+test('validates typed schema form with zod', async () => {
   const wrapper = mountWithHoc({
     setup() {
       const schema = toTypedSchema(
-        zod.object({
-          email: zod.string().email(EMAIL_MSG).min(1, REQUIRED_MSG),
-          password: zod.string().min(8, MIN_MSG),
+        z.object({
+          email: z.string().email(EMAIL_MSG).min(1, REQUIRED_MSG),
+          password: z.string().min(8, MIN_MSG),
         })
       );
 
@@ -182,13 +182,71 @@ test('validates typed schema form with yup', async () => {
   expect(passwordError.textContent).toBe('');
 });
 
+// #4204
+test('handles zod union errors', async () => {
+  const wrapper = mountWithHoc({
+    setup() {
+      const schema = z.object({
+        email: z.string().email({ message: 'valid email' }).min(1, 'Email is required'),
+        name: z.string().min(1, 'Name is required'),
+      });
+
+      const schemaBothUndefined = z.object({
+        email: z.undefined(),
+        name: z.undefined(),
+      });
+
+      const bothOrNeither = schema.or(schemaBothUndefined);
+
+      const { useFieldModel, errors } = useForm({
+        validationSchema: toTypedSchema(bothOrNeither),
+      });
+
+      const [email, name] = useFieldModel(['email', 'name']);
+
+      return {
+        schema,
+        email,
+        name,
+        errors,
+      };
+    },
+    template: `
+    <div>
+      <input id="email" name="email" v-model="email" />
+      <span id="emailErr">{{ errors.email }}</span>
+
+      <input id="name" name="name" v-model="name" />
+      <span id="nameErr">{{ errors.name }}</span>
+    </div>
+    `,
+  });
+
+  const email = wrapper.$el.querySelector('#email');
+  const name = wrapper.$el.querySelector('#name');
+  const emailError = wrapper.$el.querySelector('#emailErr');
+  const nameError = wrapper.$el.querySelector('#nameErr');
+
+  await flushPromises();
+
+  setValue(name, '4');
+  await flushPromises();
+  expect(nameError.textContent).toBe('Expected undefined, received string');
+
+  setValue(email, 'test@gmail.com');
+  await flushPromises();
+
+  expect(emailError.textContent).toBe('');
+  expect(nameError.textContent).toBe('');
+});
+
 test('uses zod for form values transformations and parsing', async () => {
   const submitSpy = vi.fn();
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(
-        zod.object({
-          age: zod.preprocess(arg => Number(arg), zod.number()),
+        z.object({
+          age: z.preprocess(arg => Number(arg), z.number()),
         })
       );
 
@@ -223,8 +281,8 @@ test('uses zod default values for submission', async () => {
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(
-        zod.object({
-          age: zod.number().default(11),
+        z.object({
+          age: z.number().default(11),
         })
       );
 
@@ -257,13 +315,13 @@ test('uses zod default values for initial values', async () => {
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(
-        zod.object({
-          name: zod.string().default('test'),
-          age: zod.number().default(11),
-          unknownKey: zod.string(),
-          object: zod.object({
-            nestedKey: zod.string(),
-            nestedDefault: zod.string().default('nested'),
+        z.object({
+          name: z.string().default('test'),
+          age: z.number().default(11),
+          unknownKey: z.string(),
+          object: z.object({
+            nestedKey: z.string(),
+            nestedDefault: z.string().default('nested'),
           }),
         })
       );
@@ -301,8 +359,8 @@ test('default values should not be undefined', async () => {
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(
-        zod.object({
-          email: zod.string().min(1),
+        z.object({
+          email: z.string().min(1),
         })
       );
 
