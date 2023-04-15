@@ -15,7 +15,8 @@
     "cover": "vitest run --coverage",
     "postversion": "npm run build",
     "docs:dev": "cd ./docs && npm run dev && cd -",
-    "postinstall": "husky install"
+    "postinstall": "husky install",
+    "release": "./scripts/release.sh"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.1",
