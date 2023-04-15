@@ -1,5 +1,6 @@
 {
   "private": true,
+  "name": "vee-validate-docs",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
