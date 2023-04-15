@@ -1,12 +1,16 @@
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs-extra';
+import { exec as execCb } from 'child_process';
+import { promisify } from 'util';
 import { rollup } from 'rollup';
 import chalk from 'chalk';
 import * as Terser from 'terser';
 import { createConfig } from './config.mjs';
 import { reportSize } from './info.mjs';
 import { generateDts } from './generate-dts.mjs';
+
+const exec = promisify(execCb);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -42,6 +46,13 @@ async function minify({ code, pkg, bundleName }) {
 }
 
 async function build(pkg) {
+  if (pkg === 'nuxt') {
+    console.log(chalk.magenta(`Generating bundle for ${pkg}`));
+    await exec('cd packages/nuxt && pnpm build && cd -');
+    console.log(`${chalk.magenta('✅ Bundled ' + pkg)}`);
+    return;
+  }
+
   console.log(chalk.magenta(`Generating bundle for ${pkg}`));
   const pkgout = path.join(__dirname, `../packages/${pkg}/dist`);
   for (const format of ['es', 'umd']) {
@@ -84,6 +95,10 @@ async function build(pkg) {
 
   if (arg === 'yup' || !arg) {
     await build('yup');
+  }
+
+  if (arg === 'nuxt' || !arg) {
+    await build('nuxt');
   }
 
   if (arg === 'i18n' || !arg) {
