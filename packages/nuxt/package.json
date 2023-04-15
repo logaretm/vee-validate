@@ -1,6 +1,6 @@
 {
   "name": "@vee-validate/nuxt",
-  "version": "4.8.4",
+  "version": "4.8.5",
   "description": "Official vee-validate nuxt module",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
@@ -11,6 +11,9 @@
     "url": "https://github.com/logaretm/vee-validate.git",
     "type": "git",
     "directory": "packages/nuxt"
+  },
+  "scripts": {
+    "build": "nuxt-module-build"
   },
   ".": {
     "types": "./dist/types.d.ts",
@@ -33,7 +36,7 @@
     "dist/*.d.ts"
   ],
   "dependencies": {
-    "vee-validate": "^4.8.4",
+    "vee-validate": "^4.8.5",
     "@nuxt/kit": "^3.4.0"
   },
   "devDependencies": {
