@@ -36,8 +36,9 @@
     "dist/*.d.ts"
   ],
   "dependencies": {
-    "vee-validate": "^4.8.5",
-    "@nuxt/kit": "^3.4.0"
+    "@nuxt/kit": "^3.4.0",
+    "local-pkg": "^0.4.3",
+    "vee-validate": "^4.8.5"
   },
   "devDependencies": {
     "@nuxt/eslint-config": "^0.1.1",
