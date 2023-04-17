@@ -1,16 +1,21 @@
+---
+layout: ../../layouts/PageLayout.astro
+title: Nuxt integration
+description: VeeValidate Integration with nuxt
+order: 3
+---
+
+import DocTip from '@/components/DocTip.vue';
+
 # @vee-validate/nuxt
 
-<p align="center">
-  <a href="https://vee-validate.logaretm.com/v4/guide/global-validators" target="_blank">
-    <img width="150" src="https://github.com/logaretm/vee-validate/raw/main/logo.png">
-  </a>
+<div class="mb-10 w-full flex items-center justify-center">
+  <img class="h-40" src="https://github.com/logaretm/vee-validate/raw/main/logo.png">
 
-  <a href="https://nuxt.com/" target="_blank">
-    <img width="150" src="https://nuxt.com/assets/design-kit/logo/full-logo-green-dark.png">
+  <a class="ml-4" href="https://nuxt.com/" target="_blank">
+    <img class="h-40" src="https://nuxt.com/assets/design-kit/logo/full-logo-green-dark.png" />
   </a>
-</p>
-
-> Official vee-validate Nuxt module
+</div>
 
 <p align="center">
   <a href="https://github.com/sponsors/logaretm">
@@ -25,6 +30,12 @@ Official vee-validate's Nuxt module
 - Auto import of vee-validate components
 - Auto import of vee-validate composables
 - Detecting if you are using `zod` or `yup` and exposing the `toTypedSchema` suitable for either.
+
+<DocTip type="warning">
+
+No types are exposed by default to avoid having conflicts with other libraries, aside from vee-validate's main API components/composables. You can still import them via `vee-validate`.
+
+</DocTip>
 
 ## Getting Started
 
@@ -52,7 +63,3 @@ export default defineNuxtConfig({
   ],
 });
 ```
-
-## Types
-
-No types are exposed by default to avoid having conflicts with other libraries, aside from vee-validate's main API components/composables. You can still import them via `vee-validate`.
