@@ -3,7 +3,7 @@ import type { NuxtModule } from '@nuxt/schema';
 import { isPackageExists } from 'local-pkg';
 
 type ComponentName = 'Field' | 'Form' | 'ErrorMessage' | 'FieldArray';
-interface VeeValidateModuleOptions {
+export interface VeeValidateNuxtOptions {
   autoImports?: boolean;
   componentNames?: Partial<Record<ComponentName, string>>;
 }
@@ -32,9 +32,9 @@ const composables = [
   'useValidateForm',
 ];
 
-export default defineNuxtModule<VeeValidateModuleOptions>({
+export default defineNuxtModule<VeeValidateNuxtOptions>({
   meta: {
-    name: 'vee-valiate',
+    name: 'vee-validate',
     configKey: 'veeValidate',
   },
   defaults: {
@@ -65,9 +65,9 @@ export default defineNuxtModule<VeeValidateModuleOptions>({
       checkForZod(options);
     }
   },
-}) as NuxtModule<VeeValidateModuleOptions>;
+}) as NuxtModule<VeeValidateNuxtOptions>;
 
-function checkForZod(options: VeeValidateModuleOptions) {
+function checkForZod(options: VeeValidateNuxtOptions) {
   if (isPackageExists('zod') && !isPackageExists('@vee-validate/zod')) {
     logger.warn(
       'You seem to be using zod, but you have not installed @vee-validate/zod. Please install it to use zod with vee-validate.'
@@ -98,7 +98,7 @@ function checkForZod(options: VeeValidateModuleOptions) {
   return false;
 }
 
-function checkForYup(options: VeeValidateModuleOptions) {
+function checkForYup(options: VeeValidateNuxtOptions) {
   if (isPackageExists('yup') && !isPackageExists('@vee-validate/yup')) {
     logger.warn(
       'You seem to be using yup, but you have not installed @vee-validate/yup. Please install it to use yup with vee-validate.'
@@ -127,4 +127,13 @@ function checkForYup(options: VeeValidateModuleOptions) {
   }
 
   return false;
+}
+
+declare module '@nuxt/schema' {
+  interface NuxtConfig {
+    'vee-validate'?: VeeValidateNuxtOptions;
+  }
+  interface NuxtOptions {
+    'vee-validate'?: VeeValidateNuxtOptions;
+  }
 }
