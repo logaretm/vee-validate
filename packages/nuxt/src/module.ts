@@ -1,4 +1,4 @@
-import { defineNuxtModule, addComponent, addImports } from '@nuxt/kit';
+import { defineNuxtModule, addComponent, addImports, logger } from '@nuxt/kit';
 import type { NuxtModule } from '@nuxt/schema';
 import { isPackageExists } from 'local-pkg';
 
@@ -66,20 +66,21 @@ export default defineNuxtModule<VeeValidateModuleOptions>({
 
 function checkForZod(options: VeeValidateModuleOptions) {
   if (isPackageExists('zod') && !isPackageExists('@vee-validate/zod')) {
-    console.log(
+    logger.warn(
       'You seem to be using zod, but you have not installed @vee-validate/zod. Please install it to use zod with vee-validate.'
     );
     return true;
   }
 
   if (isPackageExists('@vee-validate/zod') && !isPackageExists('zod')) {
-    console.log(
+    logger.warn(
       'You seem to be using @vee-validate/zod, but you have not installed zod. Please install it to use zod with vee-validate.'
     );
     return true;
   }
 
   if (isPackageExists('@vee-validate/zod') && isPackageExists('zod')) {
+    logger.info('Using zod with vee-validate');
     if (options.autoImports) {
       addImports({
         name: 'toTypedSchema',
@@ -96,20 +97,21 @@ function checkForZod(options: VeeValidateModuleOptions) {
 
 function checkForYup(options: VeeValidateModuleOptions) {
   if (isPackageExists('yup') && !isPackageExists('@vee-validate/yup')) {
-    console.log(
+    logger.warn(
       'You seem to be using yup, but you have not installed @vee-validate/yup. Please install it to use yup with vee-validate.'
     );
     return true;
   }
 
   if (isPackageExists('@vee-validate/yup') && !isPackageExists('yup')) {
-    console.log(
+    logger.warn(
       'You seem to be using @vee-validate/yup, but you have not installed yup. Please install it to use yup with vee-validate.'
     );
     return true;
   }
 
   if (isPackageExists('@vee-validate/yup') && isPackageExists('yup')) {
+    logger.info('Using yup with vee-validate');
     if (options.autoImports) {
       addImports({
         name: 'toTypedSchema',
