@@ -195,6 +195,9 @@ importers:
       '@nuxt/kit':
         specifier: ^3.4.0
         version: 3.4.0(rollup@3.20.2)
+      local-pkg:
+        specifier: ^0.4.3
+        version: 0.4.3
       vee-validate:
         specifier: ^4.8.5
         version: link:../vee-validate
