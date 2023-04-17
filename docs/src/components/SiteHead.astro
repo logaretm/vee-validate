@@ -1,17 +1,23 @@
 ---
-import { generateMetaTags } from '@/utils/seo';
+import { generateMetaTags, generateSocialImage } from '@/utils/seo';
 import config from '@/config';
 
 const { frontmatter } = Astro.props;
 
 const title = frontmatter?.title || 'VeeValidate: Painless Vue.js forms';
-const description = frontmatter?.title || 'Painless Vue.js forms';
+const description = frontmatter?.description || 'Painless Vue.js forms';
 const path = frontmatter?.url || '/';
+const image = generateSocialImage({
+  title: title,
+  tagline: description,
+  imagePublicID: 'open-source/vee-validate-share.png',
+});
 
 const metaTags = generateMetaTags({
   title,
   description,
   url: `${config.appURL}${path}`,
+  image,
 });
 ---
 
