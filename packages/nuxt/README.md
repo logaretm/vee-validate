@@ -6,7 +6,7 @@
   </a>
 
   <a href="https://nuxt.com/" target="_blank">
-    <img width="150" src="https://nuxt.com/assets/design-kit/logo/full-logo-green-dark.png">
+    <img width="150" src="https://nuxt.com/assets/design-kit/logo/icon-green.svg">
   </a>
 </p>
 
@@ -56,3 +56,53 @@ export default defineNuxtConfig({
 ## Types
 
 No types are exposed by default to avoid having conflicts with other libraries, aside from vee-validate's main API components/composables. You can still import them via `vee-validate`.
+
+## Configuration
+
+You can configure a few aspects of the `@vee-validate/nuxt` module. Here is the config interface:
+
+```ts
+export default defineNuxtConfig({
+  // ...
+  modules: [
+    //...
+    [
+      '@vee-validate/nuxt',
+      {
+        // disable or enable auto imports
+        autoImports: true,
+        // Use different names for components
+        componentNames: {
+          Form: 'VeeForm',
+          Field: 'VeeField',
+          FieldArray: 'VeeFieldArray',
+          ErrorMessage: 'VeeErrorMessage',
+        },
+      },
+    ],
+  ],
+});
+```
+
+You can also use the `veeValidate` config key instead of the array syntax:
+
+```ts
+export default defineNuxtConfig({
+  // ...
+  modules: [
+    //...
+    '@vee-validate/nuxt',
+  ],
+  veeValidate: {
+    // disable or enable auto imports
+    autoImports: true,
+    // Use different names for components
+    componentNames: {
+      Form: 'VeeForm',
+      Field: 'VeeField',
+      FieldArray: 'VeeFieldArray',
+      ErrorMessage: 'VeeErrorMessage',
+    },
+  },
+});
+```
