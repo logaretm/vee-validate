@@ -32,8 +32,7 @@
     "form"
   ],
   "files": [
-    "dist/*.js",
-    "dist/*.d.ts"
+    "dist/*"
   ],
   "dependencies": {
     "@nuxt/kit": "^3.4.0",
