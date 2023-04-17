@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.8.6
+
+### Patch Changes
+
+- 6e0b0557: Introduced official nuxt module package
+
 ## 4.8.5
 
 ### Patch Changes

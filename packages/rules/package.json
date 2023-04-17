@@ -1,6 +1,6 @@
 {
   "name": "@vee-validate/rules",
-  "version": "4.8.5",
+  "version": "4.8.6",
   "description": "Form Validation for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
@@ -28,6 +28,6 @@
     "dist/*.d.ts"
   ],
   "dependencies": {
-    "vee-validate": "^4.8.5"
+    "vee-validate": "^4.8.6"
   }
 }
