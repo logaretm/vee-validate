@@ -2,11 +2,13 @@ import { defineNuxtModule, addComponent, addImports, logger } from '@nuxt/kit';
 import type { NuxtModule } from '@nuxt/schema';
 import { isPackageExists } from 'local-pkg';
 
+type ComponentName = 'Field' | 'Form' | 'ErrorMessage' | 'FieldArray';
 interface VeeValidateModuleOptions {
   autoImports?: boolean;
+  componentNames?: Partial<Record<ComponentName, string>>;
 }
 
-const components = ['Field', 'Form', 'ErrorMessage', 'FieldArray'];
+const components: ComponentName[] = ['Field', 'Form', 'ErrorMessage', 'FieldArray'];
 
 const composables = [
   'useField',
@@ -37,6 +39,7 @@ export default defineNuxtModule<VeeValidateModuleOptions>({
   },
   defaults: {
     autoImports: true,
+    componentNames: {},
   },
   setup(options, nuxt) {
     if (options.autoImports) {
@@ -50,7 +53,7 @@ export default defineNuxtModule<VeeValidateModuleOptions>({
 
       components.forEach(component => {
         addComponent({
-          name: component,
+          name: options.componentNames?.[component] ?? component,
           export: component,
           filePath: 'vee-validate',
         });
