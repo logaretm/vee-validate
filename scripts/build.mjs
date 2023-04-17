@@ -48,7 +48,13 @@ async function minify({ code, pkg, bundleName }) {
 async function build(pkg) {
   if (pkg === 'nuxt') {
     console.log(chalk.magenta(`Generating bundle for ${pkg}`));
-    await exec('cd packages/nuxt && pnpm build && cd -');
+    const result = await exec('cd packages/nuxt && pnpm build && cd -');
+    console.log(result.stdout);
+    if (result.stderr) {
+      console.error(result.stderr);
+      process.exit(1);
+    }
+
     console.log(`${chalk.magenta('✅ Bundled ' + pkg)}`);
     return;
   }
