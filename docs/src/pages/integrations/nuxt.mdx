@@ -12,8 +12,8 @@ import DocTip from '@/components/DocTip.vue';
 <div class="mb-10 w-full flex items-center justify-center">
   <img class="h-40" src="https://github.com/logaretm/vee-validate/raw/main/logo.png" />
 
-  <a class="ml-4" href="https://nuxt.com/" target="_blank">
-    <img class="h-40" src="https://nuxt.com/assets/design-kit/logo/full-logo-green-dark.png" />
+  <a class="ml-20" href="https://nuxt.com/" target="_blank">
+    <img class="h-40" src="https://nuxt.com/assets/design-kit/logo/icon-green.svg" />
   </a>
 </div>
 
@@ -31,7 +31,7 @@ Official vee-validate's Nuxt module
 - Auto import of vee-validate composables
 - Detecting if you are using `zod` or `yup` and exposing the `toTypedSchema` suitable for either.
 
-<DocTip type="warning">
+<DocTip type="warn">
 
 No types are exposed by default to avoid having conflicts with other libraries, aside from vee-validate's main API components/composables. You can still import them via `vee-validate`.
 
@@ -61,5 +61,55 @@ export default defineNuxtConfig({
     //...
     '@vee-validate/nuxt',
   ],
+});
+```
+
+## Configuration
+
+You can configure a few aspects of the `@vee-validate/nuxt` module. Here is the config interface:
+
+```ts{3-19}
+export default defineNuxtConfig({
+  // ...
+  modules: [
+    //...
+    [
+      '@vee-validate/nuxt',
+      {
+        // disable or enable auto imports
+        autoImports: true,
+        // Use different names for components
+        componentNames: {
+          Form: 'VeeForm',
+          Field: 'VeeField',
+          FieldArray: 'VeeFieldArray',
+          ErrorMessage: 'VeeErrorMessage',
+        },
+      },
+    ],
+  ],
+});
+```
+
+You can also use the `veeValidate` config key instead of the array syntax:
+
+```ts{7-16}
+export default defineNuxtConfig({
+  // ...
+  modules: [
+    //...
+    '@vee-validate/nuxt',
+  ],
+  veeValidate: {
+    // disable or enable auto imports
+    autoImports: true,
+    // Use different names for components
+    componentNames: {
+      Form: 'VeeForm',
+      Field: 'VeeField',
+      FieldArray: 'VeeFieldArray',
+      ErrorMessage: 'VeeErrorMessage',
+    },
+  },
 });
 ```
