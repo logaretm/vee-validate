@@ -9,7 +9,8 @@
       "@vee-validate/i18n",
       "@vee-validate/rules",
       "@vee-validate/zod",
-      "@vee-validate/yup"
+      "@vee-validate/yup",
+      "@vee-validate/nuxt"
     ]
   ],
   "linked": [],
