@@ -14,11 +14,13 @@ interface ValidationTriggersProps {
   validateOnModelUpdate: boolean;
 }
 
+type EventHandlerBinding<T> = T | T[];
+
 interface FieldBindingObject<TValue = unknown> {
   name: string;
-  onBlur: (e: Event) => unknown;
-  onInput: (e: Event) => unknown;
-  onChange: (e: Event) => unknown;
+  onBlur: EventHandlerBinding<(e: Event) => unknown>;
+  onInput: EventHandlerBinding<(e: Event) => unknown>;
+  onChange: EventHandlerBinding<(e: Event) => unknown>;
   'onUpdate:modelValue'?: ((e: TValue) => unknown) | undefined;
   value?: unknown;
   checked?: boolean;
