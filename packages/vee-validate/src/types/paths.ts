@@ -146,6 +146,49 @@ type ArrayPathInternal<T, TraversedTypes = T> = T extends ReadonlyArray<infer V>
     }[keyof T];
 
 /**
+ * Type which eagerly collects all paths through a type which point to an array
+ * type.
+ * @typeParam T - type which should be introspected.
+ * @example
+ * ```
+ * Path<{foo: {bar: string[], baz: number[]}}> = 'foo.bar' | 'foo.baz'
+ * ```
+ */
+// We want to explode the union type and process each individually
+// so assignable types don't leak onto the stack from the base.
+type ArrayPath<T> = T extends any ? ArrayPathInternal<T> : never;
+
+/**
+ * Type to evaluate the type which the given path points to.
+ * @typeParam T - deeply nested type which is indexed by the path
+ * @typeParam P - path into the deeply nested type
+ * @example
+ * ```
+ * PathValue<{foo: {bar: string}}, 'foo.bar'> = string
+ * PathValue<[number, string], '1'> = string
+ * ```
+ */
+export type PathValue<T, P extends Path<T> | ArrayPath<T>> = T extends any
+  ? P extends `${infer K}.${infer R}`
+    ? K extends keyof T
+      ? R extends Path<T[K]>
+        ? PathValue<T[K], R>
+        : never
+      : K extends `${ArrayKey}`
+      ? T extends ReadonlyArray<infer V>
+        ? PathValue<V, R & Path<V>>
+        : never
+      : never
+    : P extends keyof T
+    ? T[P]
+    : P extends `${ArrayKey}`
+    ? T extends ReadonlyArray<infer V>
+      ? V
+      : never
+    : never
+  : never;
+
+/**
  * Type which eagerly collects all paths through a type
  * @typeParam T - type which should be introspected
  * @example
@@ -156,5 +199,3 @@ type ArrayPathInternal<T, TraversedTypes = T> = T extends ReadonlyArray<infer V>
 // We want to explode the union type and process each individually
 // so assignable types don't leak onto the stack from the base.
 export type Path<T> = T extends any ? PathInternal<T> : never;
-
-export type MapPaths<TRecord, TType> = { [K in Path<TRecord>]: TType };
