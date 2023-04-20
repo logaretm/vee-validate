@@ -1,7 +1,7 @@
 import { ComputedRef, Ref } from 'vue';
-import { MapValues, MaybeRef, GenericObject } from './common';
+import { MapValuesPathsToRefs, MaybeRef, GenericObject } from './common';
 import { FieldValidationMetaInfo } from '../../../shared';
-import { Path } from './paths';
+import { Path, PathValue } from './paths';
 
 export interface ValidationResult {
   errors: string[];
@@ -131,7 +131,11 @@ export interface SetFieldValueOptions {
   force: boolean;
 }
 export interface FormActions<TValues extends GenericObject, TOutput extends TValues = TValues> {
-  setFieldValue<T extends Path<TValues>>(field: T, value: TValues[T], opts?: Partial<SetFieldValueOptions>): void;
+  setFieldValue<T extends Path<TValues>>(
+    field: T,
+    value: PathValue<TValues, T>,
+    opts?: Partial<SetFieldValueOptions>
+  ): void;
   setFieldError(field: Path<TValues>, message: string | string[] | undefined): void;
   setErrors(fields: FormErrors<TValues>): void;
   setValues<T extends Path<TValues>>(fields: Partial<Record<T, TValues[T]>>): void;
@@ -205,8 +209,10 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   unregister(field: PrivateFieldContext): void;
   handleSubmit: HandleSubmitFactory<TValues, TOutput> & { withControlled: HandleSubmitFactory<TValues, TOutput> };
   setFieldInitialValue(path: string, value: unknown): void;
-  useFieldModel<TPath extends Path<TValues>>(path: MaybeRef<TPath>): Ref<TValues[TPath]>;
-  useFieldModel<TPath extends Path<TValues>>(paths: [...MaybeRef<TPath>[]]): MapValues<typeof paths, TValues>;
+  useFieldModel<TPath extends Path<TValues>>(path: TPath): Ref<PathValue<TValues, TPath>>;
+  useFieldModel<TPaths extends readonly [...MaybeRef<Path<TValues>>[]]>(
+    paths: TPaths
+  ): MapValuesPathsToRefs<TValues, TPaths>;
 }
 
 export interface FormContext<

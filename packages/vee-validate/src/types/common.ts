@@ -1,5 +1,5 @@
 import { Ref } from 'vue';
-import { Path } from './paths';
+import { Path, PathValue } from './paths';
 
 export type GenericObject = Record<string, any>;
 
@@ -9,11 +9,15 @@ export type MaybeArray<T> = T | T[];
 
 export type MaybeRefOrLazy<T> = MaybeRef<T> | (() => T);
 
-export type MapValues<T, TValues extends GenericObject> = {
-  [K in keyof T]: T[K] extends MaybeRef<infer TKey>
+export type MapValuesPathsToRefs<
+  TValues extends GenericObject,
+  TPaths extends readonly [...MaybeRef<Path<TValues>>[]]
+> = {
+  readonly [K in keyof TPaths]: TPaths[K] extends MaybeRef<infer TKey>
     ? TKey extends Path<TValues>
-      ? Ref<TValues[TKey]>
+      ? Ref<PathValue<TValues, TKey>>
       : Ref<unknown>
     : Ref<unknown>;
 };
-export type MapPaths<TRecord, TType> = { [K in Path<TRecord>]: TType };
+
+export type FlattenAndSetPathsType<TRecord, TType> = { [K in Path<TRecord>]: TType };
