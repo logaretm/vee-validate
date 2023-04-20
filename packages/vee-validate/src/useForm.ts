@@ -33,12 +33,13 @@ import {
   FieldPathLookup,
   PrivateFieldArrayContext,
   InvalidSubmissionHandler,
-  MapValues,
+  MapValuesPathsToRefs,
   FieldState,
   GenericObject,
   TypedSchema,
   Path,
-  MapPaths,
+  FlattenAndSetPathsType,
+  PathValue,
 } from './types';
 import {
   getFromPath,
@@ -61,7 +62,7 @@ import { _useFieldValue } from './useFieldState';
 import { isCallable } from '../../shared';
 
 type FormSchema<TValues extends Record<string, unknown>> =
-  | MapPaths<TValues, GenericValidateFunction | string | GenericObject>
+  | FlattenAndSetPathsType<TValues, GenericValidateFunction | string | GenericObject>
   | undefined;
 
 export interface FormOptions<
@@ -73,8 +74,8 @@ export interface FormOptions<
 > {
   validationSchema?: MaybeRef<TSchema extends TypedSchema ? TypedSchema<TValues, TOutput> : any>;
   initialValues?: MaybeRef<Partial<TValues>>;
-  initialErrors?: MapPaths<TValues, string | undefined>;
-  initialTouched?: MapPaths<TValues, boolean>;
+  initialErrors?: FlattenAndSetPathsType<TValues, string | undefined>;
+  initialTouched?: FlattenAndSetPathsType<TValues, boolean>;
   validateOnMount?: boolean;
   keepValuesOnUnmount?: MaybeRef<boolean>;
 }
@@ -174,7 +175,7 @@ export function useForm<
   // mutable non-reactive reference to initial errors
   // we need this to process initial errors then unset them
   const initialErrors = {
-    ...(opts?.initialErrors || ({} as MapPaths<TValues, string | undefined>)),
+    ...(opts?.initialErrors || ({} as FlattenAndSetPathsType<TValues, string | undefined>)),
   };
 
   const keepValuesOnUnmount = opts?.keepValuesOnUnmount ?? false;
@@ -281,7 +282,7 @@ export function useForm<
             acc[field] = true;
 
             return acc;
-          }, {} as MapPaths<TValues, boolean>)
+          }, {} as FlattenAndSetPathsType<TValues, boolean>)
         );
 
         isSubmitting.value = true;
@@ -413,7 +414,7 @@ export function useForm<
   /**
    * Sets errors for the fields specified in the object
    */
-  function setErrors(fields: Partial<MapPaths<TValues, string | string[] | undefined>>) {
+  function setErrors(fields: Partial<FlattenAndSetPathsType<TValues, string | string[] | undefined>>) {
     setErrorBag(fields);
   }
 
@@ -422,7 +423,7 @@ export function useForm<
    */
   function setFieldValue<T extends Path<TValues>>(
     field: T,
-    value: TValues[T] | undefined,
+    value: PathValue<TValues, T> | undefined,
     { force } = { force: false }
   ) {
     const fieldInstance = fieldsByPath.value[field];
@@ -477,7 +478,11 @@ export function useForm<
   }
 
   function createModel<TPath extends Path<TValues>>(path: MaybeRef<TPath>) {
-    const { value } = _useFieldValue<TValues[TPath]>(path as string, undefined, formCtx as PrivateFormContext);
+    const { value } = _useFieldValue<PathValue<TValues, TPath>>(
+      path as string,
+      undefined,
+      formCtx as PrivateFormContext
+    );
     watch(
       value,
       () => {
@@ -495,14 +500,19 @@ export function useForm<
     return value;
   }
 
-  function useFieldModel<TPath extends Path<TValues>>(path: MaybeRef<TPath>): Ref<TValues[TPath]>;
-  function useFieldModel<TPath extends Path<TValues>>(paths: [...TPath[]]): MapValues<typeof paths, TValues>;
-  function useFieldModel<TPath extends Path<TValues>>(path: MaybeRef<TPath> | [...MaybeRef<TPath>[]]) {
-    if (!Array.isArray(path)) {
-      return createModel<TPath>(path);
+  function useFieldModel<TPath extends Path<TValues>>(path: TPath): Ref<PathValue<TValues, TPath>>;
+  function useFieldModel<TPaths extends readonly [...MaybeRef<Path<TValues>>[]]>(
+    paths: TPaths
+  ): MapValuesPathsToRefs<TValues, TPaths>;
+  function useFieldModel<
+    TValues extends GenericObject,
+    TPaths extends Path<TValues> | readonly [...MaybeRef<Path<TValues>>[]]
+  >(pathOrPaths: TPaths) {
+    if (!Array.isArray(pathOrPaths)) {
+      return createModel(pathOrPaths as any);
     }
 
-    return path.map(createModel) as MapValues<typeof path, TValues>;
+    return pathOrPaths.map(createModel) as unknown as MapValuesPathsToRefs<TValues, any>;
   }
 
   /**
@@ -519,7 +529,7 @@ export function useForm<
   /**
    * Sets the touched meta state on multiple fields
    */
-  function setTouched(fields: Partial<MapPaths<TValues, boolean>>) {
+  function setTouched(fields: Partial<FlattenAndSetPathsType<TValues, boolean>>) {
     keysOf(fields).forEach(field => {
       setFieldTouched(field, !!fields[field]);
     });
@@ -731,8 +741,8 @@ export function useForm<
       })
     );
 
-    const results: Partial<MapPaths<TValues, ValidationResult>> = {};
-    const errors: Partial<MapPaths<TValues, string>> = {};
+    const results: Partial<FlattenAndSetPathsType<TValues, ValidationResult>> = {};
+    const errors: Partial<FlattenAndSetPathsType<TValues, string>> = {};
     for (const validation of validations) {
       results[validation.key as Path<TValues>] = {
         valid: validation.valid,
@@ -996,7 +1006,7 @@ function useErrorBag<TValues extends GenericObject>(initialErrors?: FormErrors<T
   /**
    * Sets errors for the fields specified in the object
    */
-  function setErrorBag(fields: Partial<MapPaths<TValues, string | string[] | undefined>>) {
+  function setErrorBag(fields: Partial<FlattenAndSetPathsType<TValues, string | string[] | undefined>>) {
     errorBag.value = keysOf(fields).reduce((acc, key) => {
       const message = fields[key] as string | string[] | undefined;
       if (message) {
