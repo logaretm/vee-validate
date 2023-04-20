@@ -29,6 +29,7 @@ export {
   TypedSchema,
   TypedSchemaError,
   RawFormSchema,
+  Path,
 } from './types';
 export { useResetForm } from './useResetForm';
 export { useIsFieldDirty } from './useIsFieldDirty';
