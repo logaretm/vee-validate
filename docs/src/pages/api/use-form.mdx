@@ -171,11 +171,11 @@ interface FormMeta<TValues extends Record<string, any>> {
   initialValues?: TValues;
 }
 
-type InvalidSubmissionHandler<TValues extends GenericFormValues = GenericFormValues> = (
+type InvalidSubmissionHandler<TValues extends GenericObject = GenericObject> = (
   ctx: InvalidSubmissionContext<TValues>
 ) => void;
 
-type HandleSubmitFactory<TValues extends GenericFormValues> = <TReturn = unknown>(
+type HandleSubmitFactory<TValues extends GenericObject> = <TReturn = unknown>(
   cb: SubmissionHandler<TValues, TReturn>,
   onSubmitValidationErrorCb?: InvalidSubmissionHandler<TValues>
 ) => (e?: Event) => Promise<TReturn | undefined>;

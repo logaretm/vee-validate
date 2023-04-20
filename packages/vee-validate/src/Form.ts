@@ -1,13 +1,6 @@
 import { h, defineComponent, toRef, resolveDynamicComponent, PropType, VNode, UnwrapRef } from 'vue';
 import { useForm } from './useForm';
-import {
-  SubmissionHandler,
-  InvalidSubmissionHandler,
-  GenericFormValues,
-  FormMeta,
-  FormContext,
-  FormErrors,
-} from './types';
+import { SubmissionHandler, InvalidSubmissionHandler, GenericObject, FormMeta, FormContext, FormErrors } from './types';
 import { isEvent, isFormSubmitEvent, normalizeChildren } from './utils';
 import { klona as deepCopy } from 'klona/full';
 
@@ -36,9 +29,9 @@ type FormSlotProps = UnwrapRef<
 > & {
   handleSubmit: (evt: Event | SubmissionHandler, onSubmit?: SubmissionHandler) => Promise<unknown>;
   submitForm(evt?: Event): void;
-  getValues<TValues extends GenericFormValues = GenericFormValues>(): TValues;
-  getMeta<TValues extends GenericFormValues = GenericFormValues>(): FormMeta<TValues>;
-  getErrors<TValues extends GenericFormValues = GenericFormValues>(): FormErrors<TValues>;
+  getValues<TValues extends GenericObject = GenericObject>(): TValues;
+  getMeta<TValues extends GenericObject = GenericObject>(): FormMeta<TValues>;
+  getErrors<TValues extends GenericObject = GenericObject>(): FormErrors<TValues>;
 };
 
 const FormImpl = defineComponent({
@@ -141,15 +134,15 @@ const FormImpl = defineComponent({
       return handleSubmit(onSuccess as SubmissionHandler<Record<string, unknown>>, props.onInvalidSubmit)(evt as Event);
     }
 
-    function getValues<TValues extends GenericFormValues = GenericFormValues>() {
+    function getValues<TValues extends GenericObject = GenericObject>() {
       return deepCopy(values) as TValues;
     }
 
-    function getMeta<TValues extends GenericFormValues = GenericFormValues>() {
+    function getMeta<TValues extends GenericObject = GenericObject>() {
       return deepCopy(meta.value) as FormMeta<TValues>;
     }
 
-    function getErrors<TValues extends GenericFormValues = GenericFormValues>() {
+    function getErrors<TValues extends GenericObject = GenericObject>() {
       return deepCopy(errors.value) as FormErrors<TValues>;
     }
 

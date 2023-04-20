@@ -35,7 +35,7 @@ import {
   InvalidSubmissionHandler,
   MapValues,
   FieldState,
-  GenericFormValues,
+  GenericObject,
   TypedSchema,
   Path,
   MapPaths,
@@ -61,11 +61,11 @@ import { _useFieldValue } from './useFieldState';
 import { isCallable } from '../../shared';
 
 type FormSchema<TValues extends Record<string, unknown>> =
-  | MapPaths<TValues, GenericValidateFunction | string | GenericFormValues>
+  | MapPaths<TValues, GenericValidateFunction | string | GenericObject>
   | undefined;
 
 export interface FormOptions<
-  TValues extends GenericFormValues,
+  TValues extends GenericObject,
   TOutput extends TValues = TValues,
   TSchema extends TypedSchema<TValues, TOutput> | FormSchema<TValues> =
     | FormSchema<TValues>
@@ -81,9 +81,7 @@ export interface FormOptions<
 
 let FORM_COUNTER = 0;
 
-function resolveInitialValues<TValues extends GenericFormValues = GenericFormValues>(
-  opts?: FormOptions<TValues>
-): TValues {
+function resolveInitialValues<TValues extends GenericObject = GenericObject>(opts?: FormOptions<TValues>): TValues {
   const providedValues = unref(opts?.initialValues) || {};
   const schema = unref(opts?.validationSchema);
   if (schema && isTypedSchema(schema) && isCallable(schema.cast)) {
@@ -94,7 +92,7 @@ function resolveInitialValues<TValues extends GenericFormValues = GenericFormVal
 }
 
 export function useForm<
-  TValues extends GenericFormValues = GenericFormValues,
+  TValues extends GenericObject = GenericObject,
   TOutput extends TValues = TValues,
   TSchema extends FormSchema<TValues> | TypedSchema<TValues, TOutput> =
     | FormSchema<TValues>
@@ -917,7 +915,7 @@ function useFormMeta<TValues extends Record<string, unknown>>(
 /**
  * Manages the initial values prop
  */
-function useFormInitialValues<TValues extends GenericFormValues>(
+function useFormInitialValues<TValues extends GenericObject>(
   fields: Ref<FieldPathLookup<TValues>>,
   formValues: TValues,
   opts?: FormOptions<TValues>
@@ -976,7 +974,7 @@ function useFormInitialValues<TValues extends GenericFormValues>(
   };
 }
 
-function useErrorBag<TValues extends GenericFormValues>(initialErrors?: FormErrors<TValues>) {
+function useErrorBag<TValues extends GenericObject>(initialErrors?: FormErrors<TValues>) {
   const errorBag: Ref<FormErrorBag<TValues>> = ref({});
 
   function normalizeErrorItem(message: string | string[]) {
