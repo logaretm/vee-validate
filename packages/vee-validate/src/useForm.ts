@@ -37,6 +37,8 @@ import {
   FieldState,
   GenericFormValues,
   TypedSchema,
+  Path,
+  MapPaths,
 } from './types';
 import {
   getFromPath,
@@ -58,7 +60,9 @@ import { refreshInspector, registerFormWithDevTools } from './devtools';
 import { _useFieldValue } from './useFieldState';
 import { isCallable } from '../../shared';
 
-type FormSchema<TValues> = Record<keyof TValues, GenericValidateFunction | string | GenericFormValues> | undefined;
+type FormSchema<TValues extends Record<string, unknown>> =
+  | MapPaths<TValues, GenericValidateFunction | string | GenericFormValues>
+  | undefined;
 
 export interface FormOptions<
   TValues extends GenericFormValues,
@@ -69,8 +73,8 @@ export interface FormOptions<
 > {
   validationSchema?: MaybeRef<TSchema extends TypedSchema ? TypedSchema<TValues, TOutput> : any>;
   initialValues?: MaybeRef<Partial<TValues>>;
-  initialErrors?: Record<keyof TValues, string | undefined>;
-  initialTouched?: Record<keyof TValues, boolean>;
+  initialErrors?: MapPaths<TValues, string | undefined>;
+  initialTouched?: MapPaths<TValues, boolean>;
   validateOnMount?: boolean;
   keepValuesOnUnmount?: MaybeRef<boolean>;
 }
@@ -134,13 +138,13 @@ export function useForm<
     }, {} as FormErrors<TValues>);
   });
 
-  function getFirstFieldAtPath(path: string): PrivateFieldContext<unknown> | undefined {
+  function getFirstFieldAtPath(path: Path<TValues>): PrivateFieldContext<unknown> | undefined {
     const fieldOrGroup = fieldsByPath.value[path];
 
     return Array.isArray(fieldOrGroup) ? fieldOrGroup[0] : fieldOrGroup;
   }
 
-  function fieldExists(path: string) {
+  function fieldExists(path: Path<TValues>) {
     return !!fieldsByPath.value[path];
   }
 
@@ -149,7 +153,7 @@ export function useForm<
    */
   const fieldNames = computed(() => {
     return keysOf(fieldsByPath.value).reduce((names, path) => {
-      const field = getFirstFieldAtPath(path as string);
+      const field = getFirstFieldAtPath(path);
       if (field) {
         names[path as string] = { name: unref(field.name) || '', label: unref(field.label) || '' };
       }
@@ -160,7 +164,7 @@ export function useForm<
 
   const fieldBailsMap = computed(() => {
     return keysOf(fieldsByPath.value).reduce((map, path) => {
-      const field = getFirstFieldAtPath(path as string);
+      const field = getFirstFieldAtPath(path);
       if (field) {
         map[path as string] = field.bails ?? true;
       }
@@ -171,7 +175,9 @@ export function useForm<
 
   // mutable non-reactive reference to initial errors
   // we need this to process initial errors then unset them
-  const initialErrors = { ...(opts?.initialErrors || {}) };
+  const initialErrors = {
+    ...(opts?.initialErrors || ({} as MapPaths<TValues, string | undefined>)),
+  };
 
   const keepValuesOnUnmount = opts?.keepValuesOnUnmount ?? false;
 
@@ -220,16 +226,17 @@ export function useForm<
 
       // aggregates the paths into a single result object while applying the results on the fields
       return paths.reduce(
-        (validation, path) => {
+        (validation, _path) => {
+          const path = _path as Path<TValues>;
           const field = fieldsById[path];
           const messages = (formResult.results[path] || { errors: [] as string[] }).errors;
           const fieldResult = {
             errors: messages,
             valid: !messages.length,
           };
-          validation.results[path as keyof TValues] = fieldResult;
+          validation.results[path] = fieldResult;
           if (!fieldResult.valid) {
-            validation.errors[path as keyof TValues] = fieldResult.errors[0];
+            validation.errors[path] = fieldResult.errors[0];
           }
 
           // field not rendered
@@ -276,7 +283,7 @@ export function useForm<
             acc[field] = true;
 
             return acc;
-          }, {} as Record<keyof TValues, boolean>)
+          }, {} as MapPaths<TValues, boolean>)
         );
 
         isSubmitting.value = true;
@@ -394,28 +401,28 @@ export function useForm<
       }
 
       // avoid resetting the field values, because they should've been reset already.
-      applyFieldMutation(field, mutation);
+      applyFieldMutation(field as PrivateFieldContext, mutation);
     });
   }
 
   /**
    * Manually sets an error message on a specific field
    */
-  function setFieldError(field: keyof TValues, message: string | string[] | undefined) {
+  function setFieldError(field: Path<TValues>, message: string | string[] | undefined) {
     setFieldErrorBag(field, message);
   }
 
   /**
    * Sets errors for the fields specified in the object
    */
-  function setErrors(fields: Partial<Record<keyof TValues, string | string[] | undefined>>) {
+  function setErrors(fields: Partial<MapPaths<TValues, string | string[] | undefined>>) {
     setErrorBag(fields);
   }
 
   /**
    * Sets a single field value
    */
-  function setFieldValue<T extends keyof TValues = string>(
+  function setFieldValue<T extends Path<TValues>>(
     field: T,
     value: TValues[T] | undefined,
     { force } = { force: false }
@@ -464,19 +471,19 @@ export function useForm<
 
     // set up new values
     keysOf(fields).forEach(path => {
-      setFieldValue(path, fields[path]);
+      setFieldValue(path as Path<TValues>, fields[path]);
     });
 
     // regenerate the arrays when the form values change
     fieldArrays.forEach(f => f && f.reset());
   }
 
-  function createModel<TPath extends keyof TValues>(path: MaybeRef<TPath>) {
+  function createModel<TPath extends Path<TValues>>(path: MaybeRef<TPath>) {
     const { value } = _useFieldValue<TValues[TPath]>(path as string, undefined, formCtx as PrivateFormContext);
     watch(
       value,
       () => {
-        if (!fieldExists(unref(path as string))) {
+        if (!fieldExists(unref(path))) {
           validate({ mode: 'validated-only' });
         }
       },
@@ -490,9 +497,9 @@ export function useForm<
     return value;
   }
 
-  function useFieldModel<TPath extends keyof TValues>(path: MaybeRef<TPath>): Ref<TValues[TPath]>;
-  function useFieldModel<TPath extends keyof TValues>(paths: [...TPath[]]): MapValues<typeof paths, TValues>;
-  function useFieldModel<TPath extends keyof TValues>(path: MaybeRef<TPath> | [...MaybeRef<TPath>[]]) {
+  function useFieldModel<TPath extends Path<TValues>>(path: MaybeRef<TPath>): Ref<TValues[TPath]>;
+  function useFieldModel<TPath extends Path<TValues>>(paths: [...TPath[]]): MapValues<typeof paths, TValues>;
+  function useFieldModel<TPath extends Path<TValues>>(path: MaybeRef<TPath> | [...MaybeRef<TPath>[]]) {
     if (!Array.isArray(path)) {
       return createModel<TPath>(path);
     }
@@ -503,7 +510,7 @@ export function useForm<
   /**
    * Sets the touched meta state on a field
    */
-  function setFieldTouched(field: keyof TValues, isTouched: boolean) {
+  function setFieldTouched(field: Path<TValues>, isTouched: boolean) {
     const fieldInstance = fieldsByPath.value[field];
 
     if (fieldInstance) {
@@ -514,13 +521,13 @@ export function useForm<
   /**
    * Sets the touched meta state on multiple fields
    */
-  function setTouched(fields: Partial<Record<keyof TValues, boolean>>) {
+  function setTouched(fields: Partial<MapPaths<TValues, boolean>>) {
     keysOf(fields).forEach(field => {
       setFieldTouched(field, !!fields[field]);
     });
   }
 
-  function resetField(field: keyof TValues, state?: Partial<FieldState>) {
+  function resetField(field: Path<TValues>, state?: Partial<FieldState>) {
     const fieldInstance = fieldsByPath.value[field];
 
     if (fieldInstance) {
@@ -553,9 +560,8 @@ export function useForm<
     });
   }
 
-  function insertFieldAtPath(field: PrivateFieldContext, path: string) {
+  function insertFieldAtPath(field: PrivateFieldContext, fieldPath: Path<TValues>) {
     const rawField = markRaw(field);
-    const fieldPath: keyof TValues = path;
 
     // first field at that path
     if (!fieldsByPath.value[fieldPath]) {
@@ -572,8 +578,7 @@ export function useForm<
     fieldsByPath.value[fieldPath] = [...(fieldsByPath.value[fieldPath] as PrivateFieldContext[]), rawField];
   }
 
-  function removeFieldFromPath(field: PrivateFieldContext, path: string) {
-    const fieldPath: keyof TValues = path;
+  function removeFieldFromPath(field: PrivateFieldContext, fieldPath: Path<TValues>) {
     const fieldAtPath = fieldsByPath.value[fieldPath];
     if (!fieldAtPath) {
       return;
@@ -600,13 +605,15 @@ export function useForm<
   }
 
   function registerField(field: PrivateFieldContext) {
-    const fieldPath = unref(field.name);
+    const fieldPath = unref(field.name) as Path<TValues>;
     insertFieldAtPath(field, fieldPath);
 
     if (isRef(field.name)) {
       // ensures when a field's name was already taken that it preserves its same value
       // necessary for fields generated by loops
-      watch(field.name, async (newPath, oldPath) => {
+      watch(field.name, async (_newPath, _oldPath) => {
+        const newPath = _newPath as Path<TValues>;
+        const oldPath = _oldPath as Path<TValues>;
         // cache the value
         await nextTick();
         removeFieldFromPath(field, oldPath);
@@ -641,7 +648,7 @@ export function useForm<
   }
 
   function unregisterField(field: PrivateFieldContext<unknown>) {
-    const fieldName = unref(field.name);
+    const fieldName = unref(field.name) as Path<TValues>;
     const fieldInstance = fieldsByPath.value[fieldName];
     const isGroup = !!fieldInstance && isFieldGroup(fieldInstance);
     removeFieldFromPath(field, fieldName);
@@ -726,16 +733,16 @@ export function useForm<
       })
     );
 
-    const results: Partial<Record<keyof TValues, ValidationResult>> = {};
-    const errors: Partial<Record<keyof TValues, string>> = {};
+    const results: Partial<MapPaths<TValues, ValidationResult>> = {};
+    const errors: Partial<MapPaths<TValues, string>> = {};
     for (const validation of validations) {
-      results[validation.key as keyof TValues] = {
+      results[validation.key as Path<TValues>] = {
         valid: validation.valid,
         errors: validation.errors,
       };
 
       if (validation.errors.length) {
-        errors[validation.key as keyof TValues] = validation.errors[0];
+        errors[validation.key as Path<TValues>] = validation.errors[0];
       }
     }
 
@@ -746,7 +753,7 @@ export function useForm<
     };
   }
 
-  async function validateField(field: keyof TValues): Promise<ValidationResult> {
+  async function validateField(field: Path<TValues>): Promise<ValidationResult> {
     const fieldInstance = fieldsByPath.value[field];
     if (!fieldInstance) {
       warn(`field with name ${field as string} was not found`);
@@ -979,7 +986,7 @@ function useErrorBag<TValues extends GenericFormValues>(initialErrors?: FormErro
   /**
    * Manually sets an error message on a specific field
    */
-  function setFieldErrorBag(field: keyof TValues, message: string | undefined | string[]) {
+  function setFieldErrorBag(field: Path<TValues>, message: string | undefined | string[]) {
     if (!message) {
       delete errorBag.value[field];
       return;
@@ -991,7 +998,7 @@ function useErrorBag<TValues extends GenericFormValues>(initialErrors?: FormErro
   /**
    * Sets errors for the fields specified in the object
    */
-  function setErrorBag(fields: Partial<Record<keyof TValues, string | string[] | undefined>>) {
+  function setErrorBag(fields: Partial<MapPaths<TValues, string | string[] | undefined>>) {
     errorBag.value = keysOf(fields).reduce((acc, key) => {
       const message = fields[key] as string | string[] | undefined;
       if (message) {
