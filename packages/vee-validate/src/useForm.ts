@@ -504,10 +504,7 @@ export function useForm<
   function useFieldModel<TPaths extends readonly [...MaybeRef<Path<TValues>>[]]>(
     paths: TPaths
   ): MapValuesPathsToRefs<TValues, TPaths>;
-  function useFieldModel<
-    TValues extends GenericObject,
-    TPaths extends Path<TValues> | readonly [...MaybeRef<Path<TValues>>[]]
-  >(pathOrPaths: TPaths) {
+  function useFieldModel<TPaths extends Path<TValues> | readonly [...MaybeRef<Path<TValues>>[]]>(pathOrPaths: TPaths) {
     if (!Array.isArray(pathOrPaths)) {
       return createModel(pathOrPaths as any);
     }
