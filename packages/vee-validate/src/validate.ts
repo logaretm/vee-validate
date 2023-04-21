@@ -9,6 +9,7 @@ import {
   RawFormSchema,
   YupSchema,
   TypedSchemaError,
+  Path,
 } from './types';
 import { isCallable, FieldValidationMetaInfo } from '../../shared';
 
@@ -290,18 +291,18 @@ export async function validateTypedSchema<TValues, TOutput = TValues>(
   const typedSchema = isTypedSchema(schema) ? schema : yupToTypedSchema(schema);
   const validationResult = await typedSchema.parse(values);
 
-  const results: Partial<Record<keyof TValues, ValidationResult>> = {};
-  const errors: Partial<Record<keyof TValues, string>> = {};
+  const results: Partial<Record<Path<TValues>, ValidationResult>> = {};
+  const errors: Partial<Record<Path<TValues>, string>> = {};
   for (const error of validationResult.errors) {
     const messages = error.errors;
     // Fixes issue with path mapping with Yup 1.0 including quotes around array indices
     const path = (error.path || '').replace(/\["(\d+)"\]/g, (_, m) => {
       return `[${m}]`;
-    });
+    }) as Path<TValues>;
 
-    results[path as keyof TValues] = { valid: !messages.length, errors: messages };
+    results[path] = { valid: !messages.length, errors: messages };
     if (messages.length) {
-      errors[path as keyof TValues] = messages[0];
+      errors[path] = messages[0];
     }
   }
 
@@ -318,10 +319,10 @@ export async function validateObjectSchema<TValues, TOutput>(
   values: TValues,
   opts?: Partial<{ names: Record<string, { name: string; label: string }>; bailsMap: Record<string, boolean> }>
 ): Promise<FormValidationResult<TValues, TOutput>> {
-  const paths = keysOf(schema) as string[];
+  const paths = keysOf(schema) as Path<TValues>[];
   const validations = paths.map(async path => {
     const strings = opts?.names?.[path];
-    const fieldResult = await validate(getFromPath(values as any, path), schema[path as keyof TValues], {
+    const fieldResult = await validate(getFromPath(values as any, path), schema[path], {
       name: strings?.name || path,
       label: strings?.label,
       values: values as any,
@@ -337,17 +338,17 @@ export async function validateObjectSchema<TValues, TOutput>(
   let isAllValid = true;
   const validationResults = await Promise.all(validations);
 
-  const results: Partial<Record<keyof TValues, ValidationResult>> = {};
-  const errors: Partial<Record<keyof TValues, string>> = {};
+  const results: Partial<Record<Path<TValues>, ValidationResult>> = {};
+  const errors: Partial<Record<Path<TValues>, string>> = {};
   for (const result of validationResults) {
-    results[result.path as keyof TValues] = {
+    results[result.path] = {
       valid: result.valid,
       errors: result.errors,
     };
 
     if (!result.valid) {
       isAllValid = false;
-      errors[result.path as keyof TValues] = result.errors[0];
+      errors[result.path] = result.errors[0];
     }
   }
 
