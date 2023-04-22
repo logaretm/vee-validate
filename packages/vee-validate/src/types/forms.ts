@@ -233,6 +233,7 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
     path: MaybeRef<TPath>,
     config?: Partial<PathStateConfig>
   ): PathState<PathValue<TValues, TPath>>;
+  getPathState<TPath extends Path<TValues>>(path: TPath): PathState<PathValue<TValues, TPath>>;
 }
 
 export interface FormContext<TValues extends Record<string, any> = Record<string, any>, TOutput = TValues>

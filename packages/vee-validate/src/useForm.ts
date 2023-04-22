@@ -285,7 +285,7 @@ export function useForm<
     pathStates.value.forEach(mutation);
   }
 
-  function mutatePathState(path: string, mutation: (state: PathState) => void) {
+  function mutatePathState(path: Path<TValues>, mutation: (state: PathState) => void) {
     const state = findPathState(path);
     if (!state) {
       return;
@@ -294,8 +294,10 @@ export function useForm<
     mutation(state);
   }
 
-  function findPathState(path: string | PathState) {
-    return typeof path === 'string' ? pathStates.value.find(state => state.path === path) : path;
+  function findPathState<TPath extends Path<TValues>>(path: TPath | PathState) {
+    const pathState = typeof path === 'string' ? pathStates.value.find(state => state.path === path) : path;
+
+    return pathState as PathState<PathValue<TValues, TPath>>;
   }
 
   function makeSubmissionFactory(onlyControlled: boolean) {
@@ -401,6 +403,7 @@ export function useForm<
     setFieldInitialValue,
     useFieldModel,
     createPathState,
+    getPathState: findPathState,
   };
 
   function isFieldGroup(
@@ -837,11 +840,11 @@ function useFormMeta<TValues extends Record<string, unknown>>(
   });
 
   function calculateFlags() {
-    const states = Object.values(pathsState);
+    const states = pathsState.value;
 
     return keysOf(MERGE_STRATEGIES).reduce((acc, flag) => {
       const mergeMethod = MERGE_STRATEGIES[flag];
-      acc[flag] = states[mergeMethod](field => field.meta[flag]);
+      acc[flag] = states[mergeMethod](s => s[flag]);
 
       return acc;
     }, {} as Record<keyof Omit<FieldMeta<unknown>, 'initialValue'>, boolean>);

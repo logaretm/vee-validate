@@ -1,18 +1,20 @@
 import { computed, inject, unref } from 'vue';
 import { FieldContextKey, FormContextKey } from './symbols';
-import { MaybeRef, PrivateFieldContext } from './types';
-import { injectWithSelf, normalizeField, warn } from './utils';
+import { MaybeRef } from './types';
+import { injectWithSelf, warn } from './utils';
 
 /**
  * If a field is validated and is valid
  */
 export function useIsFieldValid(path?: MaybeRef<string>) {
   const form = injectWithSelf(FormContextKey);
-  let field: PrivateFieldContext | undefined = path ? undefined : inject(FieldContextKey);
+  const field = path ? undefined : inject(FieldContextKey);
 
   return computed(() => {
     if (path) {
-      field = normalizeField(form?.fieldsByPath.value[unref(path)]);
+      const state = form?.getPathState(unref(path));
+
+      return state?.valid;
     }
 
     if (!field) {
