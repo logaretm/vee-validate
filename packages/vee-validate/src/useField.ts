@@ -117,10 +117,12 @@ function _useField<TValue = unknown>(
 
   // a flag indicating if the field is about to be removed/unmounted.
   let markedForRemoval = false;
-  const { id, value, initialValue, meta, setState, errors, errorMessage } = useFieldState(name, {
+  const { id, value, initialValue, meta, setState, errors } = useFieldState(name, {
     modelValue,
     form,
   });
+
+  const errorMessage = computed(() => errors.value[0]);
 
   if (syncVModel) {
     useVModel({ value, prop: modelPropName, handleChange });

@@ -322,3 +322,7 @@ export function unravel<T>(value: MaybeRefOrLazy<T>): T {
 export function lazyToRef<T>(value: MaybeRefOrLazy<T>): Ref<T> {
   return computed(() => unravel(value));
 }
+
+export function normalizeErrorItem(message: string | string[] | null | undefined) {
+  return Array.isArray(message) ? message : message ? [message] : [];
+}
