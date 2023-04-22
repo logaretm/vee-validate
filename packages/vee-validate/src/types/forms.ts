@@ -50,6 +50,24 @@ export interface FieldState<TValue = unknown> {
   errors: string[];
 }
 
+export interface PathStateConfig {
+  bails: boolean;
+  label: MaybeRef<string>;
+}
+
+export interface PathState<TValue = unknown> {
+  path: string;
+  touched: boolean;
+  dirty: boolean;
+  valid: boolean;
+  validated: boolean;
+  pending: boolean;
+  initialValue: TValue | undefined;
+  errors: string[];
+  bails: boolean;
+  label: string | undefined;
+}
+
 /**
  * validated-only: only mutate the previously validated fields
  * silent: do not mutate any field
@@ -189,7 +207,6 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   formId: number;
   values: TValues;
   controlledValues: Ref<TValues>;
-  fieldsByPath: Ref<FieldPathLookup>;
   fieldArrays: PrivateFieldArrayContext[];
   submitCount: Ref<number>;
   schema?: MaybeRef<RawFormSchema<TValues> | TypedSchema<TValues, TOutput> | YupSchema<TValues> | undefined>;
@@ -201,7 +218,7 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues, TOutput>>;
   validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues, TOutput>>;
   validateField(field: Path<TValues>): Promise<ValidationResult>;
-  setFieldErrorBag(field: string, messages: string | string[]): void;
+  setFieldErrorBag(field: Path<TValues>, messages: string | string[]): void;
   stageInitialValue(path: string, value: unknown, updateOriginal?: boolean): void;
   unsetInitialValue(path: string): void;
   register(field: PrivateFieldContext): void;
@@ -212,6 +229,10 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   useFieldModel<TPaths extends readonly [...MaybeRef<Path<TValues>>[]]>(
     paths: TPaths
   ): MapValuesPathsToRefs<TValues, TPaths>;
+  createPathState<TPath extends Path<TValues>>(
+    path: MaybeRef<TPath>,
+    config?: Partial<PathStateConfig>
+  ): PathState<PathValue<TValues, TPath>>;
 }
 
 export interface FormContext<TValues extends Record<string, any> = Record<string, any>, TOutput = TValues>
