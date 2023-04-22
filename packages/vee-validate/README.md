@@ -168,6 +168,7 @@ You are welcome to contribute to this project, but before you do, please make su
 
 - Inspired by Laravel's [validation syntax](https://laravel.com/docs/5.4/validation)
 - v4 API Inspired by [Formik's](https://github.com/formium/formik)
+- Nested path types by [react-hook-form](https://github.com/react-hook-form/react-hook-form)
 - Logo by [Baianat](https://github.com/baianat)
 
 ## Emeriti
