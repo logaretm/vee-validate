@@ -130,7 +130,7 @@ export type FormErrorBag<TValues extends GenericObject> = Partial<Record<Path<TV
 export interface SetFieldValueOptions {
   force: boolean;
 }
-export interface FormActions<TValues extends GenericObject, TOutput extends TValues = TValues> {
+export interface FormActions<TValues extends GenericObject, TOutput = TValues> {
   setFieldValue<T extends Path<TValues>>(
     field: T,
     value: PathValue<TValues, T>,
@@ -157,11 +157,10 @@ export interface SubmissionContext<TValues extends GenericObject = GenericObject
   controlledValues: Partial<TValues>;
 }
 
-export type SubmissionHandler<
-  TValues extends GenericObject = GenericObject,
-  TOutput extends TValues = TValues,
-  TReturn = unknown
-> = (values: TOutput, ctx: SubmissionContext<TValues>) => TReturn;
+export type SubmissionHandler<TValues extends GenericObject = GenericObject, TOutput = TValues, TReturn = unknown> = (
+  values: TOutput,
+  ctx: SubmissionContext<TValues>
+) => TReturn;
 
 export interface InvalidSubmissionContext<TValues extends GenericObject = GenericObject> {
   values: TValues;
@@ -180,12 +179,12 @@ export type FieldPathLookup<TValues extends Record<string, any> = Record<string,
   Record<Path<TValues>, PrivateFieldContext | PrivateFieldContext[]>
 >;
 
-type HandleSubmitFactory<TValues extends GenericObject, TOutput extends TValues = TValues> = <TReturn = unknown>(
+type HandleSubmitFactory<TValues extends GenericObject, TOutput = TValues> = <TReturn = unknown>(
   cb: SubmissionHandler<TValues, TOutput, TReturn>,
   onSubmitValidationErrorCb?: InvalidSubmissionHandler<TValues>
 ) => (e?: Event) => Promise<TReturn | undefined>;
 
-export interface PrivateFormContext<TValues extends GenericObject = GenericObject, TOutput extends TValues = TValues>
+export interface PrivateFormContext<TValues extends GenericObject = GenericObject, TOutput = TValues>
   extends FormActions<TValues> {
   formId: number;
   values: TValues;
@@ -200,7 +199,7 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   isSubmitting: Ref<boolean>;
   keepValuesOnUnmount: MaybeRef<boolean>;
   validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues, TOutput>>;
-  validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues>>;
+  validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues, TOutput>>;
   validateField(field: Path<TValues>): Promise<ValidationResult>;
   setFieldErrorBag(field: string, messages: string | string[]): void;
   stageInitialValue(path: string, value: unknown, updateOriginal?: boolean): void;
@@ -215,10 +214,8 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   ): MapValuesPathsToRefs<TValues, TPaths>;
 }
 
-export interface FormContext<
-  TValues extends Record<string, any> = Record<string, any>,
-  TOutput extends TValues = TValues
-> extends Omit<
+export interface FormContext<TValues extends Record<string, any> = Record<string, any>, TOutput = TValues>
+  extends Omit<
     PrivateFormContext<TValues, TOutput>,
     | 'formId'
     | 'register'

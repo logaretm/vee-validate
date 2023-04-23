@@ -2,7 +2,7 @@ import { useField, useForm } from '@/vee-validate';
 import { toTypedSchema } from '@/zod';
 import { mountWithHoc, flushPromises, setValue } from 'vee-validate/tests/helpers';
 import { Ref } from 'vue';
-import { z } from 'zod';
+import { input, output, z } from 'zod';
 
 const REQUIRED_MSG = 'field is required';
 const MIN_MSG = 'field is too short';

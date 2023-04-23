@@ -67,7 +67,7 @@ type FormSchema<TValues extends Record<string, unknown>> =
 
 export interface FormOptions<
   TValues extends GenericObject,
-  TOutput extends TValues = TValues,
+  TOutput = TValues,
   TSchema extends TypedSchema<TValues, TOutput> | FormSchema<TValues> =
     | FormSchema<TValues>
     | TypedSchema<TValues, TOutput>
@@ -94,7 +94,7 @@ function resolveInitialValues<TValues extends GenericObject = GenericObject>(opt
 
 export function useForm<
   TValues extends GenericObject = GenericObject,
-  TOutput extends TValues = TValues,
+  TOutput = TValues,
   TSchema extends FormSchema<TValues> | TypedSchema<TValues, TOutput> =
     | FormSchema<TValues>
     | TypedSchema<TValues, TOutput>
@@ -289,11 +289,11 @@ export function useForm<
         submitCount.value++;
         return validate()
           .then(result => {
-            const values = deepCopy(formValues) as TOutput;
+            const values = deepCopy(formValues);
 
             if (result.valid && typeof fn === 'function') {
-              const controlled = deepCopy(controlledValues.value) as TOutput;
-              let submittedValues = onlyControlled ? controlled : values;
+              const controlled = deepCopy(controlledValues.value);
+              let submittedValues = (onlyControlled ? controlled : values) as TOutput;
               if (result.values) {
                 submittedValues = result.values;
               }
