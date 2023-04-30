@@ -10,7 +10,7 @@ const minValidator = (value: unknown, params: [string | number] | { length: stri
     return value.every(val => minValidator(val, { length }));
   }
 
-  return String(value).length >= Number(length);
+  return [...String(value)].length >= Number(length);
 };
 
 export default minValidator;

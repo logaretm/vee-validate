@@ -13,9 +13,11 @@ test('validates minimum number of characters in a string', () => {
   expect(validate(null, params)).toBe(true);
   expect(validate('', params)).toBe(true);
   expect(validate([], params)).toBe(true);
+  expect(validate('𩸽寿司', params)).toBe(true);
 
   // invalid
   expect(validate(1, params)).toBe(false);
   expect(validate(12, params)).toBe(false);
   expect(validate([1], params)).toBe(false);
+  expect(validate('𩸽', params)).toBe(false);
 });
