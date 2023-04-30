@@ -1,28 +1,18 @@
-import { computed, inject, unref } from 'vue';
-import { FieldContextKey, FormContextKey } from './symbols';
+import { computed } from 'vue';
 import { MaybeRef } from './types';
-import { injectWithSelf, warn } from './utils';
+import { resolveFieldOrPathState } from './utils';
 
 /**
  * If a field is validated and is valid
  */
 export function useIsFieldValid(path?: MaybeRef<string>) {
-  const form = injectWithSelf(FormContextKey);
-  const field = path ? undefined : inject(FieldContextKey);
+  const fieldOrPath = resolveFieldOrPathState(path);
 
   return computed(() => {
-    if (path) {
-      const state = form?.getPathState(unref(path));
-
-      return state?.valid;
-    }
-
-    if (!field) {
-      warn(`field with name ${unref(path)} was not found`);
-
+    if (!fieldOrPath) {
       return false;
     }
 
-    return field.meta.valid;
+    return ('meta' in fieldOrPath ? fieldOrPath.meta.valid : fieldOrPath?.value?.valid) ?? false;
   });
 }

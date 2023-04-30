@@ -50,23 +50,7 @@ export interface FieldState<TValue = unknown> {
   errors: string[];
 }
 
-export interface PathStateConfig {
-  bails: boolean;
-  label: MaybeRef<string>;
-}
-
-export interface PathState<TValue = unknown> {
-  path: string;
-  touched: boolean;
-  dirty: boolean;
-  valid: boolean;
-  validated: boolean;
-  pending: boolean;
-  initialValue: TValue | undefined;
-  errors: string[];
-  bails: boolean;
-  label: string | undefined;
-}
+export type InputType = 'checkbox' | 'radio' | 'default';
 
 /**
  * validated-only: only mutate the previously validated fields
@@ -77,6 +61,34 @@ export type SchemaValidationMode = 'validated-only' | 'silent' | 'force';
 
 export interface ValidationOptions {
   mode: SchemaValidationMode;
+}
+
+export type FieldValidator = (opts?: Partial<ValidationOptions>) => Promise<ValidationResult>;
+
+export interface PathStateConfig {
+  bails: boolean;
+  label: MaybeRef<string | undefined>;
+  type: InputType;
+  validator: FieldValidator;
+}
+
+export interface PathState<TValue = unknown> {
+  id: number | number[];
+  path: string;
+  touched: boolean;
+  dirty: boolean;
+  valid: boolean;
+  validated: boolean;
+  pending: boolean;
+  initialValue: TValue | undefined;
+  value: TValue | undefined;
+  errors: string[];
+  bails: boolean;
+  label: string | undefined;
+  type: InputType;
+  multiple: boolean;
+  fieldsCount: number;
+  validator?: FieldValidator;
 }
 
 export interface FieldEntry<TValue = unknown> {
@@ -119,7 +131,7 @@ export interface PrivateFieldContext<TValue = unknown> {
   checked?: Ref<boolean>;
   resetField(state?: Partial<FieldState<TValue>>): void;
   handleReset(): void;
-  validate(opts?: Partial<ValidationOptions>): Promise<ValidationResult>;
+  validate: FieldValidator;
   handleChange(e: Event | unknown, shouldValidate?: boolean): void;
   handleBlur(e?: Event): void;
   setState(state: Partial<FieldState<TValue>>): void;
@@ -214,6 +226,7 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   errors: ComputedRef<FormErrors<TValues>>;
   meta: ComputedRef<FormMeta<TValues>>;
   isSubmitting: Ref<boolean>;
+  isResetting: Ref<boolean>;
   keepValuesOnUnmount: MaybeRef<boolean>;
   validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues, TOutput>>;
   validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues, TOutput>>;
@@ -221,8 +234,6 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   setFieldErrorBag(field: Path<TValues>, messages: string | string[]): void;
   stageInitialValue(path: string, value: unknown, updateOriginal?: boolean): void;
   unsetInitialValue(path: string): void;
-  register(field: PrivateFieldContext): void;
-  unregister(field: PrivateFieldContext): void;
   handleSubmit: HandleSubmitFactory<TValues, TOutput> & { withControlled: HandleSubmitFactory<TValues, TOutput> };
   setFieldInitialValue(path: string, value: unknown): void;
   useFieldModel<TPath extends Path<TValues>>(path: TPath): Ref<PathValue<TValues, TPath>>;
@@ -233,17 +244,21 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
     path: MaybeRef<TPath>,
     config?: Partial<PathStateConfig>
   ): PathState<PathValue<TValues, TPath>>;
-  getPathState<TPath extends Path<TValues>>(path: TPath): PathState<PathValue<TValues, TPath>>;
+  getPathState<TPath extends Path<TValues>>(path: TPath): PathState<PathValue<TValues, TPath>> | undefined;
+  getAllPathStates(): PathState[];
+  removePathState<TPath extends Path<TValues>>(path: TPath): void;
+  unsetPathValue<TPath extends Path<TValues>>(path: TPath): void;
 }
 
 export interface FormContext<TValues extends Record<string, any> = Record<string, any>, TOutput = TValues>
   extends Omit<
     PrivateFormContext<TValues, TOutput>,
     | 'formId'
-    | 'register'
-    | 'unregister'
-    | 'fieldsByPath'
     | 'schema'
+    | 'getPathState'
+    | 'getAllPathStates'
+    | 'removePathState'
+    | 'unsetPathValue'
     | 'validateSchema'
     | 'setFieldErrorBag'
     | 'stageInitialValue'

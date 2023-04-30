@@ -3,14 +3,14 @@ import {
   isRef,
   computed,
   onMounted,
-  onBeforeUnmount,
   unref,
-  WatchStopHandle,
   provide,
-  nextTick,
   getCurrentInstance,
   Ref,
   ComponentInternalInstance,
+  onBeforeUnmount,
+  nextTick,
+  WatchStopHandle,
 } from 'vue';
 import { klona as deepCopy } from 'klona/full';
 import { validate as validateValue } from './validate';
@@ -27,6 +27,7 @@ import {
   PrivateFormContext,
   YupSchema,
   MaybeRefOrLazy,
+  InputType,
 } from './types';
 import {
   normalizeRules,
@@ -42,6 +43,7 @@ import {
   isEqual,
   isTypedSchema,
   lazyToRef,
+  unravel,
 } from './utils';
 import { isCallable } from '../../shared';
 import { FieldContextKey, FormContextKey, IS_ABSENT } from './symbols';
@@ -53,7 +55,7 @@ export interface FieldOptions<TValue = unknown> {
   validateOnValueUpdate: boolean;
   validateOnMount?: boolean;
   bails?: boolean;
-  type?: string;
+  type?: InputType;
   valueProp?: MaybeRef<TValue>;
   checkedValue?: MaybeRef<TValue>;
   uncheckedValue?: MaybeRef<TValue>;
@@ -84,7 +86,7 @@ export function useField<TValue = unknown>(
   opts?: Partial<FieldOptions<TValue>>
 ): FieldContext<TValue> {
   if (hasCheckedAttr(opts?.type)) {
-    return useCheckboxField(path, rules, opts);
+    return useFieldWithChecked(path, rules, opts);
   }
 
   return _useField(path, rules, opts);
@@ -115,11 +117,33 @@ function _useField<TValue = unknown>(
   const form = (controlForm as PrivateFormContext | undefined) || injectedForm;
   const name = lazyToRef(path);
 
-  // a flag indicating if the field is about to be removed/unmounted.
-  let markedForRemoval = false;
+  const validator = computed(() => {
+    const schema = unref(form?.schema);
+    if (schema) {
+      return undefined;
+    }
+
+    const rulesValue = unref(rules);
+
+    if (
+      isYupValidator(rulesValue) ||
+      isTypedSchema(rulesValue) ||
+      isCallable(rulesValue) ||
+      Array.isArray(rulesValue)
+    ) {
+      return rulesValue;
+    }
+
+    return normalizeRules(rulesValue);
+  });
+
   const { id, value, initialValue, meta, setState, errors } = useFieldState(name, {
     modelValue,
     form,
+    bails,
+    label,
+    type,
+    validator: validator.value ? validate : undefined,
   });
 
   const errorMessage = computed(() => errors.value[0]);
@@ -135,36 +159,21 @@ function _useField<TValue = unknown>(
     meta.touched = true;
   };
 
-  const normalizedRules = computed(() => {
-    let rulesValue = unref(rules);
-    const schema = unref(form?.schema);
-    if (schema && !isYupValidator(schema) && !isTypedSchema(schema)) {
-      rulesValue = extractRuleFromSchema<TValue>(schema, unref(name)) || rulesValue;
-    }
-
-    if (
-      isYupValidator(rulesValue) ||
-      isTypedSchema(rulesValue) ||
-      isCallable(rulesValue) ||
-      Array.isArray(rulesValue)
-    ) {
-      return rulesValue;
-    }
-
-    return normalizeRules(rulesValue);
-  });
-
   async function validateCurrentValue(mode: SchemaValidationMode) {
     if (form?.validateSchema) {
       return (await form.validateSchema(mode)).results[unref(name)] ?? { valid: true, errors: [] };
     }
 
-    return validateValue(value.value, normalizedRules.value, {
-      name: unref(name),
-      label: unref(label),
-      values: form?.values ?? {},
-      bails,
-    });
+    if (validator.value) {
+      return validateValue(value.value, validator.value, {
+        name: unref(name),
+        label: unref(label),
+        values: form?.values ?? {},
+        bails,
+      });
+    }
+
+    return { valid: true, errors: [] };
   }
 
   const validateWithStateMutation = withLatest(
@@ -175,13 +184,9 @@ function _useField<TValue = unknown>(
       return validateCurrentValue('validated-only');
     },
     result => {
-      if (markedForRemoval) {
-        result.valid = true;
-        result.errors = [];
-      }
-
       setState({ errors: result.errors });
       meta.pending = false;
+      meta.valid = result.valid;
 
       return result;
     }
@@ -192,10 +197,6 @@ function _useField<TValue = unknown>(
       return validateCurrentValue('silent');
     },
     result => {
-      if (markedForRemoval) {
-        result.valid = true;
-      }
-
       meta.valid = result.valid;
 
       return result;
@@ -243,6 +244,10 @@ function _useField<TValue = unknown>(
     unwatchValue = watch(
       value,
       (val, oldVal) => {
+        if (form?.isResetting.value) {
+          return;
+        }
+
         if (isEqual(val, oldVal) && isEqual(val, lastWatchedValue)) {
           return;
         }
@@ -348,16 +353,10 @@ function _useField<TValue = unknown>(
   }
 
   // associate the field with the given form
-  form.register(field);
-
-  onBeforeUnmount(() => {
-    markedForRemoval = true;
-    form.unregister(field);
-  });
 
   // extract cross-field dependencies in a computed prop
   const dependencies = computed(() => {
-    const rulesVal = normalizedRules.value;
+    const rulesVal = validator.value;
     // is falsy, a function schema or a yup schema
     if (
       !rulesVal ||
@@ -399,6 +398,40 @@ function _useField<TValue = unknown>(
     if (shouldValidate) {
       meta.validated ? validateWithStateMutation() : validateValidStateOnly();
     }
+  });
+
+  onBeforeUnmount(() => {
+    const shouldKeepValue = unref(field.keepValueOnUnmount) ?? unref(form.keepValuesOnUnmount);
+    if (shouldKeepValue || !form) {
+      return;
+    }
+
+    const path = unravel(name);
+    const pathState = form.getPathState(path);
+    const matchesId =
+      Array.isArray(pathState?.id) && pathState?.multiple
+        ? pathState?.id.includes(field.id)
+        : pathState?.id === field.id;
+    if (!matchesId) {
+      return;
+    }
+
+    if (pathState?.multiple && Array.isArray(pathState.value)) {
+      const valueIdx = pathState.value.findIndex(i => isEqual(i, unref(field.checkedValue)));
+      if (valueIdx > -1) {
+        const newVal = [...pathState.value];
+        newVal.splice(valueIdx, 1);
+        form.setFieldValue(path, newVal);
+      }
+
+      if (Array.isArray(pathState.id)) {
+        pathState.id.splice(pathState.id.indexOf(field.id), 1);
+      }
+    } else {
+      form.unsetPathValue(path);
+    }
+
+    form.removePathState(path);
   });
 
   return field;
@@ -459,7 +492,7 @@ export function extractRuleFromSchema<TValue>(
   return schema[fieldName];
 }
 
-function useCheckboxField<TValue = unknown>(
+function useFieldWithChecked<TValue = unknown>(
   name: MaybeRefOrLazy<string>,
   rules?: MaybeRef<RuleExpression<TValue>>,
   opts?: Partial<FieldOptions<TValue>>
@@ -468,7 +501,7 @@ function useCheckboxField<TValue = unknown>(
   const checkedValue = opts?.checkedValue;
   const uncheckedValue = opts?.uncheckedValue;
 
-  function patchCheckboxApi(
+  function patchCheckedApi(
     field: FieldContext<TValue> & { originalHandleChange?: FieldContext['handleChange'] }
   ): FieldContext<TValue> {
     const handleChange = field.handleChange;
@@ -490,9 +523,14 @@ function useCheckboxField<TValue = unknown>(
         return;
       }
 
-      let newValue = normalizeEventValue(e) as TValue;
-      // Single checkbox field without a form to toggle it's value
-      if (!form) {
+      const path = unravel(name);
+      const pathState = form?.getPathState(path);
+      const value = normalizeEventValue(e);
+      let newValue!: TValue;
+      if (form && pathState?.multiple && pathState.type === 'checkbox') {
+        newValue = resolveNextCheckboxValue(getFromPath(form.values, path) || [], value, undefined) as TValue;
+      } else {
+        // Single checkbox field without a form to toggle it's value
         newValue = resolveNextCheckboxValue(unref(field.value), unref(checkedValue), unref(uncheckedValue)) as TValue;
       }
 
@@ -508,7 +546,7 @@ function useCheckboxField<TValue = unknown>(
     };
   }
 
-  return patchCheckboxApi(_useField<TValue>(name, rules, opts));
+  return patchCheckedApi(_useField<TValue>(name, rules, opts));
 }
 
 interface ModelOpts<TValue> {

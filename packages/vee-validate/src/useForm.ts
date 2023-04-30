@@ -10,9 +10,7 @@ import {
   unref,
   nextTick,
   warn,
-  markRaw,
   watchEffect,
-  shallowRef,
 } from 'vue';
 import { klona as deepCopy } from 'klona/full';
 import {
@@ -47,12 +45,10 @@ import {
   getFromPath,
   isYupValidator,
   keysOf,
-  resolveNextCheckboxValue,
   setInPath,
   unsetPath,
   isFormSubmitEvent,
   debounceAsync,
-  isEmptyContainer,
   withLatest,
   isEqual,
   isTypedSchema,
@@ -61,7 +57,6 @@ import {
 import { FormContextKey } from './symbols';
 import { validateTypedSchema, validateObjectSchema } from './validate';
 import { refreshInspector, registerFormWithDevTools } from './devtools';
-import { _useFieldValue } from './useFieldState';
 import { isCallable } from '../../shared';
 
 type FormSchema<TValues extends Record<string, unknown>> =
@@ -95,6 +90,10 @@ function resolveInitialValues<TValues extends GenericObject = GenericObject>(opt
   return deepCopy(providedValues) as TValues;
 }
 
+// TODO: BIG FAT WORK TO DO:
+// Resets must happen here, the useField should not handle its resets unless called from there.
+// Field validators must not set their state, the forms must do that instead and process their own errors, unless no form exists
+
 export function useForm<
   TValues extends GenericObject = GenericObject,
   TOutput = TValues,
@@ -105,8 +104,9 @@ export function useForm<
   const formId = FORM_COUNTER++;
 
   // Prevents fields from double resetting their values, which causes checkboxes to toggle their initial value
-  // TODO: This won't be needed if we centralize all the state inside the `form` for form inputs
-  let RESET_LOCK = false;
+  let FIELD_ID_COUNTER = 0;
+
+  const isResetting = ref(false);
 
   // If the form is currently submitting
   const isSubmitting = ref(false);
@@ -120,7 +120,7 @@ export function useForm<
   // a private ref for all form values
   const formValues = reactive(resolveInitialValues(opts));
 
-  const pathStates = shallowRef<PathState<unknown>[]>([]);
+  const pathStates = ref<PathState<unknown>[]>([]);
 
   // the source of errors for the form fields
   const { errorBag, setErrorBag, setFieldErrorBag } = useErrorBag(opts?.initialErrors);
@@ -190,31 +190,56 @@ export function useForm<
     config?: Partial<PathStateConfig>
   ): PathState<TValue> {
     const initialValue = computed(() => getFromPath(initialValues.value, unref(path)));
-    const pathErrors = computed(() => errors.value[unref(path)] || []);
+    const pathErrors = computed(() => errorBag.value[unref(path)] || []);
 
     const pathStateExists = pathStates.value.find(state => state.path === unref(path));
     if (pathStateExists) {
+      if (config?.type === 'checkbox' || config?.type === 'radio') {
+        pathStateExists.multiple = true;
+      }
+
+      if (Array.isArray(pathStateExists.id)) {
+        pathStateExists.id.push(FIELD_ID_COUNTER++);
+      } else {
+        pathStateExists.id = [pathStateExists.id, FIELD_ID_COUNTER++];
+      }
+
+      pathStateExists.fieldsCount++;
+
       return pathStateExists as PathState<TValue>;
     }
 
+    const currentValue = computed(() => getFromPath(formValues, unref(path)));
+    const pathValue = unref(path);
     const state = reactive({
+      id: FIELD_ID_COUNTER++,
       path,
       touched: false,
       pending: false,
       valid: true,
-      validated: !!initialErrors[unref(path)]?.length,
+      validated: !!initialErrors[pathValue]?.length,
       initialValue,
       errors: pathErrors,
       bails: config?.bails ?? false,
       label: config?.label,
+      type: config?.type || 'default',
+      value: currentValue,
+      multiple: false,
+      fieldsCount: 1,
+      validator: config?.validator,
       dirty: computed(() => {
-        const current = getFromPath(formValues, unref(path));
-
-        return !isEqual(current, unref(initialValue));
+        return !isEqual(unref(currentValue), unref(initialValue));
       }),
     }) as PathState<TValue>;
 
     pathStates.value.push(state);
+
+    // if it has errors before, validate it.
+    if (errors.value[pathValue] && !initialErrors[pathValue]) {
+      nextTick(() => {
+        validateField(pathValue);
+      });
+    }
 
     return state;
   }
@@ -235,7 +260,7 @@ export function useForm<
       // errors fields names, we need it to also check if custom errors are updated
       const currentErrorsPaths = keysOf(formCtx.errorBag.value);
       // collect all the keys from the schema and all fields
-      // this ensures we have a complete keymap of all the fields
+      // this ensures we have a complete key map of all the fields
       const paths = [
         ...new Set([...keysOf(formResult.results), ...pathStates.value.map(p => p.path), ...currentErrorsPaths]),
       ] as string[];
@@ -297,7 +322,11 @@ export function useForm<
   function findPathState<TPath extends Path<TValues>>(path: TPath | PathState) {
     const pathState = typeof path === 'string' ? pathStates.value.find(state => state.path === path) : path;
 
-    return pathState as PathState<PathValue<TValues, TPath>>;
+    return pathState as PathState<PathValue<TValues, TPath>> | undefined;
+  }
+
+  function unsetPathValue<TPath extends Path<TValues>>(path: TPath) {
+    unsetPath(formValues, path);
   }
 
   function makeSubmissionFactory(onlyControlled: boolean) {
@@ -371,6 +400,23 @@ export function useForm<
   const handleSubmit: typeof handleSubmitImpl & { withControlled: typeof handleSubmitImpl } = handleSubmitImpl as any;
   handleSubmit.withControlled = makeSubmissionFactory(true);
 
+  function removePathState<TPath extends Path<TValues>>(path: TPath) {
+    const idx = pathStates.value.findIndex(s => s.path === path);
+    const pathState = pathStates.value[idx];
+    if (idx === -1 || !pathState) {
+      return;
+    }
+
+    if (pathState.multiple && pathState.fieldsCount) {
+      pathState.fieldsCount--;
+    }
+
+    if (!pathState.multiple || pathState.fieldsCount <= 0) {
+      pathStates.value.splice(idx, 1);
+      setFieldErrorBag(path, undefined);
+    }
+  }
+
   const formCtx: PrivateFormContext<TValues, TOutput> = {
     formId,
     values: formValues,
@@ -381,12 +427,11 @@ export function useForm<
     submitCount,
     meta,
     isSubmitting,
+    isResetting,
     fieldArrays,
     keepValuesOnUnmount,
     validateSchema: unref(schema) ? validateSchema : undefined,
     validate,
-    register: registerField,
-    unregister: unregisterField,
     setFieldErrorBag,
     validateField,
     setFieldValue,
@@ -404,24 +449,10 @@ export function useForm<
     useFieldModel,
     createPathState,
     getPathState: findPathState,
+    unsetPathValue,
+    removePathState,
+    getAllPathStates: () => pathStates.value,
   };
-
-  function isFieldGroup(
-    fieldOrGroup: PrivateFieldContext | PrivateFieldContext[]
-  ): fieldOrGroup is PrivateFieldContext[] {
-    return Array.isArray(fieldOrGroup);
-  }
-
-  function applyFieldMutation(
-    fieldOrGroup: PrivateFieldContext | PrivateFieldContext[],
-    mutation: (f: PrivateFieldContext) => unknown
-  ) {
-    if (Array.isArray(fieldOrGroup)) {
-      return fieldOrGroup.forEach(mutation);
-    }
-
-    return mutation(fieldOrGroup);
-  }
 
   /**
    * Manually sets an error message on a specific field
@@ -440,44 +471,15 @@ export function useForm<
   /**
    * Sets a single field value
    */
-  function setFieldValue<T extends Path<TValues>>(
-    field: T | PathState,
-    value: PathValue<TValues, T> | undefined,
-    { force } = { force: false }
-  ) {
-    const pathState = findPathState(field);
+  function setFieldValue<T extends Path<TValues>>(field: T | PathState, value: PathValue<TValues, T> | undefined) {
     const clonedValue = deepCopy(value);
-    // field wasn't found, set it in the values.
+    const path = typeof field === 'string' ? field : (field.path as Path<TValues>);
+    const pathState = findPathState(path);
     if (!pathState) {
-      setInPath(formValues, field as string, clonedValue);
-      return;
+      createPathState(path);
     }
 
-    // TODO: Hmmmmm
-    // if (isFieldGroup(fieldInstance) && fieldInstance[0]?.type === 'checkbox' && !Array.isArray(value)) {
-    //   // Multiple checkboxes, and only one of them got updated
-    //   const newValue = deepCopy(
-    //     resolveNextCheckboxValue(getFromPath(formValues, field as string) || [], value, undefined)
-    //   );
-
-    //   setInPath(formValues, field as string, newValue);
-    //   return;
-    // }
-
-    // TODO: Hmmmm
-    const newValue = clonedValue;
-    // // Single Checkbox: toggles the field value unless the field is being reset then force it
-    // if (!isFieldGroup(fieldInstance) && fieldInstance.type === 'checkbox' && !force && !RESET_LOCK) {
-    //   newValue = deepCopy(
-    //     resolveNextCheckboxValue<TValues[T]>(
-    //       getFromPath<TValues[T]>(formValues, field as string) as TValues[T],
-    //       value as TValues[T],
-    //       unref(fieldInstance.uncheckedValue) as TValues[T]
-    //     )
-    //   );
-    // }
-
-    setInPath(formValues, field as string, newValue);
+    setInPath(formValues, path, clonedValue);
   }
 
   /**
@@ -499,8 +501,22 @@ export function useForm<
   }
 
   function createModel<TPath extends Path<TValues>>(path: MaybeRef<TPath>) {
-    // TODO: Re-think this
-    return ref();
+    const pathState = findPathState(unref(path)) || createPathState(path);
+
+    return computed({
+      get() {
+        return pathState.value;
+      },
+      set(value) {
+        const pathValue = unref(path);
+        setFieldValue(pathValue, value);
+        pathState.validated = true;
+        pathState.pending = true;
+        validateField(pathValue).then(() => {
+          pathState.pending = false;
+        });
+      },
+    }) as Ref<PathValue<TValues, TPath>>;
   }
 
   function useFieldModel<TPath extends Path<TValues>>(path: TPath): Ref<PathValue<TValues, TPath>>;
@@ -538,7 +554,7 @@ export function useForm<
     const newValue = state && 'value' in state ? state.value : getFromPath(initialValues.value, field);
 
     setFieldInitialValue(field, deepCopy(newValue));
-    setFieldValue(field, newValue as PathValue<TValues, typeof field>, { force: true });
+    setFieldValue(field, newValue as PathValue<TValues, typeof field>);
     setFieldTouched(field, state?.touched ?? false);
     setFieldErrorBag(field, state?.errors || []);
   }
@@ -546,119 +562,26 @@ export function useForm<
   /**
    * Resets all fields
    */
-  function resetForm(state?: Partial<FormState<TValues>>) {
-    RESET_LOCK = true;
+  function resetForm(resetState?: Partial<FormState<TValues>>) {
+    isResetting.value = true;
 
-    // TODO: Needs perf work
-    mutateAllPathState(({ path }) => resetField(path as Path<TValues>));
-
-    // reset values
-    const newValues = state?.values ? state.values : originalInitialValues.value;
+    const newValues = resetState?.values ? resetState.values : originalInitialValues.value;
     setInitialValues(newValues);
     setValues(newValues);
+    mutateAllPathState(state => {
+      state.validated = false;
+      state.touched = resetState?.touched?.[state.path as Path<TValues>] || false;
 
-    if (state?.touched) {
-      setTouched(state.touched);
-    }
-
-    setErrors(state?.errors || {});
-    submitCount.value = state?.submitCount || 0;
-    nextTick(() => {
-      RESET_LOCK = false;
+      setFieldValue(state.path as Path<TValues>, getFromPath(newValues, state.path));
+      setFieldErrorBag(state.path as Path<TValues>, undefined);
     });
-  }
 
-  function registerField(field: PrivateFieldContext) {
-    // TODO: Do we need to do anything at all?
-    // const fieldPath = unref(field.name) as Path<TValues>;
-    // if (isRef(field.name)) {
-    //   // ensures when a field's name was already taken that it preserves its same value
-    //   // necessary for fields generated by loops
-    //   watch(field.name, async (_newPath, _oldPath) => {
-    //     const newPath = _newPath as Path<TValues>;
-    //     const oldPath = _oldPath as Path<TValues>;
-    //     // cache the value
-    //     await nextTick();
-    //     removeFieldFromPath(field, oldPath);
-    //     insertFieldAtPath(field, newPath);
-    //     // re-validate if either path had errors before
-    //     if (errors.value[oldPath] || errors.value[newPath]) {
-    //       // clear up both paths errors
-    //       setFieldError(oldPath, undefined);
-    //       validateField(newPath);
-    //     }
-    //     // clean up the old path if no other field is sharing that name
-    //     // #3325
-    //     await nextTick();
-    //     if (!fieldExists(oldPath)) {
-    //       unsetPath(formValues, oldPath);
-    //     }
-    //   });
-    // }
-    // // if field already had errors (initial errors) that's not user-set, validate it again to ensure state is correct
-    // // the difference being that `initialErrors` will contain the error message while other errors (pre-validated schema) won't have them as initial errors
-    // // #3342
-    // const initialErrorMessage = unref(field.errorMessage);
-    // if (initialErrorMessage && initialErrors?.[fieldPath] !== initialErrorMessage) {
-    //   validateField(fieldPath);
-    // }
-    // // marks the initial error as "consumed" so it won't be matched later with same non-initial error
-    // delete initialErrors[fieldPath];
-  }
-
-  function unregisterField(field: PrivateFieldContext<unknown>) {
-    // TODO: Do we need to do anything at all?
-    // TODO: Probably remove the state from the tracked states or something
-    // TODO: Checkboxes and radios are going to be a pain
-    // const fieldName = unref(field.name) as Path<TValues>;
-    // const fieldInstance = fieldsByPath.value[fieldName];
-    // const isGroup = !!fieldInstance && isFieldGroup(fieldInstance);
-    // removeFieldFromPath(field, fieldName);
-    // // clears a field error on unmounted
-    // // we wait till next tick to make sure if the field is completely removed and doesn't have any siblings like checkboxes
-    // nextTick(() => {
-    //   const shouldKeepValue = unref(field.keepValueOnUnmount) ?? unref(keepValuesOnUnmount);
-    //   const currentGroupValue = getFromPath(formValues, fieldName);
-    //   // The boolean here is we check if the field still belongs to the same control group with that name
-    //   // if another group claimed the name, we should avoid handling it since it is no longer the same group
-    //   // this happens with `v-for` over some checkboxes and field arrays.
-    //   // also if the group no longer exist we can assume this group was the last one that controlled it
-    //   const isSameGroup =
-    //     isGroup && (fieldInstance === fieldsByPath.value[fieldName] || !fieldsByPath.value[fieldName]);
-    //   // group field that still has a dangling value, the field may exist or not after it was removed.
-    //   // This used to be handled in the useField composable but the form has better context on when it should/not happen.
-    //   // if it does belong to it that means the group still exists
-    //   // #3844
-    //   if (isSameGroup && !shouldKeepValue) {
-    //     if (Array.isArray(currentGroupValue)) {
-    //       const valueIdx = currentGroupValue.findIndex(i => isEqual(i, unref(field.checkedValue)));
-    //       if (valueIdx > -1) {
-    //         const newVal = [...currentGroupValue];
-    //         newVal.splice(valueIdx, 1);
-    //         setFieldValue(fieldName, newVal as any, { force: true });
-    //       }
-    //     } else if (currentGroupValue === unref(field.checkedValue)) {
-    //       // Remove field if it is a group but does not have an array value, like for radio inputs #3963
-    //       unsetPath(formValues, fieldName);
-    //     }
-    //   }
-    //   // Field was removed entirely, we should unset its path
-    //   // #3384
-    //   if (!fieldExists(fieldName)) {
-    //     setFieldError(fieldName, undefined);
-    //     // Checks if the field was configured to be unset during unmount or not
-    //     // Checks both the form-level config and field-level one
-    //     // Field has the priority if it is set, otherwise it goes to the form settings
-    //     if (shouldKeepValue) {
-    //       return;
-    //     }
-    //     // Don't apply emptyContainer check unless the current group value is an array
-    //     if (isGroup && Array.isArray(currentGroupValue) && !isEmptyContainer(currentGroupValue)) {
-    //       return;
-    //     }
-    //     unsetPath(formValues, fieldName);
-    //   }
-    // });
+    setErrors(resetState?.errors || {});
+    submitCount.value = resetState?.submitCount || 0;
+    nextTick(() => {
+      validate({ mode: 'silent' });
+      isResetting.value = false;
+    });
   }
 
   async function validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues, TOutput>> {
@@ -672,53 +595,63 @@ export function useForm<
     }
 
     // No schema, each field is responsible to validate itself
-    // TODO: Schema-less validation is going to be fun
     const validations = await Promise.all(
-      []
-      // pathStates.value.map(field => {
-      //   return fieldInstance.validate(opts).then((result: ValidationResult) => {
-      //     return {
-      //       key: unref(fieldInstance.name),
-      //       valid: result.valid,
-      //       errors: result.errors,
-      //     };
-      //   });
-      // })
+      pathStates.value.map(state => {
+        if (!state.validator) {
+          return Promise.resolve({
+            key: state.path,
+            valid: true,
+            errors: [],
+          });
+        }
+
+        return state.validator(opts).then((result: ValidationResult) => {
+          return {
+            key: state.path,
+            valid: result.valid,
+            errors: result.errors,
+          };
+        });
+      })
     );
 
     const results: Partial<FlattenAndSetPathsType<TValues, ValidationResult>> = {};
     const errors: Partial<FlattenAndSetPathsType<TValues, string>> = {};
-    // for (const validation of validations) {
-    //   results[validation.key as Path<TValues>] = {
-    //     valid: validation.valid,
-    //     errors: validation.errors,
-    //   };
+    for (const validation of validations) {
+      results[validation.key as Path<TValues>] = {
+        valid: validation.valid,
+        errors: validation.errors,
+      };
 
-    //   if (validation.errors.length) {
-    //     errors[validation.key as Path<TValues>] = validation.errors[0];
-    //   }
-    // }
+      if (validation.errors.length) {
+        errors[validation.key as Path<TValues>] = validation.errors[0];
+      }
+    }
 
-    // TODO: Hmmm
     return {
-      valid: validations.every(r => true),
+      valid: validations.every(r => r.valid),
       results,
       errors,
     };
   }
 
-  async function validateField(field: Path<TValues>): Promise<ValidationResult> {
-    // TODO: Schema-less validation is going to be fun
-    // const fieldInstance = fieldsByPath.value[field];
-    // if (!fieldInstance) {
-    //   warn(`field with name ${field as string} was not found`);
-    //   return Promise.resolve({ errors: [], valid: true });
-    // }
-    // if (Array.isArray(fieldInstance)) {
-    //   return fieldInstance.map(f => f.validate())[0];
-    // }
-    // return fieldInstance.validate();
+  async function validateField(path: Path<TValues>): Promise<ValidationResult> {
+    const state = findPathState(path);
+    if (state) {
+      state.validated = true;
+    }
 
+    if (schema) {
+      const { results }: FormValidationResult<TValues, TOutput> = await validateSchema('validated-only');
+
+      return results[path] || { errors: [], valid: true };
+    }
+
+    if (state?.validator) {
+      return state.validator();
+    }
+
+    warn(`field with path ${path} was not found`);
     return Promise.resolve({ errors: [], valid: true });
   }
 

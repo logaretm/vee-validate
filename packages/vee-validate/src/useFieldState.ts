@@ -1,5 +1,5 @@
-import { computed, isRef, reactive, ref, Ref, toRefs, unref, watch } from 'vue';
-import { FieldMeta, FieldState, MaybeRef, PrivateFormContext } from './types';
+import { computed, isRef, reactive, ref, Ref, unref, watch } from 'vue';
+import { FieldMeta, FieldState, FieldValidator, InputType, MaybeRef, PrivateFormContext } from './types';
 import { getFromPath, isEqual, normalizeErrorItem } from './utils';
 
 export interface StateSetterInit<TValue = unknown> extends FieldState<TValue> {
@@ -19,6 +19,10 @@ export interface FieldStateComposable<TValue = unknown> {
 export interface StateInit<TValue = unknown> {
   modelValue: MaybeRef<TValue>;
   form?: PrivateFormContext;
+  bails: boolean;
+  label?: MaybeRef<string | undefined>;
+  type?: InputType;
+  validator?: FieldValidator;
 }
 
 let ID_COUNTER = 0;
@@ -27,11 +31,11 @@ export function useFieldState<TValue = unknown>(
   path: MaybeRef<string>,
   init: Partial<StateInit<TValue>>
 ): FieldStateComposable<TValue> {
-  const id = ID_COUNTER >= Number.MAX_SAFE_INTEGER ? 0 : ++ID_COUNTER;
   const { value, initialValue, setInitialValue } = _useFieldValue<TValue>(path, init.modelValue, init.form);
 
   if (!init.form) {
     const { errors, setErrors } = createFieldErrors();
+    const id = ID_COUNTER >= Number.MAX_SAFE_INTEGER ? 0 : ++ID_COUNTER;
     const meta = createFieldMeta(value, initialValue, errors);
 
     function setState(state: Partial<StateSetterInit<TValue>>) {
@@ -63,7 +67,13 @@ export function useFieldState<TValue = unknown>(
     };
   }
 
-  const state = init.form.createPathState(path);
+  const state = init.form.createPathState(path, {
+    bails: init.bails,
+    label: init.label,
+    type: init.type,
+    validator: init.validator,
+  });
+
   const errors = computed(() => state.errors);
 
   function setState(state: Partial<StateSetterInit<TValue>>) {
@@ -85,7 +95,7 @@ export function useFieldState<TValue = unknown>(
   }
 
   return {
-    id,
+    id: Array.isArray(state.id) ? state.id[state.id.length - 1] : state.id,
     path,
     value,
     errors,

@@ -13,7 +13,8 @@ import {
 import { klona as deepCopy } from 'klona/full';
 import { isCallable, isIndex, isNullOrUndefined, isObject, toNumber } from '../../../shared';
 import { isContainerValue, isEmptyContainer, isEqual, isNotNestedPath } from './assertions';
-import { MaybeRefOrLazy, PrivateFieldContext } from '../types';
+import { MaybeRef, MaybeRefOrLazy, PrivateFieldContext } from '../types';
+import { FormContextKey, FieldContextKey } from '../symbols';
 
 function cleanupNonNestedPath(path: string) {
   if (isNotNestedPath(path)) {
@@ -178,7 +179,7 @@ export function normalizeField<TValue = unknown>(
 
 export function resolveNextCheckboxValue<T>(currentValue: T, checkedValue: T, uncheckedValue: T): T;
 export function resolveNextCheckboxValue<T>(currentValue: T[], checkedValue: T, uncheckedValue: T): T[];
-export function resolveNextCheckboxValue<T>(currentValue: T | T[], checkedValue: T, uncheckedValue: T) {
+export function resolveNextCheckboxValue<T>(currentValue: T | T[], checkedValue: T, uncheckedValue: T): T | T[] {
   if (Array.isArray(currentValue)) {
     const newVal = [...currentValue];
     // Use isEqual since checked object values can possibly fail the equality check #3883
@@ -325,4 +326,16 @@ export function lazyToRef<T>(value: MaybeRefOrLazy<T>): Ref<T> {
 
 export function normalizeErrorItem(message: string | string[] | null | undefined) {
   return Array.isArray(message) ? message : message ? [message] : [];
+}
+
+export function resolveFieldOrPathState(path?: MaybeRef<string>) {
+  const form = injectWithSelf(FormContextKey);
+  const state = path ? computed(() => form?.getPathState(unref(path))) : undefined;
+  const field = path ? undefined : inject(FieldContextKey);
+
+  if (!field || !state?.value) {
+    warn(`field with name ${unref(path)} was not found`);
+  }
+
+  return state || field;
 }
