@@ -1,5 +1,5 @@
 ---
-import { generateMetaTags, generateSocialImage } from '@/utils/seo';
+import { generateLinks, generateMetaTags, generateSocialImage } from '@/utils/seo';
 import config from '@/config';
 
 const { frontmatter } = Astro.props;
@@ -19,6 +19,10 @@ const metaTags = generateMetaTags({
   url: `${config.appURL}${path}`,
   image,
 });
+
+const links = generateLinks({
+  url: `${config.appURL}${path}`,
+});
 ---
 
 <head>
@@ -27,6 +31,7 @@ const metaTags = generateMetaTags({
   <link rel="icon" type="image/x-icon" href="/v4/img/favicon.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   {metaTags.map(t => <meta content={t.content} name={t.name} property={t.property} />)}
+  {links.map(t => <link href={t.href} rel={t.rel} />)}
   <script is:inline src="/v4/loadTheme.js"></script>
   <script src="https://cdn.usefathom.com/script.js" data-site="OYTLUCCD" defer></script>
 </head>
