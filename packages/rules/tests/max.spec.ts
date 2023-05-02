@@ -11,10 +11,12 @@ test('validates maximum number of characters in a string', () => {
   expect(validate(null, params)).toBe(true);
   expect(validate('', params)).toBe(true);
   expect(validate([1, 2], params)).toBe(true);
+  expect(validate('𩸽寿司', params)).toBe(true);
 
   // invalid
   expect(validate('abcde', params)).toBe(false);
   expect(validate('null', params)).toBe(false);
   expect(validate('undefined', params)).toBe(false);
   expect(validate(['1234'], params)).toBe(false);
+  expect(validate('𩸽寿司の', params)).toBe(false);
 });

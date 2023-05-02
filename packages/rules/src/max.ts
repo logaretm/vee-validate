@@ -10,7 +10,7 @@ const maxLengthValidator = (value: unknown, params: [string | number] | { length
     return value.every(val => maxLengthValidator(val, { length }));
   }
 
-  return String(value).length <= Number(length);
+  return [...String(value)].length <= Number(length);
 };
 
 export default maxLengthValidator;
