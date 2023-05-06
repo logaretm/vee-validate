@@ -251,7 +251,7 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   unsetPathValue<TPath extends Path<TValues>>(path: TPath): void;
 }
 
-export interface BaseComponentBinds<TValue> {
+export interface BaseComponentBinds<TValue = unknown> {
   modelValue: TValue | undefined;
   'onUpdate:modelValue': (value: TValue) => void;
   onBlur: () => void;
@@ -262,25 +262,42 @@ export type PublicPathState<TValue = unknown> = Omit<
   'bails' | 'label' | 'multiple' | 'fieldsCount' | 'validate' | 'id' | 'type'
 >;
 
-export interface ComponentBindsConfig<TValue, TExtraProps extends GenericObject = GenericObject> {
+export interface ComponentBindsConfig<TValue = unknown, TExtraProps extends GenericObject = GenericObject> {
   mapProps: (state: PublicPathState<TValue>) => TExtraProps;
   validateOnBlur: boolean;
   validateOnModelUpdate: boolean;
 }
 
-export interface BaseInputBinds<TValue> {
+export type LazyComponentBindsConfig<TValue = unknown, TExtraProps extends GenericObject = GenericObject> = (
+  state: PublicPathState<TValue>
+) => Partial<{
+  props: TExtraProps;
+  validateOnBlur: boolean;
+  validateOnModelUpdate: boolean;
+}>;
+
+export interface BaseInputBinds<TValue = unknown> {
   value: TValue | undefined;
   onBlur: (e: Event) => void;
   onChange: (e: Event) => void;
   onInput: (e: Event) => void;
 }
 
-export interface InputBindsConfig<TValue, TExtraProps extends GenericObject = GenericObject> {
-  mapProps: (state: PublicPathState<TValue>) => TExtraProps;
+export interface InputBindsConfig<TValue = unknown, TExtraProps extends GenericObject = GenericObject> {
+  mapAttrs: (state: PublicPathState<TValue>) => TExtraProps;
   validateOnBlur: boolean;
   validateOnChange: boolean;
   validateOnInput: boolean;
 }
+
+export type LazyInputBindsConfig<TValue = unknown, TExtraProps extends GenericObject = GenericObject> = (
+  state: PublicPathState<TValue>
+) => Partial<{
+  attrs: TExtraProps;
+  validateOnBlur: boolean;
+  validateOnChange: boolean;
+  validateOnInput: boolean;
+}>;
 
 export interface FormContext<TValues extends GenericObject = GenericObject, TOutput = TValues>
   extends Omit<
@@ -308,7 +325,7 @@ export interface FormContext<TValues extends GenericObject = GenericObject, TOut
     TExtras extends GenericObject = GenericObject
   >(
     path: MaybeRefOrLazy<TPath>,
-    config?: Partial<ComponentBindsConfig<TValue, TExtras>>
+    config?: Partial<ComponentBindsConfig<TValue, TExtras>> | LazyComponentBindsConfig<TValue, TExtras>
   ): Ref<BaseComponentBinds<TValue> & TExtras>;
   defineInputBinds<
     TPath extends Path<TValues>,
@@ -316,6 +333,6 @@ export interface FormContext<TValues extends GenericObject = GenericObject, TOut
     TExtras extends GenericObject = GenericObject
   >(
     path: MaybeRefOrLazy<TPath>,
-    config?: Partial<InputBindsConfig<TValue, TExtras>>
+    config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>
   ): Ref<BaseInputBinds<TValue> & TExtras>;
 }

@@ -45,6 +45,8 @@ import {
   BaseInputBinds,
   InputBindsConfig,
   ComponentBindsConfig,
+  LazyInputBindsConfig,
+  LazyComponentBindsConfig,
 } from './types';
 import {
   getFromPath,
@@ -807,12 +809,16 @@ export function useForm<
     TPath extends Path<TValues>,
     TValue = PathValue<TValues, TPath>,
     TExtras extends GenericObject = GenericObject
-  >(path: MaybeRefOrLazy<TPath>, config?: Partial<ComponentBindsConfig<TValue, TExtras>>) {
+  >(
+    path: MaybeRefOrLazy<TPath>,
+    config?: Partial<ComponentBindsConfig<TValue, TExtras>> | LazyComponentBindsConfig<TValue, TExtras>
+  ) {
     const pathState = findPathState(unravel(path)) || createPathState(path);
+    const evalConfig = () => (isCallable(config) ? config(omit(pathState, PRIVATE_PATH_STATE_KEYS)) : config || {});
 
     function onBlur() {
       pathState.touched = true;
-      const validateOnBlur = config?.validateOnBlur ?? getConfig().validateOnBlur;
+      const validateOnBlur = evalConfig().validateOnBlur ?? getConfig().validateOnBlur;
       if (validateOnBlur) {
         validateField(pathState.path as Path<TValues>);
       }
@@ -820,7 +826,7 @@ export function useForm<
 
     function onUpdateModelValue(value: TValue) {
       setFieldValue(pathState.path as Path<TValues>, value as PathValue<TValues, TPath>);
-      const validateOnModelUpdate = config?.validateOnModelUpdate ?? getConfig().validateOnModelUpdate;
+      const validateOnModelUpdate = evalConfig().validateOnModelUpdate ?? getConfig().validateOnModelUpdate;
       if (validateOnModelUpdate) {
         validateField(pathState.path as Path<TValues>);
       }
@@ -832,6 +838,13 @@ export function useForm<
         'onUpdate:modelValue': onUpdateModelValue,
         onBlur,
       };
+
+      if (isCallable(config)) {
+        return {
+          ...base,
+          ...(config(pathState).props || {}),
+        } as BaseComponentBinds<TValue> & TExtras;
+      }
 
       if (config?.mapProps) {
         return {
@@ -850,12 +863,16 @@ export function useForm<
     TPath extends Path<TValues>,
     TValue = PathValue<TValues, TPath>,
     TExtras extends GenericObject = GenericObject
-  >(path: MaybeRefOrLazy<TPath>, config?: Partial<InputBindsConfig<TValue, TExtras>>) {
+  >(
+    path: MaybeRefOrLazy<TPath>,
+    config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>
+  ) {
     const pathState = (findPathState(unravel(path)) || createPathState(path)) as PathState<TValue>;
+    const evalConfig = () => (isCallable(config) ? config(omit(pathState, PRIVATE_PATH_STATE_KEYS)) : config || {});
 
     function onBlur() {
       pathState.touched = true;
-      const validateOnBlur = config?.validateOnBlur ?? getConfig().validateOnBlur;
+      const validateOnBlur = evalConfig().validateOnBlur ?? getConfig().validateOnBlur;
       if (validateOnBlur) {
         validateField(pathState.path as Path<TValues>);
       }
@@ -864,7 +881,7 @@ export function useForm<
     function onInput(e: Event) {
       const value = normalizeEventValue(e) as PathValue<TValues, TPath>;
       setFieldValue(pathState.path as Path<TValues>, value);
-      const validateOnInput = config?.validateOnInput ?? getConfig().validateOnInput;
+      const validateOnInput = evalConfig().validateOnInput ?? getConfig().validateOnInput;
       if (validateOnInput) {
         validateField(pathState.path as Path<TValues>);
       }
@@ -873,7 +890,7 @@ export function useForm<
     function onChange(e: Event) {
       const value = normalizeEventValue(e) as PathValue<TValues, TPath>;
       setFieldValue(pathState.path as Path<TValues>, value);
-      const validateOnChange = config?.validateOnChange ?? getConfig().validateOnChange;
+      const validateOnChange = evalConfig().validateOnChange ?? getConfig().validateOnChange;
       if (validateOnChange) {
         validateField(pathState.path as Path<TValues>);
       }
@@ -887,10 +904,17 @@ export function useForm<
         onBlur,
       };
 
-      if (config?.mapProps) {
+      if (isCallable(config)) {
         return {
           ...base,
-          ...config.mapProps(omit(pathState, PRIVATE_PATH_STATE_KEYS)),
+          ...(config(omit(pathState, PRIVATE_PATH_STATE_KEYS)).attrs || {}),
+        } as BaseInputBinds<TValue> & TExtras;
+      }
+
+      if (config?.mapAttrs) {
+        return {
+          ...base,
+          ...config.mapAttrs(omit(pathState, PRIVATE_PATH_STATE_KEYS)),
         } as BaseInputBinds<TValue> & TExtras;
       }
 

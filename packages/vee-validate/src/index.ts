@@ -31,6 +31,10 @@ export {
   RawFormSchema,
   Path,
   PublicPathState as PathState,
+  ComponentBindsConfig,
+  InputBindsConfig,
+  LazyComponentBindsConfig,
+  LazyInputBindsConfig,
 } from './types';
 export { useResetForm } from './useResetForm';
 export { useIsFieldDirty } from './useIsFieldDirty';
