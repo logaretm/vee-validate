@@ -116,6 +116,7 @@ function _useField<TValue = unknown>(
   const injectedForm = controlled ? injectWithSelf(FormContextKey) : undefined;
   const form = (controlForm as PrivateFormContext | undefined) || injectedForm;
   const name = lazyToRef(path);
+  let PENDING_UNMOUNT = false;
 
   const validator = computed(() => {
     const schema = unref(form?.schema);
@@ -184,6 +185,10 @@ function _useField<TValue = unknown>(
       return validateCurrentValue('validated-only');
     },
     result => {
+      if (PENDING_UNMOUNT) {
+        return;
+      }
+
       setState({ errors: result.errors });
       meta.pending = false;
       meta.valid = result.valid;
@@ -401,6 +406,7 @@ function _useField<TValue = unknown>(
   });
 
   onBeforeUnmount(() => {
+    PENDING_UNMOUNT = true;
     const shouldKeepValue = unref(field.keepValueOnUnmount) ?? unref(form.keepValuesOnUnmount);
     if (shouldKeepValue || !form) {
       return;

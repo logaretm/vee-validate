@@ -11,6 +11,7 @@ import {
   nextTick,
   warn,
   watchEffect,
+  shallowRef,
 } from 'vue';
 import { klona as deepCopy } from 'klona/full';
 import {
@@ -21,7 +22,6 @@ import {
   MaybeRef,
   FormState,
   FormValidationResult,
-  PrivateFieldContext,
   PrivateFormContext,
   FormContext,
   FormErrors,
@@ -122,15 +122,55 @@ export function useForm<
 
   const pathStates = ref<PathState<unknown>[]>([]);
 
-  // the source of errors for the form fields
-  const { errorBag, setErrorBag, setFieldErrorBag } = useErrorBag(opts?.initialErrors);
+  const extraErrorsBag = ref<FormErrorBag<TValues>>({});
+
+  /**
+   * Manually sets an error message on a specific field
+   */
+  function setFieldErrorBag(field: Path<TValues> | PathState, message: string | undefined | string[]) {
+    const state = findPathState(field);
+    if (!state) {
+      extraErrorsBag.value[field as string] = normalizeErrorItem(message);
+      return;
+    }
+
+    state.errors = normalizeErrorItem(message);
+  }
+
+  /**
+   * Sets errors for the fields specified in the object
+   */
+  function setErrorBag(paths: Partial<FlattenAndSetPathsType<TValues, string | string[] | undefined>>) {
+    keysOf(paths).forEach(path => {
+      const state = findPathState(path);
+      if (state) {
+        state.errors = normalizeErrorItem(paths[path]);
+      }
+    });
+  }
+
+  if (opts?.initialErrors) {
+    setErrorBag(opts.initialErrors);
+  }
+
+  const errorBag = computed<FormErrorBag<TValues>>(() => {
+    const pathErrors = pathStates.value.reduce((acc, state) => {
+      if (state.errors.length) {
+        acc[state.path as Path<TValues>] = state.errors;
+      }
+
+      return acc;
+    }, {} as FormErrorBag<TValues>);
+
+    return { ...extraErrorsBag.value, ...pathErrors };
+  });
 
   // Gets the first error of each field
   const errors = computed<FormErrors<TValues>>(() => {
     return keysOf(errorBag.value).reduce((acc, key) => {
-      const bag = errorBag.value[key];
-      if (bag && bag.length) {
-        acc[key] = bag[0];
+      const errors = errorBag.value[key];
+      if (errors?.length) {
+        acc[key] = errors[0];
       }
 
       return acc;
@@ -190,8 +230,6 @@ export function useForm<
     config?: Partial<PathStateConfig>
   ): PathState<TValue> {
     const initialValue = computed(() => getFromPath(initialValues.value, unref(path)));
-    const pathErrors = computed(() => errorBag.value[unref(path)] || []);
-
     const pathStateExists = pathStates.value.find(state => state.path === unref(path));
     if (pathStateExists) {
       if (config?.type === 'checkbox' || config?.type === 'radio') {
@@ -219,7 +257,7 @@ export function useForm<
       valid: true,
       validated: !!initialErrors[pathValue]?.length,
       initialValue,
-      errors: pathErrors,
+      errors: shallowRef([]),
       bails: config?.bails ?? false,
       label: config?.label,
       type: config?.type || 'default',
@@ -238,6 +276,17 @@ export function useForm<
     if (errors.value[pathValue] && !initialErrors[pathValue]) {
       nextTick(() => {
         validateField(pathValue);
+      });
+    }
+
+    // Handles when a path changes
+    if (isRef(path)) {
+      watch(path, newPath => {
+        const nextValue = deepCopy(currentValue.value);
+
+        nextTick(() => {
+          setInPath(formValues, newPath, nextValue);
+        });
       });
     }
 
@@ -280,6 +329,11 @@ export function useForm<
             validation.errors[path] = fieldResult.errors[0];
           }
 
+          // clean up extra errors if path state exists
+          if (pathState && extraErrorsBag.value[path]) {
+            delete extraErrorsBag.value[path];
+          }
+
           // field not rendered
           if (!pathState) {
             setFieldError(path, messages);
@@ -308,15 +362,6 @@ export function useForm<
 
   function mutateAllPathState(mutation: (state: PathState) => void) {
     pathStates.value.forEach(mutation);
-  }
-
-  function mutatePathState(path: Path<TValues>, mutation: (state: PathState) => void) {
-    const state = findPathState(path);
-    if (!state) {
-      return;
-    }
-
-    mutation(state);
   }
 
   function findPathState<TPath extends Path<TValues>>(path: TPath | PathState) {
@@ -413,7 +458,7 @@ export function useForm<
 
     if (!pathState.multiple || pathState.fieldsCount <= 0) {
       pathStates.value.splice(idx, 1);
-      setFieldErrorBag(path, undefined);
+      unsetInitialValue(path);
     }
   }
 
@@ -451,6 +496,7 @@ export function useForm<
     getPathState: findPathState,
     unsetPathValue,
     removePathState,
+    initialValues: initialValues as Ref<TValues>,
     getAllPathStates: () => pathStates.value,
   };
 
@@ -663,8 +709,8 @@ export function useForm<
    * Sneaky function to set initial field values
    */
   function stageInitialValue(path: string, value: unknown, updateOriginal = false) {
-    setInPath(formValues, path, value);
     setFieldInitialValue(path, value);
+    setInPath(formValues, path, value);
     if (updateOriginal && !opts?.initialValues) {
       setInPath(originalInitialValues.value, path, deepCopy(value));
     }
@@ -860,46 +906,5 @@ function useFormInitialValues<TValues extends GenericObject>(
     initialValues,
     originalInitialValues,
     setInitialValues,
-  };
-}
-
-function useErrorBag<TValues extends GenericObject>(initialErrors?: FormErrors<TValues>) {
-  const errorBag: Ref<FormErrorBag<TValues>> = ref({});
-
-  /**
-   * Manually sets an error message on a specific field
-   */
-  function setFieldErrorBag(field: Path<TValues> | PathState, message: string | undefined | string[]) {
-    const path = (typeof field === 'string' ? field : field.path) as Path<TValues>;
-    if (!message) {
-      delete errorBag.value[path];
-      return;
-    }
-
-    errorBag.value[path] = normalizeErrorItem(message);
-  }
-
-  /**
-   * Sets errors for the fields specified in the object
-   */
-  function setErrorBag(fields: Partial<FlattenAndSetPathsType<TValues, string | string[] | undefined>>) {
-    errorBag.value = keysOf(fields).reduce((acc, key) => {
-      const message = fields[key] as string | string[] | undefined;
-      if (message) {
-        acc[key] = normalizeErrorItem(message);
-      }
-
-      return acc;
-    }, {} as FormErrorBag<TValues>);
-  }
-
-  if (initialErrors) {
-    setErrorBag(initialErrors);
-  }
-
-  return {
-    errorBag,
-    setErrorBag,
-    setFieldErrorBag,
   };
 }

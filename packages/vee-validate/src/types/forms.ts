@@ -218,6 +218,7 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   extends FormActions<TValues> {
   formId: number;
   values: TValues;
+  initialValues: Ref<Partial<TValues>>;
   controlledValues: Ref<TValues>;
   fieldArrays: PrivateFieldArrayContext[];
   submitCount: Ref<number>;
@@ -255,6 +256,7 @@ export interface FormContext<TValues extends Record<string, any> = Record<string
     PrivateFormContext<TValues, TOutput>,
     | 'formId'
     | 'schema'
+    | 'initialValues'
     | 'getPathState'
     | 'getAllPathStates'
     | 'removePathState'

@@ -126,7 +126,7 @@ export function _useFieldValue<TValue = unknown>(
       return unref(modelRef) as TValue;
     }
 
-    return getFromPath<TValue>(form.meta.value.initialValues, unref(path), unref(modelRef)) as TValue;
+    return getFromPath<TValue>(form.initialValues.value, unref(path), unref(modelRef)) as TValue;
   }
 
   function setInitialValue(value: TValue) {

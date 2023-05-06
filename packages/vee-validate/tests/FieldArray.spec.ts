@@ -653,7 +653,7 @@ test('clears old errors path when last item is removed and value update validati
     setup(props) {
       const { value, handleChange, errors } = useField(toRef(props, 'name'), props.rules, {
         label: props.label,
-        type: props.type,
+        type: props.type as 'checkbox',
       });
 
       return {
