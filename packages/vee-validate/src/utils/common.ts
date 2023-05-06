@@ -164,19 +164,6 @@ export function warn(message: string) {
   vueWarning(`[vee-validate]: ${message}`);
 }
 
-/**
- * Ensures we deal with a singular field value
- */
-export function normalizeField<TValue = unknown>(
-  field: PrivateFieldContext<TValue> | PrivateFieldContext<TValue>[] | undefined
-): PrivateFieldContext<TValue> | undefined {
-  if (Array.isArray(field)) {
-    return field[0];
-  }
-
-  return field;
-}
-
 export function resolveNextCheckboxValue<T>(currentValue: T, checkedValue: T, uncheckedValue: T): T;
 export function resolveNextCheckboxValue<T>(currentValue: T[], checkedValue: T, uncheckedValue: T): T[];
 export function resolveNextCheckboxValue<T>(currentValue: T | T[], checkedValue: T, uncheckedValue: T): T | T[] {
