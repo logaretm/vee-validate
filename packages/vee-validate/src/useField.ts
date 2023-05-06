@@ -482,22 +482,6 @@ function normalizeOptions<TValue>(opts: Partial<FieldOptions<TValue>> | undefine
   } as FieldOptions<TValue>;
 }
 
-/**
- * Extracts the validation rules from a schema
- */
-export function extractRuleFromSchema<TValue>(
-  schema: Record<string, RuleExpression<TValue>> | undefined,
-  fieldName: string
-) {
-  // no schema at all
-  if (!schema) {
-    return undefined;
-  }
-
-  // there is a key on the schema object for this field
-  return schema[fieldName];
-}
-
 function useFieldWithChecked<TValue = unknown>(
   name: MaybeRefOrLazy<string>,
   rules?: MaybeRef<RuleExpression<TValue>>,
