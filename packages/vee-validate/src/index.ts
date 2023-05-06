@@ -30,6 +30,7 @@ export {
   TypedSchemaError,
   RawFormSchema,
   Path,
+  PublicPathState as PathState,
 } from './types';
 export { useResetForm } from './useResetForm';
 export { useIsFieldDirty } from './useIsFieldDirty';

@@ -1,6 +1,7 @@
 import { Ref } from 'vue';
 import { Path, PathValue } from './paths';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type GenericObject = Record<string, any>;
 
 export type MaybeRef<T> = Ref<T> | T;

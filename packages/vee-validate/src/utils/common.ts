@@ -13,7 +13,7 @@ import {
 import { klona as deepCopy } from 'klona/full';
 import { isCallable, isIndex, isNullOrUndefined, isObject, toNumber } from '../../../shared';
 import { isContainerValue, isEmptyContainer, isEqual, isNotNestedPath } from './assertions';
-import { MaybeRef, MaybeRefOrLazy, PrivateFieldContext } from '../types';
+import { GenericObject, MaybeRef, MaybeRefOrLazy, PrivateFieldContext } from '../types';
 import { FormContextKey, FieldContextKey } from '../symbols';
 
 function cleanupNonNestedPath(path: string) {
@@ -325,4 +325,16 @@ export function resolveFieldOrPathState(path?: MaybeRef<string>) {
   }
 
   return state || field;
+}
+
+export function omit<TObj extends GenericObject>(obj: TObj, keys: (keyof GenericObject)[]) {
+  const target = {} as TObj;
+
+  for (const key in obj) {
+    if (!keys.includes(key)) {
+      target[key] = obj[key];
+    }
+  }
+
+  return target;
 }
