@@ -352,7 +352,7 @@ function getFieldNodeTags(
 }
 
 function encodeNodeId(form?: PrivateFormContext, stateOrField?: PathState | PrivateFieldContext): string {
-  const type = stateOrField ? ('path' in stateOrField ? 'field' : 'pathState') : 'form';
+  const type = stateOrField ? ('path' in stateOrField ? 'pathState' : 'field') : 'form';
   const fieldPath = stateOrField ? ('path' in stateOrField ? stateOrField?.path : unref(stateOrField?.name)) : '';
   const idObject = { f: form?.formId, ff: fieldPath, type };
 
