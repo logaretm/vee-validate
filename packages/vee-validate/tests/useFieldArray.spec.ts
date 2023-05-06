@@ -1,5 +1,5 @@
 import { useForm, useFieldArray, FieldEntry, FormContext, FieldArrayContext } from '@/vee-validate';
-import { nextTick, onMounted, Ref } from 'vue';
+import { onMounted, Ref } from 'vue';
 import * as yup from 'yup';
 import { mountWithHoc, flushPromises } from './helpers';
 
@@ -104,6 +104,26 @@ test('warns when updating a no-longer existing item', async () => {
   spy.mockRestore();
 });
 
+test('warns when no form context is present', async () => {
+  const spy = vi.spyOn(console, 'warn').mockImplementation(() => {
+    // NOOP
+  });
+  mountWithHoc({
+    setup() {
+      const { push } = useFieldArray('users');
+      push('');
+    },
+    template: `
+      <div></div>
+    `,
+  });
+
+  await flushPromises();
+
+  expect(spy).toHaveBeenCalled();
+  spy.mockRestore();
+});
+
 test('duplicate calls yields the same instance', async () => {
   let removeFn!: (idx: number) => void;
   mountWithHoc({
@@ -172,6 +192,33 @@ test('array push should trigger a silent validation', async () => {
   expect(form.meta.value.valid).toBe(false);
 });
 
+test('array push noop when path is not an array', async () => {
+  let arr!: FieldArrayContext;
+  mountWithHoc({
+    setup() {
+      const form = useForm<any>({
+        initialValues: {
+          users: 'test',
+        },
+        validationSchema: yup.object({
+          users: yup.array().of(yup.string().required().min(1)),
+        }),
+      });
+
+      arr = useFieldArray('users');
+    },
+    template: `
+      <div></div>
+    `,
+  });
+
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(0);
+  arr.push('');
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(0);
+});
+
 // #4096
 test('array prepend should trigger a silent validation', async () => {
   let form!: FormContext;
@@ -201,6 +248,33 @@ test('array prepend should trigger a silent validation', async () => {
   expect(form.meta.value.valid).toBe(false);
 });
 
+test('array prepend noop when path is not an array', async () => {
+  let arr!: FieldArrayContext;
+  mountWithHoc({
+    setup() {
+      const form = useForm<any>({
+        initialValues: {
+          users: 'test',
+        },
+        validationSchema: yup.object({
+          users: yup.array().of(yup.string().required().min(1)),
+        }),
+      });
+
+      arr = useFieldArray('users');
+    },
+    template: `
+      <div></div>
+    `,
+  });
+
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(0);
+  arr.prepend('');
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(0);
+});
+
 // #4096
 test('array insert should trigger a silent validation', async () => {
   let form!: FormContext;
@@ -228,4 +302,220 @@ test('array insert should trigger a silent validation', async () => {
   arr.insert(1, '');
   await flushPromises();
   expect(form.meta.value.valid).toBe(false);
+});
+
+test('array insert noop when path is not an array', async () => {
+  let arr!: FieldArrayContext;
+  mountWithHoc({
+    setup() {
+      useForm<any>({
+        initialValues: {
+          users: 'test',
+        },
+        validationSchema: yup.object({
+          users: yup.array().of(yup.string().required().min(1)),
+        }),
+      });
+
+      arr = useFieldArray('users');
+    },
+    template: `
+      <div></div>
+    `,
+  });
+
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(0);
+  arr.insert(0, '');
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(0);
+});
+
+test('array move noop when path is not an array', async () => {
+  let arr!: FieldArrayContext;
+  mountWithHoc({
+    setup() {
+      useForm<any>({
+        initialValues: {
+          users: 'test',
+        },
+        validationSchema: yup.object({
+          users: yup.array().of(yup.string().required().min(1)),
+        }),
+      });
+
+      arr = useFieldArray('users');
+    },
+    template: `
+      <div></div>
+    `,
+  });
+
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(0);
+  arr.move(0, 1);
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(0);
+});
+
+test('array swap noop when path is not an array', async () => {
+  let arr!: FieldArrayContext;
+  mountWithHoc({
+    setup() {
+      useForm<any>({
+        initialValues: {
+          users: 'test',
+        },
+        validationSchema: yup.object({
+          users: yup.array().of(yup.string().required().min(1)),
+        }),
+      });
+
+      arr = useFieldArray('users');
+    },
+    template: `
+      <div></div>
+    `,
+  });
+
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(0);
+  arr.swap(0, 1);
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(0);
+});
+
+test('array remove noop when path is not an array', async () => {
+  let arr!: FieldArrayContext;
+  mountWithHoc({
+    setup() {
+      useForm<any>({
+        initialValues: {
+          users: 'test',
+        },
+        validationSchema: yup.object({
+          users: yup.array().of(yup.string().required().min(1)),
+        }),
+      });
+
+      arr = useFieldArray('users');
+    },
+    template: `
+      <div></div>
+    `,
+  });
+
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(0);
+  arr.remove(0);
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(0);
+});
+
+test('array update noop when path is not an array', async () => {
+  let arr!: FieldArrayContext;
+  mountWithHoc({
+    setup() {
+      useForm<any>({
+        initialValues: {
+          users: 'test',
+        },
+        validationSchema: yup.object({
+          users: yup.array().of(yup.string().required().min(1)),
+        }),
+      });
+
+      arr = useFieldArray('users');
+    },
+    template: `
+      <div></div>
+    `,
+  });
+
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(0);
+  arr.update(0, '');
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(0);
+});
+
+test('array push initializes the array if undefined', async () => {
+  let arr!: FieldArrayContext;
+  mountWithHoc({
+    setup() {
+      useForm<any>({
+        initialValues: {
+          users: undefined,
+        },
+        validationSchema: yup.object({
+          users: yup.array().of(yup.string().required().min(1)),
+        }),
+      });
+
+      arr = useFieldArray('users');
+    },
+    template: `
+      <div></div>
+    `,
+  });
+
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(0);
+  arr.push('');
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(1);
+});
+
+test('array prepend initializes the array if undefined', async () => {
+  let arr!: FieldArrayContext;
+  mountWithHoc({
+    setup() {
+      useForm<any>({
+        initialValues: {
+          users: undefined,
+        },
+        validationSchema: yup.object({
+          users: yup.array().of(yup.string().required().min(1)),
+        }),
+      });
+
+      arr = useFieldArray('users');
+    },
+    template: `
+      <div></div>
+    `,
+  });
+
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(0);
+  arr.prepend('');
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(1);
+});
+
+test('array move initializes the array if undefined', async () => {
+  let arr!: FieldArrayContext;
+  mountWithHoc({
+    setup() {
+      useForm<any>({
+        initialValues: {
+          users: undefined,
+        },
+        validationSchema: yup.object({
+          users: yup.array().of(yup.string().required().min(1)),
+        }),
+      });
+
+      arr = useFieldArray('users');
+    },
+    template: `
+      <div></div>
+    `,
+  });
+
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(0);
+  arr.move(0, 0);
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(0);
 });

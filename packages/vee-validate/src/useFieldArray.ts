@@ -49,6 +49,10 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
 
   function initFields() {
     const currentValues = getCurrentValues();
+    if (!Array.isArray(currentValues)) {
+      return;
+    }
+
     fields.value = currentValues.map((v, idx) => createEntry(v, idx, fields.value));
     updateEntryFlags();
   }
