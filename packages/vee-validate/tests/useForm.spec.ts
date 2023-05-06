@@ -1,7 +1,8 @@
 import { FieldMeta, FormContext, FormMeta, useField, useForm } from '@/vee-validate';
-import { mountWithHoc, setValue, flushPromises, runInSetup } from './helpers';
+import { mountWithHoc, setValue, flushPromises, runInSetup, dispatchEvent } from './helpers';
 import * as yup from 'yup';
 import { onMounted, Ref } from 'vue';
+import ModelComp from './helpers/ModelComp';
 
 describe('useForm()', () => {
   const REQUIRED_MESSAGE = 'Field is required';
@@ -696,5 +697,276 @@ describe('useForm()', () => {
     await flushPromises();
     expect(model.value).toEqual({ name: 'test' });
     expect(formMeta.value.initialValues?.field?.name).toBe('1');
+  });
+
+  describe('defineComponentBinds', () => {
+    test('creates bindable object to components', async () => {
+      mountWithHoc({
+        components: {
+          ModelComp,
+        },
+        setup() {
+          const { defineComponentBinds, values, errors } = useForm({
+            validationSchema: yup.object({
+              name: yup.string().required(),
+            }),
+          });
+
+          const field = defineComponentBinds('name');
+
+          return { field, values, errors };
+        },
+        template: `
+        <ModelComp v-bind="field" />
+        <span id="errors">{{ errors.name }}</span>
+        <span id="values">{{ values.name }}</span>
+      `,
+      });
+
+      await flushPromises();
+      const errorEl = document.getElementById('errors');
+      const valuesEl = document.getElementById('values');
+      setValue(document.querySelector('input') as any, '');
+      dispatchEvent(document.querySelector('input') as any, 'blur');
+      await flushPromises();
+      expect(errorEl?.textContent).toBe('name is a required field');
+      setValue(document.querySelector('input') as any, '123');
+      dispatchEvent(document.querySelector('input') as any, 'blur');
+      await flushPromises();
+      expect(errorEl?.textContent).toBe('');
+      expect(valuesEl?.textContent).toBe('123');
+    });
+
+    test('can configure the validation events', async () => {
+      mountWithHoc({
+        components: {
+          ModelComp,
+        },
+        setup() {
+          const { defineComponentBinds, values, errors } = useForm({
+            validationSchema: yup.object({
+              name: yup.string().required(),
+            }),
+          });
+
+          const field = defineComponentBinds('name', { validateOnModelUpdate: true });
+
+          return { field, values, errors };
+        },
+        template: `
+        <ModelComp v-bind="field" />
+        <span id="errors">{{ errors.name }}</span>
+        <span id="values">{{ values.name }}</span>
+      `,
+      });
+
+      await flushPromises();
+      const errorEl = document.getElementById('errors');
+      const valuesEl = document.getElementById('values');
+      setValue(document.querySelector('input') as any, '');
+      await flushPromises();
+      expect(errorEl?.textContent).toBe('name is a required field');
+      setValue(document.querySelector('input') as any, '123');
+      await flushPromises();
+      expect(errorEl?.textContent).toBe('');
+      expect(valuesEl?.textContent).toBe('123');
+    });
+
+    test('can pass extra props', async () => {
+      mountWithHoc({
+        components: {
+          ModelComp,
+        },
+        setup() {
+          const { defineComponentBinds } = useForm({
+            validationSchema: yup.object({
+              name: yup.string().required(),
+            }),
+          });
+
+          const field = defineComponentBinds('name', {
+            validateOnModelUpdate: true,
+            mapProps: state => ({ test: state.valid ? 'valid' : 'invalid' }),
+          });
+
+          return { field };
+        },
+        template: `
+        <ModelComp v-bind="field" />
+      `,
+      });
+
+      await flushPromises();
+      setValue(document.querySelector('input') as any, '');
+      await flushPromises();
+      expect(document.body.innerHTML).toContain('invalid');
+      setValue(document.querySelector('input') as any, '123');
+      await flushPromises();
+      expect(document.body.innerHTML).toContain('valid');
+    });
+
+    test('can have lazy config', async () => {
+      mountWithHoc({
+        components: {
+          ModelComp,
+        },
+        setup() {
+          const { defineComponentBinds } = useForm({
+            validationSchema: yup.object({
+              name: yup.string().required(),
+            }),
+          });
+
+          const field = defineComponentBinds('name', state => ({
+            props: { test: state.valid ? 'valid' : 'invalid' },
+            validateOnModelUpdate: true,
+          }));
+
+          return { field };
+        },
+        template: `
+        <ModelComp v-bind="field" />
+      `,
+      });
+
+      await flushPromises();
+      setValue(document.querySelector('input') as any, '');
+      await flushPromises();
+      expect(document.body.innerHTML).toContain('invalid');
+      setValue(document.querySelector('input') as any, '123');
+      await flushPromises();
+      expect(document.body.innerHTML).toContain('valid');
+    });
+  });
+
+  describe('defineInputBinds', () => {
+    test('creates bindable object to HTML inputs', async () => {
+      mountWithHoc({
+        setup() {
+          const { defineInputBinds, values, errors } = useForm({
+            validationSchema: yup.object({
+              name: yup.string().required(),
+            }),
+          });
+
+          const field = defineInputBinds('name');
+
+          return { field, values, errors };
+        },
+        template: `
+        <input v-bind="field" />
+        <span id="errors">{{ errors.name }}</span>
+        <span id="values">{{ values.name }}</span>
+      `,
+      });
+
+      await flushPromises();
+      const errorEl = document.getElementById('errors');
+      const valuesEl = document.getElementById('values');
+      setValue(document.querySelector('input') as any, '');
+      dispatchEvent(document.querySelector('input') as any, 'blur');
+      await flushPromises();
+      expect(errorEl?.textContent).toBe('name is a required field');
+      setValue(document.querySelector('input') as any, '123');
+      dispatchEvent(document.querySelector('input') as any, 'blur');
+      await flushPromises();
+      expect(errorEl?.textContent).toBe('');
+      expect(valuesEl?.textContent).toBe('123');
+    });
+
+    test('can configure the validation events', async () => {
+      mountWithHoc({
+        setup() {
+          const { defineInputBinds, values, errors } = useForm({
+            validationSchema: yup.object({
+              name: yup.string().required(),
+            }),
+          });
+
+          const field = defineInputBinds('name', { validateOnInput: true });
+
+          return { field, values, errors };
+        },
+        template: `
+        <input v-bind="field" />
+        <span id="errors">{{ errors.name }}</span>
+        <span id="values">{{ values.name }}</span>
+      `,
+      });
+
+      await flushPromises();
+      const errorEl = document.getElementById('errors');
+      const valuesEl = document.getElementById('values');
+      setValue(document.querySelector('input') as any, '');
+      await flushPromises();
+      expect(errorEl?.textContent).toBe('name is a required field');
+      setValue(document.querySelector('input') as any, '123');
+      await flushPromises();
+      expect(errorEl?.textContent).toBe('');
+      expect(valuesEl?.textContent).toBe('123');
+    });
+
+    test('can pass extra props', async () => {
+      mountWithHoc({
+        setup() {
+          const { defineInputBinds } = useForm({
+            validationSchema: yup.object({
+              name: yup.string().required(),
+            }),
+          });
+
+          const field = defineInputBinds('name', {
+            validateOnInput: true,
+            mapAttrs: state => ({ 'aria-valid': state.valid ? 'true' : 'false' }),
+          });
+
+          return { field };
+        },
+        template: `
+        <input v-bind="field" />
+      `,
+      });
+
+      await flushPromises();
+      setValue(document.querySelector('input') as any, '');
+      await flushPromises();
+      expect(document.body.innerHTML).toContain('aria-valid="false"');
+      setValue(document.querySelector('input') as any, '123');
+      await flushPromises();
+      expect(document.body.innerHTML).toContain('aria-valid="true"');
+    });
+
+    test('can have lazy config', async () => {
+      mountWithHoc({
+        components: {
+          ModelComp,
+        },
+        setup() {
+          const { defineInputBinds } = useForm({
+            validationSchema: yup.object({
+              name: yup.string().required(),
+            }),
+          });
+
+          const field = defineInputBinds('name', state => ({
+            attrs: { 'aria-valid': state.valid ? 'true' : 'false' },
+            validateOnModelUpdate: true,
+          }));
+
+          return { field };
+        },
+        template: `
+        <input v-bind="field" />
+      `,
+      });
+
+      await flushPromises();
+      setValue(document.querySelector('input') as any, '');
+      await flushPromises();
+      expect(document.body.innerHTML).toContain('aria-valid="false"');
+      setValue(document.querySelector('input') as any, '123');
+      await flushPromises();
+      expect(document.body.innerHTML).toContain('aria-valid="true"');
+    });
   });
 });
