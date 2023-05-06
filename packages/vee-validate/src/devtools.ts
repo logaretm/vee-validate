@@ -313,7 +313,7 @@ function getFieldNodeTags(
   const { textColor, bgColor } = getValidityColors(valid);
 
   return [
-    !multiple && fieldsCount === 1
+    multiple
       ? undefined
       : {
           label: 'Field',
