@@ -28,6 +28,9 @@ jobs:
           paths:
             - node_modules
       - run:
+          name: Type check
+          command: pnpm typecheck
+      - run:
           name: Build
           command: pnpm build
       - run:
