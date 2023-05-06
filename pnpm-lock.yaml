@@ -236,20 +236,20 @@ importers:
   packages/yup:
     dependencies:
       type-fest:
-        specifier: ^3.6.1
-        version: 3.6.1
+        specifier: ^3.10.0
+        version: 3.10.0(typescript@5.0.4)
       vee-validate:
         specifier: ^4.8.6
         version: link:../vee-validate
       yup:
-        specifier: ^1.0.2
-        version: 1.0.2
+        specifier: ^1.1.1
+        version: 1.1.1
 
   packages/zod:
     dependencies:
       type-fest:
-        specifier: ^3.6.1
-        version: 3.6.1
+        specifier: ^3.10.0
+        version: 3.10.0(typescript@5.0.4)
       vee-validate:
         specifier: ^4.8.6
         version: link:../vee-validate
@@ -10576,12 +10576,6 @@ packages:
       typescript: '>=4.7.0'
     dependencies:
       typescript: 5.0.4
-    dev: true
-
-  /type-fest@3.6.1:
-    resolution: {integrity: sha512-htXWckxlT6U4+ilVgweNliPqlsVSSucbxVexRYllyMVJDtf5rTjv6kF/s+qAd4QSL1BZcnJPEJavYBPQiWuZDA==}
-    engines: {node: '>=14.16'}
-    dev: false
 
   /typed-array-length@1.0.4:
     resolution: {integrity: sha512-KjZypGq+I/H7HI5HlOoGHkWUUGq+Q0TPhQurLbyrVrvnKTBgzLhIJ7j6J/XTQOi0d1RjyZ0wdas8bKs2p0x3Ng==}
@@ -11683,15 +11677,6 @@ packages:
     engines: {node: '>=12.20'}
     dev: true
 
-  /yup@1.0.2:
-    resolution: {integrity: sha512-Lpi8nITFKjWtCoK3yQP8MUk78LJmHWqbFd0OOMXTar+yjejlQ4OIIoZgnTW1bnEUKDw6dZBcy3/IdXnt2KDUow==}
-    dependencies:
-      property-expr: 2.0.5
-      tiny-case: 1.0.3
-      toposort: 2.0.2
-      type-fest: 2.19.0
-    dev: false
-
   /yup@1.1.1:
     resolution: {integrity: sha512-KfCGHdAErqFZWA5tZf7upSUnGKuTOnsI3hUsLr7fgVtx+DK04NPV01A68/FslI4t3s/ZWpvXJmgXhd7q6ICnag==}
     dependencies:
@@ -11699,7 +11684,6 @@ packages:
       tiny-case: 1.0.3
       toposort: 2.0.2
       type-fest: 2.19.0
-    dev: true
 
   /zhead@2.0.4:
     resolution: {integrity: sha512-V4R94t3ifk9AURym6OskbKcnowzgp5Z88tkoL/NF67vyryNxC62u6mx5F1Ux4oh4+YN7FFmKYEyWy6m5kfPH6g==}
