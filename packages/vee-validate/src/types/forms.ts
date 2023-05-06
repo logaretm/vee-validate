@@ -69,7 +69,7 @@ export interface PathStateConfig {
   bails: boolean;
   label: MaybeRef<string | undefined>;
   type: InputType;
-  validator: FieldValidator;
+  validate: FieldValidator;
 }
 
 export interface PathState<TValue = unknown> {
@@ -88,7 +88,7 @@ export interface PathState<TValue = unknown> {
   type: InputType;
   multiple: boolean;
   fieldsCount: number;
-  validator?: FieldValidator;
+  validate?: FieldValidator;
 }
 
 export interface FieldEntry<TValue = unknown> {

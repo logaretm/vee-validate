@@ -264,7 +264,7 @@ export function useForm<
       value: currentValue,
       multiple: false,
       fieldsCount: 1,
-      validator: config?.validator,
+      validator: config?.validate,
       dirty: computed(() => {
         return !isEqual(unref(currentValue), unref(initialValue));
       }),
@@ -643,7 +643,7 @@ export function useForm<
     // No schema, each field is responsible to validate itself
     const validations = await Promise.all(
       pathStates.value.map(state => {
-        if (!state.validator) {
+        if (!state.validate) {
           return Promise.resolve({
             key: state.path,
             valid: true,
@@ -651,7 +651,7 @@ export function useForm<
           });
         }
 
-        return state.validator(opts).then((result: ValidationResult) => {
+        return state.validate(opts).then((result: ValidationResult) => {
           return {
             key: state.path,
             valid: result.valid,
@@ -693,8 +693,8 @@ export function useForm<
       return results[path] || { errors: [], valid: true };
     }
 
-    if (state?.validator) {
-      return state.validator();
+    if (state?.validate) {
+      return state.validate();
     }
 
     warn(`field with path ${path} was not found`);

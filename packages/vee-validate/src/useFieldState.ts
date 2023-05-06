@@ -22,7 +22,7 @@ export interface StateInit<TValue = unknown> {
   bails: boolean;
   label?: MaybeRef<string | undefined>;
   type?: InputType;
-  validator?: FieldValidator;
+  validate?: FieldValidator;
 }
 
 let ID_COUNTER = 0;
@@ -71,7 +71,7 @@ export function useFieldState<TValue = unknown>(
     bails: init.bails,
     label: init.label,
     type: init.type,
-    validator: init.validator,
+    validate: init.validate,
   });
 
   const errors = computed(() => state.errors);

@@ -144,7 +144,7 @@ function _useField<TValue = unknown>(
     bails,
     label,
     type,
-    validator: validator.value ? validate : undefined,
+    validate: validator.value ? validate : undefined,
   });
 
   const errorMessage = computed(() => errors.value[0]);
