@@ -264,7 +264,7 @@ export function useForm<
       value: currentValue,
       multiple: false,
       fieldsCount: 1,
-      validator: config?.validate,
+      validate: config?.validate,
       dirty: computed(() => {
         return !isEqual(unref(currentValue), unref(initialValue));
       }),
