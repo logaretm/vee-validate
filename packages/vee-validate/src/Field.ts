@@ -3,7 +3,7 @@ import { getConfig } from './config';
 import { RuleExpression, useField } from './useField';
 import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent, normalizeEventValue } from './utils';
 import { IS_ABSENT } from './symbols';
-import { FieldMeta } from './types';
+import { FieldMeta, InputType } from './types';
 import { FieldContext } from '.';
 
 interface ValidationTriggersProps {
@@ -132,7 +132,7 @@ const FieldImpl = defineComponent({
       validateOnMount: props.validateOnMount,
       bails: props.bails,
       standalone: props.standalone,
-      type: ctx.attrs.type as string,
+      type: ctx.attrs.type as InputType,
       initialValue: resolveInitialValue(props, ctx),
       // Only for checkboxes and radio buttons
       checkedValue: ctx.attrs.value,

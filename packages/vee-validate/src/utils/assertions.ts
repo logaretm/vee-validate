@@ -8,20 +8,6 @@ export function isLocator(value: unknown): value is Locator {
   return isCallable(value) && !!(value as Locator).__locatorRef;
 }
 
-/**
- * Checks if an tag name is a native HTML tag and not a Vue component
- */
-export function isHTMLTag(tag: string) {
-  return ['input', 'textarea', 'select'].includes(tag);
-}
-
-/**
- * Checks if an input is of type file
- */
-export function isFileInputNode(tag: string, attrs: Record<string, unknown>) {
-  return isHTMLTag(tag) && attrs.type === 'file';
-}
-
 export function isTypedSchema(value: unknown): value is TypedSchema {
   return !!value && isCallable((value as TypedSchema).parse) && (value as TypedSchema).__type === 'VVTypedSchema';
 }

@@ -13,8 +13,9 @@
     "format": "prettier \"./**/*.ts\" --write",
     "build": "node scripts/build.mjs",
     "cover": "vitest run --coverage",
-    "postversion": "npm run build",
-    "docs:dev": "cd ./docs && npm run dev && cd -",
+    "postversion": "pnpm build",
+    "typecheck": "pnpm tsc --noEmit --project ./tsconfig.json --skipLibCheck",
+    "docs:dev": "cd ./docs && pnpm dev && cd -",
     "postinstall": "husky install",
     "release": "./scripts/release.sh"
   },

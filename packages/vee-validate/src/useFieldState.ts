@@ -1,6 +1,6 @@
 import { computed, isRef, reactive, ref, Ref, unref, watch } from 'vue';
-import { FieldMeta, FieldState, MaybeRef, PrivateFormContext } from './types';
-import { getFromPath, isEqual } from './utils';
+import { FieldMeta, FieldState, FieldValidator, InputType, MaybeRef, PrivateFormContext } from './types';
+import { getFromPath, isEqual, normalizeErrorItem } from './utils';
 
 export interface StateSetterInit<TValue = unknown> extends FieldState<TValue> {
   initialValue: TValue;
@@ -12,7 +12,6 @@ export interface FieldStateComposable<TValue = unknown> {
   meta: FieldMeta<TValue>;
   value: Ref<TValue>;
   initialValue: Ref<TValue>;
-  errorMessage: Ref<string | undefined>;
   errors: Ref<string[]>;
   setState(state: Partial<StateSetterInit<TValue>>): void;
 }
@@ -20,6 +19,10 @@ export interface FieldStateComposable<TValue = unknown> {
 export interface StateInit<TValue = unknown> {
   modelValue: MaybeRef<TValue>;
   form?: PrivateFormContext;
+  bails: boolean;
+  label?: MaybeRef<string | undefined>;
+  type?: InputType;
+  validate?: FieldValidator;
 }
 
 let ID_COUNTER = 0;
@@ -29,9 +32,49 @@ export function useFieldState<TValue = unknown>(
   init: Partial<StateInit<TValue>>
 ): FieldStateComposable<TValue> {
   const { value, initialValue, setInitialValue } = _useFieldValue<TValue>(path, init.modelValue, init.form);
-  const { errorMessage, errors, setErrors } = _useFieldErrors(path, init.form);
-  const meta = _useFieldMeta(value, initialValue, errors);
-  const id = ID_COUNTER >= Number.MAX_SAFE_INTEGER ? 0 : ++ID_COUNTER;
+
+  if (!init.form) {
+    const { errors, setErrors } = createFieldErrors();
+    const id = ID_COUNTER >= Number.MAX_SAFE_INTEGER ? 0 : ++ID_COUNTER;
+    const meta = createFieldMeta(value, initialValue, errors);
+
+    function setState(state: Partial<StateSetterInit<TValue>>) {
+      if ('value' in state) {
+        value.value = state.value as TValue;
+      }
+
+      if ('errors' in state) {
+        setErrors(state.errors);
+      }
+
+      if ('touched' in state) {
+        meta.touched = state.touched ?? meta.touched;
+      }
+
+      if ('initialValue' in state) {
+        setInitialValue(state.initialValue as TValue);
+      }
+    }
+
+    return {
+      id,
+      path,
+      value,
+      initialValue,
+      meta,
+      errors,
+      setState,
+    };
+  }
+
+  const state = init.form.createPathState(path, {
+    bails: init.bails,
+    label: init.label,
+    type: init.type,
+    validate: init.validate,
+  });
+
+  const errors = computed(() => state.errors);
 
   function setState(state: Partial<StateSetterInit<TValue>>) {
     if ('value' in state) {
@@ -39,11 +82,11 @@ export function useFieldState<TValue = unknown>(
     }
 
     if ('errors' in state) {
-      setErrors(state.errors);
+      init.form?.setFieldError(unref(path), state.errors);
     }
 
     if ('touched' in state) {
-      meta.touched = state.touched ?? meta.touched;
+      init.form?.setFieldTouched(unref(path), state.touched ?? false);
     }
 
     if ('initialValue' in state) {
@@ -52,13 +95,12 @@ export function useFieldState<TValue = unknown>(
   }
 
   return {
-    id,
+    id: Array.isArray(state.id) ? state.id[state.id.length - 1] : state.id,
     path,
     value,
-    initialValue,
-    meta,
     errors,
-    errorMessage,
+    meta: state,
+    initialValue,
     setState,
   };
 }
@@ -84,7 +126,7 @@ export function _useFieldValue<TValue = unknown>(
       return unref(modelRef) as TValue;
     }
 
-    return getFromPath<TValue>(form.meta.value.initialValues, unref(path), unref(modelRef)) as TValue;
+    return getFromPath<TValue>(form.initialValues.value, unref(path), unref(modelRef)) as TValue;
   }
 
   function setInitialValue(value: TValue) {
@@ -158,7 +200,7 @@ function resolveModelValue<TValue>(
 /**
  * Creates meta flags state and some associated effects with them
  */
-function _useFieldMeta<TValue>(
+function createFieldMeta<TValue>(
   currentValue: Ref<TValue>,
   initialValue: MaybeRef<TValue> | undefined,
   errors: Ref<string[]>
@@ -191,34 +233,13 @@ function _useFieldMeta<TValue>(
 /**
  * Creates the error message state for the field state
  */
-export function _useFieldErrors(path: MaybeRef<string>, form?: PrivateFormContext) {
-  function normalizeErrors(messages: string | string[] | null | undefined) {
-    if (!messages) {
-      return [];
-    }
-
-    return Array.isArray(messages) ? messages : [messages];
-  }
-
-  if (!form) {
-    const errors = ref<string[]>([]);
-
-    return {
-      errors,
-      errorMessage: computed<string | undefined>(() => errors.value[0]),
-      setErrors: (messages: string | string[] | null | undefined) => {
-        errors.value = normalizeErrors(messages);
-      },
-    };
-  }
-
-  const errors = computed(() => form.errorBag.value[unref(path)] || []);
+export function createFieldErrors() {
+  const errors = ref<string[]>([]);
 
   return {
     errors,
-    errorMessage: computed<string | undefined>(() => errors.value[0]),
     setErrors: (messages: string | string[] | null | undefined) => {
-      form.setFieldErrorBag(unref(path), normalizeErrors(messages));
+      errors.value = normalizeErrorItem(messages);
     },
   };
 }
