@@ -722,6 +722,90 @@ test('clears old errors path when last item is removed and value update validati
   expect(errorList.children).toHaveLength(0);
 });
 
+// 4017
+test('keeps the errors intact if an item was removed in the middle of the list', async () => {
+  defineRule('required', (v: any) => (v ? true : REQUIRED_MESSAGE));
+  const InputField = defineComponent({
+    props: {
+      rules: {
+        type: null,
+        required: true,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      label: String,
+      type: { type: String, default: 'text' },
+    },
+    setup(props) {
+      const { value, handleChange, errors } = useField(toRef(props, 'name'), props.rules, {
+        label: props.label,
+      });
+
+      return {
+        value,
+        errors,
+        handleChange,
+      };
+    },
+    template: `
+      <label :for="name">{{ label }}</label>
+      <input :type="type" :name="name" :value="value" @input="handleChange" />
+      <span>{{ errors[0] }}</span>
+      `,
+  });
+
+  mountWithHoc({
+    components: {
+      InputField,
+    },
+    setup() {
+      const initialValues = {
+        users: ['', '', ''],
+      };
+
+      const schema = yup.string().required();
+
+      return {
+        schema,
+        initialValues,
+      };
+    },
+    template: `
+      <VForm :initial-values="initialValues" v-slot="{ errors }">
+        <FieldArray name="users" v-slot="{ remove, push, fields }">
+          <fieldset v-for="(field, idx) in fields" :key="field.key">
+            <legend>User #{{ idx }}</legend>
+            <label :for="'name_' + idx">Name</label>
+            <InputField :name="'users[' + idx + ']'" :rules="schema" />
+
+            <button class="remove" type="button" @click="remove(idx)">X</button>
+          </fieldset>
+        </FieldArray>
+
+
+        <ul class="errors">
+          <li v-for="error in errors">{{ error }}</li>
+        </ul>
+
+        <button class="submit" type="submit">Submit</button>
+      </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const errorList = document.querySelector('ul') as HTMLUListElement;
+  const removeBtnAt = (idx: number) => document.querySelectorAll('.remove')[idx] as HTMLButtonElement; // remove the second item
+
+  await flushPromises();
+  expect(errorList.children).toHaveLength(0);
+  removeBtnAt(1).click();
+  await flushPromises();
+
+  expect(errorList.children).toHaveLength(0);
+});
+
 test('moves items around the array with move()', async () => {
   const onSubmit = vi.fn();
   mountWithHoc({

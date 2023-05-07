@@ -29,23 +29,16 @@ describe('useField()', () => {
     expect(error?.textContent).toBe(REQUIRED_MESSAGE);
   });
 
-  // #3926
-  test('validates when nested value changes', async () => {
+  test('warns when nested value changes', async () => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // NOOP
+    });
+
     mountWithHoc({
       setup() {
-        const { value, errorMessage } = useField<any>(
-          'field',
-          val => {
-            if (!val?.name) {
-              return REQUIRED_MESSAGE;
-            }
-
-            return true;
-          },
-          {
-            initialValue: { name: 'test' },
-          }
-        );
+        const { value, errorMessage } = useField<any>('field', undefined, {
+          initialValue: { name: 'test' },
+        });
 
         onMounted(() => {
           value.value.name = '';
@@ -61,10 +54,9 @@ describe('useField()', () => {
     `,
     });
 
-    const error = document.querySelector('span');
-
     await flushPromises();
-    expect(error?.textContent).toBe(REQUIRED_MESSAGE);
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
   });
 
   test('valid flag is correct after reset', async () => {

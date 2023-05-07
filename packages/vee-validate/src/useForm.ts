@@ -116,8 +116,6 @@ export function useForm<
   // Prevents fields from double resetting their values, which causes checkboxes to toggle their initial value
   let FIELD_ID_COUNTER = 0;
 
-  const isResetting = ref(false);
-
   // If the form is currently submitting
   const isSubmitting = ref(false);
 
@@ -479,7 +477,6 @@ export function useForm<
     submitCount,
     meta,
     isSubmitting,
-    isResetting,
     fieldArrays,
     keepValuesOnUnmount,
     validateSchema: unref(schema) ? validateSchema : undefined,
@@ -593,8 +590,6 @@ export function useForm<
    * Resets all fields
    */
   function resetForm(resetState?: Partial<FormState<TValues>>) {
-    isResetting.value = true;
-
     const newValues = resetState?.values ? resetState.values : originalInitialValues.value;
     setInitialValues(newValues);
     setValues(newValues);
@@ -610,7 +605,6 @@ export function useForm<
     submitCount.value = resetState?.submitCount || 0;
     nextTick(() => {
       validate({ mode: 'silent' });
-      isResetting.value = false;
     });
   }
 

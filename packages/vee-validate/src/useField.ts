@@ -9,8 +9,7 @@ import {
   Ref,
   ComponentInternalInstance,
   onBeforeUnmount,
-  nextTick,
-  WatchStopHandle,
+  warn,
 } from 'vue';
 import { klona as deepCopy } from 'klona/full';
 import { validate as validateValue } from './validate';
@@ -220,7 +219,7 @@ function _useField<TValue = unknown>(
   function handleChange(e: unknown, shouldValidate = true) {
     const newValue = normalizeEventValue(e) as TValue;
 
-    value.value = newValue;
+    setValue(newValue, false);
     if (!validateOnValueUpdate && shouldValidate) {
       validateWithStateMutation();
     }
@@ -243,35 +242,7 @@ function _useField<TValue = unknown>(
     meta.touched = isTouched;
   }
 
-  let unwatchValue: WatchStopHandle;
-  let lastWatchedValue = deepCopy(value.value);
-  function watchValue() {
-    unwatchValue = watch(
-      value,
-      (val, oldVal) => {
-        if (form?.isResetting.value) {
-          return;
-        }
-
-        if (isEqual(val, oldVal) && isEqual(val, lastWatchedValue)) {
-          return;
-        }
-
-        const validateFn = validateOnValueUpdate ? validateWithStateMutation : validateValidStateOnly;
-        validateFn();
-        lastWatchedValue = deepCopy(val);
-      },
-      {
-        deep: true,
-      }
-    );
-  }
-
-  watchValue();
-
   function resetField(state?: Partial<FieldState<TValue>>) {
-    unwatchValue?.();
-
     const newValue = state && 'value' in state ? (state.value as TValue) : initialValue.value;
 
     setState({
@@ -284,26 +255,50 @@ function _useField<TValue = unknown>(
     meta.pending = false;
     meta.validated = false;
     validateValidStateOnly();
-
-    // need to watch at next tick to avoid triggering the value watcher
-    nextTick(() => {
-      watchValue();
-    });
   }
 
-  function setValue(newValue: TValue) {
+  function setValue(newValue: TValue, validate = true) {
     value.value = newValue;
+    if (!validate) {
+      return;
+    }
+
+    const validateFn = validateOnValueUpdate ? validateWithStateMutation : validateValidStateOnly;
+    validateFn();
   }
 
   function setErrors(errors: string[] | string) {
     setState({ errors: Array.isArray(errors) ? errors : [errors] });
   }
 
+  const valueProxy = computed({
+    get() {
+      return value.value;
+    },
+    set(newValue: TValue) {
+      setValue(newValue, validateOnValueUpdate);
+    },
+  });
+
+  if (__DEV__) {
+    watch(
+      valueProxy,
+      (value, oldValue) => {
+        if (value === oldValue && isEqual(value, oldValue)) {
+          warn(
+            'Detected a possible deep change on field `value` ref, for nested changes please either set the entire ref value or use `setValue` or `handleChange`.'
+          );
+        }
+      },
+      { deep: true }
+    );
+  }
+
   const field: PrivateFieldContext<TValue> = {
     id,
     name,
     label,
-    value,
+    value: valueProxy,
     meta,
     errors,
     errorMessage,
