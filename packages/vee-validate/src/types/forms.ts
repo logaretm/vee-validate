@@ -233,7 +233,6 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues, TOutput>>;
   validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues, TOutput>>;
   validateField(field: Path<TValues>): Promise<ValidationResult>;
-  setFieldErrorBag(field: Path<TValues>, messages: string | string[]): void;
   stageInitialValue(path: string, value: unknown, updateOriginal?: boolean): void;
   unsetInitialValue(path: string): void;
   handleSubmit: HandleSubmitFactory<TValues, TOutput> & { withControlled: HandleSubmitFactory<TValues, TOutput> };
@@ -311,7 +310,6 @@ export interface FormContext<TValues extends GenericObject = GenericObject, TOut
     | 'removePathState'
     | 'unsetPathValue'
     | 'validateSchema'
-    | 'setFieldErrorBag'
     | 'stageInitialValue'
     | 'setFieldInitialValue'
     | 'unsetInitialValue'

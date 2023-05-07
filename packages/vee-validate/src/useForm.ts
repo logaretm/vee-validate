@@ -137,7 +137,7 @@ export function useForm<
   /**
    * Manually sets an error message on a specific field
    */
-  function setFieldErrorBag(field: Path<TValues> | PathState, message: string | undefined | string[]) {
+  function setFieldError(field: Path<TValues> | PathState, message: string | undefined | string[]) {
     const state = findPathState(field);
     if (!state) {
       extraErrorsBag.value[field as string] = normalizeErrorItem(message);
@@ -150,14 +150,14 @@ export function useForm<
   /**
    * Sets errors for the fields specified in the object
    */
-  function setErrorBag(paths: Partial<FlattenAndSetPathsType<TValues, string | string[] | undefined>>) {
+  function setErrors(paths: Partial<FlattenAndSetPathsType<TValues, string | string[] | undefined>>) {
     keysOf(paths).forEach(path => {
-      setFieldErrorBag(path, paths[path]);
+      setFieldError(path, paths[path]);
     });
   }
 
   if (opts?.initialErrors) {
-    setErrorBag(opts.initialErrors);
+    setErrors(opts.initialErrors);
   }
 
   const errorBag = computed<FormErrorBag<TValues>>(() => {
@@ -358,7 +358,7 @@ export function useForm<
             return validation;
           }
 
-          setFieldErrorBag(pathState, fieldResult.errors);
+          setFieldError(pathState, fieldResult.errors);
 
           return validation;
         },
@@ -484,12 +484,11 @@ export function useForm<
     keepValuesOnUnmount,
     validateSchema: unref(schema) ? validateSchema : undefined,
     validate,
-    setFieldErrorBag,
+    setFieldError,
     validateField,
     setFieldValue,
     setValues,
     setErrors,
-    setFieldError,
     setFieldTouched,
     setTouched,
     resetForm,
@@ -506,20 +505,6 @@ export function useForm<
     initialValues: initialValues as Ref<TValues>,
     getAllPathStates: () => pathStates.value,
   };
-
-  /**
-   * Manually sets an error message on a specific field
-   */
-  function setFieldError(field: Path<TValues>, message: string | string[] | undefined) {
-    setFieldErrorBag(field, message);
-  }
-
-  /**
-   * Sets errors for the fields specified in the object
-   */
-  function setErrors(fields: Partial<FlattenAndSetPathsType<TValues, string | string[] | undefined>>) {
-    setErrorBag(fields);
-  }
 
   /**
    * Sets a single field value
@@ -601,7 +586,7 @@ export function useForm<
     setFieldInitialValue(field, deepCopy(newValue));
     setFieldValue(field, newValue as PathValue<TValues, typeof field>);
     setFieldTouched(field, state?.touched ?? false);
-    setFieldErrorBag(field, state?.errors || []);
+    setFieldError(field, state?.errors || []);
   }
 
   /**
@@ -618,7 +603,7 @@ export function useForm<
       state.touched = resetState?.touched?.[state.path as Path<TValues>] || false;
 
       setFieldValue(state.path as Path<TValues>, getFromPath(newValues, state.path));
-      setFieldErrorBag(state.path as Path<TValues>, undefined);
+      setFieldError(state.path as Path<TValues>, undefined);
     });
 
     setErrors(resetState?.errors || {});
