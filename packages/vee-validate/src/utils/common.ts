@@ -320,7 +320,7 @@ export function resolveFieldOrPathState(path?: MaybeRef<string>) {
   const state = path ? computed(() => form?.getPathState(unref(path))) : undefined;
   const field = path ? undefined : inject(FieldContextKey);
 
-  if (!field || !state?.value) {
+  if (!field && !state?.value) {
     warn(`field with name ${unref(path)} was not found`);
   }
 
