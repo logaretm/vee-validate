@@ -5,6 +5,7 @@ import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresen
 import { IS_ABSENT } from './symbols';
 import { FieldMeta, InputType } from './types';
 import { FieldContext } from '.';
+import { isCallable } from '../../shared';
 
 interface ValidationTriggersProps {
   validateOnMount: boolean;
@@ -14,15 +15,13 @@ interface ValidationTriggersProps {
   validateOnModelUpdate: boolean;
 }
 
-type EventHandlerBinding<T> = T | T[];
-
-interface FieldBindingObject<TValue = unknown> {
+interface FieldBindingObject<TValue = any> {
   name: string;
-  onBlur: EventHandlerBinding<(e: Event) => unknown>;
-  onInput: EventHandlerBinding<(e: Event) => unknown>;
-  onChange: EventHandlerBinding<(e: Event) => unknown>;
+  onBlur: (e: Event) => void;
+  onInput: (e: Event) => void;
+  onChange: (e: Event) => void;
   'onUpdate:modelValue'?: ((e: TValue) => unknown) | undefined;
-  value?: unknown;
+  value?: TValue;
   checked?: boolean;
 }
 
@@ -162,13 +161,31 @@ const FieldImpl = defineComponent({
     const fieldProps = computed(() => {
       const { validateOnInput, validateOnChange, validateOnBlur, validateOnModelUpdate } =
         resolveValidationTriggers(props);
-      const baseOnBlur: any = [handleBlur, ctx.attrs.onBlur, validateOnBlur ? validateField : undefined].filter(
-        Boolean
-      );
-      const baseOnInput: any = [(e: unknown) => onChangeHandler(e, validateOnInput), ctx.attrs.onInput].filter(Boolean);
-      const baseOnChange: any = [(e: unknown) => onChangeHandler(e, validateOnChange), ctx.attrs.onChange].filter(
-        Boolean
-      );
+
+      function baseOnBlur(e: Event) {
+        handleBlur(e);
+        if (isCallable(ctx.attrs.onBlur)) {
+          ctx.attrs.onBlur(e);
+        }
+
+        if (validateOnBlur) {
+          validateField();
+        }
+      }
+
+      function baseOnInput(e: Event) {
+        onChangeHandler(e, validateOnInput);
+        if (isCallable(ctx.attrs.onInput)) {
+          ctx.attrs.onInput(e);
+        }
+      }
+
+      function baseOnChange(e: Event) {
+        onChangeHandler(e, validateOnChange);
+        if (isCallable(ctx.attrs.onChange)) {
+          ctx.attrs.onChange(e);
+        }
+      }
 
       const attrs: FieldBindingObject<unknown> = {
         name: props.name,
