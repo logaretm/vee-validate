@@ -681,7 +681,10 @@ export function useForm<
       return state.validate();
     }
 
-    warn(`field with path ${path} was not found`);
+    if (!state) {
+      warn(`field with path ${path} was not found`);
+    }
+
     return Promise.resolve({ errors: [], valid: true });
   }
 
