@@ -67,8 +67,9 @@ import {
 import { FormContextKey } from './symbols';
 import { validateTypedSchema, validateObjectSchema } from './validate';
 import { refreshInspector, registerFormWithDevTools } from './devtools';
-import { isCallable } from '../../shared';
+import { isCallable, merge } from '../../shared';
 import { getConfig } from './config';
+import { PartialDeep } from 'type-fest';
 
 type FormSchema<TValues extends Record<string, unknown>> =
   | FlattenAndSetPathsType<TValues, GenericValidateFunction | string | GenericObject>
@@ -82,7 +83,7 @@ export interface FormOptions<
     | TypedSchema<TValues, TOutput>
 > {
   validationSchema?: MaybeRef<TSchema extends TypedSchema ? TypedSchema<TValues, TOutput> : any>;
-  initialValues?: MaybeRef<Partial<TValues>>;
+  initialValues?: MaybeRef<PartialDeep<TValues>>;
   initialErrors?: FlattenAndSetPathsType<TValues, string | undefined>;
   initialTouched?: FlattenAndSetPathsType<TValues, boolean>;
   validateOnMount?: boolean;
@@ -102,10 +103,6 @@ function resolveInitialValues<TValues extends GenericObject = GenericObject>(opt
 
   return deepCopy(providedValues) as TValues;
 }
-
-// TODO: BIG FAT WORK TO DO:
-// Resets must happen here, the useField should not handle its resets unless called from there.
-// Field validators must not set their state, the forms must do that instead and process their own errors, unless no form exists
 
 export function useForm<
   TValues extends GenericObject = GenericObject,
@@ -158,7 +155,10 @@ export function useForm<
       const state = findPathState(path);
       if (state) {
         state.errors = normalizeErrorItem(paths[path]);
+        return;
       }
+
+      extraErrorsBag.value[path as string] = normalizeErrorItem(paths[path]);
     });
   }
 
@@ -544,16 +544,8 @@ export function useForm<
   /**
    * Sets multiple fields values
    */
-  function setValues(fields: Partial<TValues>) {
-    // clean up old values
-    keysOf(formValues).forEach(key => {
-      delete formValues[key];
-    });
-
-    // set up new values
-    keysOf(fields).forEach(path => {
-      setFieldValue(path as Path<TValues>, fields[path]);
-    });
+  function setValues(fields: PartialDeep<TValues>) {
+    merge(formValues, fields);
 
     // regenerate the arrays when the form values change
     fieldArrays.forEach(f => f && f.reset());
@@ -939,7 +931,7 @@ export function useForm<
 function useFormMeta<TValues extends Record<string, unknown>>(
   pathsState: Ref<PathState<unknown>[]>,
   currentValues: TValues,
-  initialValues: MaybeRef<Partial<TValues>>,
+  initialValues: MaybeRef<PartialDeep<TValues>>,
   errors: Ref<FormErrors<TValues>>
 ) {
   const MERGE_STRATEGIES: Record<keyof Pick<FieldMeta<unknown>, 'touched' | 'pending' | 'valid'>, 'every' | 'some'> = {
@@ -990,18 +982,18 @@ function useFormInitialValues<TValues extends GenericObject>(
   formValues: TValues,
   opts?: FormOptions<TValues>
 ) {
-  const values = resolveInitialValues(opts);
+  const values = resolveInitialValues(opts) as PartialDeep<TValues>;
   const providedValues = opts?.initialValues;
   // these are the mutable initial values as the fields are mounted/unmounted
-  const initialValues = ref<Partial<TValues>>(values);
+  const initialValues = ref<PartialDeep<TValues>>(values);
   // these are the original initial value as provided by the user initially, they don't keep track of conditional fields
   // this is important because some conditional fields will overwrite the initial values for other fields who had the same name
   // like array fields, any push/insert operation will overwrite the initial values because they "create new fields"
   // so these are the values that the reset function should use
   // these only change when the user explicitly changes the initial values or when the user resets them with new values.
-  const originalInitialValues = ref<Partial<TValues>>(deepCopy(values)) as Ref<Partial<TValues>>;
+  const originalInitialValues = ref<PartialDeep<TValues>>(deepCopy(values)) as Ref<PartialDeep<TValues>>;
 
-  function setInitialValues(values: Partial<TValues>, updateFields = false) {
+  function setInitialValues(values: PartialDeep<TValues>, updateFields = false) {
     initialValues.value = deepCopy(values);
     originalInitialValues.value = deepCopy(values);
 

@@ -2,6 +2,7 @@ import { ComputedRef, Ref } from 'vue';
 import { MapValuesPathsToRefs, MaybeRef, GenericObject, MaybeRefOrLazy } from './common';
 import { FieldValidationMetaInfo } from '../../../shared';
 import { Path, PathValue } from './paths';
+import { PartialDeep } from 'type-fest';
 
 export interface ValidationResult {
   errors: string[];
@@ -148,7 +149,7 @@ export type GenericValidateFunction<TValue = unknown> = (
 ) => boolean | string | Promise<boolean | string>;
 
 export interface FormState<TValues> {
-  values: TValues;
+  values: PartialDeep<TValues>;
   errors: Partial<Record<Path<TValues>, string | undefined>>;
   touched: Partial<Record<Path<TValues>, boolean>>;
   submitCount: number;
@@ -168,7 +169,7 @@ export interface FormActions<TValues extends GenericObject, TOutput = TValues> {
   ): void;
   setFieldError(field: Path<TValues>, message: string | string[] | undefined): void;
   setErrors(fields: FormErrors<TValues>): void;
-  setValues<T extends Path<TValues>>(fields: Partial<Record<T, TValues[T]>>): void;
+  setValues(fields: PartialDeep<TValues>): void;
   setFieldTouched(field: Path<TValues>, isTouched: boolean): void;
   setTouched(fields: Partial<Record<Path<TValues>, boolean>>): void;
   resetForm(state?: Partial<FormState<TValues>>): void;
