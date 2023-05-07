@@ -44,7 +44,7 @@ import {
   lazyToRef,
   unravel,
 } from './utils';
-import { isCallable } from '../../shared';
+import { isCallable, isObject } from '../../shared';
 import { FieldContextKey, FormContextKey, IS_ABSENT } from './symbols';
 import { useFieldState } from './useFieldState';
 import { refreshInspector, registerSingleFieldWithDevtools } from './devtools';
@@ -284,6 +284,10 @@ function _useField<TValue = unknown>(
     watch(
       valueProxy,
       (value, oldValue) => {
+        if (!isObject(value)) {
+          return;
+        }
+
         if (value === oldValue && isEqual(value, oldValue)) {
           warn(
             'Detected a possible deep change on field `value` ref, for nested changes please either set the entire ref value or use `setValue` or `handleChange`.'
