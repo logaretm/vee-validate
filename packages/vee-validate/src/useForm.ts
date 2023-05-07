@@ -152,13 +152,7 @@ export function useForm<
    */
   function setErrorBag(paths: Partial<FlattenAndSetPathsType<TValues, string | string[] | undefined>>) {
     keysOf(paths).forEach(path => {
-      const state = findPathState(path);
-      if (state) {
-        state.errors = normalizeErrorItem(paths[path]);
-        return;
-      }
-
-      extraErrorsBag.value[path as string] = normalizeErrorItem(paths[path]);
+      setFieldErrorBag(path, paths[path]);
     });
   }
 
