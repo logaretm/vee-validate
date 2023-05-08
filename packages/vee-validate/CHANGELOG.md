@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.9.1
+
+### Patch Changes
+
+- 681bbab4: Added type-fest to core package dependencies
+
 ## 4.9.0
 
 ### Minor Changes
