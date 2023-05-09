@@ -241,21 +241,24 @@ export function useForm<
         pathStateExists.multiple = true;
       }
 
+      const id = FIELD_ID_COUNTER++;
       if (Array.isArray(pathStateExists.id)) {
-        pathStateExists.id.push(FIELD_ID_COUNTER++);
+        pathStateExists.id.push(id);
       } else {
-        pathStateExists.id = [pathStateExists.id, FIELD_ID_COUNTER++];
+        pathStateExists.id = [pathStateExists.id, id];
       }
 
       pathStateExists.fieldsCount++;
+      pathStateExists.__flags.pendingUnmount[id] = false;
 
       return pathStateExists as PathState<TValue>;
     }
 
     const currentValue = computed(() => getFromPath(formValues, unravel(path)));
     const pathValue = unravel(path);
+    const id = FIELD_ID_COUNTER++;
     const state = reactive({
-      id: FIELD_ID_COUNTER++,
+      id,
       path,
       touched: false,
       pending: false,
@@ -268,6 +271,9 @@ export function useForm<
       type: config?.type || 'default',
       value: currentValue,
       multiple: false,
+      __flags: {
+        pendingUnmount: { [id]: false },
+      },
       fieldsCount: 1,
       validate: config?.validate,
       dirty: computed(() => {
@@ -467,6 +473,16 @@ export function useForm<
     }
   }
 
+  function markForUnmount(path: string) {
+    return mutateAllPathState(s => {
+      if (s.path.startsWith(path)) {
+        keysOf(s.__flags.pendingUnmount).forEach(id => {
+          s.__flags.pendingUnmount[id] = true;
+        });
+      }
+    });
+  }
+
   const formCtx: PrivateFormContext<TValues, TOutput> = {
     formId,
     values: formValues,
@@ -501,6 +517,7 @@ export function useForm<
     removePathState,
     initialValues: initialValues as Ref<TValues>,
     getAllPathStates: () => pathStates.value,
+    markForUnmount,
   };
 
   /**

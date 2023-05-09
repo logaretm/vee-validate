@@ -89,6 +89,9 @@ export interface PathState<TValue = unknown> {
   type: InputType;
   multiple: boolean;
   fieldsCount: number;
+  __flags: {
+    pendingUnmount: Record<string, boolean>;
+  };
   validate?: FieldValidator;
 }
 
@@ -248,6 +251,7 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   getAllPathStates(): PathState[];
   removePathState<TPath extends Path<TValues>>(path: TPath): void;
   unsetPathValue<TPath extends Path<TValues>>(path: TPath): void;
+  markForUnmount(path: string): void;
 }
 
 export interface BaseComponentBinds<TValue = unknown> {
@@ -258,7 +262,7 @@ export interface BaseComponentBinds<TValue = unknown> {
 
 export type PublicPathState<TValue = unknown> = Omit<
   PathState<TValue>,
-  'bails' | 'label' | 'multiple' | 'fieldsCount' | 'validate' | 'id' | 'type'
+  'bails' | 'label' | 'multiple' | 'fieldsCount' | 'validate' | 'id' | 'type' | '__flags'
 >;
 
 export interface ComponentBindsConfig<TValue = unknown, TExtraProps extends GenericObject = GenericObject> {
@@ -313,6 +317,7 @@ export interface FormContext<TValues extends GenericObject = GenericObject, TOut
     | 'setFieldInitialValue'
     | 'unsetInitialValue'
     | 'fieldArrays'
+    | 'markForUnmount'
     | 'keepValuesOnUnmount'
   > {
   handleReset: () => void;

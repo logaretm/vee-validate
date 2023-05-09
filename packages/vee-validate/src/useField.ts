@@ -115,7 +115,6 @@ function _useField<TValue = unknown>(
   const injectedForm = controlled ? injectWithSelf(FormContextKey) : undefined;
   const form = (controlForm as PrivateFormContext | undefined) || injectedForm;
   const name = lazyToRef(path);
-  let PENDING_UNMOUNT = false;
 
   const validator = computed(() => {
     const schema = unref(form?.schema);
@@ -137,7 +136,7 @@ function _useField<TValue = unknown>(
     return normalizeRules(rulesValue);
   });
 
-  const { id, value, initialValue, meta, setState, errors } = useFieldState(name, {
+  const { id, value, initialValue, meta, setState, errors, flags } = useFieldState(name, {
     modelValue,
     form,
     bails,
@@ -184,7 +183,7 @@ function _useField<TValue = unknown>(
       return validateCurrentValue('validated-only');
     },
     result => {
-      if (PENDING_UNMOUNT) {
+      if (flags.pendingUnmount[field.id]) {
         return;
       }
 
@@ -405,15 +404,15 @@ function _useField<TValue = unknown>(
   });
 
   onBeforeUnmount(() => {
-    PENDING_UNMOUNT = true;
     const shouldKeepValue = unref(field.keepValueOnUnmount) ?? unref(form.keepValuesOnUnmount);
     const path = unravel(name);
-    if (shouldKeepValue || !form) {
+    if (shouldKeepValue || !form || flags.pendingUnmount[field.id]) {
       form?.removePathState(path);
 
       return;
     }
 
+    flags.pendingUnmount[field.id] = true;
     const pathState = form.getPathState(path);
     const matchesId =
       Array.isArray(pathState?.id) && pathState?.multiple
