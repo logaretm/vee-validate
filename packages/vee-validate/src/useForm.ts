@@ -119,6 +119,9 @@ export function useForm<
   // If the form is currently submitting
   const isSubmitting = ref(false);
 
+  // If the form is currently validating
+  const isValidating = ref(false);
+
   // The number of times the user tried to submit the form
   const submitCount = ref(0);
 
@@ -477,6 +480,7 @@ export function useForm<
     submitCount,
     meta,
     isSubmitting,
+    isValidating,
     fieldArrays,
     keepValuesOnUnmount,
     validateSchema: unref(schema) ? validateSchema : undefined,
@@ -618,6 +622,8 @@ export function useForm<
       return formCtx.validateSchema(mode);
     }
 
+    isValidating.value = true;
+
     // No schema, each field is responsible to validate itself
     const validations = await Promise.all(
       pathStates.value.map(state => {
@@ -638,6 +644,8 @@ export function useForm<
         });
       })
     );
+
+    isValidating.value = false;
 
     const results: Partial<FlattenAndSetPathsType<TValues, ValidationResult>> = {};
     const errors: Partial<FlattenAndSetPathsType<TValues, string>> = {};
@@ -707,6 +715,8 @@ export function useForm<
       return { valid: true, results: {}, errors: {} };
     }
 
+    isValidating.value = true;
+
     const formResult =
       isYupValidator(schemaValue) || isTypedSchema(schemaValue)
         ? await validateTypedSchema<TValues, TOutput>(schemaValue, formValues)
@@ -714,6 +724,8 @@ export function useForm<
             names: fieldNames.value,
             bailsMap: fieldBailsMap.value,
           });
+
+    isValidating.value = false;
 
     return formResult;
   }
@@ -764,6 +776,7 @@ export function useForm<
         ...meta.value,
         values: formValues,
         isSubmitting: isSubmitting.value,
+        isValidating: isValidating.value,
         submitCount: submitCount.value,
       }),
       refreshInspector,
