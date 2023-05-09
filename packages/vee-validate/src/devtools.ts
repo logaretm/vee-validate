@@ -7,8 +7,8 @@ import {
   CustomInspectorState,
   InspectorNodeTag,
 } from '@vue/devtools-api';
-import { PrivateFieldContext, PrivateFormContext } from './types';
-import { keysOf, normalizeField, setInPath, throttle } from './utils';
+import { PathState, PrivateFieldContext, PrivateFormContext } from './types';
+import { keysOf, setInPath, throttle } from './utils';
 import { isObject } from '../../shared';
 
 function installDevtoolsPlugin(app: App) {
@@ -96,8 +96,11 @@ const COLORS = {
   gray: 0xbbbfca,
 };
 
-let SELECTED_NODE: ((PrivateFormContext | PrivateFieldContext) & { _vm?: ComponentInternalInstance | null }) | null =
-  null;
+let SELECTED_NODE:
+  | { type: 'pathState'; form: PrivateFormContext; state: PathState }
+  | { type: 'form'; form: PrivateFormContext & { _vm?: ComponentInternalInstance | null } }
+  | { type: 'field'; field: PrivateFieldContext & { _vm?: ComponentInternalInstance | null } }
+  | null = null;
 
 function setupApiHooks(api: DevtoolsPluginApi<Record<string, any>>) {
   API = api;
@@ -133,7 +136,19 @@ function setupApiHooks(api: DevtoolsPluginApi<Record<string, any>>) {
             return;
           }
 
-          await SELECTED_NODE.validate();
+          if (SELECTED_NODE.type === 'field') {
+            await SELECTED_NODE.field.validate();
+            return;
+          }
+
+          if (SELECTED_NODE.type === 'form') {
+            await SELECTED_NODE.form.validate();
+            return;
+          }
+
+          if (SELECTED_NODE.type === 'pathState') {
+            await SELECTED_NODE.form.validateField(SELECTED_NODE.state.path);
+          }
         },
       },
       {
@@ -145,12 +160,18 @@ function setupApiHooks(api: DevtoolsPluginApi<Record<string, any>>) {
             return;
           }
 
-          if ('id' in SELECTED_NODE) {
-            SELECTED_NODE.resetField();
+          if (SELECTED_NODE.type === 'field') {
+            SELECTED_NODE.field.resetField();
             return;
           }
 
-          SELECTED_NODE.resetForm();
+          if (SELECTED_NODE.type === 'form') {
+            SELECTED_NODE.form.resetForm();
+          }
+
+          if (SELECTED_NODE.type === 'pathState') {
+            SELECTED_NODE.form.resetField(SELECTED_NODE.state.path);
+          }
         },
       },
     ],
@@ -175,18 +196,32 @@ function setupApiHooks(api: DevtoolsPluginApi<Record<string, any>>) {
       return;
     }
 
-    const { form, field, type } = decodeNodeId(payload.nodeId);
+    const { form, field, state, type } = decodeNodeId(payload.nodeId);
 
     if (form && type === 'form') {
       payload.state = buildFormState(form);
-      SELECTED_NODE = form;
+      SELECTED_NODE = { type: 'form', form };
+      highlightSelected();
+      return;
+    }
+
+    if (state && type === 'pathState' && form) {
+      payload.state = buildFieldState(state);
+      SELECTED_NODE = { type: 'pathState', state, form };
       highlightSelected();
       return;
     }
 
     if (field && type === 'field') {
-      payload.state = buildFieldState(field);
-      SELECTED_NODE = field;
+      payload.state = buildFieldState({
+        errors: field.errors.value,
+        dirty: field.meta.dirty,
+        valid: field.meta.valid,
+        touched: field.meta.touched,
+        value: field.value.value,
+        initialValue: field.meta.initialValue,
+      });
+      SELECTED_NODE = { field, type: 'field' };
       highlightSelected();
       return;
     }
@@ -196,16 +231,11 @@ function setupApiHooks(api: DevtoolsPluginApi<Record<string, any>>) {
 }
 
 function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorNode {
-  const { textColor, bgColor } = getTagTheme(form);
+  const { textColor, bgColor } = getValidityColors(form.meta.value.valid);
 
   const formTreeNodes = {};
-  Object.values(form.fieldsByPath.value).forEach(field => {
-    const fieldInstance: PrivateFieldContext | undefined = Array.isArray(field) ? field[0] : field;
-    if (!fieldInstance) {
-      return;
-    }
-
-    setInPath(formTreeNodes, unref(fieldInstance.name), mapFieldForDevtoolsInspector(fieldInstance, form));
+  Object.values(form.getAllPathStates()).forEach(state => {
+    setInPath(formTreeNodes, unref(state.path), mapPathForDevtoolsInspector(state, form));
   });
 
   function buildFormTree(tree: any[] | Record<string, any>, path: string[] = []): CustomInspectorNode {
@@ -249,7 +279,7 @@ function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorN
         backgroundColor: bgColor,
       },
       {
-        label: `${Object.keys(form.fieldsByPath.value).length} fields`,
+        label: `${form.getAllPathStates().length} fields`,
         textColor: COLORS.white,
         backgroundColor: COLORS.unknown,
       },
@@ -257,67 +287,74 @@ function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorN
   };
 }
 
-function mapFieldForDevtoolsInspector(
-  field: PrivateFieldContext | PrivateFieldContext[],
-  form?: PrivateFormContext
-): CustomInspectorNode {
-  const fieldInstance = normalizeField(field) as PrivateFieldContext;
-  const { textColor, bgColor } = getTagTheme(fieldInstance);
-  const isGroup = Array.isArray(field) && field.length > 1;
-
+function mapPathForDevtoolsInspector(state: PathState, form?: PrivateFormContext): CustomInspectorNode {
   return {
-    id: encodeNodeId(form, fieldInstance, !isGroup),
-    label: unref(fieldInstance.name),
-    children: Array.isArray(field) ? field.map(fieldItem => mapFieldForDevtoolsInspector(fieldItem, form)) : undefined,
-    tags: [
-      isGroup
-        ? undefined
-        : {
-            label: 'Field',
-            textColor,
-            backgroundColor: bgColor,
-          },
-      !form
-        ? {
-            label: 'Standalone',
-            textColor: COLORS.black,
-            backgroundColor: COLORS.gray,
-          }
-        : undefined,
-      !isGroup && fieldInstance.type === 'checkbox'
-        ? {
-            label: 'Checkbox',
-            textColor: COLORS.white,
-            backgroundColor: COLORS.blue,
-          }
-        : undefined,
-      !isGroup && fieldInstance.type === 'radio'
-        ? {
-            label: 'Radio',
-            textColor: COLORS.white,
-            backgroundColor: COLORS.purple,
-          }
-        : undefined,
-      isGroup
-        ? {
-            label: 'Group',
-            textColor: COLORS.black,
-            backgroundColor: COLORS.orange,
-          }
-        : undefined,
-    ].filter(Boolean) as InspectorNodeTag[],
+    id: encodeNodeId(form, state),
+    label: unref(state.path),
+    tags: getFieldNodeTags(state.multiple, state.fieldsCount, state.type, state.valid, form),
   };
 }
 
-function encodeNodeId(form?: PrivateFormContext, field?: PrivateFieldContext, encodeIndex = true): string {
-  const fieldPath = form ? unref(field?.name) : field?.id;
-  const fieldGroup = fieldPath ? form?.fieldsByPath.value[fieldPath] : undefined;
-  let idx: number | undefined;
-  if (encodeIndex && field && Array.isArray(fieldGroup)) {
-    idx = fieldGroup.indexOf(field);
-  }
+function mapFieldForDevtoolsInspector(field: PrivateFieldContext, form?: PrivateFormContext): CustomInspectorNode {
+  return {
+    id: encodeNodeId(form, field),
+    label: unref(field.name),
+    tags: getFieldNodeTags(false, 1, field.type, field.meta.valid, form),
+  };
+}
 
-  const idObject = { f: form?.formId, ff: fieldPath, idx, type: field ? 'field' : 'form' };
+function getFieldNodeTags(
+  multiple: boolean,
+  fieldsCount: number,
+  type: string | undefined,
+  valid: boolean,
+  form: PrivateFormContext | undefined
+) {
+  const { textColor, bgColor } = getValidityColors(valid);
+
+  return [
+    multiple
+      ? undefined
+      : {
+          label: 'Field',
+          textColor,
+          backgroundColor: bgColor,
+        },
+    !form
+      ? {
+          label: 'Standalone',
+          textColor: COLORS.black,
+          backgroundColor: COLORS.gray,
+        }
+      : undefined,
+    type === 'checkbox'
+      ? {
+          label: 'Checkbox',
+          textColor: COLORS.white,
+          backgroundColor: COLORS.blue,
+        }
+      : undefined,
+    type === 'radio'
+      ? {
+          label: 'Radio',
+          textColor: COLORS.white,
+          backgroundColor: COLORS.purple,
+        }
+      : undefined,
+    multiple
+      ? {
+          label: 'Multiple',
+          textColor: COLORS.black,
+          backgroundColor: COLORS.orange,
+        }
+      : undefined,
+  ].filter(Boolean) as InspectorNodeTag[];
+}
+
+function encodeNodeId(form?: PrivateFormContext, stateOrField?: PathState | PrivateFieldContext): string {
+  const type = stateOrField ? ('path' in stateOrField ? 'pathState' : 'field') : 'form';
+  const fieldPath = stateOrField ? ('path' in stateOrField ? stateOrField?.path : unref(stateOrField?.name)) : '';
+  const idObject = { f: form?.formId, ff: fieldPath, type };
 
   return btoa(JSON.stringify(idObject));
 }
@@ -325,7 +362,8 @@ function encodeNodeId(form?: PrivateFormContext, field?: PrivateFieldContext, en
 function decodeNodeId(nodeId: string): {
   field?: PrivateFieldContext & { _vm?: ComponentInternalInstance | null };
   form?: PrivateFormContext & { _vm?: ComponentInternalInstance | null };
-  type?: 'form' | 'field';
+  state?: PathState;
+  type?: 'form' | 'field' | 'pathState';
 } {
   try {
     const idObject = JSON.parse(atob(nodeId));
@@ -347,12 +385,12 @@ function decodeNodeId(nodeId: string): {
       return {};
     }
 
-    const fieldGroup = form.fieldsByPath.value[idObject.ff];
+    const state = form.getPathState(idObject.ff);
 
     return {
       type: idObject.type,
       form,
-      field: Array.isArray(fieldGroup) ? fieldGroup[idObject.idx || 0] : fieldGroup,
+      state,
     };
   } catch (err) {
     // console.error(`Devtools: [vee-validate] Failed to parse node id ${nodeId}`);
@@ -361,31 +399,31 @@ function decodeNodeId(nodeId: string): {
   return {};
 }
 
-function buildFieldState(field: PrivateFieldContext): CustomInspectorState {
-  const { errors, meta, value } = field;
-
+function buildFieldState(
+  state: Pick<PathState, 'errors' | 'initialValue' | 'touched' | 'dirty' | 'value' | 'valid'>
+): CustomInspectorState {
   return {
     'Field state': [
-      { key: 'errors', value: errors.value },
+      { key: 'errors', value: state.errors },
       {
         key: 'initialValue',
-        value: meta.initialValue,
+        value: state.initialValue,
       },
       {
         key: 'currentValue',
-        value: value.value,
+        value: state.value,
       },
       {
         key: 'touched',
-        value: meta.touched,
+        value: state.touched,
       },
       {
         key: 'dirty',
-        value: meta.dirty,
+        value: state.dirty,
       },
       {
         key: 'valid',
-        value: meta.valid,
+        value: state.valid,
       },
     ],
   };
@@ -442,16 +480,9 @@ function buildFormState(form: PrivateFormContext): CustomInspectorState {
 /**
  * Resolves the tag color based on the form state
  */
-function getTagTheme(fieldOrForm: PrivateFormContext | PrivateFieldContext) {
-  // const fallbackColors = {
-  //   bgColor: COLORS.unknown,
-  //   textColor: COLORS.white,
-  // };
-
-  const isValid = 'id' in fieldOrForm ? fieldOrForm.meta.valid : fieldOrForm.meta.value.valid;
-
+function getValidityColors(valid: boolean) {
   return {
-    bgColor: isValid ? COLORS.success : COLORS.error,
-    textColor: isValid ? COLORS.black : COLORS.white,
+    bgColor: valid ? COLORS.success : COLORS.error,
+    textColor: valid ? COLORS.black : COLORS.white,
   };
 }

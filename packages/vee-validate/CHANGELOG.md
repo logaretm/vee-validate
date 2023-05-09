@@ -1,5 +1,23 @@
 # Change Log
 
+## 4.9.1
+
+### Patch Changes
+
+- 681bbab4: Added type-fest to core package dependencies
+
+## 4.9.0
+
+### Minor Changes
+
+- 41b5d39b: Implemented path types into various form API functions
+- 95409080: Added component and input binds helpers
+
+### Patch Changes
+
+- 7554d4a6: fix field array triggering validation when an item is removed
+- 298577b7: setValues does not delete unspecified fields values
+
 ## 4.8.6
 
 ### Patch Changes

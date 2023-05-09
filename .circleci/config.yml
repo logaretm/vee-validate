@@ -18,7 +18,7 @@ jobs:
           name: Install pnpm package manager
           command: |
             corepack enable
-            corepack prepare pnpm@latest-7 --activate
+            corepack prepare pnpm@latest-8 --activate
       - run:
           name: Install dependencies
           command: pnpm install
@@ -30,6 +30,9 @@ jobs:
       - run:
           name: Build
           command: pnpm build
+      - run:
+          name: Type check
+          command: pnpm typecheck
       - run:
           name: Generate Coverage
           command: pnpm cover

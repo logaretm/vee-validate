@@ -1,11 +1,11 @@
 import { Ref, unref, ref, onBeforeUnmount, watch } from 'vue';
 import { isNullOrUndefined } from '../../shared';
 import { FormContextKey } from './symbols';
-import { FieldArrayContext, FieldEntry, MaybeRef, PrivateFieldArrayContext } from './types';
-import { computedDeep, getFromPath, injectWithSelf, warn, isEqual } from './utils';
+import { FieldArrayContext, FieldEntry, MaybeRef, PrivateFieldArrayContext, PrivateFormContext } from './types';
+import { computedDeep, getFromPath, injectWithSelf, warn, isEqual, setInPath } from './utils';
 
 export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): FieldArrayContext<TValue> {
-  const form = injectWithSelf(FormContextKey, undefined);
+  const form = injectWithSelf(FormContextKey, undefined) as PrivateFormContext;
   const fields: Ref<FieldEntry<TValue>[]> = ref([]);
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -49,7 +49,11 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
 
   function initFields() {
     const currentValues = getCurrentValues();
-    fields.value = currentValues.map(createEntry);
+    if (!Array.isArray(currentValues)) {
+      return;
+    }
+
+    fields.value = currentValues.map((v, idx) => createEntry(v, idx, fields.value));
     updateEntryFlags();
   }
 
@@ -64,7 +68,14 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     }
   }
 
-  function createEntry(value: TValue): FieldEntry<TValue> {
+  function createEntry(value: TValue, idx?: number, currentFields?: FieldEntry<TValue>[]): FieldEntry<TValue> {
+    // Skips the work by returning the current entry if it already exists
+    // This should make the `key` prop stable and doesn't cause more re-renders than needed
+    // The value is computed and should update anyways
+    if (currentFields && !isNullOrUndefined(idx) && currentFields[idx]) {
+      return currentFields[idx];
+    }
+
     const key = entryCounter++;
 
     const entry: FieldEntry<TValue> = {
@@ -108,8 +119,9 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
 
     const newValue = [...pathValue];
     newValue.splice(idx, 1);
-    form?.unsetInitialValue(pathName + `[${idx}]`);
-    form?.setFieldValue(pathName, newValue);
+    const fieldPath = pathName + `[${idx}]`;
+    form.unsetInitialValue(fieldPath);
+    setInPath(form.values, pathName, newValue);
     fields.value.splice(idx, 1);
     afterMutation();
   }
@@ -124,8 +136,8 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
 
     const newValue = [...normalizedPathValue];
     newValue.push(value);
-    form?.stageInitialValue(pathName + `[${newValue.length - 1}]`, value);
-    form?.setFieldValue(pathName, newValue);
+    form.stageInitialValue(pathName + `[${newValue.length - 1}]`, value);
+    setInPath(form.values, pathName, newValue);
     fields.value.push(createEntry(value));
     afterMutation();
   }
@@ -148,8 +160,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     const tempEntry = newFields[indexA];
     newFields[indexA] = newFields[indexB];
     newFields[indexB] = tempEntry;
-
-    form?.setFieldValue(pathName, newValue);
+    setInPath(form.values, pathName, newValue);
     fields.value = newFields;
     updateEntryFlags();
   }
@@ -166,14 +177,15 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
 
     newValue.splice(idx, 0, value);
     newFields.splice(idx, 0, createEntry(value));
-    form?.setFieldValue(pathName, newValue);
+    setInPath(form.values, pathName, newValue);
     fields.value = newFields;
     afterMutation();
   }
 
   function replace(arr: TValue[]) {
     const pathName = unref(arrayPath);
-    form?.setFieldValue(pathName, arr);
+    form.stageInitialValue(pathName, arr);
+    setInPath(form.values, pathName, arr);
     initFields();
     afterMutation();
   }
@@ -185,7 +197,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
       return;
     }
 
-    form?.setFieldValue(`${pathName}[${idx}]`, value);
+    setInPath(form.values, `${pathName}[${idx}]`, value);
     form?.validate({ mode: 'validated-only' });
   }
 
@@ -198,8 +210,8 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     }
 
     const newValue = [value, ...normalizedPathValue];
-    form?.stageInitialValue(pathName + `[${newValue.length - 1}]`, value);
-    form?.setFieldValue(pathName, newValue);
+    form.stageInitialValue(pathName + `[${newValue.length - 1}]`, value);
+    setInPath(form.values, pathName, newValue);
     fields.value.unshift(createEntry(value));
     afterMutation();
   }
@@ -222,8 +234,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     const movedValue = newValue[oldIdx];
     newValue.splice(oldIdx, 1);
     newValue.splice(newIdx, 0, movedValue);
-
-    form?.setFieldValue(pathName, newValue);
+    setInPath(form.values, pathName, newValue);
     fields.value = newFields;
     afterMutation();
   }

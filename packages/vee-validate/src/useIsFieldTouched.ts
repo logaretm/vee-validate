@@ -1,26 +1,18 @@
-import { computed, inject, unref } from 'vue';
-import { FieldContextKey, FormContextKey } from './symbols';
-import { MaybeRef, PrivateFieldContext } from './types';
-import { injectWithSelf, normalizeField, warn } from './utils';
+import { computed } from 'vue';
+import { MaybeRef } from './types';
+import { resolveFieldOrPathState } from './utils';
 
 /**
  * If a field is touched or not
  */
 export function useIsFieldTouched(path?: MaybeRef<string>) {
-  const form = injectWithSelf(FormContextKey);
-  let field: PrivateFieldContext | undefined = path ? undefined : inject(FieldContextKey);
+  const fieldOrPath = resolveFieldOrPathState(path);
 
   return computed(() => {
-    if (path) {
-      field = normalizeField(form?.fieldsByPath.value[unref(path)]);
-    }
-
-    if (!field) {
-      warn(`field with name ${unref(path)} was not found`);
-
+    if (!fieldOrPath) {
       return false;
     }
 
-    return field.meta.touched;
+    return ('meta' in fieldOrPath ? fieldOrPath.meta.touched : fieldOrPath?.value?.touched) ?? false;
   });
 }
