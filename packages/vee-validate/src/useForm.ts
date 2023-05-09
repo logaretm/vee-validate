@@ -381,8 +381,23 @@ export function useForm<
     return pathState as PathState<PathValue<TValues, TPath>> | undefined;
   }
 
+  let UNSET_BATCH: Path<TValues>[] = [];
+  let PENDING_UNSET: Promise<void> | null;
   function unsetPathValue<TPath extends Path<TValues>>(path: TPath) {
-    unsetPath(formValues, path);
+    UNSET_BATCH.push(path);
+    if (!PENDING_UNSET) {
+      PENDING_UNSET = nextTick(() => {
+        const sortedPaths = [...UNSET_BATCH].sort().reverse();
+        sortedPaths.forEach(p => {
+          unsetPath(formValues, p);
+        });
+
+        UNSET_BATCH = [];
+        PENDING_UNSET = null;
+      });
+    }
+
+    return PENDING_UNSET;
   }
 
   function makeSubmissionFactory(onlyControlled: boolean) {

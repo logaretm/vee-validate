@@ -10,6 +10,7 @@ import {
   ComponentInternalInstance,
   onBeforeUnmount,
   warn,
+  nextTick,
 } from 'vue';
 import { klona as deepCopy } from 'klona/full';
 import { validate as validateValue } from './validate';
@@ -434,7 +435,7 @@ function _useField<TValue = unknown>(
         pathState.id.splice(pathState.id.indexOf(field.id), 1);
       }
     } else {
-      form.unsetPathValue(path);
+      form.unsetPathValue(unravel(name));
     }
 
     form.removePathState(path, id);
