@@ -407,7 +407,7 @@ function _useField<TValue = unknown>(
     const shouldKeepValue = unref(field.keepValueOnUnmount) ?? unref(form.keepValuesOnUnmount);
     const path = unravel(name);
     if (shouldKeepValue || !form || flags.pendingUnmount[field.id]) {
-      form?.removePathState(path);
+      form?.removePathState(path, id);
 
       return;
     }
@@ -437,7 +437,7 @@ function _useField<TValue = unknown>(
       form.unsetPathValue(path);
     }
 
-    form.removePathState(path);
+    form.removePathState(path, id);
   });
 
   return field;

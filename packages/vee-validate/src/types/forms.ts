@@ -249,7 +249,7 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   ): PathState<PathValue<TValues, TPath>>;
   getPathState<TPath extends Path<TValues>>(path: TPath): PathState<PathValue<TValues, TPath>> | undefined;
   getAllPathStates(): PathState[];
-  removePathState<TPath extends Path<TValues>>(path: TPath): void;
+  removePathState<TPath extends Path<TValues>>(path: TPath, id: number): void;
   unsetPathValue<TPath extends Path<TValues>>(path: TPath): void;
   markForUnmount(path: string): void;
 }

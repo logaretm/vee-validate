@@ -456,7 +456,7 @@ export function useForm<
   const handleSubmit: typeof handleSubmitImpl & { withControlled: typeof handleSubmitImpl } = handleSubmitImpl as any;
   handleSubmit.withControlled = makeSubmissionFactory(true);
 
-  function removePathState<TPath extends Path<TValues>>(path: TPath) {
+  function removePathState<TPath extends Path<TValues>>(path: TPath, id: number) {
     const idx = pathStates.value.findIndex(s => s.path === path);
     const pathState = pathStates.value[idx];
     if (idx === -1 || !pathState) {
@@ -465,6 +465,15 @@ export function useForm<
 
     if (pathState.multiple && pathState.fieldsCount) {
       pathState.fieldsCount--;
+    }
+
+    if (Array.isArray(pathState.id)) {
+      const idIndex = pathState.id.indexOf(id);
+      if (idIndex >= 0) {
+        pathState.id.splice(idIndex, 1);
+      }
+
+      delete pathState.__flags.pendingUnmount[id];
     }
 
     if (!pathState.multiple || pathState.fieldsCount <= 0) {
