@@ -407,11 +407,13 @@ function _useField<TValue = unknown>(
   onBeforeUnmount(() => {
     PENDING_UNMOUNT = true;
     const shouldKeepValue = unref(field.keepValueOnUnmount) ?? unref(form.keepValuesOnUnmount);
+    const path = unravel(name);
     if (shouldKeepValue || !form) {
+      form?.removePathState(path);
+
       return;
     }
 
-    const path = unravel(name);
     const pathState = form.getPathState(path);
     const matchesId =
       Array.isArray(pathState?.id) && pathState?.multiple
