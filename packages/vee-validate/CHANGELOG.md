@@ -1,5 +1,13 @@
 # Change Log
 
+## 4.9.2
+
+### Patch Changes
+
+- 31090e0d: avoid double unset path with field array remove
+- 9046308b: fixed validations running for unmounted fields
+- fe322a07: batch unsets and sort paths unset order for safer unsets closes #4115
+
 ## 4.9.1
 
 ### Patch Changes
