@@ -218,11 +218,7 @@ function _useField<TValue = unknown>(
   // Common input/change event handler
   function handleChange(e: unknown, shouldValidate = true) {
     const newValue = normalizeEventValue(e) as TValue;
-
-    setValue(newValue, false);
-    if (!validateOnValueUpdate && shouldValidate) {
-      validateWithStateMutation();
-    }
+    setValue(newValue, shouldValidate);
   }
 
   // Runs the initial validation
@@ -257,13 +253,14 @@ function _useField<TValue = unknown>(
     validateValidStateOnly();
   }
 
-  function setValue(newValue: TValue, validate = true) {
+  function setValue(newValue: TValue, shouldValidate = true) {
     value.value = newValue;
-    if (!validate) {
+    if (!shouldValidate) {
+      validateValidStateOnly();
       return;
     }
 
-    const validateFn = validateOnValueUpdate ? validateWithStateMutation : validateValidStateOnly;
+    const validateFn = shouldValidate ? validateWithStateMutation : validateValidStateOnly;
     validateFn();
   }
 

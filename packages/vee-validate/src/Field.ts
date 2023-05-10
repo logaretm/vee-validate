@@ -147,17 +147,6 @@ const FieldImpl = defineComponent({
       ctx.emit('update:modelValue', value.value);
     };
 
-    const handleInput = (e: any) => {
-      if (!hasCheckedAttr(ctx.attrs.type)) {
-        value.value = normalizeEventValue(e);
-      }
-    };
-
-    const onInputHandler = function handleInputWithModel(e: any) {
-      handleInput(e);
-      ctx.emit('update:modelValue', value.value);
-    };
-
     const fieldProps = computed(() => {
       const { validateOnInput, validateOnChange, validateOnBlur, validateOnModelUpdate } =
         resolveValidationTriggers(props);
@@ -218,7 +207,7 @@ const FieldImpl = defineComponent({
         validate: validateField,
         resetField,
         handleChange: onChangeHandler,
-        handleInput: onInputHandler,
+        handleInput: e => onChangeHandler(e, false),
         handleReset,
         handleBlur,
         setTouched,
