@@ -231,6 +231,7 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   errors: ComputedRef<FormErrors<TValues>>;
   meta: ComputedRef<FormMeta<TValues>>;
   isSubmitting: Ref<boolean>;
+  isValidating: Ref<boolean>;
   keepValuesOnUnmount: MaybeRef<boolean>;
   validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues, TOutput>>;
   validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues, TOutput>>;

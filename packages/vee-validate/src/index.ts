@@ -41,6 +41,7 @@ export { useIsFieldDirty } from './useIsFieldDirty';
 export { useIsFieldTouched } from './useIsFieldTouched';
 export { useIsFieldValid } from './useIsFieldValid';
 export { useIsSubmitting } from './useIsSubmitting';
+export { useIsValidating } from './useIsValidating';
 export { useValidateField } from './useValidateField';
 export { useIsFormDirty } from './useIsFormDirty';
 export { useIsFormTouched } from './useIsFormTouched';

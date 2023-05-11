@@ -13,5 +13,6 @@ export interface DevtoolsPluginFormState {
   errors: FormErrors<Record<string, any>>;
   values: Record<string, any>;
   isSubmitting: boolean;
+  isValidating: boolean;
   submitCount: number;
 }
