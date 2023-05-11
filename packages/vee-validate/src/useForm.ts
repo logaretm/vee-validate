@@ -326,13 +326,13 @@ export function useForm<
       // this ensures we have a complete key map of all the fields
       const paths = [
         ...new Set([...keysOf(formResult.results), ...pathStates.value.map(p => p.path), ...currentErrorsPaths]),
-      ] as string[];
+      ].sort() as string[];
 
       // aggregates the paths into a single result object while applying the results on the fields
       return paths.reduce(
         (validation, _path) => {
           const path = _path as Path<TValues>;
-          const pathState = findPathState(path);
+          const pathState = findPathState(path) || findHoistedPath(path);
           const messages = (formResult.results[path] || { errors: [] as string[] }).errors;
           const fieldResult = {
             errors: messages,
@@ -382,6 +382,20 @@ export function useForm<
     const pathState = typeof path === 'string' ? pathStates.value.find(state => state.path === path) : path;
 
     return pathState as PathState<PathValue<TValues, TPath>> | undefined;
+  }
+
+  function findHoistedPath(path: Path<TValues>) {
+    const candidates = pathStates.value.filter(state => path.startsWith(state.path));
+
+    return candidates.reduce((bestCandidate, candidate) => {
+      if (!bestCandidate) {
+        return candidate as PathState<PathValue<TValues, Path<TValues>>>;
+      }
+
+      return (candidate.path.length > bestCandidate.path.length ? candidate : bestCandidate) as PathState<
+        PathValue<TValues, Path<TValues>>
+      >;
+    }, undefined as PathState<PathValue<TValues, Path<TValues>>> | undefined);
   }
 
   let UNSET_BATCH: Path<TValues>[] = [];
