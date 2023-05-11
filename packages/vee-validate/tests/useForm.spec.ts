@@ -288,6 +288,67 @@ describe('useForm()', () => {
     spy.mockRestore();
   });
 
+  test('hoists nested field errors to their parent if no field has it', async () => {
+    let form!: FormContext;
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          validationSchema: yup.object({
+            name: yup.object({
+              value: yup.string().required(REQUIRED_MESSAGE),
+            }),
+          }),
+          validateOnMount: true,
+        });
+
+        useField('name');
+
+        return {};
+      },
+      template: `
+      <div></div>
+    `,
+    });
+
+    await flushPromises();
+    expect(form.errors.value.name).toBe(REQUIRED_MESSAGE);
+    expect(form.meta.value.valid).toBe(false);
+  });
+
+  test('selects the deepest candidate for hoisted errors', async () => {
+    let form!: FormContext<any>;
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          validationSchema: yup.object({
+            names: yup.object({
+              value: yup.array().of(yup.object({ name: yup.string().required(REQUIRED_MESSAGE) })),
+            }),
+          }),
+          validateOnMount: true,
+          initialValues: {
+            names: {
+              value: [{ name: '' }, { name: '' }, { name: '' }],
+            },
+          },
+        });
+
+        useField('names.value');
+        useField('names');
+
+        return {};
+      },
+      template: `
+      <div></div>
+    `,
+    });
+
+    await flushPromises();
+    expect(form.errors.value.names).toBe(undefined);
+    expect(form.errors.value['names.value']).toBe(REQUIRED_MESSAGE);
+    expect(form.meta.value.valid).toBe(false);
+  });
+
   test('resets the meta valid state on reset', async () => {
     let passwordValue!: Ref<string>;
     mountWithHoc({
