@@ -1,5 +1,13 @@
 # Change Log
 
+## 4.9.3
+
+### Patch Changes
+
+- 09d5596b: fix: run validation on value change closes #4251
+- 9bfbfaaf: feat: added isValidating to useForm
+- 48b45d91: fix: hoist nested errors path to the deepest direct parent closes #4063
+
 ## 4.9.2
 
 ### Patch Changes
