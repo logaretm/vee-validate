@@ -1,4 +1,4 @@
-import { defineRule, useField } from '@/vee-validate';
+import { Form, defineRule, useField } from '@/vee-validate';
 import { toRef, ref, defineComponent } from 'vue';
 import * as yup from 'yup';
 import { mountWithHoc, setValue, getValue, dispatchEvent, flushPromises } from './helpers';
@@ -979,4 +979,45 @@ test('adding or removing fields should update form dirty correctly', async () =>
   removeBtn.click();
   await flushPromises();
   expect(dirty.textContent).toBe('false');
+});
+
+// #4115
+test('removing fields with `v-if` should clean up their state properly', async () => {
+  const showFields = ref(true);
+  const formRef = ref<InstanceType<typeof Form>>();
+  const initialValues = {
+    users: [
+      { name: 'test 1', amount: 123 },
+      { name: 'test 2', amount: 567 },
+    ],
+  };
+  mountWithHoc({
+    setup() {
+      return {
+        initialValues,
+        formRef,
+        showFields,
+      };
+    },
+    template: `
+      <VForm ref="formRef" :initial-values="initialValues">
+        <FieldArray name="users" v-slot="{ fields }">
+          <fieldset v-for="(field, idx) in fields" :key="field.key">
+            <legend>User #{{ idx }}</legend>
+            <template v-if="showFields">
+              <Field :name="'users[' + idx + '].name'" />
+              <Field :name="'users[' + idx + '].amount'" />
+            </template>
+          </fieldset>
+        </FieldArray>
+
+      </VForm>
+    `,
+  });
+
+  await flushPromises();
+  expect(formRef.value?.getValues()).toEqual(initialValues);
+  showFields.value = false;
+  await flushPromises();
+  expect(formRef.value?.getValues()).toEqual({});
 });

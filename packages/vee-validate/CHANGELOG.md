@@ -1,5 +1,21 @@
 # Change Log
 
+## 4.9.3
+
+### Patch Changes
+
+- 09d5596b: fix: run validation on value change closes #4251
+- 9bfbfaaf: feat: added isValidating to useForm
+- 48b45d91: fix: hoist nested errors path to the deepest direct parent closes #4063
+
+## 4.9.2
+
+### Patch Changes
+
+- 31090e0d: avoid double unset path with field array remove
+- 9046308b: fixed validations running for unmounted fields
+- fe322a07: batch unsets and sort paths unset order for safer unsets closes #4115
+
 ## 4.9.1
 
 ### Patch Changes

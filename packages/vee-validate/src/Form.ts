@@ -12,6 +12,7 @@ type FormSlotProps = UnwrapRef<
     | 'errorBag'
     | 'values'
     | 'isSubmitting'
+    | 'isValidating'
     | 'submitCount'
     | 'validate'
     | 'validateField'
@@ -86,6 +87,7 @@ const FormImpl = defineComponent({
       values,
       meta,
       isSubmitting,
+      isValidating,
       submitCount,
       controlledValues,
       validate,
@@ -153,6 +155,7 @@ const FormImpl = defineComponent({
         errorBag: errorBag.value,
         values,
         isSubmitting: isSubmitting.value,
+        isValidating: isValidating.value,
         submitCount: submitCount.value,
         controlledValues: controlledValues.value,
         validate,

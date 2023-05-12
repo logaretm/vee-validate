@@ -430,7 +430,7 @@ function buildFieldState(
 }
 
 function buildFormState(form: PrivateFormContext): CustomInspectorState {
-  const { errorBag, meta, values, isSubmitting, submitCount } = form;
+  const { errorBag, meta, values, isSubmitting, isValidating, submitCount } = form;
 
   return {
     'Form state': [
@@ -441,6 +441,10 @@ function buildFormState(form: PrivateFormContext): CustomInspectorState {
       {
         key: 'isSubmitting',
         value: isSubmitting.value,
+      },
+      {
+        key: 'isValidating',
+        value: isValidating.value,
       },
       {
         key: 'touched',

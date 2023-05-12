@@ -199,7 +199,7 @@ importers:
         specifier: ^0.4.3
         version: 0.4.3
       vee-validate:
-        specifier: ^4.9.1
+        specifier: ^4.9.3
         version: link:../vee-validate
     devDependencies:
       '@nuxt/eslint-config':
@@ -221,7 +221,7 @@ importers:
   packages/rules:
     dependencies:
       vee-validate:
-        specifier: ^4.9.1
+        specifier: ^4.9.3
         version: link:../vee-validate
 
   packages/vee-validate:
@@ -242,7 +242,7 @@ importers:
         specifier: ^3.10.0
         version: 3.10.0(typescript@5.0.4)
       vee-validate:
-        specifier: ^4.9.1
+        specifier: ^4.9.3
         version: link:../vee-validate
       yup:
         specifier: ^1.1.1
@@ -254,7 +254,7 @@ importers:
         specifier: ^3.10.0
         version: 3.10.0(typescript@5.0.4)
       vee-validate:
-        specifier: ^4.9.1
+        specifier: ^4.9.3
         version: link:../vee-validate
       zod:
         specifier: ^3.21.4

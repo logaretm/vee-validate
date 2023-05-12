@@ -832,4 +832,42 @@ describe('useField()', () => {
     await flushPromises();
     expect(name?.textContent).toBe('second');
   });
+
+  test('handle change validates the field by default', async () => {
+    let field!: FieldContext;
+    const validator = vi.fn(val => (val ? true : REQUIRED_MESSAGE));
+    mountWithHoc({
+      setup() {
+        field = useField('field', validator);
+      },
+      template: `<div></div>`,
+    });
+
+    await flushPromises();
+    expect(validator).toHaveBeenCalledTimes(1);
+    expect(field.errorMessage.value).toBe(undefined);
+    field.handleChange('');
+    await flushPromises();
+    expect(field.errorMessage.value).toBe(REQUIRED_MESSAGE);
+  });
+
+  test('handle change can be configured to not validate the field', async () => {
+    let field!: FieldContext;
+    const validator = vi.fn(val => (val ? true : REQUIRED_MESSAGE));
+    mountWithHoc({
+      setup() {
+        field = useField('field', validator, { validateOnValueUpdate: false });
+      },
+      template: `<div></div>`,
+    });
+
+    await flushPromises();
+    expect(validator).toHaveBeenCalledTimes(1);
+    expect(field.errorMessage.value).toBe(undefined);
+    field.handleChange('', false);
+    await flushPromises();
+
+    expect(validator).toHaveBeenCalledTimes(2);
+    expect(field.errorMessage.value).toBe(undefined);
+  });
 });

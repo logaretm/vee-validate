@@ -1,4 +1,4 @@
-import { defineRule, useField, Form } from '@/vee-validate';
+import { defineRule, useField, Form, Field, useIsValidating } from '@/vee-validate';
 import { mountWithHoc, setValue, setChecked, dispatchEvent, flushPromises } from './helpers';
 import * as yup from 'yup';
 import { computed, defineComponent, onErrorCaptured, reactive, ref, Ref } from 'vue';
@@ -1354,6 +1354,43 @@ describe('<Form />', () => {
     vi.advanceTimersByTime(501);
     await flushPromises();
     expect(submitting.textContent).toBe('false');
+  });
+
+  test('isValidating state', async () => {
+    const spy = vi.fn((isValidating: boolean) => isValidating);
+
+    const Input = defineComponent({
+      components: {
+        Field,
+      },
+      template: `<Field name="field" />`,
+      setup() {
+        const isValidating = useIsValidating();
+
+        useField('field', () => {
+          spy(isValidating.value);
+          return true;
+        });
+      },
+    });
+    const wrapper = mountWithHoc({
+      components: {
+        Input,
+      },
+      template: `
+      <VForm v-slot="{ validate }">
+        <Input />
+        <button @click="validate">Validate</button>
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+    const button = wrapper.$el.querySelector('button');
+    button.click();
+
+    await flushPromises();
+    expect(spy).toHaveLastReturnedWith(true);
   });
 
   test('aggregated meta reactivity', async () => {
@@ -3042,4 +3079,48 @@ test('unmounted radio fields gets unregistered and their values are removed if c
   // errors were cleared
   expect(errors.textContent).toBe('{}');
   expect(JSON.parse(values.textContent)).toEqual({});
+});
+
+// #4247
+test('unmounted fields should not be validated when keep-values is on', async () => {
+  let showFields!: Ref<boolean>;
+  const spy = vi.fn();
+  const wrapper = mountWithHoc({
+    setup() {
+      showFields = ref(true);
+
+      return {
+        showFields,
+        onSubmit(values: any) {
+          spy(values);
+        },
+      };
+    },
+    template: `
+      <VForm @submit="onSubmit" v-slot="{ errors }" keep-values>
+        <template v-if="showFields">
+          <Field name="test" rules="required" />
+        </template>
+
+        <button>Submit</button>
+      </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const button = wrapper.$el.querySelector('button');
+  const inputs = wrapper.$el.querySelectorAll('input');
+
+  wrapper.$el.querySelector('button').click();
+  await flushPromises();
+  setValue(inputs[0], '');
+
+  showFields.value = false;
+  await flushPromises();
+  button.click();
+  await flushPromises();
+  const expected = {
+    test: '',
+  };
+  expect(spy).toHaveBeenLastCalledWith(expected);
 });

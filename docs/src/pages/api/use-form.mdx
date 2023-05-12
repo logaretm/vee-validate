@@ -187,6 +187,7 @@ type useForm = (opts?: FormOptions) => {
   errorBag: ComputedRef<Partial<Record<string, string[]>>>; // all error messages for each field
   meta: ComputedRef<FormMeta<TValues>>; // aggregate of the field's meta information
   isSubmitting: Ref<boolean>; // if the form submission function is being run
+  isValidating: Ref<boolean>; // if the form validate function is being run
   setFieldValue<T extends keyof TValues>(field: T, value: TValues[T]): void; // Sets a field value
   setFieldError: (field: keyof TValues, message: string | string[] | undefined) => void; // Sets an error message for a field
   setErrors: (fields: FormErrors<TValues>) => void; // Sets error messages for fields
@@ -328,6 +329,20 @@ Indicates if the submission handler is still running, once it resolves/rejects i
 const { isSubmitting } = useForm();
 
 isSubmitting.value; // true or false
+```
+
+<CodeTitle level="4">
+
+`isValidating: Ref<boolean>`
+
+</CodeTitle>
+
+Indicates if the validate function is still running, once validate function is done it will be automatically set to `false` again.
+
+```js
+const { isValidating } = useForm();
+
+isValidating.value; // true or false
 ```
 
 <CodeTitle level="4">

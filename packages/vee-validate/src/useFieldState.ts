@@ -1,5 +1,5 @@
 import { computed, isRef, reactive, ref, Ref, unref, watch } from 'vue';
-import { FieldMeta, FieldState, FieldValidator, InputType, MaybeRef, PrivateFormContext } from './types';
+import { FieldMeta, FieldState, FieldValidator, InputType, MaybeRef, PrivateFormContext, PathState } from './types';
 import { getFromPath, isEqual, normalizeErrorItem } from './utils';
 
 export interface StateSetterInit<TValue = unknown> extends FieldState<TValue> {
@@ -11,6 +11,7 @@ export interface FieldStateComposable<TValue = unknown> {
   path: MaybeRef<string>;
   meta: FieldMeta<TValue>;
   value: Ref<TValue>;
+  flags: PathState['__flags'];
   initialValue: Ref<TValue>;
   errors: Ref<string[]>;
   setState(state: Partial<StateSetterInit<TValue>>): void;
@@ -62,6 +63,7 @@ export function useFieldState<TValue = unknown>(
       value,
       initialValue,
       meta,
+      flags: { pendingUnmount: { [id]: false } },
       errors,
       setState,
     };
@@ -101,6 +103,7 @@ export function useFieldState<TValue = unknown>(
     errors,
     meta: state,
     initialValue,
+    flags: state.__flags,
     setState,
   };
 }

@@ -258,6 +258,22 @@ useIsSubmitting.value; // true or false
 
 <CodeTitle level="4">
 
+`useIsValidating(): ComputedRef<boolean>`
+
+</CodeTitle>
+
+Returns a computed ref to the form's `isValidating` state.
+
+```js
+import { useIsValidating } from 'vee-validate';
+
+const isValidating = useIsValidating();
+
+isValidating.value; // true or false
+```
+
+<CodeTitle level="4">
+
 `useSubmitCount(): ComputedRef<number>`
 
 </CodeTitle>

@@ -10,6 +10,7 @@ import {
   ComponentInternalInstance,
   onBeforeUnmount,
   warn,
+  nextTick,
 } from 'vue';
 import { klona as deepCopy } from 'klona/full';
 import { validate as validateValue } from './validate';
@@ -115,7 +116,6 @@ function _useField<TValue = unknown>(
   const injectedForm = controlled ? injectWithSelf(FormContextKey) : undefined;
   const form = (controlForm as PrivateFormContext | undefined) || injectedForm;
   const name = lazyToRef(path);
-  let PENDING_UNMOUNT = false;
 
   const validator = computed(() => {
     const schema = unref(form?.schema);
@@ -137,7 +137,7 @@ function _useField<TValue = unknown>(
     return normalizeRules(rulesValue);
   });
 
-  const { id, value, initialValue, meta, setState, errors } = useFieldState(name, {
+  const { id, value, initialValue, meta, setState, errors, flags } = useFieldState(name, {
     modelValue,
     form,
     bails,
@@ -184,7 +184,7 @@ function _useField<TValue = unknown>(
       return validateCurrentValue('validated-only');
     },
     result => {
-      if (PENDING_UNMOUNT) {
+      if (flags.pendingUnmount[field.id]) {
         return;
       }
 
@@ -218,11 +218,7 @@ function _useField<TValue = unknown>(
   // Common input/change event handler
   function handleChange(e: unknown, shouldValidate = true) {
     const newValue = normalizeEventValue(e) as TValue;
-
-    setValue(newValue, false);
-    if (!validateOnValueUpdate && shouldValidate) {
-      validateWithStateMutation();
-    }
+    setValue(newValue, shouldValidate);
   }
 
   // Runs the initial validation
@@ -257,13 +253,14 @@ function _useField<TValue = unknown>(
     validateValidStateOnly();
   }
 
-  function setValue(newValue: TValue, validate = true) {
+  function setValue(newValue: TValue, shouldValidate = true) {
     value.value = newValue;
-    if (!validate) {
+    if (!shouldValidate) {
+      validateValidStateOnly();
       return;
     }
 
-    const validateFn = validateOnValueUpdate ? validateWithStateMutation : validateValidStateOnly;
+    const validateFn = shouldValidate ? validateWithStateMutation : validateValidStateOnly;
     validateFn();
   }
 
@@ -405,13 +402,15 @@ function _useField<TValue = unknown>(
   });
 
   onBeforeUnmount(() => {
-    PENDING_UNMOUNT = true;
     const shouldKeepValue = unref(field.keepValueOnUnmount) ?? unref(form.keepValuesOnUnmount);
-    if (shouldKeepValue || !form) {
+    const path = unravel(name);
+    if (shouldKeepValue || !form || flags.pendingUnmount[field.id]) {
+      form?.removePathState(path, id);
+
       return;
     }
 
-    const path = unravel(name);
+    flags.pendingUnmount[field.id] = true;
     const pathState = form.getPathState(path);
     const matchesId =
       Array.isArray(pathState?.id) && pathState?.multiple
@@ -433,10 +432,10 @@ function _useField<TValue = unknown>(
         pathState.id.splice(pathState.id.indexOf(field.id), 1);
       }
     } else {
-      form.unsetPathValue(path);
+      form.unsetPathValue(unravel(name));
     }
 
-    form.removePathState(path);
+    form.removePathState(path, id);
   });
 
   return field;

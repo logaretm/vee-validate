@@ -119,6 +119,9 @@ export function useForm<
   // If the form is currently submitting
   const isSubmitting = ref(false);
 
+  // If the form is currently validating
+  const isValidating = ref(false);
+
   // The number of times the user tried to submit the form
   const submitCount = ref(0);
 
@@ -241,21 +244,24 @@ export function useForm<
         pathStateExists.multiple = true;
       }
 
+      const id = FIELD_ID_COUNTER++;
       if (Array.isArray(pathStateExists.id)) {
-        pathStateExists.id.push(FIELD_ID_COUNTER++);
+        pathStateExists.id.push(id);
       } else {
-        pathStateExists.id = [pathStateExists.id, FIELD_ID_COUNTER++];
+        pathStateExists.id = [pathStateExists.id, id];
       }
 
       pathStateExists.fieldsCount++;
+      pathStateExists.__flags.pendingUnmount[id] = false;
 
       return pathStateExists as PathState<TValue>;
     }
 
     const currentValue = computed(() => getFromPath(formValues, unravel(path)));
     const pathValue = unravel(path);
+    const id = FIELD_ID_COUNTER++;
     const state = reactive({
-      id: FIELD_ID_COUNTER++,
+      id,
       path,
       touched: false,
       pending: false,
@@ -268,6 +274,9 @@ export function useForm<
       type: config?.type || 'default',
       value: currentValue,
       multiple: false,
+      __flags: {
+        pendingUnmount: { [id]: false },
+      },
       fieldsCount: 1,
       validate: config?.validate,
       dirty: computed(() => {
@@ -317,13 +326,13 @@ export function useForm<
       // this ensures we have a complete key map of all the fields
       const paths = [
         ...new Set([...keysOf(formResult.results), ...pathStates.value.map(p => p.path), ...currentErrorsPaths]),
-      ] as string[];
+      ].sort() as string[];
 
       // aggregates the paths into a single result object while applying the results on the fields
       return paths.reduce(
         (validation, _path) => {
           const path = _path as Path<TValues>;
-          const pathState = findPathState(path);
+          const pathState = findPathState(path) || findHoistedPath(path);
           const messages = (formResult.results[path] || { errors: [] as string[] }).errors;
           const fieldResult = {
             errors: messages,
@@ -375,8 +384,37 @@ export function useForm<
     return pathState as PathState<PathValue<TValues, TPath>> | undefined;
   }
 
+  function findHoistedPath(path: Path<TValues>) {
+    const candidates = pathStates.value.filter(state => path.startsWith(state.path));
+
+    return candidates.reduce((bestCandidate, candidate) => {
+      if (!bestCandidate) {
+        return candidate as PathState<PathValue<TValues, Path<TValues>>>;
+      }
+
+      return (candidate.path.length > bestCandidate.path.length ? candidate : bestCandidate) as PathState<
+        PathValue<TValues, Path<TValues>>
+      >;
+    }, undefined as PathState<PathValue<TValues, Path<TValues>>> | undefined);
+  }
+
+  let UNSET_BATCH: Path<TValues>[] = [];
+  let PENDING_UNSET: Promise<void> | null;
   function unsetPathValue<TPath extends Path<TValues>>(path: TPath) {
-    unsetPath(formValues, path);
+    UNSET_BATCH.push(path);
+    if (!PENDING_UNSET) {
+      PENDING_UNSET = nextTick(() => {
+        const sortedPaths = [...UNSET_BATCH].sort().reverse();
+        sortedPaths.forEach(p => {
+          unsetPath(formValues, p);
+        });
+
+        UNSET_BATCH = [];
+        PENDING_UNSET = null;
+      });
+    }
+
+    return PENDING_UNSET;
   }
 
   function makeSubmissionFactory(onlyControlled: boolean) {
@@ -450,7 +488,7 @@ export function useForm<
   const handleSubmit: typeof handleSubmitImpl & { withControlled: typeof handleSubmitImpl } = handleSubmitImpl as any;
   handleSubmit.withControlled = makeSubmissionFactory(true);
 
-  function removePathState<TPath extends Path<TValues>>(path: TPath) {
+  function removePathState<TPath extends Path<TValues>>(path: TPath, id: number) {
     const idx = pathStates.value.findIndex(s => s.path === path);
     const pathState = pathStates.value[idx];
     if (idx === -1 || !pathState) {
@@ -461,10 +499,29 @@ export function useForm<
       pathState.fieldsCount--;
     }
 
+    if (Array.isArray(pathState.id)) {
+      const idIndex = pathState.id.indexOf(id);
+      if (idIndex >= 0) {
+        pathState.id.splice(idIndex, 1);
+      }
+
+      delete pathState.__flags.pendingUnmount[id];
+    }
+
     if (!pathState.multiple || pathState.fieldsCount <= 0) {
       pathStates.value.splice(idx, 1);
       unsetInitialValue(path);
     }
+  }
+
+  function markForUnmount(path: string) {
+    return mutateAllPathState(s => {
+      if (s.path.startsWith(path)) {
+        keysOf(s.__flags.pendingUnmount).forEach(id => {
+          s.__flags.pendingUnmount[id] = true;
+        });
+      }
+    });
   }
 
   const formCtx: PrivateFormContext<TValues, TOutput> = {
@@ -477,6 +534,7 @@ export function useForm<
     submitCount,
     meta,
     isSubmitting,
+    isValidating,
     fieldArrays,
     keepValuesOnUnmount,
     validateSchema: unref(schema) ? validateSchema : undefined,
@@ -501,6 +559,7 @@ export function useForm<
     removePathState,
     initialValues: initialValues as Ref<TValues>,
     getAllPathStates: () => pathStates.value,
+    markForUnmount,
   };
 
   /**
@@ -618,6 +677,8 @@ export function useForm<
       return formCtx.validateSchema(mode);
     }
 
+    isValidating.value = true;
+
     // No schema, each field is responsible to validate itself
     const validations = await Promise.all(
       pathStates.value.map(state => {
@@ -638,6 +699,8 @@ export function useForm<
         });
       })
     );
+
+    isValidating.value = false;
 
     const results: Partial<FlattenAndSetPathsType<TValues, ValidationResult>> = {};
     const errors: Partial<FlattenAndSetPathsType<TValues, string>> = {};
@@ -707,6 +770,8 @@ export function useForm<
       return { valid: true, results: {}, errors: {} };
     }
 
+    isValidating.value = true;
+
     const formResult =
       isYupValidator(schemaValue) || isTypedSchema(schemaValue)
         ? await validateTypedSchema<TValues, TOutput>(schemaValue, formValues)
@@ -714,6 +779,8 @@ export function useForm<
             names: fieldNames.value,
             bailsMap: fieldBailsMap.value,
           });
+
+    isValidating.value = false;
 
     return formResult;
   }
@@ -764,6 +831,7 @@ export function useForm<
         ...meta.value,
         values: formValues,
         isSubmitting: isSubmitting.value,
+        isValidating: isValidating.value,
         submitCount: submitCount.value,
       }),
       refreshInspector,
