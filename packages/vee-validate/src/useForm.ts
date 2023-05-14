@@ -133,7 +133,7 @@ export function useForm<
 
   const pathStates = ref<PathState<unknown>[]>([]);
 
-  const extraErrorsBag = ref<FormErrorBag<TValues>>({});
+  const extraErrorsBag: Ref<FormErrorBag<TValues>> = ref({});
 
   /**
    * Manually sets an error message on a specific field
@@ -141,7 +141,9 @@ export function useForm<
   function setFieldError(field: Path<TValues> | PathState, message: string | undefined | string[]) {
     const state = findPathState(field);
     if (!state) {
-      extraErrorsBag.value[field as string] = normalizeErrorItem(message);
+      if (typeof field === 'string') {
+        extraErrorsBag.value[field] = normalizeErrorItem(message);
+      }
       return;
     }
 
@@ -1029,7 +1031,7 @@ function useFormInitialValues<TValues extends GenericObject>(
   const values = resolveInitialValues(opts) as PartialDeep<TValues>;
   const providedValues = opts?.initialValues;
   // these are the mutable initial values as the fields are mounted/unmounted
-  const initialValues = ref<PartialDeep<TValues>>(values);
+  const initialValues = ref(values) as Ref<PartialDeep<TValues>>;
   // these are the original initial value as provided by the user initially, they don't keep track of conditional fields
   // this is important because some conditional fields will overwrite the initial values for other fields who had the same name
   // like array fields, any push/insert operation will overwrite the initial values because they "create new fields"
