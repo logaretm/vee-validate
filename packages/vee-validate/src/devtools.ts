@@ -356,7 +356,7 @@ function encodeNodeId(form?: PrivateFormContext, stateOrField?: PathState | Priv
   const fieldPath = stateOrField ? ('path' in stateOrField ? stateOrField?.path : unref(stateOrField?.name)) : '';
   const idObject = { f: form?.formId, ff: fieldPath, type };
 
-  return btoa(JSON.stringify(idObject));
+  return btoa(encodeURIComponent(JSON.stringify(idObject)));
 }
 
 function decodeNodeId(nodeId: string): {
@@ -366,7 +366,7 @@ function decodeNodeId(nodeId: string): {
   type?: 'form' | 'field' | 'pathState';
 } {
   try {
-    const idObject = JSON.parse(atob(nodeId));
+    const idObject = JSON.parse(decodeURIComponent(atob(nodeId)));
     const form = DEVTOOLS_FORMS[idObject.f];
 
     if (!form && idObject.ff) {
