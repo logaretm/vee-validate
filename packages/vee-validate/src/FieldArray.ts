@@ -3,7 +3,7 @@ import { FieldArrayContext } from './types';
 import { useFieldArray } from './useFieldArray';
 import { normalizeChildren } from './utils';
 
-const FieldArrayImpl = defineComponent({
+const FieldArrayImpl = /** #__PURE__ */ defineComponent({
   name: 'FieldArray',
   inheritAttrs: false,
   props: {

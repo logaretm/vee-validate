@@ -38,7 +38,7 @@ interface FieldSlotProps<TValue = unknown>
   handleInput: FieldContext['handleChange'];
 }
 
-const FieldImpl = defineComponent({
+const FieldImpl = /** #__PURE__ */ defineComponent({
   name: 'Field',
   inheritAttrs: false,
   props: {
