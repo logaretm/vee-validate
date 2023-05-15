@@ -35,7 +35,7 @@ type FormSlotProps = UnwrapRef<
   getErrors<TValues extends GenericObject = GenericObject>(): FormErrors<TValues>;
 };
 
-const FormImpl = defineComponent({
+const FormImpl = /** #__PURE__ */ defineComponent({
   name: 'Form',
   inheritAttrs: false,
   props: {

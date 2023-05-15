@@ -6,7 +6,7 @@ interface ErrorMessageSlotProps {
   message: string | undefined;
 }
 
-const ErrorMessageImpl = defineComponent({
+const ErrorMessageImpl = /** #__PURE__ */ defineComponent({
   name: 'ErrorMessage',
   props: {
     as: {
