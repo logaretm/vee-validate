@@ -83,7 +83,7 @@ export interface FormOptions<
     | TypedSchema<TValues, TOutput>
 > {
   validationSchema?: MaybeRef<TSchema extends TypedSchema ? TypedSchema<TValues, TOutput> : any>;
-  initialValues?: MaybeRef<PartialDeep<TValues>>;
+  initialValues?: MaybeRef<PartialDeep<TValues> | undefined | null>;
   initialErrors?: FlattenAndSetPathsType<TValues, string | undefined>;
   initialTouched?: FlattenAndSetPathsType<TValues, boolean>;
   validateOnMount?: boolean;
@@ -1066,7 +1066,9 @@ function useFormInitialValues<TValues extends GenericObject>(
     watch(
       providedValues,
       value => {
-        setInitialValues(value, true);
+        if (value) {
+          setInitialValues(value, true);
+        }
       },
       {
         deep: true,
