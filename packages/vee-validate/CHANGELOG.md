@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.9.4
+
+### Patch Changes
+
+- f4ea2c05: fix: exclude undefined and null from initial values closes #4139
+
 ## 4.9.3
 
 ### Patch Changes
