@@ -148,6 +148,7 @@ export function useForm<
     }
 
     state.errors = normalizeErrorItem(message);
+    state.valid = !state.errors.length;
   }
 
   /**

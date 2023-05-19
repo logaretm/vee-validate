@@ -8,10 +8,12 @@ describe('useForm()', () => {
   const REQUIRED_MESSAGE = 'Field is required';
 
   test('sets individual field error message', async () => {
+    let fieldMeta!: FieldMeta<unknown>;
     mountWithHoc({
       setup() {
-        const { setFieldError } = useForm();
-        const { errorMessage } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
+        const { setFieldError } = useForm({ initialValues: { field: 'test' } });
+        const { errorMessage, meta } = useField('field', val => (val ? true : REQUIRED_MESSAGE));
+        fieldMeta = meta;
 
         return {
           errorMessage,
@@ -30,6 +32,7 @@ describe('useForm()', () => {
     document.querySelector('button')?.click();
     await flushPromises();
     expect(error?.textContent).toBe('WRONG');
+    expect(fieldMeta.valid).toBe(false);
   });
 
   test('can clear individual field error messages', async () => {
