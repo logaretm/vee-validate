@@ -33,10 +33,18 @@ class Dictionary {
     return this.container[locale]?.fields?.[field]?._default || this.container[locale]?.messages?._default;
   }
 
+  public resolveLabel(locale: string, name: string, label?: string): string {
+    if (label) {
+      return this.container[locale]?.names?.[label] || label;
+    }
+
+    return this.container[locale]?.names?.[name] || name;
+  }
+
   public format(locale: string, ctx: FieldValidationMetaInfo) {
     let message!: ValidationMessageTemplate | undefined;
     const { rule, form, label, name } = ctx;
-    const fieldName = label || this.container[locale]?.names?.[name] || name;
+    const fieldName = this.resolveLabel(locale, name, label);
 
     if (!rule) {
       message = this.getLocaleDefault(locale, name) || `${fieldName} is not valid`;

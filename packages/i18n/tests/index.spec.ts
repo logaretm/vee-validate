@@ -193,6 +193,41 @@ test('can define labels or names for fields', async () => {
   expect(errors[1].textContent).toContain('Second test is required');
 });
 
+test('can define localized labels for fields', async () => {
+  configure({
+    generateMessage: localize('en', {
+      messages: { required: '{field} is required' },
+      names: {
+        first: 'First test',
+        second: 'Second test',
+      },
+    }),
+  });
+
+  const wrapper = mountWithHoc({
+    template: `
+        <div>
+          <Field name="first.value" label="first" :validateOnMount="true" rules="required" v-slot="{ field, errors }">
+            <input v-bind="field" type="text">
+            <span class="error">{{ errors[0] }}</span>
+          </Field>
+
+          <Field name="second.value" label="second" :validateOnMount="true" rules="required" v-slot="{ field, errors }">
+            <input v-bind="field" type="text">
+            <span class="error">{{ errors[0] }}</span>
+          </Field>
+        </div>
+      `,
+  });
+
+  await flushPromises();
+  const errors = wrapper.$el.querySelectorAll('.error');
+  expect(errors).toHaveLength(2);
+
+  expect(errors[0].textContent).toContain('First test is required');
+  expect(errors[1].textContent).toContain('Second test is required');
+});
+
 // #4164
 test('can define labels or names for fields with useField', async () => {
   let errorMessage!: Ref<string | undefined>;
