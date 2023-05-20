@@ -130,7 +130,7 @@ interface FieldState<TValue = unknown> {
 export interface FieldMeta<TValue> {
   touched: boolean; // field was blurred or attempted submit
   dirty: boolean; // field value was changed
-  valid: boolean; // field passed all validations
+  valid: boolean; // field doesn't have any errors
   validated: boolean; // field was validated via user input
   pending: boolean; // field is pending validation
   initialValue: TValue | undefined; // initial field value
@@ -234,7 +234,7 @@ Combining your `valid` flag checks with `dirty` will yield the expected result b
 ```js
 const { meta } = useField('field', value => !!value);
 
-meta; // { valid: true, invalid: false, dirty: true, .... }
+meta; // { valid: true, dirty: true, .... }
 ```
 
 <CodeTitle level="4">
