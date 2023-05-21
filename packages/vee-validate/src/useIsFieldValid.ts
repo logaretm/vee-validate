@@ -1,5 +1,4 @@
-import { computed } from 'vue';
-import { MaybeRef } from './types';
+import { computed, MaybeRef } from 'vue';
 import { resolveFieldOrPathState } from './utils';
 
 /**

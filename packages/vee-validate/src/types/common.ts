@@ -1,14 +1,10 @@
-import { Ref } from 'vue';
+import { MaybeRef, Ref } from 'vue';
 import { Path, PathValue } from './paths';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type GenericObject = Record<string, any>;
 
-export type MaybeRef<T> = Ref<T> | T;
-
 export type MaybeArray<T> = T | T[];
-
-export type MaybeRefOrLazy<T> = MaybeRef<T> | (() => T);
 
 export type MapValuesPathsToRefs<
   TValues extends GenericObject,

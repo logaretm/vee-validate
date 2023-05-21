@@ -10,12 +10,13 @@ import {
   ComponentInternalInstance,
   onBeforeUnmount,
   warn,
-  nextTick,
+  toValue,
+  MaybeRef,
+  MaybeRefOrGetter,
 } from 'vue';
 import { klona as deepCopy } from 'klona/full';
 import { validate as validateValue } from './validate';
 import {
-  MaybeRef,
   GenericValidateFunction,
   TypedSchema,
   FieldContext,
@@ -26,7 +27,6 @@ import {
   FormContext,
   PrivateFormContext,
   YupSchema,
-  MaybeRefOrLazy,
   InputType,
 } from './types';
 import {
@@ -43,7 +43,6 @@ import {
   isEqual,
   isTypedSchema,
   lazyToRef,
-  unravel,
 } from './utils';
 import { isCallable, isObject } from '../../shared';
 import { FieldContextKey, FormContextKey, IS_ABSENT } from './symbols';
@@ -81,7 +80,7 @@ export type RuleExpression<TValue> =
  * Creates a field composite.
  */
 export function useField<TValue = unknown>(
-  path: MaybeRefOrLazy<string>,
+  path: MaybeRefOrGetter<string>,
   rules?: MaybeRef<RuleExpression<TValue>>,
   opts?: Partial<FieldOptions<TValue>>
 ): FieldContext<TValue> {
@@ -93,7 +92,7 @@ export function useField<TValue = unknown>(
 }
 
 function _useField<TValue = unknown>(
-  path: MaybeRefOrLazy<string>,
+  path: MaybeRefOrGetter<string>,
   rules?: MaybeRef<RuleExpression<TValue>>,
   opts?: Partial<FieldOptions<TValue>>
 ): FieldContext<TValue> {
@@ -137,7 +136,7 @@ function _useField<TValue = unknown>(
     return normalizeRules(rulesValue);
   });
 
-  const { id, value, initialValue, meta, setState, errors, flags } = useFieldState(name, {
+  const { id, value, initialValue, meta, setState, errors, flags } = useFieldState<TValue>(name, {
     modelValue,
     form,
     bails,
@@ -403,7 +402,7 @@ function _useField<TValue = unknown>(
 
   onBeforeUnmount(() => {
     const shouldKeepValue = unref(field.keepValueOnUnmount) ?? unref(form.keepValuesOnUnmount);
-    const path = unravel(name);
+    const path = toValue(name);
     if (shouldKeepValue || !form || flags.pendingUnmount[field.id]) {
       form?.removePathState(path, id);
 
@@ -432,7 +431,7 @@ function _useField<TValue = unknown>(
         pathState.id.splice(pathState.id.indexOf(field.id), 1);
       }
     } else {
-      form.unsetPathValue(unravel(name));
+      form.unsetPathValue(toValue(name));
     }
 
     form.removePathState(path, id);
@@ -481,7 +480,7 @@ function normalizeOptions<TValue>(opts: Partial<FieldOptions<TValue>> | undefine
 }
 
 function useFieldWithChecked<TValue = unknown>(
-  name: MaybeRefOrLazy<string>,
+  name: MaybeRefOrGetter<string>,
   rules?: MaybeRef<RuleExpression<TValue>>,
   opts?: Partial<FieldOptions<TValue>>
 ): FieldContext<TValue> {
@@ -511,7 +510,7 @@ function useFieldWithChecked<TValue = unknown>(
         return;
       }
 
-      const path = unravel(name);
+      const path = toValue(name);
       const pathState = form?.getPathState(path);
       const value = normalizeEventValue(e);
       let newValue!: TValue;

@@ -1,6 +1,6 @@
-import { inject, unref } from 'vue';
+import { inject, unref, MaybeRef } from 'vue';
 import { FieldContextKey, FormContextKey } from './symbols';
-import { MaybeRef, ValidationResult } from './types';
+import { ValidationResult } from './types';
 import { injectWithSelf, warn } from './utils';
 
 /**
