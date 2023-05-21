@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.9.5
+
+### Patch Changes
+
+- 16580b47: fix: allow labels to be localized with names closes #4268
+
 ## 4.9.4
 
 ## 4.9.3

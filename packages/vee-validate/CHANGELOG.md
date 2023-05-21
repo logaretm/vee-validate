@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.9.5
+
+### Patch Changes
+
+- 7356c102: fix: setFieldError should set meta.valid closes #4274
+
 ## 4.9.4
 
 ### Patch Changes
