@@ -1,7 +1,8 @@
-import { defineRule, configure } from '@/vee-validate';
+import { defineRule, configure, useForm } from '@/vee-validate';
 import { mountWithHoc, setValue, dispatchEvent, setChecked, flushPromises, dispatchFileEvent } from './helpers';
 import * as yup from 'yup';
 import { computed, reactive, ref, Ref } from 'vue';
+import ModelComp from './helpers/ModelComp';
 
 vi.useFakeTimers();
 
@@ -1207,5 +1208,37 @@ describe('<Field />', () => {
     expect(lastCallOf(checkboxType)).not.toHaveProperty('value');
     expect(lastCallOf(radioType)).toHaveProperty('checked');
     expect(lastCallOf(radioType)).not.toHaveProperty('value');
+  });
+
+  describe('componentField', () => {
+    test('provides bindable object to components', async () => {
+      mountWithHoc({
+        components: {
+          ModelComp,
+        },
+        template: `
+          <Field name="name" v-slot="{ componentField, errorMessage, value }" rules="required">
+            <ModelComp v-bind="componentField" />
+            <span id="errors">{{ errorMessage }}</span>
+            <span id="values">{{ value }}</span>
+          </Field>
+        `,
+      });
+
+      await flushPromises();
+      const errorEl = document.getElementById('errors');
+      const valuesEl = document.getElementById('values');
+      const inputEl = document.querySelector('input') as HTMLInputElement;
+      expect(inputEl.getAttribute('name')).toBe('name');
+      setValue(inputEl, '');
+      dispatchEvent(inputEl, 'blur');
+      await flushPromises();
+      expect(errorEl?.textContent).toBe('This field is required');
+      setValue(inputEl, '123');
+      dispatchEvent(inputEl, 'blur');
+      await flushPromises();
+      expect(errorEl?.textContent).toBe('');
+      expect(valuesEl?.textContent).toBe('123');
+    });
   });
 });

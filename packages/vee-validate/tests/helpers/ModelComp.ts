@@ -1,6 +1,7 @@
 export default {
-  props: ['modelValue', 'test'],
+  props: ['modelValue', 'name', 'test'],
   emits: ['blur', 'update:modelValue'],
-  template: `<input type="text" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" @blur="$emit('blur')">
+  inheritAttrs: false,
+  template: `<input type="text" :name="name" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" @blur="$emit('blur')">
   <div v-if="test">{{ test }}</div>`,
 };

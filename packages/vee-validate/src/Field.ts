@@ -15,14 +15,21 @@ interface ValidationTriggersProps {
   validateOnModelUpdate: boolean;
 }
 
-interface FieldBindingObject<TValue = any> {
+interface SharedBindingObject<TValue = any> {
   name: string;
   onBlur: (e: Event) => void;
   onInput: (e: Event) => void;
   onChange: (e: Event) => void;
   'onUpdate:modelValue'?: ((e: TValue) => unknown) | undefined;
+}
+
+interface FieldBindingObject<TValue = any> extends SharedBindingObject<TValue> {
   value?: TValue;
   checked?: boolean;
+}
+
+interface ComponentFieldBindingObject<TValue = any> extends SharedBindingObject<TValue> {
+  modelValue?: TValue;
 }
 
 interface FieldSlotProps<TValue = unknown>
@@ -31,6 +38,7 @@ interface FieldSlotProps<TValue = unknown>
     'validate' | 'resetField' | 'handleChange' | 'handleReset' | 'handleBlur' | 'setTouched' | 'setErrors'
   > {
   field: FieldBindingObject<TValue>;
+  componentField: ComponentFieldBindingObject<TValue>;
   value: TValue;
   meta: FieldMeta<TValue>;
   errors: string[];
@@ -147,7 +155,7 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
       ctx.emit('update:modelValue', value.value);
     };
 
-    const fieldProps = computed(() => {
+    const sharedProps = computed(() => {
       const { validateOnInput, validateOnChange, validateOnBlur, validateOnModelUpdate } =
         resolveValidationTriggers(props);
 
@@ -185,6 +193,14 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
 
       attrs['onUpdate:modelValue'] = e => onChangeHandler(e, validateOnModelUpdate);
 
+      return attrs;
+    });
+
+    const fieldProps = computed(() => {
+      const attrs = {
+        ...sharedProps.value,
+      };
+
       if (hasCheckedAttr(ctx.attrs.type) && checked) {
         attrs.checked = checked.value;
       }
@@ -197,9 +213,17 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
       return attrs;
     });
 
+    const componentProps = computed(() => {
+      return {
+        ...sharedProps.value,
+        modelValue: value.value,
+      };
+    });
+
     function slotProps(): FieldSlotProps {
       return {
         field: fieldProps.value,
+        componentField: componentProps.value,
         value: value.value,
         meta,
         errors: errors.value,
