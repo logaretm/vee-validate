@@ -1,7 +1,7 @@
 {
   "name": "vee-validate-monorepo",
   "private": true,
-  "packageManager": "pnpm@8.5.0",
+  "packageManager": "pnpm@8.5.1",
   "description": "Form Validation for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
@@ -64,7 +64,7 @@
     "yup": "^1.1.1"
   },
   "peerDependencies": {
-    "vue": "^3.2.0"
+    "vue": "^3.3.0"
   },
   "lint-staged": {
     "*.ts": [
