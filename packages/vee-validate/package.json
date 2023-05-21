@@ -28,7 +28,7 @@
     "dist/*.d.ts"
   ],
   "peerDependencies": {
-    "vue": "^3.3.0"
+    "vue": "^3.3.4"
   },
   "dependencies": {
     "@vue/devtools-api": "^6.5.0",
