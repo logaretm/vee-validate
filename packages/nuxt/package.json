@@ -35,15 +35,15 @@
     "dist/*"
   ],
   "dependencies": {
-    "@nuxt/kit": "^3.4.3",
+    "@nuxt/kit": "^3.5.0",
     "local-pkg": "^0.4.3",
     "vee-validate": "^4.9.5"
   },
   "devDependencies": {
     "@nuxt/eslint-config": "^0.1.1",
     "@nuxt/module-builder": "^0.3.1",
-    "@nuxt/schema": "^3.4.3",
-    "@nuxt/test-utils": "^3.4.3",
-    "nuxt": "^3.4.3"
+    "@nuxt/schema": "^3.5.0",
+    "@nuxt/test-utils": "^3.5.0",
+    "nuxt": "^3.5.0"
   }
 }
