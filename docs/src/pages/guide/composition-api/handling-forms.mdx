@@ -14,40 +14,93 @@ vee-validate offers many helpers to handle form submissions, resets, and DX to m
 
 <div class="features">
 
-- Submitting forms with JavaScript listeners (AJAX)
-- Submitting forms using the classic/native approach (page reload)
-- Handling form resets
+- Form state (valid/dirty/touched/pending).
+- Submitting forms and handling invalid submissions.
+- Handling form resets.
 
 </div>
 
-## Handling Submissions
+## Form Metadata
 
-Before we get to submitting forms, there are a few things to keep in mind.
+Forms have a `meta` object value containing useful information about the form, it acts as an aggregation of the metadata for the fields inside that form.
 
-The main goal of the composition API is to enable you to add validation logic to your components and UI. So in real-world examples `useField` will be called in `TextField` and `SelectField` components, while `useForm` will be called in their parent form component.
+```js
+const { meta } = useForm();
 
-vee-validate exposes useful defaults to help you handle form submissions whether you submit them using JavaScript or native HTML submissions, in most cases, you would like to make sure all your fields are valid before you submit the form, this is done for you by default.
+meta.value.dirty;
+meta.value.pending;
+meta.value.touched;
+meta.value.valid;
+meta.value.initialValues;
+```
 
-### JavaScript Submissions (AJAX)
+- `valid`: The form's validity status, will be `true` if the errors array is empty initially, but will be updated once the form is mounted.
+- `touched`: If at least one field was blurred (unfocused) inside the form.
+- `dirty`: If at least one field's value was updated.
+- `pending`: If at least one field's validation is still pending.
+- `initialValues`: All fields' initial values, packed into an object where the keys are the field names.
 
-Mainly you will be using the `handleSubmit` function to create submission handlers for your forms, the `handleSubmit` function accepts a callback that receives the final form values, which is very convenient since you don't normally have access to the form values in the parent component.
+Here is a simple example where we disable the form's submit button if no value was changed.
 
 ```vue
 <template>
-  <form @submit="onSubmit">
-    <!-- some fields -->
+  <form>
+    <input v-bind="name" />
+
+    <button :disabled="!meta.dirty">Submit</button>
   </form>
 </template>
 
 <script setup>
 import { useForm } from 'vee-validate';
 
-const { handleSubmit } = useForm();
+const { meta, defineInputBinds } = useForm();
 
+const name = defineInputBinds('name');
+</script>
+```
+
+## Handling Submissions
+
+vee-validate exposes useful defaults to help you handle form submissions whether you submit them using JavaScript or native HTML submissions.
+
+### JavaScript Submissions (AJAX)
+
+To handle submissions, you can use the `handleSubmit` function to create submission handlers for your forms, the `handleSubmit` function accepts a callback that receives the final form values.
+
+```vue
+<script setup>
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
+
+const { errors, handleSubmit, defineInputBinds } = useForm({
+  validationSchema: yup.object({
+    email: yup.string().min(1).email(),
+    password: yup.string().min(6),
+  }),
+});
+
+// Creates a submission handler
+// It validate all fields and doesn't call your function unless all fields are valid
 const onSubmit = handleSubmit(values => {
   alert(JSON.stringify(values, null, 2));
 });
+
+const email = defineInputBinds('email');
+const password = defineInputBinds('email');
 </script>
+
+<template>
+  <form @submit="onSubmit">
+    <input v-bind="email" />
+    <span>{{ errors.email }}</span>
+
+    <input v-bind="password" />
+    <span>{{ errors.password }}</span>
+
+    <button>Submit</button>
+  </form>
+</template>
 ```
 
 The `handleSubmit` function will only execute your callback once the returned function (`onSubmit` in the example) if all fields are valid, meaning you don't have to handle if the form is invalid in your logic.
@@ -61,36 +114,46 @@ As a bonus, when the returned function is used as an event handler (like in the 
 For non-ajax submissions that trigger a full page reload, you can use the `submitForm` function instead of `handleSubmit`. You normally would use this if you are not building a single-page application.
 
 ```vue
-<template>
-  <form action="/users" method="post" @submit="submitForm">
-    <!-- some fields -->
-  </form>
-</template>
-
 <script setup>
 import { useForm } from 'vee-validate';
+import * as yup from 'yup';
 
-const { submitForm } = useForm();
+const { errors, submitForm, defineInputBinds } = useForm({
+  validationSchema: yup.object({
+    email: yup.string().min(1).email(),
+    password: yup.string().min(6),
+  }),
+});
+
+const email = defineInputBinds('email');
+const password = defineInputBinds('email');
 </script>
+
+<template>
+  <form action="/users" method="post" @submit="submitForm">
+    <input v-bind="email" />
+    <span>{{ errors.email }}</span>
+
+    <input v-bind="password" />
+    <span>{{ errors.password }}</span>
+
+    <button>Submit</button>
+  </form>
+</template>
 ```
 
 In that case **YOU MUST** use `submitForm` as an event handler for the `submit` event for a native `form` element, otherwise, it would have no effect.
 
 ### Handling Invalid Submissions
 
-In case you want to perform some logic after a form fails to submit due to validation errors (e.g: focusing the first invalid field), you can pass a callback as the second argument to `handleSubmit` function.
+Sometimes you want to perform some logic after a form fails to submit due to validation errors (e.g: focusing the first invalid field), you can pass a callback as the second argument to `handleSubmit` function.
 
-```vue{12-16,22}
-<template>
-  <form @submit="onSubmit">
-    <!-- some fields -->
-  </form>
-</template>
-
-<script setup>
-import { useForm } from 'vee-validate';
-
+```js
 const { handleSubmit } = useForm();
+
+function onSuccess(values) {
+  alert(JSON.stringify(values, null, 2));
+}
 
 function onInvalidSubmit({ values, errors, results }) {
   console.log(values); // current form values
@@ -98,69 +161,151 @@ function onInvalidSubmit({ values, errors, results }) {
   console.log(results); // a detailed map of field names and their validation results
 }
 
-const onSubmit = handleSubmit(values => {
-  alert(JSON.stringify(values, null, 2));
-}, onInvalidSubmit);
-</script>
+// This handles both valid and invalid submissions
+const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
 ```
 
-## Submission Progress
+Here is a quick example on how to scroll to and focus the first invalid field after a failed submission attempt.
+
+```vue
+<script setup>
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
+
+const { errors, handleSubmit, defineInputBinds } = useForm({
+  validationSchema: yup.object({
+    email: yup.string().min(1).email(),
+    password: yup.string().min(6),
+  }),
+});
+
+const onSubmit = handleSubmit(
+  values => {
+    alert(JSON.stringify(values, null, 2));
+  },
+  ({ errors }) => {
+    const firstError = Object.keys(errors)[0];
+    const el = document.querySelector(`[name="${firstError}"]`);
+    el.scrollIntoView();
+    el.focus();
+  }
+);
+
+const email = defineInputBinds('email');
+const password = defineInputBinds('email');
+</script>
+
+<template>
+  <form @submit="onSubmit">
+    <input v-bind="email" name="email" />
+    <span>{{ errors.email }}</span>
+
+    <input v-bind="password" name="password" />
+    <span>{{ errors.password }}</span>
+
+    <button>Submit</button>
+  </form>
+</template>
+```
+
+### Submission Progress
 
 Quite often you need to show your users a submission indicator, or you might want to disable the submit button entirely until the submission attempt is done. The `useForm` function exposes an `isSubmitting` ref that you can use.
 
 The `isSubmitting` state will be set to `true` once the validation of the form starts (as a result of a submit event) and will keep track of the submission handler you passed to either `onSubmit` or until it calls `submitForm`. If the submission handler throws any errors or completes successfully it will be set to `false` afterward.
 
 ```vue
-<template>
-  <form @submit="onSubmit">
-    <!-- Some fields -->
-
-    <button type="submit" :disabled="isSubmitting">Submit</button>
-  </form>
-</template>
-
 <script setup>
 import { useForm } from 'vee-validate';
 
-const { handleSubmit, isSubmitting } = useForm();
+const { handleSubmit, defineInputBinds, isSubmitting } = useForm();
 
-const onSubmit = handleSubmit(() => {
-  // Send stuff to the API
+const onSubmit = handleSubmit(values => {
+  // Simulates a 2 second delay
+  return new Promise(resolve => {
+    setTimeout(() => {
+      console.log('Submitted', JSON.stringify(values, null, 2));
+      resolve();
+    }, 2000);
+  });
 });
+
+const email = defineInputBinds('email');
+const password = defineInputBinds('email');
 </script>
+
+<template>
+  <form @submit="onSubmit">
+    <input v-bind="email" />
+    <span>{{ errors.email }}</span>
+
+    <input v-bind="password" />
+    <span>{{ errors.password }}</span>
+
+    <button :disabled="isSubmitting">
+      {{ isSubmitting ? 'Submitting...' : 'Submit' }}
+    </button>
+  </form>
+</template>
 ```
 
-## Submit Count
+### Submit Count
 
 The `useForm` function also exposes a `submitCount` ref that you can use to track the number of submissions attempted by the user. Maybe you want to lock the form if too many attempts were made.
 
 ```vue
-<template>
-  <form v-if="!isTooManyAttempts" @submit="onSubmit">
-    <!-- Some fields -->
-
-    <button type="submit" :disabled="isSubmitting">Submit</button>
-  </form>
-
-  <p v-else>Sorry but you have attempted to submit too many times</p>
-</template>
-
 <script setup>
-import { computed } from 'vue';
 import { useForm } from 'vee-validate';
 
-const { handleSubmit, submitCount } = useForm();
+const { handleSubmit, defineInputBinds, submitCount } = useForm();
 
-const onSubmit = handleSubmit(() => {
-  // Send stuff to the API
+const onSubmit = handleSubmit(values => {
+  console.log('Submitted', JSON.stringify(values, null, 2));
 });
 
-// too many attempts
-const isTooManyAttempts = computed(() => {
-  return submitCount.value >= 10;
-});
+const email = defineInputBinds('email');
+const password = defineInputBinds('email');
 </script>
+
+<template>
+  <form @submit="onSubmit">
+    <input v-bind="email" />
+    <span>{{ errors.email }}</span>
+
+    <input v-bind="password" />
+    <span>{{ errors.password }}</span>
+
+    <button :disabled="submitCount > 5">
+      {{ submitCount > 5 ? 'You submitted too many times' : 'Submit' }}
+    </button>
+  </form>
+</template>
 ```
+
+### Submission Behavior
+
+vee-validate does the following when calling submission handlers created by `handleSubmit` or when calling `submitForm` as a result of the user submitting the form.
+
+#### Before validation stage
+
+- Sets all fields `touched` meta to `true`
+- Sets `isSubmitting` form state to `true`
+- Increments the `submitCount` form state by `1`
+
+#### Validation stage
+
+- Sets form and individual fields meta `pending` to `true` to indicate validation is in progress
+- Runs the validation function/schema/rule against the current form values asynchronously
+- Checks for any errors in the validation result
+  - If there are errors then it will skip the next stage and update the validation state (meta, errors) for the form and fields
+  - If there aren't any errors then it will set the `pending` meta flag to `false` and proceed to the next stage
+
+#### After validation stage
+
+- Calls the `handleSubmit` handler you passed
+- After the callback finishes (it will wait if the result is asynchronous), then it will set `isSubmitting` to `false`
+
+Note that there isn't a need to have `isSubmitting` set back to false if you've used `submitForm`, as this submission method will perform a full-page refresh (native forms behavior).
 
 ## Initial Values
 
@@ -169,29 +314,34 @@ Since with vee-validate you don't have to use `v-model` to track your values, th
 Using the `initialValues` option you can send an object that contains the field names as keys and their values:
 
 ```vue
-<template>
-  <form>
-    <!-- Some fields -->
-  </form>
-</template>
-
 <script setup>
 import { useForm } from 'vee-validate';
 
-// Initial values
-const formValues = {
-  email: 'example@example.com',
-  name: 'John Smith',
-  password: 'P@$$w0Rd',
-};
-
-useForm({
-  initialValues: formValues,
+const { handleSubmit, defineInputBinds } = useForm({
+  initialValues: {
+    email: 'test@example.com',
+    password: 'p@$$w0rd',
+  },
 });
-</script>
-```
 
-All fields created with `useField` or `<Field />` component will then grab their initial value from the object you passed to `useForm`.
+const onSubmit = handleSubmit(values => {
+  console.log(JSON.stringify(values, null, 2));
+});
+
+const email = defineInputBinds('email');
+const password = defineInputBinds('email');
+</script>
+
+<template>
+  <form @submit="onSubmit">
+    <input v-bind="email" />
+
+    <input v-bind="password" />
+
+    <button>Submit</button>
+  </form>
+</template>
+```
 
 <DocTip>
 
@@ -199,53 +349,45 @@ It's generally recommended that you provide the `initialValues`, this is because
 
 </DocTip>
 
-## Setting Form Values
+<DocTip>
 
-You can set any field's value on the form-level component using either `setFieldValue` or `setValues` returned by `useForm`.
+If you are using Typed schemas with `zod` or `yup` you can define the initial values on the validation schema directly with `.default` instead of having to specify `initialValues`. Check [Typed schemas guide](/guide/typed-schema) for more information.
+
+</DocTip>
+
+## Manually Setting Form Values
+
+You can set any field's value using either `setFieldValue` or `setValues` returned by `useForm`.
 
 ```vue
-<template>
-  <form>
-    <!-- Some fields -->
-  </form>
-</template>
-
 <script setup>
 import { useForm } from 'vee-validate';
 
-const { setFieldValue, setValues } = useForm();
+const { defineInputBinds, setFieldValue, setValues } = useForm();
 
-setFieldValue('fieldName', 'newValue');
-setValues({
-  fieldName: 'newValue',
-});
+function updateValues() {
+  // set a single field value
+  // setFieldValue('email', 'test@example.com');
+
+  // set multiple fields values
+  setValues({
+    email: 'test@example.com',
+    password: 'p@$$w0rd',
+  });
+}
+
+const email = defineInputBinds('email');
+const password = defineInputBinds('email');
 </script>
+
+<template>
+  <input v-bind="email" />
+
+  <input v-bind="password" />
+
+  <button @click="updateValues">Update values</button>
+</template>
 ```
-
-## Submission Behavior
-
-vee-validate does the following when calling submission handlers created by `handleSubmit` or when calling `submitForm` as a result of the user submitting the form.
-
-### Before validation stage
-
-- Sets all fields `touched` meta to `true`
-- Sets `isSubmitting` form state to `true`
-- Increments the `submitCount` form state by `1`
-
-### Validation stage
-
-- Sets form and individual fields meta `pending` to `true` to indicate validation is in progress
-- Runs the validation function/schema/rule against the current form values asynchronously
-- Checks for any errors in the validation result
-  - If there are errors then it will skip the next stage and update the validation state (meta, errors) for the form and fields
-  - If there aren't any errors then it will set the `pending` meta flag to `false` and proceed to the next stage
-
-### After validation stage
-
-- Calls the `handleSubmit` handler you passed
-- After the callback finishes (it will wait if the result is asynchronous), then it will set `isSubmitting` to `false`
-
-Note that there isn't a need to have `isSubmitting` set back to false if you've used `submitForm`, as this submission method will perform a full-page refresh (native forms behavior).
 
 ## Handling Resets
 
