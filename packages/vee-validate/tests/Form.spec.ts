@@ -2814,6 +2814,7 @@ describe('<Form />', () => {
           type: 'checkbox',
           uncheckedValue: false,
           checkedValue: true,
+          syncVModel: true,
         });
 
         return {
