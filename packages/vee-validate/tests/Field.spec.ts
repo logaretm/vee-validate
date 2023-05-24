@@ -1241,4 +1241,23 @@ describe('<Field />', () => {
       expect(valuesEl?.textContent).toBe('123');
     });
   });
+
+  // #4285
+  test('handle blur should respect the validate on blur config', async () => {
+    mountWithHoc({
+      template: `
+        <Field name="field" rules="required" v-slot="{ errorMessage, handleBlur }" validateOnBlur>
+          <input @blur="handleBlur" />
+          <span>{{ errorMessage }}</span>
+        </Field>
+      `,
+    });
+
+    await flushPromises();
+    const input = document.querySelector('input') as HTMLInputElement;
+    const error = document.querySelector('span') as HTMLInputElement;
+    dispatchEvent(input, 'blur');
+    await flushPromises();
+    expect(error.textContent).toBe(REQUIRED_MESSAGE);
+  });
 });
