@@ -453,7 +453,7 @@ function normalizeOptions<TValue>(opts: Partial<FieldOptions<TValue>> | undefine
     validateOnValueUpdate: true,
     keepValueOnUnmount: undefined,
     modelPropName: 'modelValue',
-    syncVModel: true,
+    syncVModel: false,
     controlled: true,
   });
 

@@ -561,7 +561,7 @@ describe('useField()', () => {
         modelValue: String,
       },
       setup() {
-        const { value, errorMessage } = useField('field');
+        const { value, errorMessage } = useField('field', undefined, { syncVModel: true });
 
         return {
           value,
@@ -691,6 +691,7 @@ describe('useField()', () => {
       setup() {
         const { value, errorMessage } = useField('field', undefined, {
           modelPropName: 'textVal',
+          syncVModel: true,
         });
 
         return {
