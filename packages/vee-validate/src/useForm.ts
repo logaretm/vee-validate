@@ -12,6 +12,7 @@ import {
   warn,
   watchEffect,
   shallowRef,
+  readonly,
 } from 'vue';
 import { klona as deepCopy } from 'klona/full';
 import {
@@ -965,6 +966,7 @@ export function useForm<
 
   return {
     ...formCtx,
+    values: readonly(formValues),
     handleReset: () => resetForm(),
     submitForm,
     defineComponentBinds,
