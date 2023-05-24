@@ -234,7 +234,7 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
         handleChange: onChangeHandler,
         handleInput: e => onChangeHandler(e, false),
         handleReset,
-        handleBlur,
+        handleBlur: sharedProps.value.onBlur,
         setTouched,
         setErrors,
       };
