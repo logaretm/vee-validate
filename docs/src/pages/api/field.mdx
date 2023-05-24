@@ -172,6 +172,7 @@ interface FieldMeta {
   touched: boolean; // if the field has been blurred (via handleBlur)
   dirty: boolean; // if the field has been manipulated (via handleChange)
   valid: boolean; // if the field doesn't have any errors
+  validated: boolean; // if the field has been validated
   pending: boolean; // if validation is in progress
   initialValue?: any; // the field's initial value
 }
