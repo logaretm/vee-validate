@@ -1,6 +1,6 @@
 # Validation Observer
 
-The `ValidationObserver` is a component that wraps your forms and provides aggregated validation state for all the fields nested under it using [scoped slots](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots).
+The `ValidationObserver` is a component that wraps your forms and provides aggregated validation state for all the fields nested under it using [scoped slots](https://v2.vuejs.org/v2/guide/components-slots.html#Scoped-Slots).
 
 For more information on how to use the `ValidationObserver`, see [Forms Guide](../guide/forms.md).
 

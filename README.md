@@ -18,7 +18,7 @@
 
 <br>
 
-vee-validate is a template-based validation framework for [Vue.js](https://vuejs.org/) that allows you to validate inputs and display errors.
+vee-validate is a template-based validation framework for [Vue.js](https://v2.vuejs.org/) that allows you to validate inputs and display errors.
 
 Being template-based you only need to specify for each input what kind of validators should be used when the value changes. The errors will be automatically generated with 40+ locales supported. [Many rules are available out of the box](https://vee-validate.logaretm.com/v3/guide/rules.html).
 
@@ -115,7 +115,7 @@ All the JavaScript work is done. Next in the template add the inputs you want to
 
 The validation provider accepts two props: `rules` which is in its simplest form, a string containing the validation rules separated by a `|` character, and a `name` prop which is the field name that will be used in error messages.
 
-and That's it, your input will be validated automatically, notice that the `ValidationProvider` uses [scoped slots](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots) to pass down validation state and results.
+and That's it, your input will be validated automatically, notice that the `ValidationProvider` uses [scoped slots](https://v2.vuejs.org/v2/guide/components-slots.html#Scoped-Slots) to pass down validation state and results.
 
 There is more that can be done! You can customize events, validate initial values, manually validate or reset the field and much more. Make sure to [read the docs](https://vee-validate.logaretm.com/v3).
 

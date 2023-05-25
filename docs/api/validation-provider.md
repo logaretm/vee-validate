@@ -1,6 +1,6 @@
 # Validation Provider
 
-The `ValidationProvider` component is a component that wraps your inputs and provides validation state using [scoped slots](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots).
+The `ValidationProvider` component is a component that wraps your inputs and provides validation state using [scoped slots](https://v2.vuejs.org/v2/guide/components-slots.html#Scoped-Slots).
 
 ## Scoped Slot Props
 
