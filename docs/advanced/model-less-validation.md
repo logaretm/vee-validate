@@ -67,6 +67,6 @@ export default {
 </script>
 ```
 
-You won't be able to bind `v-model` on a single input for both of these states as `v-model` have a 1:1 relation with data items, instead you can use [Vue's computed setters](https://vuejs.org/v2/guide/computed.html#Computed-Setter) to achieve binding with `v-model` while updating the state accordingly.
+You won't be able to bind `v-model` on a single input for both of these states as `v-model` have a 1:1 relation with data items, instead you can use [Vue's computed setters](https://v2.vuejs.org/v2/guide/computed.html#Computed-Setter) to achieve binding with `v-model` while updating the state accordingly.
 
 @[example](computed-setters)

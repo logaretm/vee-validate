@@ -8,7 +8,7 @@ VeeValidate is a collection of function-based APIs and Vue components, the main 
 
 ## Validation Provider
 
-First you need to register the `ValidationProvider` component which acts as a validator for your fields, it works via [scoped-slots](https://vuejs.org/v2/guide/components-slots.html) to provide validation errors to your template.
+First you need to register the `ValidationProvider` component which acts as a validator for your fields, it works via [scoped-slots](https://v2.vuejs.org/v2/guide/components-slots.html) to provide validation errors to your template.
 
 ## Registering the Validation Provider
 
@@ -53,7 +53,7 @@ After that you can use it in your components templates, typically you **wrap you
 
 For the `input` field or the component acting as an input, it **should have a `v-model` attached to it**. This is because the `ValidationProvider` searches its own children for inputs, so the `v-model` acts as a hint for the `ValidationProvider`.
 
-However, if you cannot use `v-model` on the input, you can use [computed setters](https://vuejs.org/v2/guide/computed.html#Computed-Setter) for cases like Vuex state and other complex input types where more than one state items are involved. For more information on using computed setters you can check the [advanced guide](model-less-validation.md#using-computed-setters).
+However, if you cannot use `v-model` on the input, you can use [computed setters](https://v2.vuejs.org/v2/guide/computed.html#Computed-Setter) for cases like Vuex state and other complex input types where more than one state items are involved. For more information on using computed setters you can check the [advanced guide](model-less-validation.md#using-computed-setters).
 
 If you cannot use either you can add a `value` prop on your input and it should serve as a hint for vee-validate as well.
 

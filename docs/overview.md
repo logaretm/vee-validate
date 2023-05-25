@@ -113,7 +113,7 @@ The examples will use Pascal case which should work fine if you are using Vue co
 
 The `rules` prop passed to the `ValidationProvider` is the validation rules that will be checked against the input.
 
-To display error messages, the `ValidationProvider` exposes `errors` array through [scoped slots](https://vuejs.org/v2/guide/components-slots.html#Scoped-Slots), this array contains error messages related to that field.
+To display error messages, the `ValidationProvider` exposes `errors` array through [scoped slots](https://v2.vuejs.org/v2/guide/components-slots.html#Scoped-Slots), this array contains error messages related to that field.
 
 #### Demo
 
