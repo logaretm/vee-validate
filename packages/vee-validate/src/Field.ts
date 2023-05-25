@@ -18,8 +18,8 @@ interface ValidationTriggersProps {
 interface SharedBindingObject<TValue = any> {
   name: string;
   onBlur: (e: Event) => void;
-  onInput: (e: Event) => void;
-  onChange: (e: Event) => void;
+  onInput: (e: Event | unknown) => void;
+  onChange: (e: Event | unknown) => void;
   'onUpdate:modelValue'?: ((e: TValue) => unknown) | undefined;
 }
 
@@ -151,7 +151,7 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
     });
 
     // If there is a v-model applied on the component we need to emit the `update:modelValue` whenever the value binding changes
-    const onChangeHandler = function handleChangeWithModel(e: unknown, shouldValidate = true) {
+    const onChangeHandler = function handleChangeWithModel(e: Event | unknown, shouldValidate = true) {
       handleChange(e, shouldValidate);
       ctx.emit('update:modelValue', value.value);
     };
@@ -171,14 +171,14 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
         }
       }
 
-      function baseOnInput(e: Event) {
+      function baseOnInput(e: Event | unknown) {
         onChangeHandler(e, validateOnInput);
         if (isCallable(ctx.attrs.onInput)) {
           ctx.attrs.onInput(e);
         }
       }
 
-      function baseOnChange(e: Event) {
+      function baseOnChange(e: Event | unknown) {
         onChangeHandler(e, validateOnChange);
         if (isCallable(ctx.attrs.onChange)) {
           ctx.attrs.onChange(e);
