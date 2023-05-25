@@ -34,9 +34,9 @@ export function getTag(value: any) {
   return Object.prototype.toString.call(value);
 }
 
+// Reference: https://github.com/lodash/lodash/blob/master/isPlainObject.js
 export function isPlainObject(value: any) {
-  // eslint-disable-next-line eqeqeq
-  if (!isObjectLike(value) || getTag(value) != '[object Object]') {
+  if (!isObjectLike(value) || getTag(value) !== '[object Object]') {
     return false;
   }
   if (Object.getPrototypeOf(value) === null) {
