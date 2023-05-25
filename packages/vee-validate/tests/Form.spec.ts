@@ -1671,6 +1671,31 @@ describe('<Form />', () => {
     expect(inputs[1].value).toBe(values.password);
   });
 
+  test('sets non-plain object field with setValues()', async () => {
+    const wrapper = mountWithHoc({
+      template: `
+      <VForm ref="form">
+        <Field id="nonPlain" name="nonPlain" />
+      </VForm>
+    `,
+    });
+
+    await flushPromises();
+
+    class NonPlain {
+      field = 5;
+    }
+    const nonPlain = new NonPlain();
+    (wrapper.$refs as any)?.form.setValues({
+      nonPlain,
+    });
+
+    const realValues = (wrapper.$refs as any).form.getValues();
+    await flushPromises();
+    expect(realValues.nonPlain).toBeInstanceOf(NonPlain);
+    expect(realValues.nonPlain).toStrictEqual(nonPlain);
+  });
+
   test('handles submit with handleSubmit and passing the event object', async () => {
     const spy = vi.fn();
     const wrapper = mountWithHoc({
