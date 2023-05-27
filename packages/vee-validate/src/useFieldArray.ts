@@ -1,7 +1,7 @@
-import { Ref, unref, ref, onBeforeUnmount, watch } from 'vue';
+import { Ref, unref, ref, onBeforeUnmount, watch, MaybeRef } from 'vue';
 import { isNullOrUndefined } from '../../shared';
 import { FormContextKey } from './symbols';
-import { FieldArrayContext, FieldEntry, MaybeRef, PrivateFieldArrayContext, PrivateFormContext } from './types';
+import { FieldArrayContext, FieldEntry, PrivateFieldArrayContext, PrivateFormContext } from './types';
 import { computedDeep, getFromPath, injectWithSelf, warn, isEqual, setInPath } from './utils';
 
 export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): FieldArrayContext<TValue> {

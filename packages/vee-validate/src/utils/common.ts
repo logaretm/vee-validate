@@ -3,17 +3,19 @@ import {
   getCurrentInstance,
   inject,
   InjectionKey,
-  isRef,
+  MaybeRefOrGetter,
   ref,
   Ref,
   unref,
+  toValue,
   warn as vueWarning,
   watch,
+  MaybeRef,
 } from 'vue';
 import { klona as deepCopy } from 'klona/full';
-import { isCallable, isIndex, isNullOrUndefined, isObject, toNumber } from '../../../shared';
+import { isIndex, isNullOrUndefined, isObject, toNumber } from '../../../shared';
 import { isContainerValue, isEmptyContainer, isEqual, isNotNestedPath } from './assertions';
-import { GenericObject, MaybeRef, MaybeRefOrLazy, PrivateFieldContext } from '../types';
+import { GenericObject } from '../types';
 import { FormContextKey, FieldContextKey } from '../symbols';
 
 function cleanupNonNestedPath(path: string) {
@@ -299,16 +301,8 @@ export function computedDeep<TValue = unknown>({ get, set }: { get(): TValue; se
   return baseRef;
 }
 
-export function unravel<T>(value: MaybeRefOrLazy<T>): T {
-  if (isCallable(value)) {
-    return value();
-  }
-
-  return unref(value);
-}
-
-export function lazyToRef<T>(value: MaybeRefOrLazy<T>): Ref<T> {
-  return computed(() => unravel(value));
+export function lazyToRef<T>(value: MaybeRefOrGetter<T>): Ref<T> {
+  return computed(() => toValue(value));
 }
 
 export function normalizeErrorItem(message: string | string[] | null | undefined) {

@@ -7,16 +7,16 @@
     "build": "astro build && node scripts/afterBuild.js"
   },
   "dependencies": {
-    "@astrojs/mdx": "^0.19.1",
+    "@astrojs/mdx": "^0.19.2",
     "@astrojs/sitemap": "^1.3.1",
-    "@astrojs/vue": "^2.1.1",
-    "@docsearch/css": "^3.3.3",
-    "@docsearch/js": "^3.3.3",
+    "@astrojs/vue": "^2.2.0",
+    "@docsearch/css": "^3.3.5",
+    "@docsearch/js": "^3.3.5",
     "@floating-ui/dom": "^1.2.8",
     "@stackblitz/sdk": "^1.9.0",
     "@types/fs-extra": "^11.0.1",
     "@vueuse/core": "^10.1.2",
-    "astro": "^2.4.5",
+    "astro": "^2.5.1",
     "autoprefixer": "^10.4.13",
     "fs-extra": "^11.1.1",
     "jsdom": "^22.0.0",
@@ -24,6 +24,6 @@
     "shiki": "^0.14.2",
     "tailwindcss": "^3.3.2",
     "unist-util-visit": "^4.1.2",
-    "vue": "^3.3.2"
+    "vue": "^3.3.0"
   }
 }

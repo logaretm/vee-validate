@@ -1,6 +1,5 @@
-import { computed, inject, unref } from 'vue';
+import { computed, inject, unref, MaybeRef } from 'vue';
 import { FieldContextKey, FormContextKey } from './symbols';
-import { MaybeRef } from './types';
 import { injectWithSelf } from './utils';
 
 /**

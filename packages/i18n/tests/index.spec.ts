@@ -1,8 +1,8 @@
-import { defineRule, configure, FieldContext, useField } from '@/vee-validate';
+import { Ref } from 'vue';
+import { defineRule, configure, useField } from '@/vee-validate';
 import { required, between } from '@/rules';
 import { localize, setLocale } from '@/i18n';
 import { mountWithHoc, setValue, flushPromises } from '../../vee-validate/tests/helpers';
-import { Ref } from 'vue';
 
 defineRule('required', required);
 defineRule('between', between);

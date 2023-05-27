@@ -1,5 +1,5 @@
-import { computed, isRef, reactive, ref, Ref, unref, watch } from 'vue';
-import { FieldMeta, FieldState, FieldValidator, InputType, MaybeRef, PrivateFormContext, PathState } from './types';
+import { computed, isRef, reactive, ref, Ref, unref, watch, MaybeRef } from 'vue';
+import { FieldMeta, FieldState, FieldValidator, InputType, PrivateFormContext, PathState } from './types';
 import { getFromPath, isEqual, normalizeErrorItem } from './utils';
 
 export interface StateSetterInit<TValue = unknown> extends FieldState<TValue> {
