@@ -30,7 +30,7 @@
   "dependencies": {
     "type-fest": "^3.11.0",
     "vee-validate": "^4.9.6",
-    "yup": "^1.1.1"
+    "yup": "^1.2.0"
   },
   "publishConfig": {
     "access": "public"
