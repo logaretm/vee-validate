@@ -1,14 +1,11 @@
 <script setup>
 import { useForm } from 'vee-validate';
-import { toTypedSchema } from '@vee-validate/zod';
-import { z } from 'zod';
+import * as yup from 'yup';
 
-const schema = toTypedSchema(
-  z.object({
-    email: z.string().email().min(1, 'Required'),
-    password: z.string().min(6),
-  })
-);
+const schema = yup.object({
+  email: yup.string().email().required(),
+  password: yup.string().min(6).required(),
+});
 
 const { defineInputBinds, errors, handleSubmit } = useForm({
   validationSchema: schema,
