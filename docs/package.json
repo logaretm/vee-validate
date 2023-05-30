@@ -15,6 +15,7 @@
     "@floating-ui/dom": "^1.4.2",
     "@stackblitz/sdk": "^1.9.0",
     "@types/fs-extra": "^11.0.1",
+    "@vue/repl": "^1.4.1",
     "@vueuse/core": "^10.2.1",
     "astro": "^2.7.1",
     "autoprefixer": "^10.4.13",
