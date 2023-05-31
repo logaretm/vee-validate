@@ -1,5 +1,12 @@
 # Change Log
 
+## 4.9.6
+
+### Patch Changes
+
+- b138282a: fix(types): export SetFieldValueOptions interface closes #4290
+- 6e074f77: fix: handleBlur should respect blur validate config closes #4285
+
 ## 4.9.5
 
 ### Patch Changes
