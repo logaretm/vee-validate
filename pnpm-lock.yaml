@@ -161,6 +161,12 @@ importers:
       '@types/fs-extra':
         specifier: ^11.0.1
         version: 11.0.1
+      '@vee-validate/yup':
+        specifier: 4.9.6
+        version: link:../packages/yup
+      '@vee-validate/zod':
+        specifier: 4.9.6
+        version: link:../packages/zod
       '@vue/repl':
         specifier: ^1.4.1
         version: 1.4.1(vue@3.3.4)
@@ -191,9 +197,18 @@ importers:
       unist-util-visit:
         specifier: ^4.1.2
         version: 4.1.2
+      vee-validate:
+        specifier: ^4.9.6
+        version: link:../packages/vee-validate
       vue:
         specifier: ^3.3.0
         version: 3.3.4
+      yup:
+        specifier: ^1.2.0
+        version: 1.2.0
+      zod:
+        specifier: ^3.21.4
+        version: 3.21.4
 
   packages/i18n: {}
 
