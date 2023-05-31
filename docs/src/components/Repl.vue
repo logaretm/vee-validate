@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" async>
 import { watchEffect } from 'vue';
 import '@vue/repl/style.css';
 import { Repl, ReplStore } from '@vue/repl';
@@ -7,8 +7,16 @@ const props = defineProps<{
   files: Record<string, string>;
 }>();
 
+const files = await Promise.all(
+  Object.entries(props.files).map(async ([filename, componentName]) => {
+    const code = await import(`./examples/${componentName}.vue?raw`);
+
+    return [filename, code.default];
+  })
+);
+
 const store = new ReplStore({
-  serializedState: btoa(JSON.stringify(props.files)),
+  serializedState: btoa(JSON.stringify(Object.fromEntries(files))),
 });
 
 // persist state to URL hash

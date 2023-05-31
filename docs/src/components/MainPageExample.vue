@@ -22,11 +22,15 @@
     </div>
 
     <div v-if="currentFlavor === 'components'" class="w-full">
-      <Repl :files="{ 'App.vue': ComponentsBasicExample }" />
+      <Suspense>
+        <Repl :files="{ 'App.vue': 'ComponentsBasic' }" />
+      </Suspense>
     </div>
 
     <div v-else class="w-full">
-      <Repl :files="{ 'App.vue': CompositionBasicExample }" />
+      <Suspense>
+        <Repl :files="{ 'App.vue': 'CompositionBasic' }" />
+      </Suspense>
     </div>
   </div>
 </template>
@@ -34,8 +38,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import Repl from './Repl.vue';
-import ComponentsBasicExample from '@/components/examples/ComponentsBasic.vue?raw';
-import CompositionBasicExample from '@/components/examples/CompositionBasic.vue?raw';
 
 const currentFlavor = ref<'components' | 'composition'>('components');
 
