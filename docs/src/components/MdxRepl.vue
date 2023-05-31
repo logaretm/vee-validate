@@ -1,7 +1,7 @@
 <template>
   <div class="my-8">
     <Suspense>
-      <Repl :files="files" client:only v-if="mounted" />
+      <Repl :files="files" v-if="mounted" />
     </Suspense>
   </div>
 </template>

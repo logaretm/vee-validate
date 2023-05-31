@@ -46,3 +46,19 @@ store.setVueVersion('3.3.4');
 <template>
   <Repl :store="store" :showCompileOutput="false" :ssr="false" :showImportMap="false" />
 </template>
+
+<style lang="postcss" scoped>
+.vue-repl {
+  &:deep(iframe) {
+    margin: 0;
+  }
+
+  &:deep(.stretch) {
+    @apply items-stretch;
+  }
+
+  &:deep(.right) {
+    height: unset;
+  }
+}
+</style>
