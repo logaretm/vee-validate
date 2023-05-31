@@ -155,6 +155,7 @@ export function generateLinks({ url }) {
 
 export interface Frontmatter {
   title: string;
+  menuTitle?: string;
   order: number;
 }
 
@@ -166,6 +167,7 @@ export function buildMenu(pages: { url?: string; frontmatter: Frontmatter; child
   ].map(p => {
     return {
       title: p.frontmatter.title,
+      menuTitle: p.frontmatter.menuTitle,
       order: p.frontmatter.order,
       path: p.url || '',
       children: p.children ? buildMenu(p.children) : undefined,

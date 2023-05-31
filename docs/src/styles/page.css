@@ -1,6 +1,6 @@
 .PageApp {
   @apply h-full mx-auto;
-  max-width: 1500px;
+  max-width: 1600px;
   grid-template-areas:
     'content'
     'footer';

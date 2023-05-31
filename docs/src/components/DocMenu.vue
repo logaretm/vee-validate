@@ -41,7 +41,7 @@
                   @click="expanded[page.title] = !expanded[page.title]"
                 >
                   <Icon :name="page.icon" class="w-5 h-5 fill-current" />
-                  <span class="ml-2 group-hover:text-accent-800">{{ page.title }}</span>
+                  <span class="ml-2 group-hover:text-accent-800">{{ page.menuTitle || page.title }}</span>
 
                   <svg
                     class="ml-auto w-5 h-5"
