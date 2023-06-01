@@ -8,6 +8,7 @@ import EditPage from '@/components/EditPage.vue';
 import SponsorButton from '@/components/SponsorButton.vue';
 import DocMenu from '@/components/DocMenu.vue';
 import DocToc from '@/components/DocToc.vue';
+import DocNextStep from '@/components/DocNextStep.vue';
 import DocSearch from '@/components/DocSearch.vue';
 import ContentWrapper from '@/components/ContentWrapper.vue';
 import { buildMenu, Frontmatter } from '@/utils/seo';
@@ -16,6 +17,8 @@ import '@/styles/page.css';
 
 const { headings, frontmatter } = Astro.props;
 const filePath = path.relative(path.resolve('../'), frontmatter.file);
+
+const page = frontmatter as Frontmatter;
 
 const menu = [
   {
@@ -78,6 +81,8 @@ const menu = [
         <ContentWrapper>
           <slot />
         </ContentWrapper>
+
+        {page.next && <DocNextStep {...page.next} />}
 
         <div class="mt-20 pt-2 border-t dark:border-gray-600 border-gray-200 flex items-center">
           <EditPage path={filePath} />

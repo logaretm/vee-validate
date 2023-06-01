@@ -3,7 +3,12 @@ layout: ../../../layouts/PageLayout.astro
 title: Getting started
 description: Field-level and form-level validation and validation behavior and error messages with composition API
 order: 1
-next: guide/composition-api/handling-forms
+next:
+  path: guide/composition-api/handling-forms
+  title: Handling forms
+  description: Submissions, resets and form state
+  intro: |
+    Now that you've learned how to use forms to define fields, collect their values and validate them. Next, you will learn how to handle submissions and implement advanced patterns with forms.
 ---
 
 import DocTip from '@/components/DocTip.vue';
@@ -293,7 +298,3 @@ When the validation schema value changes, only the fields that were validated at
 The other ways depend on which validation library you are using, for example with yup you can achieve the same with `yup.lazy` or `zod.lazy`:
 
 <Repl files={{ 'App.vue': 'CompositionDynamicSchemaYupLazy' }} client:only />
-
----
-
-Now that you've learned how to use forms to define fields, collect their values and validate them. Next, you will learn how to handle submissions and implement advanced patterns with forms.
