@@ -12,16 +12,102 @@ next:
 ---
 
 import DocTip from '@/components/DocTip.vue';
+import Repl from '@/components/MdxRepl.vue';
 
-## Validation Behavior
+## What is `useField`
 
-import LiveExample from '@/components/LiveExample.vue';
+So far we've been using `useForm` to create forms and use `defineInputBinds` or `defineComponentBinds` to create our field binding objects to integrate them with our fields. However that usually requires a lot of boilerplate code to create the binding object and the field component.
 
-<DocTip>
+For example this how a 5-field form looks like with `useForm` and `defineInputBinds`:
 
-This is only relevant to the `useField` and `useForm` API
+```js
+const { defineInputBinds } = useForm();
 
-</DocTip>
+const email = defineInputBinds('email');
+const password = defineInputBinds('password');
+const passwordConfirm = defineInputBinds('passwordConfirm');
+const firstName = defineInputBinds('firstName');
+const lastName = defineInputBinds('lastName');
+```
+
+This can get ugly very quickly especially if you have a bunch of field arrays or nested fields involved. This is one of the downsides of using an imperative API, but with `useField` you can switch to declarative API and get rid of all that boilerplate code.
+
+`useField` is a composition function that similar to how `useForm` makes it easier to manage forms, it makes easier to create and manage input components. You should use it when creating custom input components and that means you've made the choice that vee-validate will be an integral part of your input component system.
+
+## Creating a custom input component
+
+Let's start with a simple example, we will create a `InputText` component that represents a text field. It can be as simple as this:
+
+```vue
+<template>
+  <input v-model="value" />
+  {{ errorMessage }}
+</template>
+
+<script setup>
+import { useField } from 'vee-validate';
+
+const props = defineProps({
+  name: String,
+});
+
+// The `name` is returned in a function because we want to make sure it stays reactive
+// If the name changes you want `useField` to be able to pick it up
+const { value, errorMessage } = useField(() => props.name);
+</script>
+```
+
+This works exactly the same way as with `defineInputBinds`, but now since you have a vee-validate field component, you can use it directly in any component with a form context and it will just work:
+
+Here is a live example:
+
+<Repl files={{ 'App.vue': 'CompositionCustomField01', 'InputText.vue': 'CustomInputFieldBasic' }} client:only />
+
+Notice how much of the burden of defining fields went away as soon as switched to the declarative approach. This is where `useField` really shines, but that's just us getting started. Following along in this guide to make the most out of `useField`.
+
+# v-model Support
+
+The `useField` function can automatically manage `v-model` integration for you. Usually you will need to do this in every component you create:
+
+```js
+const props = defineProps({
+  modelValue: String,
+});
+
+const emit = defineEmits(['update:modelValue']);
+```
+
+Instead you can let `useField` do that for you by telling it to enable `v-model` syncing:
+
+```js
+const props = defineProps({
+  modelValue: String,
+});
+
+const { value, errorMessage } = useField('fieldName', undefined, {
+  syncModel: true,
+});
+```
+
+Now whenever `value` changes, you will emit an `update:modelValue` event with the new value. This is useful when you want to use `v-model` with your custom input component:
+
+<Repl files={{ 'App.vue': 'CompositionCustomField02', 'InputText.vue': 'CustomInputFieldVModel' }} client:only />
+
+You can also use different prop names for the `modelValue`, for example `v-model:text` can be implemented by passing the model name directly to `syncModel`.
+
+```js
+const props = defineProps({
+  text: String,
+});
+
+const { value, errorMessage } = useField('fieldName', undefined, {
+  syncModel: 'text',
+});
+```
+
+This will emit `onUpdate:text` instead of `onUpdate:modelValue` whenever the `value` changes.
+
+---
 
 By default vee-validate runs validation whenever the `value` ref changes whether it was bound by a `v-model` or changed in your code:
 
