@@ -13,36 +13,21 @@ next:
 
 import DocTip from '@/components/DocTip.vue';
 import DocBadge from '@/components/DocBadge.vue';
+import Repl from '@/components/MdxRepl.vue';
 
 # Nested Objects and Arrays
 
-vee-validate supports nested objects and arrays by using field name syntax to indicate a field's path. This allows you to structure forms easily to make data mapping straightforward without having to deal with flat form values.
+vee-validate supports nested objects and arrays by using field path syntax to indicate a field's path. This allows you to structure forms easily to make data mapping straightforward without having to deal with flat form values.
 
 ## Nested Objects
 
 You can specify a field to be nested in an object using dot paths, like what you would normally do in JavaScript to access a nested property. The field's `name` acts as the path for that field in the form values:
 
-```vue
-<template>
-  <form @submit="onSubmit">
-    <input v-model="twitter" type="url" />
-    <input v-model="github" type="url" />
+```js
+const { defineInputBinds } = useForm();
 
-    <button>Submit</button>
-  </form>
-</template>
-
-<script setup>
-import { useField, useForm } from 'vee-validate';
-
-const { handleSubmit } = useForm();
-const onSubmit = handleSubmit(values => {
-  alert(JSON.stringify(values, null, 2));
-});
-
-const { value: twitter } = useField('links.twitter');
-const { value: github } = useField('links.github');
-</script>
+const twitterLink = defineInputBinds('links.twitter');
+const githubLink = defineInputBinds('links.github');
 ```
 
 Submitting the previous form would result in the following values being passed to your handler:
@@ -56,36 +41,26 @@ Submitting the previous form would result in the following values being passed t
 }
 ```
 
+Here is a live example so you can see it in action.
+
+<Repl files={{ 'App.vue': 'CompositionNested01' }} client:only />
+
 You are not limited to a specific depth, you can nest as much as you like.
 
 ## Nested Arrays
 
 Similar to objects, you can also nest your values in an array, using square brackets just like how you would do it in JavaScript.
 
+```js
+const { defineInputBinds } = useForm();
+
+const twitterLink = defineInputBinds('links[0]');
+const githubLink = defineInputBinds('links[1]');
+```
+
 Here is the same example as above but in array format:
 
-```vue
-<template>
-  <form @submit="onSubmit">
-    <input v-model="twitter" type="url" />
-    <input v-model="github" type="url" />
-
-    <button>Submit</button>
-  </form>
-</template>
-
-<script setup>
-import { useField, useForm } from 'vee-validate';
-
-const { handleSubmit } = useForm();
-const onSubmit = handleSubmit(values => {
-  alert(JSON.stringify(values, null, 2));
-});
-
-const { value: twitter } = useField('links[0]');
-const { value: github } = useField('links[1]');
-</script>
-```
+<Repl files={{ 'App.vue': 'CompositionNested02' }} client:only />
 
 Submitting the previous form would result in the following values being passed to your handler:
 
@@ -108,27 +83,11 @@ vee-validate will only create nested arrays if the path expression is a complete
 
 If your fields' names are using the dot notation and you want to avoid the nesting behavior which is enabled by default, all you need to do is wrap your field names in square brackets (`[]`) to disable nesting for those fields.
 
-```vue
-<template>
-  <form @submit="onSubmit">
-    <input v-model="twitter" type="url" />
-    <input v-model="github" type="url" />
+```js
+const { defineInputBinds } = useForm();
 
-    <button>Submit</button>
-  </form>
-</template>
-
-<script setup>
-import { useField, useForm } from 'vee-validate';
-
-const { handleSubmit } = useForm();
-const onSubmit = handleSubmit(values => {
-  alert(JSON.stringify(values, null, 2));
-});
-
-const { value: twitter } = useField('[links.twitter]');
-const { value: github } = useField('[links.github]');
-</script>
+const twitter = defineInputBinds('[links.twitter]');
+const github = defineInputBinds('[links.github]');
 ```
 
 Submitting the previous form would result in the following values being passed to your handler:
@@ -140,51 +99,35 @@ Submitting the previous form would result in the following values being passed t
 }
 ```
 
-## Field Arrays <DocBadge title="v4.5" />
+Here is a live example on that:
+
+<Repl files={{ 'App.vue': 'CompositionNested03' }} client:only />
+
+## Field Arrays
 
 Field arrays are a special type of nested array fields, they are often used to collect repeatable pieces of data or repeatable forms. They are often called "repeatable fields".
 
-Unlike the [components](/guide/components/nested-objects-and-arrays) API, it can be tricky to set up a group of repeatable fields with the composition API in the same component. This is because you usually need an input component to iterate over.
+To set up a repeatable block of the form, you can use `useFieldArray` to help you manage the array values and operations. It requires a form context to be present so `useForm` must be called before you use `useFieldArray` either in parent component or in the same component.
 
-The following snippet uses the `Field` component as the input component, but you can use any component as long as they call `useField` internally.
+```js
+import { useForm, useFieldArray } from 'vee-validate';
 
-To set up a repeatable field, you can use `useFieldArray` to help you manage the array values and operations:
+useForm();
 
-```vue
-<template>
-  <form @submit="onSubmit" novalidate>
-    <div v-for="(field, idx) in fields" :key="field.key">
-      <Field :name="`links[${idx}]`" type="url" />
-
-      <button type="button" @click="remove(idx)">Remove</button>
-    </div>
-
-    <button type="button" @click="push('')">Add</button>
-
-    <button>Submit</button>
-  </form>
-</template>
-
-<script setup>
-import { Field, useForm, useFieldArray } from 'vee-validate';
-
-const { handleSubmit } = useForm({
-  initialValues: {
-    links: ['https://github.com/logaretm'],
-  },
-});
-
-const { remove, push, fields } = useFieldArray('links');
-
-const onSubmit = handleSubmit(values => {
-  console.log(JSON.stringify(values, null, 2));
-});
-</script>
+const { remove, push, fields } = useFieldArray('users');
 ```
+
+The `useFieldArray` exposes a few properties and functions to help you manage the array fields, the most special one is the `fields` array which contains the array items and represents their current value in the form. You will use `fields` as an iteration source to render the array items.
+
+Here is an example of a repeatable block of fields, we mutate the field value with `v-model` directly on the iteration item value.
+
+<Repl files={{ 'App.vue': 'CompositionNested04' }} client:only />
+
+Notice that we used `field.key` as the key of the iteration, this is because vee-validate generates a unique key for each array item so you can rely it on without having to generate them yourself.
 
 ### Field Array Paths
 
-When planning to use `useFieldArray` you need to provide a `name` prop which is the path of the array starting from the root form value, you can use dot notation for object paths or indices for array paths.
+When calling `useFieldArray` you need to provide a `name` prop which is the path of the array starting from the root form value, you can use dot notation for object paths or indices for array paths.
 
 Here are a few examples:
 
@@ -199,34 +142,6 @@ _*Iterate over the `domains` inside `settings.dns` object:*_
 ```js
 const { remove, push, fields } = useFieldArray('settings.dns.domains');
 ```
-
-### Iteration Keys
-
-The `FieldArrayEntry` item exposes a `key` property, this property is unique and is auto-generated for you so you can use it as an iteration key.
-
-```vue
-<template>
-  <form @submit="onSubmit" novalidate>
-    <div v-for="(field, idx) in fields" :key="field.key">
-      <Field :name="`links[${idx}]`" type="url" />
-    </div>
-  </form>
-</template>
-
-<script setup>
-import { Field, useForm, useFieldArray } from 'vee-validate';
-
-const { handleSubmit } = useForm({
-  initialValues: {
-    links: ['https://github.com/logaretm'],
-  },
-});
-
-const { fields } = useFieldArray('links');
-</script>
-```
-
-This auto-generated `key` property is very convenient as you no longer have to provide your own unique key for each item.
 
 ### Array Helpers
 
@@ -278,44 +193,10 @@ const field = useField('field', undefined, {
 
 When referencing errors using `errors` object returned from the `useForm` function. Make sure to reference the field name in the same way you set it on the `name` argument for that field. So even if you avoid nesting you should always include the square brackets. In other words `errors` do not get nested, they are always flat.
 
-### Nested Fields With Validation Schema
+Since vee-validate supports `yup` and `zod` schemas, referencing the nested fields may vary depending on how you are specifying the schema.
 
-Since vee-validate supports [form-level validation](/guide/composition-api/validation#form-level-validation), referencing the nested fields may vary depending on how you are specifying the schema.
+If you are using yup, you can utilize the nested `yup.object` or `yup.array` schemas to provide validation for your nested fields, here is an example:
 
-If you are using yup, you can utilize the nested `yup.object` or `yup.array` schemas to provide validation for your nested fields, here is a quick example:
-
-```vue
-<template>
-  <form @submit="onSubmit">
-    <input v-model="name" />
-    <span>{{ errors['user.name'] }}</span>
-    <input v-model="address" />
-    <span>{{ errors['user.addresses[0]'] }}</span>
-
-    <button>Submit</button>
-  </form>
-</template>
-
-<script setup>
-import { useField, useForm } from 'vee-validate';
-import * as yup from 'yup';
-
-const { handleSubmit, errors } = useForm({
-  validationSchema: yup.object({
-    user: yup.object({
-      name: yup.string().required(),
-      addresses: yup.array().of(yup.string().required()),
-    }),
-  }),
-});
-
-const { value: name } = useField('user.name');
-const { value: address } = useField('user.addresses[0]');
-
-const onSubmit = handleSubmit(values => {
-  alert(JSON.stringify(values, null, 2));
-});
-</script>
-```
+<Repl files={{ 'App.vue': 'CompositionNested05' }} client:only />
 
 You can [visit this link](/examples/array-fields) for a practical example using nested arrays.
