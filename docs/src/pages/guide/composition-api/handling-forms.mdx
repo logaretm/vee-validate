@@ -12,10 +12,11 @@ next:
 ---
 
 import DocTip from '@/components/DocTip.vue';
+import Repl from '@/components/MdxRepl.vue';
 
 # Handling Forms
 
-vee-validate offers many helpers to handle form submissions, resets, and DX to make your forms much easier to reason about and less of a burden to maintain. The `useForm` function allow you to easily handle:
+vee-validate makes it easy to handle form submissions, resets, and DX to make your forms much easier to reason about and less of a burden to maintain. The `useForm` function allow you to easily handle:
 
 <div class="features">
 
@@ -45,25 +46,9 @@ meta.value.initialValues;
 - `pending`: If at least one field's validation is still pending.
 - `initialValues`: All fields' initial values, packed into an object where the keys are the field names.
 
-Here is a simple example where we disable the form's submit button if no value was changed.
+Here is a simple example where we disable the form's submit button if the value did not change.
 
-```vue
-<template>
-  <form>
-    <input v-bind="name" />
-
-    <button :disabled="!meta.dirty">Submit</button>
-  </form>
-</template>
-
-<script setup>
-import { useForm } from 'vee-validate';
-
-const { meta, defineInputBinds } = useForm();
-
-const name = defineInputBinds('name');
-</script>
-```
+<Repl files={{ 'App.vue': 'CompositionHandlingForms01' }} client:only />
 
 ## Handling Submissions
 
@@ -73,12 +58,8 @@ vee-validate exposes useful defaults to help you handle form submissions whether
 
 To handle submissions, you can use the `handleSubmit` function to create submission handlers for your forms, the `handleSubmit` function accepts a callback that receives the final form values.
 
-```vue
-<script setup>
-import { useForm } from 'vee-validate';
-import * as yup from 'yup';
-
-const { errors, handleSubmit, defineInputBinds } = useForm({
+```js
+const { handleSubmit } = useForm({
   validationSchema: yup.object({
     email: yup.string().min(1).email(),
     password: yup.string().min(6),
@@ -87,26 +68,15 @@ const { errors, handleSubmit, defineInputBinds } = useForm({
 
 // Creates a submission handler
 // It validate all fields and doesn't call your function unless all fields are valid
+// You can bind `onSubmit` to forms submit event, or call it directly to submit the current data.
 const onSubmit = handleSubmit(values => {
   alert(JSON.stringify(values, null, 2));
 });
-
-const email = defineInputBinds('email');
-const password = defineInputBinds('email');
-</script>
-
-<template>
-  <form @submit="onSubmit">
-    <input v-bind="email" />
-    <span>{{ errors.email }}</span>
-
-    <input v-bind="password" />
-    <span>{{ errors.password }}</span>
-
-    <button>Submit</button>
-  </form>
-</template>
 ```
+
+Here is an example that makes use of `handleSubmit` to validate before submitting the form.
+
+<Repl files={{ 'App.vue': 'CompositionHandlingForms02' }} client:only />
 
 The `handleSubmit` function will only execute your callback once the returned function (`onSubmit` in the example) if all fields are valid, meaning you don't have to handle if the form is invalid in your logic.
 
@@ -172,46 +142,7 @@ const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
 
 Here is a quick example on how to scroll to and focus the first invalid field after a failed submission attempt.
 
-```vue
-<script setup>
-import { useForm } from 'vee-validate';
-import * as yup from 'yup';
-
-const { errors, handleSubmit, defineInputBinds } = useForm({
-  validationSchema: yup.object({
-    email: yup.string().min(1).email(),
-    password: yup.string().min(6),
-  }),
-});
-
-const onSubmit = handleSubmit(
-  values => {
-    alert(JSON.stringify(values, null, 2));
-  },
-  ({ errors }) => {
-    const firstError = Object.keys(errors)[0];
-    const el = document.querySelector(`[name="${firstError}"]`);
-    el.scrollIntoView();
-    el.focus();
-  }
-);
-
-const email = defineInputBinds('email');
-const password = defineInputBinds('email');
-</script>
-
-<template>
-  <form @submit="onSubmit">
-    <input v-bind="email" name="email" />
-    <span>{{ errors.email }}</span>
-
-    <input v-bind="password" name="password" />
-    <span>{{ errors.password }}</span>
-
-    <button>Submit</button>
-  </form>
-</template>
-```
+<Repl files={{ 'App.vue': 'CompositionHandlingForms03' }} client:only />
 
 ### Submission Progress
 
@@ -219,73 +150,23 @@ Quite often you need to show your users a submission indicator, or you might wan
 
 The `isSubmitting` state will be set to `true` once the validation of the form starts (as a result of a submit event) and will keep track of the submission handler you passed to either `onSubmit` or until it calls `submitForm`. If the submission handler throws any errors or completes successfully it will be set to `false` afterward.
 
-```vue
-<script setup>
-import { useForm } from 'vee-validate';
-
-const { handleSubmit, defineInputBinds, isSubmitting } = useForm();
-
-const onSubmit = handleSubmit(values => {
-  // Simulates a 2 second delay
-  return new Promise(resolve => {
-    setTimeout(() => {
-      console.log('Submitted', JSON.stringify(values, null, 2));
-      resolve();
-    }, 2000);
-  });
-});
-
-const email = defineInputBinds('email');
-const password = defineInputBinds('email');
-</script>
-
-<template>
-  <form @submit="onSubmit">
-    <input v-bind="email" />
-    <span>{{ errors.email }}</span>
-
-    <input v-bind="password" />
-    <span>{{ errors.password }}</span>
-
-    <button :disabled="isSubmitting">
-      {{ isSubmitting ? 'Submitting...' : 'Submit' }}
-    </button>
-  </form>
-</template>
+```js
+const { isSubmitting } = useForm();
 ```
+
+<Repl files={{ 'App.vue': 'CompositionHandlingForms04' }} client:only />
 
 ### Submit Count
 
-The `useForm` function also exposes a `submitCount` ref that you can use to track the number of submissions attempted by the user. Maybe you want to lock the form if too many attempts were made.
+The `useForm` function also exposes a `submitCount` ref that you can use to track the number of submissions attempted by the user. The count is incremented regardless of the validation result.
 
-```vue
-<script setup>
-import { useForm } from 'vee-validate';
-
-const { handleSubmit, defineInputBinds, submitCount } = useForm();
-
-const onSubmit = handleSubmit(values => {
-  console.log('Submitted', JSON.stringify(values, null, 2));
-});
-
-const email = defineInputBinds('email');
-const password = defineInputBinds('email');
-</script>
-
-<template>
-  <form @submit="onSubmit">
-    <input v-bind="email" />
-    <span>{{ errors.email }}</span>
-
-    <input v-bind="password" />
-    <span>{{ errors.password }}</span>
-
-    <button :disabled="submitCount > 5">
-      {{ submitCount > 5 ? 'You submitted too many times' : 'Submit' }}
-    </button>
-  </form>
-</template>
+```js
+const { submitCount } = useForm();
 ```
+
+Maybe you want to lock the form if too many attempts were made, or you want to show a message after the first submission attempt.
+
+<Repl files={{ 'App.vue': 'CompositionHandlingForms05' }} client:only />
 
 ### Submission Behavior
 
@@ -312,41 +193,43 @@ vee-validate does the following when calling submission handlers created by `han
 
 Note that there isn't a need to have `isSubmitting` set back to false if you've used `submitForm`, as this submission method will perform a full-page refresh (native forms behavior).
 
-## Initial Values
+## Form Values
+
+You may have noticed in the earlier examples that you can access all fields' values using the `values` reactive object returned by `useForm`.
+
+```js
+const { values } = useForm();
+```
+
+The `values` object is read-only and should not be mutated with a `v-model` or by assigning a value to it. This is because all mutations are done through the vee-validate API, this is because mutations to form state needs to have a context.
+
+For example:
+
+```js
+const { values } = useForm();
+
+// ❌ Do not do that!
+values.email = '';
+```
+
+In order for the form UX to be stable, we need to understand why the email value was set to `''`. Was it being reset? should we run validation again? This is the type of small differences that are a result of vee-validate's design choice based on fields and forms, not values.
+
+### Initial Values
 
 Since with vee-validate you don't have to use `v-model` to track your values, the `useForm` function allows you to define the starting values for your fields, by default all fields start with `undefined` as a value.
 
 Using the `initialValues` option you can send an object that contains the field names as keys and their values:
 
-```vue
-<script setup>
-import { useForm } from 'vee-validate';
-
-const { handleSubmit, defineInputBinds } = useForm({
+```js
+const { defineInputBinds } = useForm({
   initialValues: {
     email: 'test@example.com',
     password: 'p@$$w0rd',
   },
 });
-
-const onSubmit = handleSubmit(values => {
-  console.log(JSON.stringify(values, null, 2));
-});
-
-const email = defineInputBinds('email');
-const password = defineInputBinds('email');
-</script>
-
-<template>
-  <form @submit="onSubmit">
-    <input v-bind="email" />
-
-    <input v-bind="password" />
-
-    <button>Submit</button>
-  </form>
-</template>
 ```
+
+<Repl files={{ 'App.vue': 'CompositionHandlingForms06' }} client:only />
 
 <DocTip>
 
@@ -356,75 +239,97 @@ It's generally recommended that you provide the `initialValues`, this is because
 
 <DocTip>
 
-If you are using Typed schemas with `zod` or `yup` you can define the initial values on the validation schema directly with `.default` instead of having to specify `initialValues`. Check [Typed schemas guide](/guide/typed-schema) for more information.
+If you are using `zod` or `yup` with [Typed schemas](/guide/composition/typed-schema), you can define the initial values on the validation schema directly with `.default` instead of having to specify `initialValues`.
 
 </DocTip>
 
-## Manually Setting Form Values
+### Manually Setting Form Values
 
 You can set any field's value using either `setFieldValue` or `setValues` returned by `useForm`.
 
-```vue
-<script setup>
-import { useForm } from 'vee-validate';
+```js
+const { setFieldValue, setValues } = useForm();
 
-const { defineInputBinds, setFieldValue, setValues } = useForm();
+// Sets a value of a specific field in the form values
+setFieldValue('fieldName', 'value');
 
-function updateValues() {
-  // set a single field value
-  // setFieldValue('email', 'test@example.com');
-
-  // set multiple fields values
-  setValues({
-    email: 'test@example.com',
-    password: 'p@$$w0rd',
-  });
-}
-
-const email = defineInputBinds('email');
-const password = defineInputBinds('email');
-</script>
-
-<template>
-  <input v-bind="email" />
-
-  <input v-bind="password" />
-
-  <button @click="updateValues">Update values</button>
-</template>
+// Merges the given object with the current form values
+setValues({
+  fieldName: 'value',
+});
 ```
+
+<Repl files={{ 'App.vue': 'CompositionHandlingForms07' }} client:only />
+
+### Controlled Values
+
+The form values can be categorized into two categories:
+
+- Controlled values: values that have a form input controlling them via `defineInputBinds` or `defineComponentBinds` or `useField` or `<Field />`.
+- Uncontrolled values: values that are inserted dynamically with `setFieldValue` or inserted initially with initial values.
+
+Sometimes you maybe only interested in controlled values. For example, your initial data contains noisy extra properties from your API and you wish to ignore them when submitting them back to your API.
+
+When accessing `values` from `useForm` result or the submission handler you get all the values, both controlled and uncontrolled values. To get access to only the controlled values you can use `controlledValues` from the `useForm` result:
+
+```js
+const { handleSubmit, controlledValues } = useForm();
+
+const onSubmit = handleSubmit(async () => {
+  // Send only controlled values to the API
+  // Only fields declared with `useField` or `useFieldModel` will be sent
+  const response = await client.post('/users/', controlledValues.value);
+});
+```
+
+Alternatively for less verbosity, you can create submission handlers with only the controlled values with `handleSubmit.withControlled` which has the same API as `handleSubmit`:
+
+```js
+const { handleSubmit } = useForm();
+
+const onSubmit = handleSubmit.withControlled(async values => {
+  // Send only controlled values to the API
+  // Only fields declared with `useField` or `useFieldModel` will be sent
+  const response = await client.post('/users/', values);
+});
+```
+
+Here is an example that filters out some noisy initial values when submitting the form using `withControlled` modifier.
+
+<Repl files={{ 'App.vue': 'CompositionHandlingForms12' }} client:only />
 
 ## Handling Resets
 
-vee-validate also handles form resets in a similar way to submissions. When resetting the form, all fields' errors and meta flags will be reset to their original state, including the fields' values.
+vee-validate also handles form resets in a similar way to submissions. When resetting the form, all fields' errors will be cleared, and meta info will be reset to defaults and the values will be reset to their original or initial values.
 
-To reset forms you can use the `resetForm` function returned by `useForm`.
+To reset forms you can use the `resetForm` function returned by `useForm`. You can also reset the form to a new state by passing a `FormState` object to the `resetForm` function. You can then set errors, `touched` meta and the values.
 
-```vue
-<template>
-  <div>
-    <input name="email" v-model="value" />
-
-    <button @click="resetForm()">Reset</button>
-  </div>
-</template>
-
-<script setup>
-import { useForm, useField } from 'vee-validate';
-
+```js
 const { resetForm } = useForm();
-const { value } = useField('email');
-</script>
+
+// Rests the form
+resetForm();
+
+//
+resetForm({
+  touched: {
+    email: false,
+  },
+  errors: {
+    email: 'custom error',
+  },
+  values: {
+    email: 'newvalue@email.com',
+  },
+});
 ```
 
-The `resetForm` accepts an optional `state` object that allows you to specify the new initial values for any of the fields state, this is the shape of the `FormState` object:
+This is the shape of the `FormState` object:
 
 ```ts
 interface FormState {
   // any error messages
   errors: Record<string, string>;
-  // dirty meta flags
-  dirty: Record<string, boolean>;
   // touched meta flags
   touched: Record<string, boolean>;
   // Form Values
@@ -432,16 +337,9 @@ interface FormState {
 }
 ```
 
-In the following snippet, `resetForm` is used to update the form values to specific ones other than their original values. This is useful if your receive your form state asynchronously
+Here is an example where a full-form is being reset:
 
-```js
-resetForm({
-  values: {
-    email: 'example@example.com',
-    password: '',
-  },
-});
-```
+<Repl files={{ 'App.vue': 'CompositionHandlingForms08' }} client:only />
 
 ### Resetting Forms After Submit
 
@@ -461,53 +359,39 @@ export interface FormActions {
 
 This is an example of using the form actions object to reset the form:
 
-```vue
-<template>
-  <form @submit="onSubmit">
-    <!-- fields ... -->
-  </form>
-</template>
+<Repl files={{ 'App.vue': 'CompositionHandlingForms09' }} client:only />
 
-<script setup>
-import { useForm } from 'vee-validate';
+## Errors
 
-const { handleSubmit } = useForm();
+As you have previously seen in some examples, you have access to `errors` with `useForm` that contains a mapping of each field's path and its error message.
 
-const onSubmit = handleSubmit((values, { resetForm }) => {
-  console.log(values); // send data to API
-  // reset the form and the field values to their initial values
-  resetForm();
-});
-</script>
+```js
+const { errors } = useForm();
 ```
 
-## Initial Errors
+However, if you want to display multiple errors for your fields then you can use `errorBag` which is a mapping of each field's path an array of error messages for that field.
+
+```js
+const { errorBag } = useForm();
+```
+
+Here is an example that displays multiple errors for a field:
+
+<Repl files={{ 'App.vue': 'CompositionHandlingForms10' }} client:only />
+
+### Initial Errors
 
 If you are building a non-SPA application it is very common to pre-fill form errors using server-side rendering, frameworks like Laravel and Rails make this very easy to do. vee-validate supports filling the errors initially before any validation is done using the `initialErrors` option.
 
 The `initialErrors` option accepts an object containing the field names as keys with their corresponding error message string.
 
-```vue
-<template>
-  <form>
-    <input type="text" v-model="value" />
-    <span>{{ errorMessage }}</span>
-  </form>
-</template>
-
-<script setup>
-import { useForm, useField } from 'vee-validate';
-
+```js
 useForm({
   initialErrors: {
     email: 'This email is already taken',
     password: 'The password is too short',
   },
 });
-
-const { value, errorMessage } = useField('email');
-// add more fields if needed
-</script>
 ```
 
 <DocTip>
@@ -516,7 +400,7 @@ const { value, errorMessage } = useField('email');
 
 </DocTip>
 
-## Setting Errors Manually
+### Setting Errors Manually
 
 Quite often you will find yourself unable to replicate some validation rules on the client-side due to natural limitations. For example, `unique` email validation is complex to implement on the client-side, which the ability to set errors manually can be useful.
 
@@ -524,16 +408,7 @@ You can set messages for fields by using either `setFieldError` which sets an er
 
 Both functions are available as a return value from `useForm`. In the following example, we check if the server response contains any validation errors and we set them on the fields:
 
-```vue
-<template>
-  <form @submit="onSubmit">
-    <!-- some fields -->
-  </form>
-</template>
-
-<script setup>
-import { useForm } from 'vee-validate';
-
+```js
 const { handleSubmit, setFieldError, setErrors } = useForm();
 
 const onSubmit = handleSubmit(async values => {
@@ -554,7 +429,6 @@ const onSubmit = handleSubmit(async values => {
   // and the values are the error message(s)
   setErrors(response.errors);
 });
-</script>
 ```
 
 Alternatively you can use the `FormActions` passed as the second argument to the `handleSubmit` callback which contains both functions for convenience:
@@ -576,55 +450,6 @@ const onSubmit = handleSubmit(async (values, actions) => {
 });
 ```
 
-## Controlled Values
+Here is an example that sets form errors after submission, usually you will have a backend API that returns the errors:
 
-The form values can be categorized into two categories:
-
-- Controlled values: values that have a form input controlling them via `useField` or `<Field />` or via `useFieldModel` model binding.
-- Uncontrolled values: values that are inserted dynamically with `setFieldValue` or inserted initially with initial values.
-
-Sometimes you maybe only interested in controlled values. For example, your initial data contains noisy extra properties from your API and you wish to ignore them when submitting them back to your API.
-
-When accessing `values` from `useForm` result or the submission handler you get all the values, both controlled and uncontrolled values. To get access to only the controlled values you can use `controlledValues` from the `useForm` result:
-
-```vue
-<template>
-  <form @submit="onSubmit">
-    <!-- some fields -->
-  </form>
-</template>
-
-<script setup>
-import { useForm } from 'vee-validate';
-
-const { handleSubmit, controlledValues } = useForm();
-
-const onSubmit = handleSubmit(async () => {
-  // Send only controlled values to the API
-  // Only fields declared with `useField` or `useFieldModel` will be sent
-  const response = await client.post('/users/', controlledValues.value);
-});
-</script>
-```
-
-Alternatively for less verbosity, you can create handlers with only the controlled values with `handleSubmit.withControlled` which has the same API as `handleSubmit`:
-
-```vue
-<template>
-  <form @submit="onSubmit">
-    <!-- some fields -->
-  </form>
-</template>
-
-<script setup>
-import { useForm } from 'vee-validate';
-
-const { handleSubmit } = useForm();
-
-const onSubmit = handleSubmit.withControlled(async values => {
-  // Send only controlled values to the API
-  // Only fields declared with `useField` or `useFieldModel` will be sent
-  const response = await client.post('/users/', values);
-});
-</script>
-```
+<Repl files={{ 'App.vue': 'CompositionHandlingForms11' }} client:only />

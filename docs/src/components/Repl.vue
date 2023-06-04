@@ -87,6 +87,10 @@ store.setVueVersion('3.3.4');
     --selected-bg: #454158;
     --selected-bg-non-focus: rgba(255, 255, 255, 0.15);
   }
+
+  &:deep(.CodeMirror-scroll) {
+    max-height: 500px;
+  }
 }
 
 .dark {
