@@ -61,8 +61,8 @@ To handle submissions, you can use the `handleSubmit` function to create submiss
 ```js
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
-    email: yup.string().min(1).email(),
-    password: yup.string().min(6),
+    email: yup.string().email().required(),
+    password: yup.string().min(6).required(),
   }),
 });
 
@@ -86,36 +86,9 @@ As a bonus, when the returned function is used as an event handler (like in the 
 
 ### Full-Page Submissions (non-AJAX)
 
-For non-ajax submissions that trigger a full page reload, you can use the `submitForm` function instead of `handleSubmit`. You normally would use this if you are not building a single-page application.
+For non-ajax submissions that trigger a full page reload, you can use the `submitForm` function instead of `handleSubmit`. You normally would use this if you are not building a single-page application. In the following example we submit the form to another tab using the `get` form method.
 
-```vue
-<script setup>
-import { useForm } from 'vee-validate';
-import * as yup from 'yup';
-
-const { errors, submitForm, defineInputBinds } = useForm({
-  validationSchema: yup.object({
-    email: yup.string().min(1).email(),
-    password: yup.string().min(6),
-  }),
-});
-
-const email = defineInputBinds('email');
-const password = defineInputBinds('email');
-</script>
-
-<template>
-  <form action="/users" method="post" @submit="submitForm">
-    <input v-bind="email" />
-    <span>{{ errors.email }}</span>
-
-    <input v-bind="password" />
-    <span>{{ errors.password }}</span>
-
-    <button>Submit</button>
-  </form>
-</template>
-```
+<Repl files={{ 'App.vue': 'CompositionHandlingForms13' }} client:only />
 
 In that case **YOU MUST** use `submitForm` as an event handler for the `submit` event for a native `form` element, otherwise, it would have no effect.
 

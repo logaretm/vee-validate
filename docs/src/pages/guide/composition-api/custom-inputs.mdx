@@ -364,6 +364,15 @@ interface FieldMeta {
 }
 ```
 
+Just like how the form's `meta` is readonly, this is also readonly and you cannot change it directly. Actually, only the `touched` meta value can be mutated using `handleBlur`, all other meta values are automatically updated for you as the field validates or when it changes its value.
+
+```js
+const { meta, handleBlur } = useField('fieldName');
+
+// updates meta.touched = true
+handleBlur();
+```
+
 <DocTip title="Valid Flag Combinations">
 
 Since the `meta.valid` flag is initially `true` (because it just means there are no errors yet), it would cause problems if you have a "success" UI state an indicator.

@@ -6,14 +6,14 @@ import * as yup from 'yup';
 const { errors, defineInputBinds } = useForm({
   validationSchema: toTypedSchema(
     yup.object({
-      email: yup.string().min(1).email(),
-      password: yup.string().min(6),
+      email: yup.string().email().required(),
+      password: yup.string().min(6).required(),
     })
   ),
 });
 
 const email = defineInputBinds('email');
-const password = defineInputBinds('email');
+const password = defineInputBinds('password');
 </script>
 
 <template>

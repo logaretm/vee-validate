@@ -16,7 +16,7 @@ import * as yup from 'yup';
 
 const { errors, handleSubmit, defineInputBinds } = useForm({
   validationSchema: yup.object({
-    email: yup.string().min(1).email().required(),
+    email: yup.string().email().required(),
     password: yup.string().min(6).required(),
   }),
 });
