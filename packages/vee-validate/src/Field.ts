@@ -161,13 +161,9 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
         resolveValidationTriggers(props);
 
       function baseOnBlur(e: Event) {
-        handleBlur(e);
+        handleBlur(e, validateOnBlur);
         if (isCallable(ctx.attrs.onBlur)) {
           ctx.attrs.onBlur(e);
-        }
-
-        if (validateOnBlur) {
-          validateField();
         }
       }
 

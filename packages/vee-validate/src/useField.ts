@@ -159,8 +159,11 @@ function _useField<TValue = unknown>(
   /**
    * Handles common onBlur meta update
    */
-  const handleBlur = () => {
+  const handleBlur = (evt?: unknown, shouldValidate = false) => {
     meta.touched = true;
+    if (shouldValidate) {
+      validateWithStateMutation();
+    }
   };
 
   async function validateCurrentValue(mode: SchemaValidationMode) {
@@ -259,11 +262,6 @@ function _useField<TValue = unknown>(
 
   function setValue(newValue: TValue, shouldValidate = true) {
     value.value = newValue;
-    if (!shouldValidate) {
-      validateValidStateOnly();
-      return;
-    }
-
     const validateFn = shouldValidate ? validateWithStateMutation : validateValidStateOnly;
     validateFn();
   }

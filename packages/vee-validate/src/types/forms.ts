@@ -137,7 +137,7 @@ export interface PrivateFieldContext<TValue = unknown> {
   handleReset(): void;
   validate: FieldValidator;
   handleChange(e: Event | unknown, shouldValidate?: boolean): void;
-  handleBlur(e?: Event): void;
+  handleBlur(e?: Event, shouldValidate?: boolean): void;
   setState(state: Partial<FieldState<TValue>>): void;
   setTouched(isTouched: boolean): void;
   setErrors(message: string | string[]): void;
