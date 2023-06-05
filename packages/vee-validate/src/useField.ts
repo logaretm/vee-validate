@@ -55,6 +55,9 @@ export interface FieldOptions<TValue = unknown> {
   validateOnMount?: boolean;
   bails?: boolean;
   type?: InputType;
+  /**
+   * @deprecated Use `checkedValue` instead.
+   */
   valueProp?: MaybeRef<TValue>;
   checkedValue?: MaybeRef<TValue>;
   uncheckedValue?: MaybeRef<TValue>;
@@ -62,8 +65,11 @@ export interface FieldOptions<TValue = unknown> {
   controlled?: boolean;
   standalone?: boolean;
   keepValueOnUnmount?: MaybeRef<boolean | undefined>;
+  /**
+   * @deprecated Pass the model prop name to `syncVModel` instead.
+   */
   modelPropName?: string;
-  syncVModel?: boolean;
+  syncVModel?: boolean | string;
   form?: FormContext;
 }
 
@@ -107,7 +113,6 @@ function _useField<TValue = unknown>(
     uncheckedValue,
     controlled,
     keepValueOnUnmount,
-    modelPropName,
     syncVModel,
     form: controlForm,
   } = normalizeOptions(opts);
@@ -148,7 +153,7 @@ function _useField<TValue = unknown>(
   const errorMessage = computed(() => errors.value[0]);
 
   if (syncVModel) {
-    useVModel({ value, prop: modelPropName, handleChange });
+    useVModel({ value, prop: syncVModel, handleChange });
   }
 
   /**
@@ -451,15 +456,15 @@ function normalizeOptions<TValue>(opts: Partial<FieldOptions<TValue>> | undefine
     label: undefined,
     validateOnValueUpdate: true,
     keepValueOnUnmount: undefined,
-    modelPropName: 'modelValue',
     syncVModel: false,
     controlled: true,
   });
 
-  const isVModelSynced = opts?.syncVModel ?? true;
+  const isVModelSynced = !!opts?.syncVModel;
+  const modelPropName = typeof opts?.syncVModel === 'string' ? opts.syncVModel : opts?.modelPropName || 'modelValue';
   const initialValue =
     isVModelSynced && !('initialValue' in (opts || {}))
-      ? getCurrentModelValue(getCurrentInstance(), opts?.modelPropName || 'modelValue')
+      ? getCurrentModelValue(getCurrentInstance(), modelPropName)
       : opts?.initialValue;
 
   if (!opts) {
@@ -469,6 +474,7 @@ function normalizeOptions<TValue>(opts: Partial<FieldOptions<TValue>> | undefine
   // TODO: Deprecate this in next major release
   const checkedValue = 'valueProp' in opts ? opts.valueProp : opts.checkedValue;
   const controlled = 'standalone' in opts ? !opts.standalone : opts.controlled;
+  const syncVModel = opts?.modelPropName || opts?.syncVModel || false;
 
   return {
     ...defaults(),
@@ -476,6 +482,7 @@ function normalizeOptions<TValue>(opts: Partial<FieldOptions<TValue>> | undefine
     initialValue,
     controlled: controlled ?? true,
     checkedValue,
+    syncVModel,
   } as FieldOptions<TValue>;
 }
 
@@ -537,7 +544,7 @@ function useFieldWithChecked<TValue = unknown>(
 }
 
 interface ModelOpts<TValue> {
-  prop?: string;
+  prop: string | boolean;
   value: Ref<TValue>;
   handleChange: FieldContext['handleChange'];
 }
@@ -545,14 +552,14 @@ interface ModelOpts<TValue> {
 function useVModel<TValue = unknown>({ prop, value, handleChange }: ModelOpts<TValue>) {
   const vm = getCurrentInstance();
   /* istanbul ignore next */
-  if (!vm) {
+  if (!vm || !prop) {
     if (__DEV__) {
       console.warn('Failed to setup model events because `useField` was not called in setup.');
     }
     return;
   }
 
-  const propName = prop || 'modelValue';
+  const propName = typeof prop === 'string' ? prop : 'modelValue';
   const emitName = `update:${propName}`;
 
   // Component doesn't have a model prop setup (must be defined on the props)

@@ -604,7 +604,7 @@ describe('useField()', () => {
         modelValue: String,
       },
       setup() {
-        const { value, errorMessage } = useField('field');
+        const { value, errorMessage } = useField('field', undefined, { syncVModel: true });
 
         return {
           value,
