@@ -11,10 +11,12 @@ next:
     You've learned to build your form, your custom inputs. Now it is a quick one to figure out how to build special components like submission buttons, reset buttons, error displays and more with these composable helpers.
 ---
 
+# Building Custom inputs
+
 import DocTip from '@/components/DocTip.vue';
 import Repl from '@/components/MdxRepl.vue';
 
-## What is `useField`
+## Imperative vs Declarative
 
 So far we've been using `useForm` to create forms and use `defineInputBinds` or `defineComponentBinds` to create our field binding objects to integrate them with our fields. However that usually requires a lot of boilerplate code to create the binding object and the field component.
 
@@ -24,10 +26,10 @@ For example this how a 5-field form looks like with `useForm` and `defineInputBi
 const { defineInputBinds } = useForm();
 
 const email = defineInputBinds('email');
-const password = defineInputBinds('password');
-const passwordConfirm = defineInputBinds('passwordConfirm');
 const firstName = defineInputBinds('firstName');
 const lastName = defineInputBinds('lastName');
+const password = defineInputBinds('password');
+const passwordConfirm = defineInputBinds('passwordConfirm');
 ```
 
 This can get ugly very quickly especially if you have a bunch of field arrays or nested fields involved. This is one of the downsides of using an imperative API, but with `useField` you can switch to declarative API and get rid of all that boilerplate code.
@@ -77,12 +79,9 @@ You can only validate using field-level validation or form-level validation, you
 
 ### Validating with yup
 
-```ts
-import { useField } from 'vee-validate';
-import * as yup from 'yup';
+You can use Yup schemas to validate fields individually by passing the schema as the second argument to `useField`.
 
-const { value, errorMessage } = useField('email', yup.string().email().required());
-```
+<Repl files={{ 'App.vue': 'CompositionInputFieldYup' }} client:only />
 
 ### Validating with Zod
 
@@ -99,13 +98,7 @@ yarn add @vee-validate/zod
 
 Then you can wrap your zod field schemas with `toTypedSchema` function. [More on that here](/guide/composition-api/typed-schema).
 
-```ts
-import { useField } from 'vee-validate';
-import { toTypedSchema } from '@vee-validate/zod';
-import { z } from 'zod';
-
-const { value, errorMessage } = useField('email', toTypedSchema(z.string().email().required()));
-```
+<Repl files={{ 'App.vue': 'CompositionInputFieldZod' }} client:only />
 
 ### Validating with global validators
 
@@ -117,16 +110,7 @@ You can refer to the full guide on global rules [here](/guide/global-validators)
 
 Another option is to just use any 3rd party validation tool you prefer.
 
-```js
-import { useField } from 'vee-validate';
-import * as yup from 'yup';
-
-function required(value) {
-  return value ? true : 'This field is required';
-}
-
-const { value, errorMessage } = useField('email', required);
-```
+<Repl files={{ 'App.vue': 'CompositionInputFieldFn' }} client:only />
 
 ### Triggers
 
@@ -284,57 +268,29 @@ const { value, errorMessage } = useField('fieldName', undefined, {
 
 This will emit `onUpdate:text` instead of `onUpdate:modelValue` whenever the `value` changes.
 
-## TODO: WE HERE
-
 ## Displaying Error Messages
 
 You've already seen how to display errors with `useForm`. With `useField` you can use `errorMessage` ref:
 
-```vue
-<template>
-  <div>
-    <input v-model="value" type="text" />
-    <span>{{ errorMessage }}</span>
-  </div>
-</template>
+```js
+const { errorMessage, value } = useField('fieldName', yup.string().required());
 
-<script setup>
-import { useField } from 'vee-validate';
-
-function isRequired(value) {
-  // ...
-}
-
-const { errorMessage, value } = useField('fieldName', isRequired);
-</script>
+// contains the error message if available
+errorMessage.value;
 ```
 
 In addition to this, you can get all errors for the field using the `errors` ref which contains multiple error messages if applicable:
 
-```vue
-<template>
-  <div>
-    <input v-model="value" type="text" />
+```js
+const { errors, value } = useField('fieldName', yup.string().required());
 
-    <template v-if="errors.length">
-      <p>Please correct these errors:</p>
-      <ol>
-        <li v-for="message in errors" :key="message">{{ message }}</li>
-      </ol>
-    </template>
-  </div>
-</template>
-
-<script setup>
-import { useField } from 'vee-validate';
-
-function isRequired(value) {
-  // ...
-}
-
-const { errors, value } = useField('fieldName', isRequired);
-</script>
+// contains array of error messages, otherwise empty array
+errors.value;
 ```
+
+Here is an example where each field displays its entire range of error messages:
+
+<Repl files={{ 'App.vue': 'CompositionCustomField04', 'InputText.vue': 'CustomInputFieldMultiErrors' }} client:only />
 
 ### Custom Field Labels
 
@@ -359,13 +315,24 @@ With yup it is very straightforward, you just need to call `label()` after defin
 ```js
 const schema = Yup.object({
   email_addr: Yup.string().email().required().label('Email Address'),
-  acc_pazzword: Yup.string().min(5).required().label('Your Password'),
+  acc_password: Yup.string().min(5).required().label('Your Password'),
+});
+```
+
+#### Custom Labels with Zod
+
+With Zod it is similar, you call the `label` function and give it the name you want to use in the generated message.
+
+```js
+const schema = z.object({
+  email_addr: z.string().email().label('Email Address'),
+  acc_password: z.string().min(5).label('Your Password'),
 });
 ```
 
 If you are interested in how to do the same for global validators check the [i18n guide](/guide/i18n#custom-labels)
 
-### Field-level Meta
+## Field-level Meta
 
 Each field has metadata associated with it, the `meta` property returned from `useField` contains information about the field:
 
@@ -397,24 +364,17 @@ interface FieldMeta {
 }
 ```
 
-In the following example, we use the `meta.dirty` flag to check if the field value was changed or not
+<DocTip title="Valid Flag Combinations">
 
-```vue
-<template>
-  <input v-model="value" type="text" />
+Since the `meta.valid` flag is initially `true` (because it just means there are no errors yet), it would cause problems if you have a "success" UI state an indicator.
 
-  <button :disabled="!meta.dirty">Submit</button>
-</template>
+To avoid this case you should combine the `valid` flag with either `meta.dirty` or `meta.touched` to get an accurate representation. You will see that in action in the next example.
 
-<script setup>
-import { useField } from 'vee-validate';
+</DocTip>
 
-// Provide initial value to make `meta.dirty` accurate
-const { value, meta } = useField('fieldName', undefined, {
-  initialValue: '',
-});
-</script>
-```
+In the following example, we the various meta information flags to style the input with some styling.
+
+<Repl files={{ 'App.vue': 'CompositionCustomField05', 'InputText.vue': 'CustomInputFieldMeta' }} client:only />
 
 <DocTip title="Field Dirty Flag and Initial Values">
 
@@ -423,13 +383,5 @@ Notice in the previous example, we passed an `initialValue`, this is because the
 To get accurate results for the `meta.dirty` flag, you must provide an initial value to your field even if the values are empty.
 
 To reduce the verbosity of adding an `initialValue` prop to each field, you could provide the `initialValues` prop to your `useForm` call instead.
-
-</DocTip>
-
-<DocTip title="Valid Flag Combinations">
-
-Since the `meta.valid` flag is initially `true` (because it just means there are no errors yet), it would cause problems if you have a "success" UI state an indicator.
-
-To avoid this case you should combine the `valid` flag with either `meta.dirty` or `meta.touched` to get an accurate representation.
 
 </DocTip>

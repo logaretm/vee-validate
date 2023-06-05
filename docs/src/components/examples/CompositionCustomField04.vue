@@ -17,8 +17,8 @@ import InputText from './InputText.vue';
 
 const { handleSubmit } = useForm({
   validationSchema: yup.object({
-    firstName: yup.string().required(),
-    lastName: yup.string().required(),
+    firstName: yup.string().required().min(1),
+    lastName: yup.string().required().min(2),
     email: yup.string().required().email(),
     password: yup.string().required().min(6),
     passwordConfirm: yup
