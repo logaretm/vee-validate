@@ -191,7 +191,24 @@ handleChange('new value', true);
 handleChange('new value', false);
 ```
 
-TODO: SOMETHING FOR ON BLUR??
+Let's say you want to validate on `blur` instead. You can use the `handleBlur` in a similar way. The main differences are:
+
+- `handleBlur` doesn't mutate the `value` of the field. It only sets the `meta.touched` to `true`.
+- `handleBlur` does not validate the current value by default, you have to pass `true` as a second argument to trigger validation.
+
+With that info in mind, you can validate on `blur` like so:
+
+```vue-html
+<div>
+  <input
+    :value="value"
+    type="text"
+    @change="handleChange"
+    @blur="handleBlur($event, true)"
+  />
+  <span>{{ errorMessage }}</span>
+</div>
+```
 
 As you can see, the `useField` doesn't care which events you use `handleChange` for. This allows for greater flexibility that's not possible with the `<Field>` component, not as straightforward at least.
 
@@ -266,6 +283,8 @@ const { value, errorMessage } = useField('fieldName', undefined, {
 ```
 
 This will emit `onUpdate:text` instead of `onUpdate:modelValue` whenever the `value` changes.
+
+## TODO: WE HERE
 
 ## Displaying Error Messages
 
