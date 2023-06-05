@@ -65,7 +65,167 @@ Here is a live example:
 
 Notice how much of the burden of defining fields went away as soon as switched to the declarative approach. This is where `useField` really shines, but that's just us getting started. Following along in this guide to make the most out of `useField`.
 
-# v-model Support
+## Validation
+
+All previous examples have used the form's validation schema to validate the individual fields, however you can also define a validation schema for each field individually. The same types of validation libraries are supported.
+
+<DocTip title="Yup Typed Schema">
+
+You can only validate using field-level validation or form-level validation, you cannot mix the two approaches here.
+
+</DocTip>
+
+### Validating with yup
+
+```ts
+import { useField } from 'vee-validate';
+import * as yup from 'yup';
+
+const { value, errorMessage } = useField('email', yup.string().email().required());
+```
+
+### Validating with Zod
+
+You can use [Zod](https://github.com/colinhacks/zod), however you will need to add `@vee-validate/zod` to your dependencies.
+
+```sh
+# with npm
+npm i @vee-validate/zod
+# with pnpm
+pnpm add @vee-validate/zod
+# with yarn
+yarn add @vee-validate/zod
+```
+
+Then you can wrap your zod field schemas with `toTypedSchema` function. [More on that here](/guide/composition-api/typed-schema).
+
+```ts
+import { useField } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import { z } from 'zod';
+
+const { value, errorMessage } = useField('email', toTypedSchema(z.string().email().required()));
+```
+
+### Validating with global validators
+
+Another option is using `@vee-validate/rules` which have been historically bundled with past versions of vee-validate. It includes rules that can be defined globally and then used anywhere using Laravel-like string expressions.
+
+You can refer to the full guide on global rules [here](/guide/global-validators).
+
+### Validating with functions
+
+Another option is to just use any 3rd party validation tool you prefer.
+
+```js
+import { useField } from 'vee-validate';
+import * as yup from 'yup';
+
+function required(value) {
+  return value ? true : 'This field is required';
+}
+
+const { value, errorMessage } = useField('email', required);
+```
+
+### Triggers
+
+#### Default Behavior
+
+By default vee-validate runs validation whenever the `value` ref changes whether it was bound by a `v-model` or changed in your code:
+
+```js
+const { value } = useField('fieldName', yup.string().required());
+
+// validation WILL be triggered
+value.value = 'something';
+```
+
+You can disable that behavior by passing a `validateOnValueUpdate` option set to `false`:
+
+```js
+const { value } = useField('fieldName', yup.string().required(), {
+  validateOnValueUpdate: false,
+});
+
+// validation WILL NOT trigger
+value.value = 'something';
+```
+
+#### Handling Events
+
+`useField()` composition function is not concerned with any events, it only validates whenever the `value` ref changes. However, it gives you everything you need to set up your own validation experience.
+
+The `useField` function exposes some handler functions, each handles a specific aspect of the validation experience:
+
+- `handleChange`: Updates the field value, can be configured to trigger validation or silently update the value
+- `handleBlur`: Updates the `meta.touched` flag, doesn't trigger validation.
+
+```js
+const { handleChange, handleBlur } = useField('someField');
+```
+
+In this example we are validating on `input` event (when the user types), which would make the validation aggressive:
+
+<Repl files={{ 'App.vue': 'CompositionCustomField03', 'InputText.vue': 'CustomInputFieldAggressive' }} client:only />
+
+With a slight adjustment we can make our validation lazy by changing the listener to `@change` (validates when the user leaves the control):
+
+```vue-html
+<div>
+  <input @change="handleChange" :value="value" type="text" />
+  <span>{{ errorMessage }}</span>
+</div>
+```
+
+Note that `handleChange` can be called anywhere, not just in the template and not as just a event handler. You can use it to mutate the field value whenever you want, as an added bonus you can choose if `handleChange` should trigger a validation or not.
+
+```js
+const { handleChange } = useField('someField');
+
+// validates by default
+handleChange('new value');
+// validates
+handleChange('new value', true);
+// Doesn't validate
+handleChange('new value', false);
+```
+
+TODO: SOMETHING FOR ON BLUR??
+
+As you can see, the `useField` doesn't care which events you use `handleChange` for. This allows for greater flexibility that's not possible with the `<Field>` component, not as straightforward at least.
+
+Consider this validation experience:
+
+- Validate on Change/Blur initially (when user leaves the control), let's call this lazy mode.
+- If the field is invalid, switch the validation to validate on input (when user types), let's call this aggressive mode.
+- If the field is valid, go back to "lazy" mode, otherwise be "aggressive".
+
+Implementing this requires some knowledge about how the `v-on` (we can bind objects on it) handler works.
+
+```js
+const { errorMessage, value, handleChange } = useField(() => props.name, undefined, {
+  validateOnValueUpdate: false,
+});
+
+const validationListeners = {
+  blur: evt => handleBlur(evt, true),
+  change: handleChange,
+  input: evt => handleChange(evt, !!errorMessage.value),
+};
+```
+
+Then in your template you can use `v-on` to add your listener object:
+
+```vue-html
+<input @input="handleChange" :value="value" v-on="validationListeners" type="text" />
+```
+
+Here is a full example:
+
+<Repl files={{ 'App.vue': 'CompositionCustomField03', 'InputText.vue': 'CustomInputFieldEager' }} client:only />
+
+## v-model Support
 
 The `useField` function can automatically manage `v-model` integration for you. Usually you will need to do this in every component you create:
 
@@ -107,143 +267,9 @@ const { value, errorMessage } = useField('fieldName', undefined, {
 
 This will emit `onUpdate:text` instead of `onUpdate:modelValue` whenever the `value` changes.
 
----
-
-By default vee-validate runs validation whenever the `value` ref changes whether it was bound by a `v-model` or changed in your code:
-
-```js
-const { value } = useField('fieldName', isRequired);
-
-// validation WILL be triggered
-value.value = 'something';
-```
-
-You can disable that behavior by passing a `validateOnValueUpdate` option set to `false`:
-
-```js
-const { value } = useField('fieldName', isRequired, {
-  validateOnValueUpdate: false,
-});
-
-// validation WILL NOT trigger
-value.value = 'something';
-```
-
-### Handling Events
-
-`useField()` composition function is not concerned with any events, it only validates whenever the `value` ref changes. However, it gives you everything you need to set up your own validation experience.
-
-The `useField` function exposes some handler functions, each handles a specific aspect of the validation experience:
-
-- `handleChange`: Updates the field value, can be configured to trigger validation or silently update the value
-- `handleBlur`: Updates the `meta.touched` flag, doesn't trigger validation.
-
-```js
-const { handleChange, handleBlur } = useField('someField');
-```
-
-In this example we are validating on `input` event (when the user types), which would make the validation aggressive:
-
-```vue
-<template>
-  <div>
-    <input @input="handleChange" :value="value" type="text" />
-    <span>{{ errorMessage }}</span>
-  </div>
-</template>
-
-<script setup>
-import { useField } from 'vee-validate';
-
-function isRequired(value) {
-  // ...
-}
-
-const { errorMessage, value, handleChange } = useField('fieldName', isRequired);
-</script>
-```
-
-With a slight adjustment we can make our validation lazy by changing the listener to `@change` (validates when the user leaves the control):
-
-```vue-html
-<div>
-  <input @change="handleChange" :value="value" type="text" />
-  <span>{{ errorMessage }}</span>
-</div>
-```
-
-If we wanted to validate on `blur` as well, you can simply add `handleChange` as a handler for it:
-
-```vue-html
-<div>
-  <input @change="handleChange" @blur="handleChange" :value="value" type="text" />
-  <span>{{ errorMessage }}</span>
-</div>
-```
-
-As you can see, the `useField` doesn't care which events you use `handleChange` for. This allows for greater flexibility that's not possible with the `<Field>` component, not as straightforward at least.
-
-Consider this validation experience:
-
-- Validate on Change/Blur initially (when user leaves the control), let's call this lazy mode.
-- If the field is invalid, switch the validation to validate on input (when user types), let's call this aggressive mode.
-- If the field is valid, go back to "lazy" mode, otherwise be "aggressive".
-
-Implementing this requires some knowledge about how the `v-on` (we can bind objects on it) handler works and the `computed` function. It can be as easy as this:
-
-```vue
-<template>
-  <div>
-    <input v-on="validationListeners" :value="value" type="text" />
-    <span>{{ errorMessage }}</span>
-  </div>
-</template>
-
-<script setup>
-import { computed } from 'vue';
-import { useField } from 'vee-validate';
-
-function isRequired(value) {
-  // ...
-}
-
-const { errorMessage, value, handleChange } = useField('fieldName', isRequired, {
-  validateOnValueUpdate: false,
-});
-
-const validationListeners = computed(() => {
-  // If the field is valid or have not been validated yet
-  // lazy
-  if (!errorMessage.value) {
-    return {
-      blur: handleChange,
-      change: handleChange,
-      // disable `shouldValidate` to avoid validating on input
-      input: e => handleChange(e, false),
-    };
-  }
-
-  // Aggressive
-  return {
-    blur: handleChange,
-    change: handleChange,
-    input: handleChange, // only switched this
-  };
-});
-</script>
-```
-
-Check the working example here:
-
-<LiveExample client:visible id="vee-validate-v4-eager-validation-with-composition-api" />
-
 ## Displaying Error Messages
 
-You can display error messages using either `useField` or `useForm`.
-
-### Displaying Errors with useField
-
-You've already seen how to display errors with `useField`, by using the `errorMessage` ref:
+You've already seen how to display errors with `useForm`. With `useField` you can use `errorMessage` ref:
 
 ```vue
 <template>
@@ -288,39 +314,6 @@ function isRequired(value) {
 }
 
 const { errors, value } = useField('fieldName', isRequired);
-</script>
-```
-
-### Displaying Errors with useForm
-
-You can use the `errors` returned by `useForm` to display messages for all fields.
-
-```vue
-<template>
-  <div>
-    <MyTextInput name="email" />
-
-    <MyTextInput name="password" />
-
-    <pre>{{ errors }}</pre>
-  </div>
-</template>
-
-<script setup>
-import { useForm, useField } from 'vee-validate';
-import * as yup from 'yup';
-import MyTextInput from '@/components/MyTextInput.vue';
-
-// Define a validation schema
-const schema = yup.object({
-  email: yup.string().required().email(),
-  password: yup.string().required().min(8),
-});
-
-// Create a form context with the validation schema
-const { errors } = useForm({
-  validationSchema: schema,
-});
 </script>
 ```
 

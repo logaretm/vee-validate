@@ -3,7 +3,6 @@
 </template>
 
 <script setup>
-import { useField } from 'vee-validate';
 import { ref } from 'vue';
 import InputText from './InputText.vue';
 
