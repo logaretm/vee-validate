@@ -518,12 +518,11 @@ function useFieldWithChecked<TValue = unknown>(
       const path = toValue(name);
       const pathState = form?.getPathState(path);
       const value = normalizeEventValue(e);
-      let newValue!: TValue;
+      let newValue = unref(checkedValue) ?? value;
       if (form && pathState?.multiple && pathState.type === 'checkbox') {
-        newValue = resolveNextCheckboxValue(getFromPath(form.values, path) || [], value, undefined) as TValue;
-      } else {
-        // Single checkbox field without a form to toggle it's value
-        newValue = resolveNextCheckboxValue(unref(field.value), unref(checkedValue), unref(uncheckedValue)) as TValue;
+        newValue = resolveNextCheckboxValue(getFromPath(form.values, path) || [], newValue, undefined) as TValue;
+      } else if (opts?.type === 'checkbox') {
+        newValue = resolveNextCheckboxValue(unref(field.value), newValue, unref(uncheckedValue)) as TValue;
       }
 
       handleChange(newValue, shouldValidate);

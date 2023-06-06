@@ -3150,3 +3150,46 @@ test('unmounted fields should not be validated when keep-values is on', async ()
   };
   expect(spy).toHaveBeenLastCalledWith(expected);
 });
+
+// #4308
+test('radio fields with single field component binding', async () => {
+  const submit = vi.fn();
+  const model = ref('');
+  const wrapper = mountWithHoc({
+    setup() {
+      return {
+        onSubmit: submit,
+        model,
+      };
+    },
+    template: `
+      <VForm @submit="onSubmit">
+        <Field name="drink" type="radio" v-model="model" v-slot="{ field }">
+          <input type="radio" value="Coffee" v-bind="field" />
+          <input type="radio" value="Tea" v-bind="field" />
+        </Field>
+
+        <button>Submit</button>
+      </VForm>
+    `,
+  });
+
+  const inputs = wrapper.$el.querySelectorAll('input');
+  const button = wrapper.$el.querySelector('button');
+
+  wrapper.$el.querySelector('button').click();
+  await flushPromises();
+
+  setChecked(inputs[0]);
+  await flushPromises();
+  button.click();
+  await flushPromises();
+  expect(model.value).toBe('Coffee');
+  expect(submit).toHaveBeenLastCalledWith({ drink: 'Coffee' }, expect.anything());
+  setChecked(inputs[1]);
+  await flushPromises();
+  button.click();
+  await flushPromises();
+  expect(model.value).toBe('Tea');
+  expect(submit).toHaveBeenLastCalledWith({ drink: 'Tea' }, expect.anything());
+});
