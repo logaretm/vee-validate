@@ -17,7 +17,6 @@
     <Home v-if="$page.frontmatter.home" />
 
     <Ad />
-    <Analytics />
 
     <Page v-if="!$page.frontmatter.home" :sidebar-items="sidebarItems">
       <slot name="page-top" slot="top" />
@@ -33,7 +32,6 @@ import UpgradeNotice from "@theme/components/UpgradeNotice.vue";
 import Page from "@parent-theme/components/Page.vue";
 import Sidebar from "@parent-theme/components/Sidebar.vue";
 import Ad from '@theme/components/Ad.vue';
-import Analytics from '@theme/components/Analytics.vue';
 import { resolveSidebarItems } from "@parent-theme/util";
 
 let isLoaded = false;
