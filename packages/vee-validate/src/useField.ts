@@ -63,6 +63,9 @@ export interface FieldOptions<TValue = unknown> {
   uncheckedValue?: MaybeRef<TValue>;
   label?: MaybeRef<string | undefined>;
   controlled?: boolean;
+  /**
+   * @deprecated Use `controlled` instead, controlled is opposite of standalone.
+   */
   standalone?: boolean;
   keepValueOnUnmount?: MaybeRef<boolean | undefined>;
   /**
