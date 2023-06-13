@@ -161,15 +161,8 @@ export interface FormState<TValues> {
 export type FormErrors<TValues extends GenericObject> = Partial<Record<Path<TValues>, string | undefined>>;
 export type FormErrorBag<TValues extends GenericObject> = Partial<Record<Path<TValues>, string[]>>;
 
-export interface SetFieldValueOptions {
-  force: boolean;
-}
 export interface FormActions<TValues extends GenericObject, TOutput = TValues> {
-  setFieldValue<T extends Path<TValues>>(
-    field: T,
-    value: PathValue<TValues, T>,
-    opts?: Partial<SetFieldValueOptions>
-  ): void;
+  setFieldValue<T extends Path<TValues>>(field: T, value: PathValue<TValues, T>, shouldValidate?: boolean): void;
   setFieldError(field: Path<TValues>, message: string | string[] | undefined): void;
   setErrors(fields: FormErrors<TValues>): void;
   setValues(fields: PartialDeep<TValues>): void;

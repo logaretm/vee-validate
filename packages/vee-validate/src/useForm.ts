@@ -569,7 +569,11 @@ export function useForm<
   /**
    * Sets a single field value
    */
-  function setFieldValue<T extends Path<TValues>>(field: T | PathState, value: PathValue<TValues, T> | undefined) {
+  function setFieldValue<T extends Path<TValues>>(
+    field: T | PathState,
+    value: PathValue<TValues, T> | undefined,
+    shouldValidate = true
+  ) {
     const clonedValue = deepCopy(value);
     const path = typeof field === 'string' ? field : (field.path as Path<TValues>);
     const pathState = findPathState(path);
@@ -578,6 +582,9 @@ export function useForm<
     }
 
     setInPath(formValues, path, clonedValue);
+    if (shouldValidate) {
+      validateField(path);
+    }
   }
 
   /**
@@ -599,7 +606,7 @@ export function useForm<
       },
       set(value) {
         const pathValue = unref(path);
-        setFieldValue(pathValue, value);
+        setFieldValue(pathValue, value, false);
         pathState.validated = true;
         pathState.pending = true;
         validateField(pathValue).then(() => {
@@ -644,7 +651,7 @@ export function useForm<
     const newValue = state && 'value' in state ? state.value : getFromPath(initialValues.value, field);
 
     setFieldInitialValue(field, deepCopy(newValue));
-    setFieldValue(field, newValue as PathValue<TValues, typeof field>);
+    setFieldValue(field, newValue as PathValue<TValues, typeof field>, false);
     setFieldTouched(field, state?.touched ?? false);
     setFieldError(field, state?.errors || []);
   }
@@ -660,7 +667,7 @@ export function useForm<
       state.validated = false;
       state.touched = resetState?.touched?.[state.path as Path<TValues>] || false;
 
-      setFieldValue(state.path as Path<TValues>, getFromPath(newValues, state.path));
+      setFieldValue(state.path as Path<TValues>, getFromPath(newValues, state.path), false);
       setFieldError(state.path as Path<TValues>, undefined);
     });
 
