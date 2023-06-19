@@ -719,6 +719,33 @@ describe('useForm()', () => {
     expect(meta.validated).toBe(false);
   });
 
+  // #4320
+  test('Initial values are merged with previous values to ensure meta.dirty is stable', async () => {
+    let meta!: Ref<FieldMeta<any>>;
+
+    mountWithHoc({
+      setup() {
+        const { resetForm, meta: fm } = useForm();
+        useField('name');
+        useField('email');
+
+        meta = fm;
+
+        onMounted(() => {
+          resetForm({ values: { name: 'test' } });
+        });
+
+        return {};
+      },
+      template: `
+        <div></div>
+      `,
+    });
+
+    await flushPromises();
+    expect(meta.value.dirty).toBe(false);
+  });
+
   // #3991
   test('initial value should not be mutable if nested field model is used', async () => {
     let model!: Ref<{ name: string }>;
