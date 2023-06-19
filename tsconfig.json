@@ -23,7 +23,8 @@
     "paths": {
       "@/*": ["packages/*/src"]
     },
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "typeRoots": ["node_modules/@types", "node_modules"]
   },
   "include": ["packages/*/src", "packages/*/tests", "vitest.setup.ts", "vitest.setup.ts"]
 }

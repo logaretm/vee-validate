@@ -32,6 +32,6 @@
   },
   "dependencies": {
     "@vue/devtools-api": "^6.5.0",
-    "type-fest": "^3.11.0"
+    "type-fest": "^3.12.0"
   }
 }
