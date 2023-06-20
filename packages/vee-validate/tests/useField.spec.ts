@@ -871,4 +871,26 @@ describe('useField()', () => {
     expect(validator).toHaveBeenCalledTimes(2);
     expect(field.errorMessage.value).toBe(undefined);
   });
+
+  test('handleChange parses input[type=number] value', async () => {
+    let field!: FieldContext;
+
+    mountWithHoc({
+      setup() {
+        field = useField('field', undefined);
+        const { handleChange } = field;
+
+        return {
+          handleChange,
+        };
+      },
+      template: `<input type="number" @change="handleChange" />`,
+    });
+
+    await flushPromises();
+    const input = document.querySelector('input') as HTMLInputElement;
+    setValue(input, '123');
+    await flushPromises();
+    expect(field.value.value).toBe(123);
+  });
 });

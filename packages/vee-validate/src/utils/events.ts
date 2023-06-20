@@ -1,6 +1,14 @@
 import { hasCheckedAttr, isNativeMultiSelect, isNativeSelect, isEvent } from './assertions';
 import { getBoundValue, hasValueBinding } from './vnode';
 
+function parseInputValue(el: HTMLInputElement) {
+  if (el.type === 'number') {
+    return el.valueAsNumber;
+  }
+
+  return el.value;
+}
+
 export function normalizeEventValue(value: Event | unknown): unknown {
   if (!isEvent(value)) {
     return value;
@@ -33,5 +41,5 @@ export function normalizeEventValue(value: Event | unknown): unknown {
     return selectedOption ? getBoundValue(selectedOption) : input.value;
   }
 
-  return input.value;
+  return parseInputValue(input);
 }
