@@ -893,4 +893,24 @@ describe('useField()', () => {
     await flushPromises();
     expect(field.value.value).toBe(123);
   });
+
+  test('a validator can return multiple messages', async () => {
+    let field!: FieldContext;
+    const validator = vi.fn(val => (val ? true : [REQUIRED_MESSAGE, 'second']));
+
+    mountWithHoc({
+      setup() {
+        field = useField('field', validator);
+
+        return {};
+      },
+    });
+
+    await flushPromises();
+    expect(field.errors.value).toHaveLength(0);
+    await field.validate();
+    await flushPromises();
+    expect(field.errors.value).toHaveLength(2);
+    expect(field.errors.value).toEqual([REQUIRED_MESSAGE, 'second']);
+  });
 });

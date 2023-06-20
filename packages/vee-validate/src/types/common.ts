@@ -6,6 +6,8 @@ export type GenericObject = Record<string, any>;
 
 export type MaybeArray<T> = T | T[];
 
+export type MaybePromise<T> = T | Promise<T>;
+
 export type MapValuesPathsToRefs<
   TValues extends GenericObject,
   TPaths extends readonly [...MaybeRef<Path<TValues>>[]]

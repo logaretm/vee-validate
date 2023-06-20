@@ -93,13 +93,17 @@ async function _validate<TValue = unknown>(field: FieldValidationContext<TValue>
     for (let i = 0; i < length; i++) {
       const rule = pipeline[i];
       const result = await rule(value, ctx);
-      const isValid = typeof result !== 'string' && result;
+      const isValid = typeof result !== 'string' && !Array.isArray(result) && result;
       if (isValid) {
         continue;
       }
 
-      const message = typeof result === 'string' ? result : _generateFieldError(ctx);
-      errors.push(message);
+      if (Array.isArray(result)) {
+        errors.push(...result);
+      } else {
+        const message = typeof result === 'string' ? result : _generateFieldError(ctx);
+        errors.push(message);
+      }
 
       if (field.bails) {
         return {

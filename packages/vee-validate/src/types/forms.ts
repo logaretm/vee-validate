@@ -1,5 +1,5 @@
 import { ComputedRef, DeepReadonly, Ref, MaybeRef, MaybeRefOrGetter } from 'vue';
-import { MapValuesPathsToRefs, GenericObject } from './common';
+import { MapValuesPathsToRefs, GenericObject, MaybeArray, MaybePromise } from './common';
 import { FieldValidationMetaInfo } from '../../../shared';
 import { Path, PathValue } from './paths';
 import { PartialDeep } from 'type-fest';
@@ -149,7 +149,7 @@ export type FieldContext<TValue = unknown> = Omit<PrivateFieldContext<TValue>, '
 export type GenericValidateFunction<TValue = unknown> = (
   value: TValue,
   ctx: FieldValidationMetaInfo
-) => boolean | string | Promise<boolean | string>;
+) => MaybePromise<boolean | MaybeArray<string>>;
 
 export interface FormState<TValues> {
   values: PartialDeep<TValues>;
