@@ -1,5 +1,24 @@
 # Change Log
 
+## 4.10.0
+
+### Minor Changes
+
+- 7a548f42: chore: require vue 3.3 and refactor types
+- 7ce9d671: feat(breaking): disable v-model support by default closes #4283
+- bfd6b00a: "feat: allow custom models for defineComponentBinds"
+- d4fafc95: "feat: allow handleBlur to run validations"
+- 05d957ec: feat: mark form values as readonly closes #4282
+
+### Patch Changes
+
+- 77345c42: fix: reset form should merge values closes #4320
+- f1dc1359: fix: use event value if no checked value for checkbox/radio closes #4308
+- 3e4a7c13: feat(dx): make `syncVModel` accept the model propName
+- 2cf0eec9: feat: allow multiple messages in a validator fn closes #4322 #4318
+- ed208918: fix: trigger validation with setFieldValue by default closes #4314
+- 6a3f9f15: fix: parse native number fields closes #4313
+
 ## 4.9.6
 
 ### Patch Changes

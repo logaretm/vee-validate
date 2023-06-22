@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.10.0
+
+### Minor Changes
+
+- 7a548f42: chore: require vue 3.3 and refactor types
+
 ## 4.9.6
 
 ## 4.9.5
