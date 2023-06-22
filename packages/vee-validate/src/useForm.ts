@@ -880,21 +880,27 @@ export function useForm<
     }
 
     const props = computed(() => {
-      const base: BaseComponentBinds<TValue> = {
-        modelValue: pathState.value,
-        'onUpdate:modelValue': onUpdateModelValue,
-        onBlur,
-      };
-
       if (isCallable(config)) {
+        const configVal = config(pathState);
+        const model = configVal.model || 'modelValue';
+
         return {
-          ...base,
-          ...(config(pathState).props || {}),
+          onBlur,
+          [model]: pathState.value,
+          [`onUpdate:${model}`]: onUpdateModelValue,
+          ...(configVal.props || {}),
         } as BaseComponentBinds<TValue> & TExtras;
       }
 
+      const model = config?.model || 'modelValue';
+      const base = {
+        [model]: pathState.value,
+        [`onUpdate:${model}`]: onUpdateModelValue,
+      };
+
       if (config?.mapProps) {
         return {
+          onBlur,
           ...base,
           ...config.mapProps(omit(pathState, PRIVATE_PATH_STATE_KEYS)),
         } as BaseComponentBinds<TValue> & TExtras;

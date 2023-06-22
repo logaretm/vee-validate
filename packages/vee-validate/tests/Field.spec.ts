@@ -1,8 +1,8 @@
-import { defineRule, configure, useForm } from '@/vee-validate';
+import { defineRule, configure } from '@/vee-validate';
 import { mountWithHoc, setValue, dispatchEvent, setChecked, flushPromises, dispatchFileEvent } from './helpers';
 import * as yup from 'yup';
 import { computed, reactive, ref, Ref } from 'vue';
-import ModelComp from './helpers/ModelComp';
+import { ModelComp } from './helpers/ModelComp';
 
 vi.useFakeTimers();
 

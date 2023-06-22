@@ -2,7 +2,7 @@ import { FieldMeta, FormContext, FormMeta, useField, useForm } from '@/vee-valid
 import { mountWithHoc, setValue, flushPromises, runInSetup, dispatchEvent } from './helpers';
 import * as yup from 'yup';
 import { onMounted, Ref } from 'vue';
-import ModelComp from './helpers/ModelComp';
+import { ModelComp, CustomModelComp } from './helpers/ModelComp';
 
 describe('useForm()', () => {
   const REQUIRED_MESSAGE = 'Field is required';
@@ -927,6 +927,80 @@ describe('useForm()', () => {
       setValue(document.querySelector('input') as any, '123');
       await flushPromises();
       expect(document.body.innerHTML).toContain('valid');
+    });
+
+    test('can have custom model', async () => {
+      mountWithHoc({
+        components: {
+          CustomModelComp,
+        },
+        setup() {
+          const { defineComponentBinds, values, errors } = useForm({
+            validationSchema: yup.object({
+              name: yup.string().required(),
+            }),
+          });
+
+          const field = defineComponentBinds('name', { model: 'value' });
+
+          return { field, values, errors };
+        },
+        template: `
+        <CustomModelComp v-bind="field" />
+        <span id="errors">{{ errors.name }}</span>
+        <span id="values">{{ values.name }}</span>
+      `,
+      });
+
+      await flushPromises();
+      const errorEl = document.getElementById('errors');
+      const valuesEl = document.getElementById('values');
+      setValue(document.querySelector('input') as any, '');
+      dispatchEvent(document.querySelector('input') as any, 'blur');
+      await flushPromises();
+      expect(errorEl?.textContent).toBe('name is a required field');
+      setValue(document.querySelector('input') as any, '123');
+      dispatchEvent(document.querySelector('input') as any, 'blur');
+      await flushPromises();
+      expect(errorEl?.textContent).toBe('');
+      expect(valuesEl?.textContent).toBe('123');
+    });
+
+    test('can have lazy custom model', async () => {
+      mountWithHoc({
+        components: {
+          CustomModelComp,
+        },
+        setup() {
+          const { defineComponentBinds, values, errors } = useForm({
+            validationSchema: yup.object({
+              name: yup.string().required(),
+            }),
+          });
+
+          const field = defineComponentBinds('name', () => ({ model: 'value' }));
+
+          return { field, values, errors };
+        },
+        template: `
+        <CustomModelComp v-bind="field" />
+        <span id="errors">{{ errors.name }}</span>
+        <span id="values">{{ values.name }}</span>
+      `,
+      });
+
+      await flushPromises();
+      const errorEl = document.getElementById('errors');
+      const valuesEl = document.getElementById('values');
+      setValue(document.querySelector('input') as any, '');
+      dispatchEvent(document.querySelector('input') as any, 'blur');
+      await flushPromises();
+      expect(errorEl?.textContent).toBe('name is a required field');
+      setValue(document.querySelector('input') as any, '123');
+      dispatchEvent(document.querySelector('input') as any, 'blur');
+      await flushPromises();
+      expect(errorEl?.textContent).toBe('');
+      expect(valuesEl?.textContent).toBe('123');
     });
   });
 

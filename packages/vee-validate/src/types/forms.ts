@@ -248,9 +248,7 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   markForUnmount(path: string): void;
 }
 
-export interface BaseComponentBinds<TValue = unknown> {
-  modelValue: TValue | undefined;
-  'onUpdate:modelValue': (value: TValue) => void;
+export interface BaseComponentBinds<TValue = unknown, TModel = 'modelValue'> {
   onBlur: () => void;
 }
 
@@ -263,6 +261,7 @@ export interface ComponentBindsConfig<TValue = unknown, TExtraProps extends Gene
   mapProps: (state: PublicPathState<TValue>) => TExtraProps;
   validateOnBlur: boolean;
   validateOnModelUpdate: boolean;
+  model: string;
 }
 
 export type LazyComponentBindsConfig<TValue = unknown, TExtraProps extends GenericObject = GenericObject> = (
@@ -271,6 +270,7 @@ export type LazyComponentBindsConfig<TValue = unknown, TExtraProps extends Gener
   props: TExtraProps;
   validateOnBlur: boolean;
   validateOnModelUpdate: boolean;
+  model: string;
 }>;
 
 export interface BaseInputBinds<TValue = unknown> {
