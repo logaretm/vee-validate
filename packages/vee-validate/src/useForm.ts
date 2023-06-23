@@ -662,7 +662,6 @@ export function useForm<
   function resetForm(resetState?: Partial<FormState<TValues>>) {
     const newValues = resetState?.values ? resetState.values : originalInitialValues.value;
     setInitialValues(newValues);
-    setValues(newValues);
     mutateAllPathState(state => {
       state.validated = false;
       state.touched = resetState?.touched?.[state.path as Path<TValues>] || false;
@@ -670,6 +669,7 @@ export function useForm<
       setFieldValue(state.path as Path<TValues>, getFromPath(newValues, state.path), false);
       setFieldError(state.path as Path<TValues>, undefined);
     });
+    setValues(newValues);
 
     setErrors(resetState?.errors || {});
     submitCount.value = resetState?.submitCount || 0;
