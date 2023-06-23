@@ -28,5 +28,7 @@
     "required": "The {field} field is required",
     "size": "The {field} field size must be less than 0:{size}KB",
     "url": "The {field} field is not a valid URL"
-  }
+  },
+  "messages.double": "The {field} field may only contain decimal",
+  "messages.oneOf": "The {field} field may only contain allowed characters"
 }
