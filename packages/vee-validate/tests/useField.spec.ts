@@ -917,4 +917,25 @@ describe('useField()', () => {
     expect(field.errors.value).toHaveLength(2);
     expect(field.errors.value).toEqual([REQUIRED_MESSAGE, 'second']);
   });
+
+  // #4323
+  test('resetField should not validate', async () => {
+    let field!: FieldContext;
+    const validator = vi.fn(val => (val ? true : REQUIRED_MESSAGE));
+
+    mountWithHoc({
+      setup() {
+        useForm();
+        field = useField('field', validator);
+
+        return {};
+      },
+    });
+
+    await flushPromises();
+    expect(field.errors.value).toHaveLength(0);
+    field.resetField({ value: '' });
+    await flushPromises();
+    expect(field.errors.value).toHaveLength(0);
+  });
 });

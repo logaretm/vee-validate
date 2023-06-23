@@ -166,7 +166,7 @@ export function _useFieldValue<TValue = unknown>(
       return getFromPath<TValue>(form.values, unref(path)) as TValue;
     },
     set(newVal) {
-      form.setFieldValue(unref(path), newVal);
+      form.setFieldValue(unref(path), newVal, false);
     },
   }) as Ref<TValue>;
 
