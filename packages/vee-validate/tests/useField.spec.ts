@@ -892,6 +892,10 @@ describe('useField()', () => {
     setValue(input, '123');
     await flushPromises();
     expect(field.value.value).toBe(123);
+
+    setValue(input, '');
+    await flushPromises();
+    expect(field.value.value).toBe('');
   });
 
   test('a validator can return multiple messages', async () => {

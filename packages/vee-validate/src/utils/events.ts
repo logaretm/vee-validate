@@ -3,7 +3,7 @@ import { getBoundValue, hasValueBinding } from './vnode';
 
 function parseInputValue(el: HTMLInputElement) {
   if (el.type === 'number') {
-    return el.valueAsNumber;
+    return Number.isNaN(el.valueAsNumber) ? el.value : el.valueAsNumber;
   }
 
   return el.value;
