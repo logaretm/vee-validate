@@ -1,5 +1,13 @@
 # Change Log
 
+## 4.10.1
+
+### Patch Changes
+
+- fc416918: fix: handle NaN when parsing number inputs closes #4328
+- 435e7857: fix: reset present values after all path mutation
+- 273cca74: fix: reset field should not validate closes #4323
+
 ## 4.10.0
 
 ### Minor Changes
