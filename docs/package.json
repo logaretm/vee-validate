@@ -18,7 +18,7 @@
     "@types/lodash-es": "^4.17.7",
     "@vee-validate/yup": "4.9.6",
     "@vee-validate/zod": "4.9.6",
-    "@vue/repl": "^1.4.1",
+    "@vue/repl": "^2.1.4",
     "@vueuse/core": "^10.2.1",
     "astro": "^2.7.1",
     "autoprefixer": "^10.4.13",

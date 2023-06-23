@@ -166,13 +166,13 @@ importers:
         version: 4.17.7
       '@vee-validate/yup':
         specifier: 4.9.6
-        version: link:../packages/yup
+        version: 4.9.6(vue@3.3.4)
       '@vee-validate/zod':
         specifier: 4.9.6
-        version: link:../packages/zod
+        version: 4.9.6(vue@3.3.4)
       '@vue/repl':
-        specifier: ^1.4.1
-        version: 1.4.1(vue@3.3.4)
+        specifier: ^2.1.4
+        version: 2.1.4
       '@vueuse/core':
         specifier: ^10.2.1
         version: 10.2.1(vue@3.3.4)
@@ -2840,6 +2840,26 @@ packages:
       vue: 3.3.4
     dev: true
 
+  /@vee-validate/yup@4.9.6(vue@3.3.4):
+    resolution: {integrity: sha512-Gsd9V3IK4Tqxc2HzmCizHbjh/28uwhD6XAZeRd0cO86op8x05MXljGqAtcaghqjAgZhxLOyU7RRqrICPUzpWDw==}
+    dependencies:
+      type-fest: 3.12.0
+      vee-validate: 4.10.2(vue@3.3.4)
+      yup: 1.2.0
+    transitivePeerDependencies:
+      - vue
+    dev: false
+
+  /@vee-validate/zod@4.9.6(vue@3.3.4):
+    resolution: {integrity: sha512-YFpJDtsFDdM47HQSGKRQvA5nxEYZW1RjTWe1MPSpgo8uEWBOtxEwgiiPWoxnQtwc2c8qYpYMIwUbm2mUAHhpaw==}
+    dependencies:
+      type-fest: 3.12.0
+      vee-validate: 4.10.2(vue@3.3.4)
+      zod: 3.21.4
+    transitivePeerDependencies:
+      - vue
+    dev: false
+
   /@vercel/nft@0.22.6:
     resolution: {integrity: sha512-gTsFnnT4mGxodr4AUlW3/urY+8JKKB452LwF3m477RFUJTAaDmcz2JqFuInzvdybYIeyIv1sSONEJxsxnbQ5JQ==}
     engines: {node: '>=14'}
@@ -3050,12 +3070,8 @@ packages:
     dependencies:
       '@vue/shared': 3.3.4
 
-  /@vue/repl@1.4.1(vue@3.3.4):
-    resolution: {integrity: sha512-7ONz/o1OtS611jW6SdAOZXn4HdN8gfyatcOzcEu+3bDMvgbyr7ZUcbRV6Y4xdkxDARKDBzs+sb3/oz1Na5hAeQ==}
-    peerDependencies:
-      vue: ^3.2.13
-    dependencies:
-      vue: 3.3.4
+  /@vue/repl@2.1.4:
+    resolution: {integrity: sha512-1fK5bsdM3vAkP6l5r0mQwGELaz2BWyk9vWDjA0h1RQ1+2qmf3YVDaJ7Pd7jW3RCaVZUwrIuHLfzRnu2p+ZjZMw==}
     dev: false
 
   /@vue/runtime-core@3.3.4:
@@ -10872,6 +10888,16 @@ packages:
       spdx-correct: 3.2.0
       spdx-expression-parse: 3.0.1
     dev: true
+
+  /vee-validate@4.10.2(vue@3.3.4):
+    resolution: {integrity: sha512-J2we1IjIvEKSC32ECw1HWgwwyqDIsrUnhGhZWgrvHeNp6m+pHY5C6PrdSDy1Ly4NcDNNO5XGMNvRZnurIKIdEg==}
+    peerDependencies:
+      vue: ^3.3.4
+    dependencies:
+      '@vue/devtools-api': 6.5.0
+      type-fest: 3.12.0
+      vue: 3.3.4
+    dev: false
 
   /vfile-location@4.1.0:
     resolution: {integrity: sha512-YF23YMyASIIJXpktBa4vIGLJ5Gs88UB/XePgqPmTa7cDA+JeO3yclbpheQYCHjVHBn/yePzrXuygIL+xbvRYHw==}

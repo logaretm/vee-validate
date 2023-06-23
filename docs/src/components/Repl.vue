@@ -1,6 +1,9 @@
 <script setup lang="ts" async>
-import '@vue/repl/style.css';
+import { version } from 'vue';
 import { Repl, ReplStore } from '@vue/repl';
+// @ts-ignore
+import CodeMirror from '@vue/repl/codemirror-editor';
+import '@vue/repl/style.css';
 
 const props = defineProps<{
   files: Record<string, string>;
@@ -21,26 +24,27 @@ const store = new ReplStore({
 // pre-set import map
 store.setImportMap({
   imports: {
-    'vee-validate': 'https://unpkg.com/vee-validate@4.9.5/dist/vee-validate.esm.js',
-    '@vee-validate/zod': 'https://unpkg.com/@vee-validate/zod@4.9.5/dist/vee-validate-zod.esm.js',
-    '@vee-validate/yup': 'https://unpkg.com/@vee-validate/yup@4.9.5/dist/vee-validate-yup.esm.js',
-    '@vee-validate/i18n': 'https://unpkg.com/@vee-validate/i18n@4.9.5/dist/vee-validate-i18n.esm.js',
-    '@vee-validate/rules': 'https://unpkg.com/@vee-validate/rules@4.9.5/dist/vee-validate-rules.esm.js',
+    'vee-validate': 'https://unpkg.com/vee-validate@latest/dist/vee-validate.esm.js',
+    '@vee-validate/zod': 'https://unpkg.com/@vee-validate/zod@latest/dist/vee-validate-zod.esm.js',
+    '@vee-validate/yup': 'https://unpkg.com/@vee-validate/yup@latest/dist/vee-validate-yup.esm.js',
+    '@vee-validate/i18n': 'https://unpkg.com/@vee-validate/i18n@latest/dist/vee-validate-i18n.esm.js',
+    '@vee-validate/rules': 'https://unpkg.com/@vee-validate/rules@latest/dist/vee-validate-rules.esm.js',
     'property-expr': 'https://esm-repo.netlify.app/property-expr.esm.js',
     'tiny-case': 'https://esm-repo.netlify.app/tiny-case.esm.js',
     toposort: 'https://esm-repo.netlify.app/topsort.esm.js',
     yup: 'https://unpkg.com/yup@1.2.0/index.esm.js',
     zod: 'https://unpkg.com/zod@3.21.4/lib/index.mjs',
     '@vue/devtools-api': 'https://unpkg.com/@vue/devtools-api@6.5.0/lib/esm/index.js',
+    vue: `https://unpkg.com/vue@${version}/dist/vue.esm-browser.prod.js`,
   },
 });
 
 // use a specific version of Vue
-store.setVueVersion('3.3.4');
+store.setVueVersion(version);
 </script>
 
 <template>
-  <Repl :store="store" :showCompileOutput="false" :ssr="false" :showImportMap="false" />
+  <Repl :store="store" :editor="CodeMirror" :showCompileOutput="false" :ssr="false" :showImportMap="false" />
 </template>
 
 <style lang="postcss" scoped>
