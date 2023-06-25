@@ -65,7 +65,7 @@
                 <ExpandTransition>
                   <ul v-show="expanded[page.title]" class="mt-3 space-y-2">
                     <li v-for="childPage in page.children" :key="childPage.title" class="pl-7 flex items-center">
-                      <a :href="childPage.path" :aria-current="currentUrl === page.path ? 'page' : undefined">
+                      <a :href="childPage.path" :aria-current="currentUrl === childPage.path ? 'page' : undefined">
                         {{ childPage.menuTitle || childPage.title }}
                       </a>
 

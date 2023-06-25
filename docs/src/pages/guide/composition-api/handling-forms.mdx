@@ -46,7 +46,7 @@ meta.value.initialValues;
 - `pending`: If at least one field's validation is still pending.
 - `initialValues`: All fields' initial values, packed into an object where the keys are the field names.
 
-Here is a simple example where we disable the form's submit button if the value did not change.
+Here is a simple example where we disable the form's submit button unless a field was touched.
 
 <Repl files={{ 'App.vue': 'CompositionHandlingForms01' }} client:only />
 

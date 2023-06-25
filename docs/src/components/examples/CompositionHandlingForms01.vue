@@ -1,9 +1,7 @@
 <template>
-  <form>
-    <input v-bind="name" />
+  <input v-bind="name" />
 
-    <button :disabled="!meta.dirty">Submit</button>
-  </form>
+  <button :disabled="!meta.touched">Submit</button>
 </template>
 
 <script setup>

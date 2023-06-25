@@ -44,12 +44,19 @@ store.setVueVersion(version);
 </script>
 
 <template>
-  <Repl :store="store" :editor="CodeMirror" :showCompileOutput="false" :ssr="false" :showImportMap="false" />
+  <Repl
+    :store="store"
+    :editor="CodeMirror"
+    :showCompileOutput="false"
+    :ssr="false"
+    :showImportMap="false"
+    :class="{ 'no-files': files.length <= 1 }"
+  />
 </template>
 
 <style lang="postcss" scoped>
 .vue-repl {
-  @apply border-2 border-emerald-500 border-opacity-30 rounded-md;
+  @apply border border-gray-300 dark:border-emerald-500 border-opacity-80 rounded-md shadow-sm;
   --bg: #e8e8e8 !important;
   --bg-soft: #e8e8e8 !important;
   --border: hsl(0 0% 74%) !important;
@@ -71,6 +78,28 @@ store.setVueVersion(version);
     .active {
       @apply border-none;
     }
+  }
+
+  &:deep(.add) {
+    @apply hidden;
+  }
+
+  &:deep(.right .tab-buttons) {
+    @apply hidden;
+  }
+
+  &:deep(.output-container) {
+    @apply h-full;
+  }
+
+  &.no-files {
+    &:deep(.file-selector) {
+      @apply hidden;
+    }
+  }
+
+  &:deep(.file .remove) {
+    @apply hidden;
   }
 
   &:deep(.CodeMirror) {

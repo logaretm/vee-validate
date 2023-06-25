@@ -246,7 +246,7 @@ const props = defineProps({
 });
 
 const { value, errorMessage } = useField('fieldName', undefined, {
-  syncModel: true,
+  syncVModel: true,
 });
 ```
 
@@ -254,7 +254,7 @@ Now whenever `value` changes, you will emit an `update:modelValue` event with th
 
 <Repl files={{ 'App.vue': 'CompositionCustomField02', 'InputText.vue': 'CustomInputFieldVModel' }} client:only />
 
-You can also use different prop names for the `modelValue`, for example `v-model:text` can be implemented by passing the model name directly to `syncModel`.
+You can also use different prop names for the `modelValue`, for example `v-model:text` can be implemented by passing the model name directly to `syncVModel`.
 
 ```js
 const props = defineProps({
@@ -262,7 +262,7 @@ const props = defineProps({
 });
 
 const { value, errorMessage } = useField('fieldName', undefined, {
-  syncModel: 'text',
+  syncVModel: 'text',
 });
 ```
 

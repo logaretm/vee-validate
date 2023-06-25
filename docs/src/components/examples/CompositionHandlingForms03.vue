@@ -1,9 +1,9 @@
 <template>
   <form @submit="onSubmit">
-    <input v-bind="email" type="email" />
+    <input v-bind="email" name="email" type="email" />
     <span>{{ errors.email }}</span>
 
-    <input v-bind="password" type="password" />
+    <input v-bind="password" name="password" type="password" />
     <span>{{ errors.password }}</span>
 
     <button>Submit</button>
@@ -28,7 +28,7 @@ const onSubmit = handleSubmit(
   ({ errors }) => {
     const firstError = Object.keys(errors)[0];
     const el = document.querySelector(`[name="${firstError}"]`);
-    el.scrollIntoView({
+    el?.scrollIntoView({
       behavior: 'smooth',
     });
     el.focus();

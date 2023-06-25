@@ -93,7 +93,7 @@ Let's quickly add a validation schema on the form to see some errors on the form
 
 To add a `yup` schema or any kind of form schema, you pass it to the `validationSchema` option when calling `useForm`. Naturally, form schemas almost always an `object` or a `shape` schema.
 
-```ts{3-5,8}
+```ts{1,3-5,8}
 import * as yup from 'yup';
 
 const schema = yup.object({
@@ -119,7 +119,7 @@ You can change that behavior, for example you can make it "aggressive" by passin
 
 Now as you type in the field, the input is immediately validated. You can do more with dynamic configurations.
 
-### Components
+### Component Binds
 
 Similarly to HTML inputs you can achieve the same results with `defineComponentBinds` function. This function accepts a field path and returns an object containing the bindings for the component.
 
@@ -142,6 +142,13 @@ Let's add validation to the previous example:
 Notice that for components, validations are executed immediately. This is intended because component implementations are not standardized across the Vue ecosystem as there is no guarantees it will emit the same range of events as the native HTML elements. However, you can customize the validation trigger if you know the components you are using are emitting the right events to support the behavior.
 
 <Repl files={{ 'App.vue': 'CompositionComponentBindsBasic03', 'CustomInput.vue': 'CustomInputBasic' }} client:only />
+
+In case the component you are working with does not use the `modelValue` prop and the `update:modelValue` event, you can pass `model` option to tell vee-validate which prop and event to use for that component binds. In the following example, the `CustomInput` uses `value` prop and `update:value` event.
+
+<Repl
+  files={{ 'App.vue': 'CompositionComponentBindsBasic06', 'CustomInput.vue': 'CustomInputBasicValueEvent' }}
+  client:only
+/>
 
 ### Mapping attributes and props
 

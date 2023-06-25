@@ -1,5 +1,7 @@
 <template>
   <InputText name="email" type="email" v-model="email" />
+
+  <pre>Model: {{ email }}</pre>
 </template>
 
 <script setup>
