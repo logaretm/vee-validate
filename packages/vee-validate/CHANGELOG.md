@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.10.2
+
+### Patch Changes
+
+- 1660048e: fix: define binds not respecting config events
+
 ## 4.10.1
 
 ### Patch Changes
