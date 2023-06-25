@@ -933,20 +933,14 @@ export function useForm<
 
     function onInput(e: Event) {
       const value = normalizeEventValue(e) as PathValue<TValues, TPath>;
-      setFieldValue(pathState.path as Path<TValues>, value);
       const validateOnInput = evalConfig().validateOnInput ?? getConfig().validateOnInput;
-      if (validateOnInput) {
-        validateField(pathState.path as Path<TValues>);
-      }
+      setFieldValue(pathState.path as Path<TValues>, value, validateOnInput);
     }
 
     function onChange(e: Event) {
       const value = normalizeEventValue(e) as PathValue<TValues, TPath>;
-      setFieldValue(pathState.path as Path<TValues>, value);
       const validateOnChange = evalConfig().validateOnChange ?? getConfig().validateOnChange;
-      if (validateOnChange) {
-        validateField(pathState.path as Path<TValues>);
-      }
+      setFieldValue(pathState.path as Path<TValues>, value, validateOnChange);
     }
 
     const props = computed(() => {
