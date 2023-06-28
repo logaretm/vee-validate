@@ -637,6 +637,51 @@ describe('useField()', () => {
     expect(input?.value).toBe('test');
   });
 
+  // #4333
+  test('should emit modified values with model modifiers being applied as a prop', async () => {
+    const model = ref('');
+    const InputComponent = defineComponent({
+      props: {
+        modelValue: String,
+        modelModifiers: null,
+      },
+      setup() {
+        const { value, errorMessage } = useField('field', undefined, { syncVModel: true });
+
+        return {
+          value,
+          errorMessage,
+        };
+      },
+      template: `
+        <input v-model="value" />
+      `,
+    });
+
+    const onModelUpdated = vi.fn();
+
+    mountWithHoc({
+      components: {
+        InputComponent,
+      },
+      setup() {
+        return {
+          onModelUpdated,
+          model,
+        };
+      },
+      template: `
+      <InputComponent :model-value="model" @update:model-value="onModelUpdated" :model-modifiers="{ number: true }" />
+    `,
+    });
+
+    const input = document.querySelector('input');
+
+    setValue(input as any, '123');
+    await flushPromises();
+    expect(onModelUpdated).toHaveBeenLastCalledWith(123);
+  });
+
   test('can disable model events', async () => {
     const model = ref('');
     const InputComponent = defineComponent({

@@ -234,13 +234,13 @@ export function debounceAsync<TFunction extends (...args: any) => Promise<any>, 
   };
 }
 
-export function applyModelModifiers(value: unknown, modifiers: unknown) {
+export function applyModelModifiers<TValue = unknown>(value: TValue, modifiers: unknown): TValue {
   if (!isObject(modifiers)) {
     return value;
   }
 
   if (modifiers.number) {
-    return toNumber(value as string);
+    return toNumber(value as string) as TValue;
   }
 
   return value;

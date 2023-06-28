@@ -263,8 +263,10 @@ function _useField<TValue = unknown>(
     validateValidStateOnly();
   }
 
+  const vm = getCurrentInstance();
+
   function setValue(newValue: TValue, shouldValidate = true) {
-    value.value = newValue;
+    value.value = vm && syncVModel ? applyModelModifiers<TValue>(newValue, vm.props.modelModifiers) : newValue;
     const validateFn = shouldValidate ? validateWithStateMutation : validateValidStateOnly;
     validateFn();
   }
@@ -583,7 +585,7 @@ function useVModel<TValue = unknown>({ prop, value, handleChange }: ModelOpts<TV
       }
 
       const newValue = (propValue as any) === IS_ABSENT ? undefined : propValue;
-      if (isEqual(newValue, applyModelModifiers(value.value, vm.props.modelModifiers))) {
+      if (isEqual(newValue, value.value)) {
         return;
       }
 
