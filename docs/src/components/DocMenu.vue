@@ -41,7 +41,7 @@
                   @click="expanded[page.title] = !expanded[page.title]"
                 >
                   <Icon :name="page.icon" class="w-5 h-5 fill-current" />
-                  <span class="ml-2 group-hover:text-accent-800">{{ page.title }}</span>
+                  <span class="ml-2 group-hover:text-accent-800">{{ page.menuTitle || page.title }}</span>
 
                   <svg
                     class="ml-auto w-5 h-5"
@@ -65,7 +65,7 @@
                 <ExpandTransition>
                   <ul v-show="expanded[page.title]" class="mt-3 space-y-2">
                     <li v-for="childPage in page.children" :key="childPage.title" class="pl-7 flex items-center">
-                      <a :href="childPage.path" :aria-current="currentUrl === page.path ? 'page' : undefined">
+                      <a :href="childPage.path" :aria-current="currentUrl === childPage.path ? 'page' : undefined">
                         {{ childPage.menuTitle || childPage.title }}
                       </a>
 

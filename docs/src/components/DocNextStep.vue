@@ -2,7 +2,9 @@
   <div class="pt-4">
     <h2 class="text-xl">Next Step</h2>
 
-    <a :href="path" class="bg-accent-800 w-full flex items-start p-4 rounded text-white">
+    <p v-if="intro">{{ intro }}</p>
+
+    <a :href="href" class="mt-8 bg-accent-800 w-full flex items-start p-4 rounded text-white">
       <svg
         class="w-5 h-5 mr-2 mt-1 flex-shrink-0"
         fill="none"
@@ -21,10 +23,18 @@
 </template>
 
 <script lang="ts" setup>
-defineProps({
-  title: String,
-  description: String,
-  path: String,
+import { computed } from 'vue';
+import { trim, trimEnd } from 'lodash-es';
+
+const props = defineProps<{
+  title: string;
+  description: string;
+  path: string;
+  intro: string;
+}>();
+
+const href = computed(() => {
+  return `${trimEnd(import.meta.env.BASE_URL, '/')}/${trim(props.path, '/')}/`;
 });
 </script>
 

@@ -1,0 +1,44 @@
+---
+layout: ../../../layouts/PageLayout.astro
+title: Composition Helpers
+description: Composition API helpers
+menuTitle: Helpers
+order: 5
+next:
+  path: guide/composition-api/typed-schema
+  title: TypeScript - Typed Schemas
+  description: Input and output types and how to make the most out of your form schemas with TypeScript.
+  intro: |
+    For TypeScript users, it is imperative that they strongly type their form values and the their submissions. This guide will show you how to use either zod or yup with vee-validate's typed schema utilities to get the most out of your schemas with TypeScript.
+---
+
+Aside from `useField` and `useForm` and `useFieldArray`, these are a collection of simple functions that you can use to opt-in specific parts of vee-validate features like form state and various actions you can perform on fields and forms.
+
+Here are a few examples of what you can build with these functions:
+
+- A custom submission progress component
+- A custom error message component.
+- A form validity indicators
+- reset buttons or submit buttons
+
+Here is a list of the functions available that you can use:
+
+- `useFieldError` Gives access to a single field's first error message
+- `useFormErrors` Gives access to the entire error bag of the form
+- `useIsFieldDirty` If a field is dirty
+- `useIsFormDirty` If the form is dirty (form contains at least one dirty field)
+- `useIsFieldTouched` If a field is touched
+- `useIsFormTouched` If the form is touched (form contains at least one touched field)
+- `useIsFieldValid` If a field is valid
+- `useIsFormValid` If all fields are **validated and valid**
+- `useValidateField` Returns a function that validates a specific field
+- `useValidateForm` Returns a function that validates the entire form
+- `useResetForm` Resets the form to its initial state
+- `useSubmitForm` Creates a submission function that validates and submits the form (even if no `form` element is involved)
+- `useIsSubmitting` If the form is currently submitting
+- `useIsValidating` If the form is currently validating by validate function
+- `useSubmitCount` The number of times the user attempted to submit the form
+- `useFieldValue` Returns a specific fields' current value
+- `useFormValues` Returns the current form field values
+
+For more information about the functions, you can head over to the [API reference and check them out](/api/composition-helpers).

@@ -2,7 +2,7 @@
 import HomeLayout from '@/layouts/HomeLayout.astro';
 import SponsorButton from '@/components/SponsorButton.vue';
 import Icon from '@/components/Icon.vue';
-import MainPageExample from '@/components/examples/MainPageExample.vue';
+import MainPageExample from '@/components/MainPageExample.vue';
 import StarCount from '@/components/StarCount.vue';
 import { features } from '@/constants';
 import UiLibraries from '@/components/UiLibraries.vue';
@@ -132,6 +132,6 @@ const highlights = [
       In this example, value tracking, validation and submissions are handled in just a few lines of code
     </p>
 
-    <MainPageExample client:visible />
+    <MainPageExample client:only />
   </section>
 </HomeLayout>

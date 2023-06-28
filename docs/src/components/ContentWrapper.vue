@@ -6,6 +6,10 @@
 
 <style lang="postcss">
 .rendered-content {
+  hr {
+    @apply mt-10 mb-8 border  border-gray-300;
+  }
+
   h1 {
     @apply text-5xl mb-8 font-bold;
   }
@@ -246,6 +250,10 @@
     .filename {
       @apply bg-gray-700;
     }
+  }
+
+  hr {
+    @apply border border-carbon;
   }
 }
 </style>

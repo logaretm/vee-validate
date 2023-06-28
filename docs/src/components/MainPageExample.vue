@@ -22,26 +22,26 @@
     </div>
 
     <div v-if="currentFlavor === 'components'" class="w-full">
-      <iframe
-        loading="lazy"
-        src="https://stackblitz.com/edit/vitejs-vite-2ia3j4?embed=1&file=src/App.vue&hideExplorer=1&hideNavigation=1&hideDevTools=1&devToolsHeight=0&terminalHeight=1&ctl=1"
-      ></iframe>
+      <Suspense>
+        <Repl :files="{ 'App.vue': 'ComponentsBasic' }" />
+      </Suspense>
     </div>
+
     <div v-else class="w-full">
-      <iframe
-        loading="lazy"
-        src="https://stackblitz.com/edit/vitejs-vite-zwb5gb?file=src/App.vue&embed=1&hideExplorer=1&hideNavigation=1&hideDevTools=1&devToolsHeight=0&terminalHeight=1&ctl=1"
-      ></iframe>
+      <Suspense>
+        <Repl :files="{ 'App.vue': 'CompositionBasic' }" />
+      </Suspense>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import Repl from './Repl.vue';
 
 const currentFlavor = ref<'components' | 'composition'>('components');
 
-function setFlavor(flavor: typeof currentFlavor['value']) {
+function setFlavor(flavor: (typeof currentFlavor)['value']) {
   currentFlavor.value = flavor;
 }
 </script>

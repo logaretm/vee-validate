@@ -1,0 +1,307 @@
+---
+layout: ../../../layouts/PageLayout.astro
+title: Getting started
+description: Field-level and form-level validation and validation behavior and error messages with composition API
+order: 1
+next:
+  path: guide/composition-api/handling-forms
+  title: Handling forms
+  description: Submissions, resets and form state
+  intro: |
+    Now that you've learned how to use forms to define fields, collect their values and validate them. Next, you will learn how to handle submissions and implement advanced patterns with forms.
+---
+
+import DocTip from '@/components/DocTip.vue';
+import DocBadge from '@/components/DocBadge.vue';
+import LiveExample from '@/components/LiveExample.vue';
+import Repl from '@/components/MdxRepl.vue';
+
+# Getting started
+
+vee-validate is built from the ground up with the composition API through a collection of functions, mainly the `useField` and `useForm` functions. Internally the `<Form />` and `<Field />` components actually use the composition functions under the hood.
+
+Meaning you can create your own custom input and form components and they will be treated the same as `<Form />` and `<Field />` components. You can mix them together and use a `Form` component with any other custom component that uses `useField` and vice versa.
+
+vee-validate supports synchronous and asynchronous validation and allows defining rules on the field-level or the form level using validation schemas. vee-validate has first-class support for
+
+- [yup](https://github.com/jquense/yup) through `@vee-validate/yup` package.
+- [zod](https://github.com/colinhacks/zod) through `@vee-validate/zod` package.
+- [Global validators](/guide/global-validators) (Laravel-like syntax) through `@vee-validate/rules`.
+
+vee-validate has historically been a declarative validation library, and while the composition API changes things a bit, it still follows the same mindset of declarative validation. vee-validate optimizes for building fields and forms, not values.
+
+## When to use composition API
+
+While vee-validate offers both declarative components and composition functions to supercharge your forms, it is always up to you to decide which one to use. However the composition API is easier to integrate and more flexible. You can build custom components with it or integrate it with any UI library. It is generally recommended to use the composition API.
+
+in this page you will learn how to declare forms and how to hook your elements and components into vee-validate forms and achieve value tracking, validation and more.
+
+## Declaring Forms
+
+### Form context
+
+You can declare forms with the `useForm` function exported from the `vee-validate` core package. This is a composition API function that marks the current component as a form.
+
+```vue
+<script setup>
+import { useForm } from 'vee-validate';
+
+// Creates a form context
+// This component now acts as a form
+// Usually you will destruct the form context to get what you need
+const { values } = useForm();
+</script>
+
+<template>
+  <pre>{{ values }}</pre>
+</template>
+```
+
+Calling `useForm` creates a form context in the component and provides it for any child component that injects it. This means you should stick to calling `useForm` once in a component.
+
+Creating a form context does a few things:
+
+- Acts as a value-collector for all the fields you will declare as child components.
+- Validates the fields and aggregates the errors.
+- Aggregates the validity, touched and dirty states of all the fields.
+
+### Field binds
+
+With `useForm` declared, you are now ready to integrate the form with your elements and components. vee-validate is agnostic to the UI you are using.
+
+In the following couple of sections you will learn how to associate your components and elements with the form and how to get value collection, validation, and error messages working.
+
+#### HTML Inputs
+
+`useForm` provides a function called `defineInputBinds`. This function accepts a field path and return an object containing the bindings for the input element. The field path is a string that represents the path to the field in the form context.
+
+For example, if you have a field called `email` in the form context, the field path will be `email`.
+
+```ts
+const { defineInputBinds } = useForm();
+
+const email = defineInputBinds('email');
+```
+
+Here is basic example of how to use `defineInputBinds` with a simple input element:
+
+<Repl files={{ 'App.vue': 'CompositionInputBindsBasic01' }} client:only />
+
+Notice that as you type in the input, the `values` are automatically updated with the value changes.
+
+Let's quickly add a validation schema on the form to see some errors on the form. We will be using `yup` throughout the examples, but you can use `zod` or any other supported validation library you want.
+
+To add a `yup` schema or any kind of form schema, you pass it to the `validationSchema` option when calling `useForm`. Naturally, form schemas almost always an `object` or a `shape` schema.
+
+```ts{1,3-5,8}
+import * as yup from 'yup';
+
+const schema = yup.object({
+  email: yup.string().required().email(),
+});
+
+const { defineInputBinds } = useForm({
+  validationSchema: schema,
+});
+
+const email = defineInputBinds('email');
+```
+
+Here is a full running example:
+
+<Repl files={{ 'App.vue': 'CompositionInputBindsBasic02' }} client:only />
+
+Notice as you blur the input, the validation is then triggered and the errors are populated. By default `defineInputBinds` optimizes for lazy validation, meaning the validation will be triggered on `change` and on `blur` events.
+
+You can change that behavior, for example you can make it "aggressive" by passing a configuration to `defineInputBinds` to validate on `input` events.
+
+<Repl files={{ 'App.vue': 'CompositionInputBindsBasic03' }} client:only />
+
+Now as you type in the field, the input is immediately validated. You can do more with dynamic configurations.
+
+### Component Binds
+
+Similarly to HTML inputs you can achieve the same results with `defineComponentBinds` function. This function accepts a field path and returns an object containing the bindings for the component.
+
+```ts
+const { defineComponentBinds } = useForm();
+
+const email = defineComponentBinds('email');
+```
+
+Following the previous examples we can achieve value tracking like this:
+
+<Repl files={{ 'App.vue': 'CompositionComponentBindsBasic01', 'CustomInput.vue': 'CustomInputBasic' }} client:only />
+
+As you type into the input, notice that the `values` are being updated. This means you don't need to use `v-model` on your inputs or components.
+
+Let's add validation to the previous example:
+
+<Repl files={{ 'App.vue': 'CompositionComponentBindsBasic02', 'CustomInput.vue': 'CustomInputBasic' }} client:only />
+
+Notice that for components, validations are executed immediately. This is intended because component implementations are not standardized across the Vue ecosystem as there is no guarantees it will emit the same range of events as the native HTML elements. However, you can customize the validation trigger if you know the components you are using are emitting the right events to support the behavior.
+
+<Repl files={{ 'App.vue': 'CompositionComponentBindsBasic03', 'CustomInput.vue': 'CustomInputBasic' }} client:only />
+
+In case the component you are working with does not use the `modelValue` prop and the `update:modelValue` event, you can pass `model` option to tell vee-validate which prop and event to use for that component binds. In the following example, the `CustomInput` uses `value` prop and `update:value` event.
+
+<Repl
+  files={{ 'App.vue': 'CompositionComponentBindsBasic06', 'CustomInput.vue': 'CustomInputBasicValueEvent' }}
+  client:only
+/>
+
+### Mapping attributes and props
+
+With both `defineInputBinds` and `defineComponentBinds` you can map the attributes and props of the in. This is useful when you want to:
+
+- Use a component or an element that doesn't support `v-model`
+- When you want to map the attributes/props to a different name.
+- Pass new attributes/props to the component/element.
+
+You can use `mapProps` or `mapAttrs` (For elements) to include any additional props or attributes you need to add on the component/element.
+
+```ts
+const { defineInputBinds } = useForm({
+  // ...
+});
+```
+
+In the following example we have a component that accepts an `error` string prop and shows that message if it is not empty. This is common in many UI libraries as they try not to lock you in to a specific validation library.
+
+<Repl
+  files={{ 'App.vue': 'CompositionComponentBindsBasic04', 'CustomInput.vue': 'CustomInputBasicError' }}
+  client:only
+/>
+
+<DocTip>
+
+The `state` object contains a lot of useful information about the field, it is fully typed so you can explore it with your IDE or visit the [API reference](/api/types#path-state) for more information.
+
+</DocTip>
+
+Notice that `form` also gives you access to `errors` so you can reference them anywhere in the component.
+
+### Dynamic configuration
+
+Instead of passing a static configuration object to either `defineInputBinds` or `defineComponentBinds`, you could pass a function that returns different configuration values. This is useful when you want the configuration to be dynamic based on the field state.
+
+Here is an example that shows how to make the validation behavior "eager". Meaning if the field does not have any errors then it will only validate on `change`.
+
+But once it is invalid, it validates on each input event, making it "eager" for success.
+
+<Repl
+  files={{ 'App.vue': 'CompositionComponentBindsBasic05', 'CustomInput.vue': 'CustomInputBasicError' }}
+  client:only
+/>
+
+## Form Schema
+
+As you have seen in the previous examples, the `useForm` function accepts a `validationSchema` that is used to validate the form. We've been using yup to define the schema however you can use `zod` or any 3rd-party validators.
+
+### Validating with Yup
+
+You can pass yup schemas directly like you've seen previously, but it is recommended that you use the `@vee-validate/yup` package. It will enable better support of yup features and unlock full typescript support for your schemas.
+
+```sh
+# with npm
+npm i @vee-validate/yup
+# with pnpm
+pnpm add @vee-validate/yup
+# with yarn
+yarn add @vee-validate/yup
+```
+
+The package exposes a `toTypedSchema` function that you can use to wrap your yup schemas, this allows vee-validate to infer form input and output types. [More on that here](/guide/composition-api/typed-schema).
+
+```ts
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/yup';
+import * as yup from 'yup';
+
+// Creates a typed schema for vee-validate
+const schema = toTypedSchema(
+  yup.object({
+    email: yup.string().required().email(),
+  })
+);
+
+const { errors, values } = useForm({
+  validationSchema: schema,
+});
+```
+
+<Repl files={{ 'App.vue': 'CompositionYupBasic' }} client:only />
+
+<DocTip title="Yup Schema Optimizations" type="warn">
+
+There are a couple of optimization caveats when it comes to using `yup` schemas to validate your forms, be sure to check the [best practices guide](/guide/best-practices).
+
+</DocTip>
+
+### Validating with Zod
+
+You can use [Zod](https://github.com/colinhacks/zod) in a very similar manner to how we've been using yup in the past examples, however you will need to add `@vee-validate/zod` to your dependencies.
+
+```sh
+# with npm
+npm i @vee-validate/zod
+# with pnpm
+pnpm add @vee-validate/zod
+# with yarn
+yarn add @vee-validate/zod
+```
+
+Then you can wrap your zod schemas with `toTypedSchema` function which allows vee-validate to infer form input and output types. [More on that here](/guide/composition-api/typed-schema).
+
+```ts
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import { z } from 'zod';
+
+// Creates a typed schema for vee-validate
+const schema = toTypedSchema(
+  z.object({
+    email: z.string().required().email(),
+  })
+);
+
+const { errors, values } = useForm({
+  validationSchema: schema,
+});
+```
+
+Here is a full example using zod with `useForm`:
+
+<Repl files={{ 'App.vue': 'CompositionZodBasic' }} client:only />
+
+### Validating with global validators
+
+Another option is using `@vee-validate/rules` which have been historically bundled with past versions of vee-validate. It includes rules that can be defined globally and then used anywhere using Laravel-like string expressions.
+
+You can refer to the full guide on global rules [here](/guide/global-validators).
+
+### Validating with functions
+
+Another option is to just use any 3rd party validation tool you prefer, something like [`validator.js`](https://github.com/validatorjs/validator.js/). Here is a quick example:
+
+<Repl files={{ 'App.vue': 'CompositionValidateFnBasic' }} client:only />
+
+Or you could use any custom function.
+
+<DocTip>
+
+Both `zod` and `yup` are very good at defining schemas especially nested values so it is recommended that you use either. As an added bonus, you get full typescript support with either of them. You can refer to the [Typed schemas guide](/guide/typed-schemas) to learn more about how to maximize the type safety of your schemas.
+
+</DocTip>
+
+### Dynamic Form Schemas
+
+There are a few ways you can create dynamic schemas (reactive) where it changes the validation rules based on some state. The first way to do that is with `computed`.
+
+<Repl files={{ 'App.vue': 'CompositionDynamicSchemaComputed' }} client:only />
+
+When the validation schema value changes, only the fields that were validated at least once will be re-validated, the other fields won't be validated to avoid aggressive validation behavior.
+
+The other ways depend on which validation library you are using, for example with yup you can achieve the same with `yup.lazy` or `zod.lazy`:
+
+<Repl files={{ 'App.vue': 'CompositionDynamicSchemaYupLazy' }} client:only />

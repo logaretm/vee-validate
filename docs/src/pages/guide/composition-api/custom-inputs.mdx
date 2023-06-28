@@ -1,0 +1,396 @@
+---
+layout: ../../../layouts/PageLayout.astro
+title: Custom inputs
+description: Field-level and form-level validation and validation behavior and error messages with composition API
+order: 4
+next:
+  path: guide/composition-api/helpers
+  title: Composable Helpers
+  description: Access any field or form state within child components with these composable helpers.
+  intro: |
+    You've learned to build your form, your custom inputs. Now it is a quick one to figure out how to build special components like submission buttons, reset buttons, error displays and more with these composable helpers.
+---
+
+# Building Custom inputs
+
+import DocTip from '@/components/DocTip.vue';
+import Repl from '@/components/MdxRepl.vue';
+
+## Imperative vs Declarative
+
+So far we've been using `useForm` to create forms and use `defineInputBinds` or `defineComponentBinds` to create our field binding objects to integrate them with our fields. However that usually requires a lot of boilerplate code to create the binding object and the field component.
+
+For example this how a 5-field form looks like with `useForm` and `defineInputBinds`:
+
+```js
+const { defineInputBinds } = useForm();
+
+const email = defineInputBinds('email');
+const firstName = defineInputBinds('firstName');
+const lastName = defineInputBinds('lastName');
+const password = defineInputBinds('password');
+const passwordConfirm = defineInputBinds('passwordConfirm');
+```
+
+This can get ugly very quickly especially if you have a bunch of field arrays or nested fields involved. This is one of the downsides of using an imperative API, but with `useField` you can switch to declarative API and get rid of all that boilerplate code.
+
+`useField` is a composition function that similar to how `useForm` makes it easier to manage forms, it makes easier to create and manage input components. You should use it when creating custom input components and that means you've made the choice that vee-validate will be an integral part of your input component system.
+
+## Creating a custom input component
+
+Let's start with a simple example, we will create a `InputText` component that represents a text field. It can be as simple as this:
+
+```vue
+<template>
+  <input v-model="value" />
+  {{ errorMessage }}
+</template>
+
+<script setup>
+import { useField } from 'vee-validate';
+
+const props = defineProps({
+  name: String,
+});
+
+// The `name` is returned in a function because we want to make sure it stays reactive
+// If the name changes you want `useField` to be able to pick it up
+const { value, errorMessage } = useField(() => props.name);
+</script>
+```
+
+This works exactly the same way as with `defineInputBinds`, but now since you have a vee-validate field component, you can use it directly in any component with a form context and it will just work:
+
+Here is a live example:
+
+<Repl files={{ 'App.vue': 'CompositionCustomField01', 'InputText.vue': 'CustomInputFieldBasic' }} client:only />
+
+Notice how much of the burden of defining fields went away as soon as switched to the declarative approach. This is where `useField` really shines, but that's just us getting started. Following along in this guide to make the most out of `useField`.
+
+## Validation
+
+All previous examples have used the form's validation schema to validate the individual fields, however you can also define a validation schema for each field individually. The same types of validation libraries are supported.
+
+<DocTip title="Yup Typed Schema">
+
+You can only validate using field-level validation or form-level validation, you cannot mix the two approaches here.
+
+</DocTip>
+
+### Validating with yup
+
+You can use Yup schemas to validate fields individually by passing the schema as the second argument to `useField`.
+
+<Repl files={{ 'App.vue': 'CompositionInputFieldYup' }} client:only />
+
+### Validating with Zod
+
+You can use [Zod](https://github.com/colinhacks/zod), however you will need to add `@vee-validate/zod` to your dependencies.
+
+```sh
+# with npm
+npm i @vee-validate/zod
+# with pnpm
+pnpm add @vee-validate/zod
+# with yarn
+yarn add @vee-validate/zod
+```
+
+Then you can wrap your zod field schemas with `toTypedSchema` function. [More on that here](/guide/composition-api/typed-schema).
+
+<Repl files={{ 'App.vue': 'CompositionInputFieldZod' }} client:only />
+
+### Validating with global validators
+
+Another option is using `@vee-validate/rules` which have been historically bundled with past versions of vee-validate. It includes rules that can be defined globally and then used anywhere using Laravel-like string expressions.
+
+You can refer to the full guide on global rules [here](/guide/global-validators).
+
+### Validating with functions
+
+Another option is to just use any 3rd party validation tool you prefer.
+
+<Repl files={{ 'App.vue': 'CompositionInputFieldFn' }} client:only />
+
+### Triggers
+
+#### Default Behavior
+
+By default vee-validate runs validation whenever the `value` ref changes whether it was bound by a `v-model` or changed in your code:
+
+```js
+const { value } = useField('fieldName', yup.string().required());
+
+// validation WILL be triggered
+value.value = 'something';
+```
+
+You can disable that behavior by passing a `validateOnValueUpdate` option set to `false`:
+
+```js
+const { value } = useField('fieldName', yup.string().required(), {
+  validateOnValueUpdate: false,
+});
+
+// validation WILL NOT trigger
+value.value = 'something';
+```
+
+#### Handling Events
+
+`useField()` composition function is not concerned with any events, it only validates whenever the `value` ref changes. However, it gives you everything you need to set up your own validation experience.
+
+The `useField` function exposes some handler functions, each handles a specific aspect of the validation experience:
+
+- `handleChange`: Updates the field value, can be configured to trigger validation or silently update the value
+- `handleBlur`: Updates the `meta.touched` flag, doesn't trigger validation.
+
+```js
+const { handleChange, handleBlur } = useField('someField');
+```
+
+In this example we are validating on `input` event (when the user types), which would make the validation aggressive:
+
+<Repl files={{ 'App.vue': 'CompositionCustomField03', 'InputText.vue': 'CustomInputFieldAggressive' }} client:only />
+
+With a slight adjustment we can make our validation lazy by changing the listener to `@change` (validates when the user leaves the control):
+
+```vue-html
+<div>
+  <input @change="handleChange" :value="value" type="text" />
+  <span>{{ errorMessage }}</span>
+</div>
+```
+
+Note that `handleChange` can be called anywhere, not just in the template and not as just a event handler. You can use it to mutate the field value whenever you want, as an added bonus you can choose if `handleChange` should trigger a validation or not.
+
+```js
+const { handleChange } = useField('someField');
+
+// validates by default
+handleChange('new value');
+// validates
+handleChange('new value', true);
+// Doesn't validate
+handleChange('new value', false);
+```
+
+Let's say you want to validate on `blur` instead. You can use the `handleBlur` in a similar way. The main differences are:
+
+- `handleBlur` doesn't mutate the `value` of the field. It only sets the `meta.touched` to `true`.
+- `handleBlur` does not validate the current value by default, you have to pass `true` as a second argument to trigger validation.
+
+With that info in mind, you can validate on `blur` like so:
+
+```vue-html
+<div>
+  <input
+    :value="value"
+    type="text"
+    @change="handleChange"
+    @blur="handleBlur($event, true)"
+  />
+  <span>{{ errorMessage }}</span>
+</div>
+```
+
+As you can see, the `useField` doesn't care which events you use `handleChange` for. This allows for greater flexibility that's not possible with the `<Field>` component, not as straightforward at least.
+
+Consider this validation experience:
+
+- Validate on Change/Blur initially (when user leaves the control), let's call this lazy mode.
+- If the field is invalid, switch the validation to validate on input (when user types), let's call this aggressive mode.
+- If the field is valid, go back to "lazy" mode, otherwise be "aggressive".
+
+Implementing this requires some knowledge about how the `v-on` (we can bind objects on it) handler works.
+
+```js
+const { errorMessage, value, handleChange } = useField(() => props.name, undefined, {
+  validateOnValueUpdate: false,
+});
+
+const validationListeners = {
+  blur: evt => handleBlur(evt, true),
+  change: handleChange,
+  input: evt => handleChange(evt, !!errorMessage.value),
+};
+```
+
+Then in your template you can use `v-on` to add your listener object:
+
+```vue-html
+<input @input="handleChange" :value="value" v-on="validationListeners" type="text" />
+```
+
+Here is a full example:
+
+<Repl files={{ 'App.vue': 'CompositionCustomField03', 'InputText.vue': 'CustomInputFieldEager' }} client:only />
+
+## v-model Support
+
+The `useField` function can automatically manage `v-model` integration for you. Usually you will need to do this in every component you create:
+
+```js
+const props = defineProps({
+  modelValue: String,
+});
+
+const emit = defineEmits(['update:modelValue']);
+```
+
+Instead you can let `useField` do that for you by telling it to enable `v-model` syncing:
+
+```js
+const props = defineProps({
+  modelValue: String,
+});
+
+const { value, errorMessage } = useField('fieldName', undefined, {
+  syncVModel: true,
+});
+```
+
+Now whenever `value` changes, you will emit an `update:modelValue` event with the new value. This is useful when you want to use `v-model` with your custom input component:
+
+<Repl files={{ 'App.vue': 'CompositionCustomField02', 'InputText.vue': 'CustomInputFieldVModel' }} client:only />
+
+You can also use different prop names for the `modelValue`, for example `v-model:text` can be implemented by passing the model name directly to `syncVModel`.
+
+```js
+const props = defineProps({
+  text: String,
+});
+
+const { value, errorMessage } = useField('fieldName', undefined, {
+  syncVModel: 'text',
+});
+```
+
+This will emit `onUpdate:text` instead of `onUpdate:modelValue` whenever the `value` changes.
+
+## Displaying Error Messages
+
+You've already seen how to display errors with `useForm`. With `useField` you can use `errorMessage` ref:
+
+```js
+const { errorMessage, value } = useField('fieldName', yup.string().required());
+
+// contains the error message if available
+errorMessage.value;
+```
+
+In addition to this, you can get all errors for the field using the `errors` ref which contains multiple error messages if applicable:
+
+```js
+const { errors, value } = useField('fieldName', yup.string().required());
+
+// contains array of error messages, otherwise empty array
+errors.value;
+```
+
+Here is an example where each field displays its entire range of error messages:
+
+<Repl files={{ 'App.vue': 'CompositionCustomField04', 'InputText.vue': 'CustomInputFieldMultiErrors' }} client:only />
+
+### Custom Field Labels
+
+More often than not, your fields will have names with underscores or shorthands which isn't very nice when showing in error messages, for example, you might have specific encoding to your field names because they might be generated by the backend. Ideally, you want to avoid having messages like:
+
+```txt
+The down_p is required
+```
+
+And instead show something more meaningful to the user
+
+```txt
+The down payment is required
+```
+
+You can do this in two ways depending on which validators you are using (yup or [global validators](/guide/global-validators)).
+
+#### Custom Labels with Yup
+
+With yup it is very straightforward, you just need to call `label()` after defining your field's validations either in field level or form level:
+
+```js
+const schema = Yup.object({
+  email_addr: Yup.string().email().required().label('Email Address'),
+  acc_password: Yup.string().min(5).required().label('Your Password'),
+});
+```
+
+#### Custom Labels with Zod
+
+With Zod it is similar, you call the `label` function and give it the name you want to use in the generated message.
+
+```js
+const schema = z.object({
+  email_addr: z.string().email().label('Email Address'),
+  acc_password: z.string().min(5).label('Your Password'),
+});
+```
+
+If you are interested in how to do the same for global validators check the [i18n guide](/guide/i18n#custom-labels)
+
+## Field-level Meta
+
+Each field has metadata associated with it, the `meta` property returned from `useField` contains information about the field:
+
+- `valid`: The current field validity, automatically updated for you.
+- `touched`: If the field was **touched**, can be updated with `setTouched` on `useField` return value.
+- `dirty`: If the field value was updated, you cannot change its value.
+- `pending`: If the field's validations are still running, useful for long-running async validation.
+- `initialValue`: The field's initial value, is `undefined` if you didn't specify any.
+
+```js
+const { meta } = useField('fieldName');
+
+meta.dirty;
+meta.pending;
+meta.touched;
+meta.valid;
+meta.initialValue;
+```
+
+This is the typescript interface for a field's meta value
+
+```ts
+interface FieldMeta {
+  dirty: boolean;
+  pending: boolean;
+  touched: boolean;
+  valid: boolean;
+  initialValue: any;
+}
+```
+
+Just like how the form's `meta` is readonly, this is also readonly and you cannot change it directly. Actually, only the `touched` meta value can be mutated using `handleBlur`, all other meta values are automatically updated for you as the field validates or when it changes its value.
+
+```js
+const { meta, handleBlur } = useField('fieldName');
+
+// updates meta.touched = true
+handleBlur();
+```
+
+<DocTip title="Valid Flag Combinations">
+
+Since the `meta.valid` flag is initially `true` (because it just means there are no errors yet), it would cause problems if you have a "success" UI state an indicator.
+
+To avoid this case you should combine the `valid` flag with either `meta.dirty` or `meta.touched` to get an accurate representation. You will see that in action in the next example.
+
+</DocTip>
+
+In the following example, we the various meta information flags to style the input with some styling.
+
+<Repl files={{ 'App.vue': 'CompositionCustomField05', 'InputText.vue': 'CustomInputFieldMeta' }} client:only />
+
+<DocTip title="Field Dirty Flag and Initial Values">
+
+Notice in the previous example, we passed an `initialValue`, this is because the default field value is `undefined` which may cause unexpected `meta.dirty` results.
+
+To get accurate results for the `meta.dirty` flag, you must provide an initial value to your field even if the values are empty.
+
+To reduce the verbosity of adding an `initialValue` prop to each field, you could provide the `initialValues` prop to your `useForm` call instead.
+
+</DocTip>

@@ -161,6 +161,18 @@ importers:
       '@types/fs-extra':
         specifier: ^11.0.1
         version: 11.0.1
+      '@types/lodash-es':
+        specifier: ^4.17.7
+        version: 4.17.7
+      '@vee-validate/yup':
+        specifier: 4.9.6
+        version: 4.9.6(vue@3.3.4)
+      '@vee-validate/zod':
+        specifier: 4.9.6
+        version: 4.9.6(vue@3.3.4)
+      '@vue/repl':
+        specifier: ^2.1.4
+        version: 2.1.4
       '@vueuse/core':
         specifier: ^10.2.1
         version: 10.2.1(vue@3.3.4)
@@ -176,6 +188,9 @@ importers:
       jsdom:
         specifier: ^22.1.0
         version: 22.1.0
+      lodash-es:
+        specifier: ^4.17.21
+        version: 4.17.21
       remark-gfm:
         specifier: ^3.0.1
         version: 3.0.1
@@ -188,9 +203,18 @@ importers:
       unist-util-visit:
         specifier: ^4.1.2
         version: 4.1.2
+      vee-validate:
+        specifier: ^4.9.6
+        version: link:../packages/vee-validate
       vue:
         specifier: ^3.3.0
         version: 3.3.4
+      yup:
+        specifier: ^1.2.0
+        version: 1.2.0
+      zod:
+        specifier: ^3.21.4
+        version: 3.21.4
 
   packages/i18n: {}
 
@@ -2460,6 +2484,16 @@ packages:
       '@types/node': 18.0.3
     dev: false
 
+  /@types/lodash-es@4.17.7:
+    resolution: {integrity: sha512-z0ptr6UI10VlU6l5MYhGwS4mC8DZyYer2mCoyysZtSF7p26zOX8UpbrV0YpNYLGS8K4PUFIyEr62IMFFjveSiQ==}
+    dependencies:
+      '@types/lodash': 4.14.195
+    dev: false
+
+  /@types/lodash@4.14.195:
+    resolution: {integrity: sha512-Hwx9EUgdwf2GLarOjQp5ZH8ZmblzcbTBC2wtQWNKARBSxM9ezRIAUpeDTgoQRAFB0+8CNWXVA9+MaSOzOF3nPg==}
+    dev: false
+
   /@types/mdast@3.0.10:
     resolution: {integrity: sha512-W864tg/Osz1+9f4lrGTZpCSO5/z4608eUp19tbozkq2HJK6i3z1kT0H9tlADXuYIb1YYOBByU4Jsqkk75q48qA==}
     dependencies:
@@ -2806,6 +2840,26 @@ packages:
       vue: 3.3.4
     dev: true
 
+  /@vee-validate/yup@4.9.6(vue@3.3.4):
+    resolution: {integrity: sha512-Gsd9V3IK4Tqxc2HzmCizHbjh/28uwhD6XAZeRd0cO86op8x05MXljGqAtcaghqjAgZhxLOyU7RRqrICPUzpWDw==}
+    dependencies:
+      type-fest: 3.12.0
+      vee-validate: 4.10.2(vue@3.3.4)
+      yup: 1.2.0
+    transitivePeerDependencies:
+      - vue
+    dev: false
+
+  /@vee-validate/zod@4.9.6(vue@3.3.4):
+    resolution: {integrity: sha512-YFpJDtsFDdM47HQSGKRQvA5nxEYZW1RjTWe1MPSpgo8uEWBOtxEwgiiPWoxnQtwc2c8qYpYMIwUbm2mUAHhpaw==}
+    dependencies:
+      type-fest: 3.12.0
+      vee-validate: 4.10.2(vue@3.3.4)
+      zod: 3.21.4
+    transitivePeerDependencies:
+      - vue
+    dev: false
+
   /@vercel/nft@0.22.6:
     resolution: {integrity: sha512-gTsFnnT4mGxodr4AUlW3/urY+8JKKB452LwF3m477RFUJTAaDmcz2JqFuInzvdybYIeyIv1sSONEJxsxnbQ5JQ==}
     engines: {node: '>=14'}
@@ -3015,6 +3069,10 @@ packages:
     resolution: {integrity: sha512-kLTDLwd0B1jG08NBF3R5rqULtv/f8x3rOFByTDz4J53ttIQEDmALqKqXY0J+XQeN0aV2FBxY8nJDf88yvOPAqQ==}
     dependencies:
       '@vue/shared': 3.3.4
+
+  /@vue/repl@2.1.4:
+    resolution: {integrity: sha512-1fK5bsdM3vAkP6l5r0mQwGELaz2BWyk9vWDjA0h1RQ1+2qmf3YVDaJ7Pd7jW3RCaVZUwrIuHLfzRnu2p+ZjZMw==}
+    dev: false
 
   /@vue/runtime-core@3.3.4:
     resolution: {integrity: sha512-R+bqxMN6pWO7zGI4OMlmvePOdP2c93GsHFM/siJI7O2nxFRzj55pLwkpCedEY+bTMgp5miZ8CxfIZo3S+gFqvA==}
@@ -6663,6 +6721,10 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       p-locate: 5.0.0
+
+  /lodash-es@4.17.21:
+    resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
+    dev: false
 
   /lodash.camelcase@4.3.0:
     resolution: {integrity: sha512-TwuEnCnxbc3rAvhf/LbG7tJUDzhqXyFnv3dtzLOPgCG/hODL7WFnsbwktkD7yUV0RrreP/l1PALq/YSg6VvjlA==}
@@ -10826,6 +10888,16 @@ packages:
       spdx-correct: 3.2.0
       spdx-expression-parse: 3.0.1
     dev: true
+
+  /vee-validate@4.10.2(vue@3.3.4):
+    resolution: {integrity: sha512-J2we1IjIvEKSC32ECw1HWgwwyqDIsrUnhGhZWgrvHeNp6m+pHY5C6PrdSDy1Ly4NcDNNO5XGMNvRZnurIKIdEg==}
+    peerDependencies:
+      vue: ^3.3.4
+    dependencies:
+      '@vue/devtools-api': 6.5.0
+      type-fest: 3.12.0
+      vue: 3.3.4
+    dev: false
 
   /vfile-location@4.1.0:
     resolution: {integrity: sha512-YF23YMyASIIJXpktBa4vIGLJ5Gs88UB/XePgqPmTa7cDA+JeO3yclbpheQYCHjVHBn/yePzrXuygIL+xbvRYHw==}

@@ -17,7 +17,7 @@ const props = defineProps<{
 }>();
 
 const headings = computed(() => {
-  return props.headings.filter(h => h.depth <= 3);
+  return props.headings.filter(h => h.depth <= 3 && h.depth !== 1);
 });
 </script>
 

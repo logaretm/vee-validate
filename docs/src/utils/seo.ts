@@ -155,7 +155,16 @@ export function generateLinks({ url }) {
 
 export interface Frontmatter {
   title: string;
+  menuTitle?: string;
   order: number;
+  next?: {
+    title: string;
+    description: string;
+    path: string;
+    intro: string;
+  };
+  description?: string;
+  path?: string;
 }
 
 export function buildMenu(pages: { url?: string; frontmatter: Frontmatter; children?: any[]; icon?: string }[]) {
@@ -166,7 +175,10 @@ export function buildMenu(pages: { url?: string; frontmatter: Frontmatter; child
   ].map(p => {
     return {
       title: p.frontmatter.title,
+      menuTitle: p.frontmatter.menuTitle,
       order: p.frontmatter.order,
+      description: p.frontmatter.description,
+      next: p.frontmatter.next,
       path: p.url || '',
       children: p.children ? buildMenu(p.children) : undefined,
       icon: p.icon || undefined,
