@@ -11,7 +11,7 @@ export function isEmptyArray(arr: unknown): boolean {
 }
 
 export const isObject = (obj: unknown): obj is Record<string, unknown> =>
-  obj !== null && !!obj && typeof obj === 'object' && !Array.isArray(obj);
+  obj !== null && !!obj && typeof obj === 'object' && !Array.isArray(obj) && !(obj instanceof Date);
 
 export function isIndex(value: unknown): value is number {
   return Number(value) >= 0;
@@ -24,7 +24,7 @@ export function toNumber(value: string): number | string {
 }
 
 export function isObjectLike(value: any) {
-  return typeof value === 'object' && value !== null;
+  return typeof value === 'object' && value !== null && !(value instanceof Date);
 }
 
 export function getTag(value: any) {
