@@ -125,6 +125,7 @@ function onForkClick() {
 
 <style lang="postcss" scoped>
 .vue-repl {
+  @apply flex-grow;
   --bg: #e8e8e8 !important;
   --bg-soft: #e8e8e8 !important;
   --border: hsl(0 0% 74%) !important;
@@ -157,6 +158,10 @@ function onForkClick() {
   }
 
   &:deep(.output-container) {
+    @apply h-full;
+  }
+
+  &:deep(.editor-container) {
     @apply h-full;
   }
 
