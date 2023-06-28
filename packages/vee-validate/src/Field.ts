@@ -1,7 +1,7 @@
 import { h, defineComponent, toRef, SetupContext, resolveDynamicComponent, computed, PropType, VNode } from 'vue';
 import { getConfig } from './config';
 import { RuleExpression, useField } from './useField';
-import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent, normalizeEventValue } from './utils';
+import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent } from './utils';
 import { IS_ABSENT } from './symbols';
 import { FieldMeta, InputType } from './types';
 import { FieldContext } from '.';
