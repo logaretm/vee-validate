@@ -10,15 +10,17 @@ Fork the repository, or clone it:
 git clone https://github.com/logaretm/vee-validate.git
 ```
 
-Install dependencies using [yarn](https://yarnpkg.com)
+Install dependencies using [pnpm](https://pnpm.io/)
 
 ```sh
-yarn
+pnpm i
 ```
 
 ## Issues
 
-When creating issues, please provide as much details as possible. A clear explanation on the issue and a reliable production example can help us greatly in improving this project. Your issue may get closed if it cannot be easily reproduced so please provide a working example using either [Codesandbox](https://codesandbox.io/) or [jsfiddle](https://jsfiddle.net/). Your example should only focus on the issue, minimal and clearly produces the issue.
+When creating issues, please provide as much details as possible. A clear explanation on the issue and a reliable production example can help us greatly in improving this project. Your issue may get closed if it cannot be easily reproduced so please provide a working example using either [Codesandbox](https://codesandbox.io/) or [StackBlitz](https://stackblitz.com/). Your example should only focus on the issue, minimal and clearly produces the issue.
+
+You can fork this [StackBlitz template](https://stackblitz.com/edit/vee-validate-issue-template?file=src%App.vue) to get a starting working environment ready for your demo with all vee-validate packages pre-installed and using the latest release.
 
 If your issue gets closed for not providing enough info or not responding to the maintainers' comments, do not consider it a hostile action. There are probably other issues that the maintainers are working on and must give priority to issues that are well investigated, you can always revisit the issue and address the reasons that it was closed and we will be happy to re-open it and address it properly. Sometimes a commit will close your issue without a response from the maintainers so make sure you read the issue timeline to prevent any misunderstandings.
 
@@ -34,14 +36,12 @@ Commit messages are enforced with `commitlint` which is configured to help you w
 
 If you want to contribute to the docs you can find it in the `docs` folder.
 
-The docs are using `Nuxt` and `nuxt/content` module, the content itself is present in `docs/content` as markdown files.
+The docs are using [astro](https://astro.build/) and the [MDX plugin](https://docs.astro.build/en/guides/integrations-guide/mdx/) to write the doc pages.
 
 To run the documentation locally:
 
 ```sh
-yarn docs:dev
-# or
-npm run docs:dev
+pnpm docs:dev
 ```
 
 ## Pull Requests
@@ -55,6 +55,7 @@ npm run docs:dev
 - Make sure to mention which issues are being fixed by the PR so they can be closed properly
 - Make sure to preview all pending PRs to make sure your work won't conflict with other ongoing pull-request
 - Coordinate with ongoing conflicting PRs' authors to make it easier to merge both your PRs
+- Make sure to generate a changeset on the PR branch before merging it, this will help us generate a changelog for the next release.
 
 ## Source Code
 
@@ -70,31 +71,34 @@ Each test file represents a unit test to the corresponding file in the src folde
 To run the tests:
 
 ```sh
-yarn test
-# or
-npm run test
+pnpm test
 ```
 
 To check the tests coverage:
 
 ```sh
-yarn cover
-# or
-npm run cover
+pnpm cover
 ```
 
 ## Mono repo
 
-this project uses mono-repo style using [lerna](https://github.com/lerna/lerna).
+this project uses mono-repo style using pnpm workspaces and [changesets](https://github.com/changesets/changesets).
 
 ## Building
 
 Use this command to build all project bundles
 
 ```sh
-yarn build
-# or
-npm run build
+pnpm build
+```
+
+If you are working on a specific package within the vee-validate mono repo and only want to build that, then use the following command to build specific packages, the package id is the folder name in the `packages` folder.
+
+```sh
+pnpm build vee-validate
+pnpm build rules
+pnpm build zod
+# etc...
 ```
 
 ## Tips for Testing your changes
@@ -102,4 +106,4 @@ npm run build
 If you need to try out your changes, here is a few tips
 
 - Build vee-validate dist files once you are done with your changes
-- To use the built files you can either use `npm link` and link vee-validate dist files to your project, or use [yalc](https://github.com/whitecolor/yalc) (recommended)
+- To use the built files you can either use `pnpm link {PKG_NAME}` and link the package dist files to your project, or use [yalc](https://github.com/whitecolor/yalc).
