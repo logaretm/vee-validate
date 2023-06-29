@@ -226,6 +226,12 @@ handleSubmit(submitted => {
 });
 ```
 
+<DocTip title="refine/superRefine">
+
+There is a known issue with Zod's `refine` and `superRefine` not executing whenever some object keys are missing or not filled which is common with forms. This is not an issue with vee-validate as it is a design choice in Zod at the moment. Refer to [this issue](https://github.com/logaretm/vee-validate/issues/4338) for explanations and further reading.
+
+</DocTip>
+
 ### Zod default values
 
 You can also define default values on your zod schema directly and it will be picked up by the form:

@@ -164,3 +164,9 @@ const onSubmit = handleSubmit(values => {
 You can find more information on how typed schemas work in vee-validate [here](/guide/composition-api/typed-schema#zod)
 
 </DocTip>
+
+<DocTip title="refine/superRefine">
+
+There is a known issue with Zod's `refine` and `superRefine` not executing whenever some object keys are missing which is common with forms. This is not an issue with vee-validate as it is a design choice in Zod at the moment. Refer to [this issue](https://github.com/logaretm/vee-validate/issues/4338) for explanations and further reading.
+
+</DocTip>

@@ -274,6 +274,12 @@ Here is a full example using zod with `useForm`:
 
 <Repl files={{ 'App.vue': 'CompositionZodBasic' }} client:only />
 
+<DocTip title="refine/superRefine">
+
+There is a known issue with Zod's `refine` and `superRefine` not executing whenever some object keys are missing which is common with forms. This is not an issue with vee-validate as it is a design choice in Zod at the moment. Refer to [this issue](https://github.com/logaretm/vee-validate/issues/4338) for explanations and further reading.
+
+</DocTip>
+
 ### Validating with global validators
 
 Another option is using `@vee-validate/rules` which have been historically bundled with past versions of vee-validate. It includes rules that can be defined globally and then used anywhere using Laravel-like string expressions.
