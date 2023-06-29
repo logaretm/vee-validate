@@ -65,10 +65,10 @@ function onForkClick() {
 
 <template>
   <div
-    class="flex flex-col border border-gray-300 dark:border-emerald-500 border-opacity-80 rounded-md shadow-sm overflow-hidden"
+    class="flex flex-col border border-gray-300 dark:border-emerald-500 border-opacity-80 rounded-md shadow-sm overflow-hidden relative"
     ref="containerRef"
   >
-    <div class="bg-gray-700 w-full flex items-center justify-end py-1.5 px-2">
+    <div class="flex items-center justify-end py-1.5 px-2 absolute z-10 right-0 h-[var(--header-height)]">
       <button
         type="button"
         class="ml-1 p-1 hover:bg-white hover:bg-opacity-10 rounded"
@@ -154,7 +154,7 @@ function onForkClick() {
   }
 
   &:deep(.right .tab-buttons) {
-    @apply hidden;
+    @apply invisible;
   }
 
   &:deep(.output-container) {
