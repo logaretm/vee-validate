@@ -1,5 +1,12 @@
 # Change Log
 
+## 4.10.3
+
+### Patch Changes
+
+- 32537e14: fix: less strict object checks for undefined and missing keys closes #4341
+- c3698f07: fix: respect model modifiers when emitting the value closes #4333
+
 ## 4.10.2
 
 ### Patch Changes

@@ -204,7 +204,7 @@ importers:
         specifier: ^4.1.2
         version: 4.1.2
       vee-validate:
-        specifier: ^4.9.6
+        specifier: ^4.10.3
         version: link:../packages/vee-validate
       vue:
         specifier: ^3.3.0
@@ -227,7 +227,7 @@ importers:
         specifier: ^0.4.3
         version: 0.4.3
       vee-validate:
-        specifier: ^4.10.2
+        specifier: ^4.10.3
         version: link:../vee-validate
     devDependencies:
       '@nuxt/eslint-config':
@@ -249,7 +249,7 @@ importers:
   packages/rules:
     dependencies:
       vee-validate:
-        specifier: ^4.10.2
+        specifier: ^4.10.3
         version: link:../vee-validate
 
   packages/vee-validate:
@@ -270,7 +270,7 @@ importers:
         specifier: ^3.12.0
         version: 3.12.0
       vee-validate:
-        specifier: ^4.10.2
+        specifier: ^4.10.3
         version: link:../vee-validate
       yup:
         specifier: ^1.2.0
@@ -282,7 +282,7 @@ importers:
         specifier: ^3.12.0
         version: 3.12.0
       vee-validate:
-        specifier: ^4.10.2
+        specifier: ^4.10.3
         version: link:../vee-validate
       zod:
         specifier: ^3.21.4
@@ -2844,7 +2844,7 @@ packages:
     resolution: {integrity: sha512-Gsd9V3IK4Tqxc2HzmCizHbjh/28uwhD6XAZeRd0cO86op8x05MXljGqAtcaghqjAgZhxLOyU7RRqrICPUzpWDw==}
     dependencies:
       type-fest: 3.12.0
-      vee-validate: 4.10.2(vue@3.3.4)
+      vee-validate: 4.10.3(vue@3.3.4)
       yup: 1.2.0
     transitivePeerDependencies:
       - vue
@@ -2854,7 +2854,7 @@ packages:
     resolution: {integrity: sha512-YFpJDtsFDdM47HQSGKRQvA5nxEYZW1RjTWe1MPSpgo8uEWBOtxEwgiiPWoxnQtwc2c8qYpYMIwUbm2mUAHhpaw==}
     dependencies:
       type-fest: 3.12.0
-      vee-validate: 4.10.2(vue@3.3.4)
+      vee-validate: 4.10.3(vue@3.3.4)
       zod: 3.21.4
     transitivePeerDependencies:
       - vue
@@ -10889,8 +10889,8 @@ packages:
       spdx-expression-parse: 3.0.1
     dev: true
 
-  /vee-validate@4.10.2(vue@3.3.4):
-    resolution: {integrity: sha512-J2we1IjIvEKSC32ECw1HWgwwyqDIsrUnhGhZWgrvHeNp6m+pHY5C6PrdSDy1Ly4NcDNNO5XGMNvRZnurIKIdEg==}
+  /vee-validate@4.10.3(vue@3.3.4):
+    resolution: {integrity: sha512-JDEpP765Hg5bLJBBbaYutnmiKXh4YX4Jz1FKIBp2Fw5PiuL8ULdZSuJZNbfvbA3ClMV+aJYWIlzA8iLyWGq+fQ==}
     peerDependencies:
       vue: ^3.3.4
     dependencies:

@@ -4,7 +4,7 @@
   "description": "Form Validation for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
-  "packageManager": "pnpm@8.6.4",
+  "packageManager": "pnpm@8.6.5",
   "homepage": "https://vee-validate.logaretm.com",
   "repository": "https://github.com/logaretm/vee-validate",
   "scripts": {
