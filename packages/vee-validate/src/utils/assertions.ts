@@ -163,9 +163,6 @@ export function isEqual(a: any, b: any) {
 
     keys = Object.keys(a);
     length = keys.length;
-    if (length !== Object.keys(b).length) return false;
-
-    for (i = length; i-- !== 0; ) if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;
 
     for (i = length; i-- !== 0; ) {
       // eslint-disable-next-line no-var

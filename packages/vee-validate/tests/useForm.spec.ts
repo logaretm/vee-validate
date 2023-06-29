@@ -1134,4 +1134,27 @@ describe('useForm()', () => {
       expect(document.body.innerHTML).toContain('aria-valid="true"');
     });
   });
+
+  // #4341
+  test('undefined field value should be the same as missing value when it comes to dirty', async () => {
+    let form!: FormContext<any>;
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          initialValues: {
+            fname: '',
+          },
+        });
+
+        useField('fname');
+        useField('lname');
+
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    await flushPromises();
+    expect(form.meta.value.dirty).toBe(false);
+  });
 });
