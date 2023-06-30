@@ -4,6 +4,7 @@ import typescript from '@rollup/plugin-typescript';
 import replace from '@rollup/plugin-replace';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
+import { normalizePath, slashes } from './normalize-path.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -31,11 +32,11 @@ const formatMap = {
 
 async function createConfig(pkg, format) {
   const tsPlugin = typescript({
-    declarationDir: path.resolve(__dirname, `../packages/${pkg}/dist`),
+    declarationDir: normalizePath(path.resolve(__dirname, `../packages/${pkg}/dist`)),
   });
 
   // An import assertion in a dynamic import
-  const { default: info } = await import(path.resolve(__dirname, `../packages/${pkg}/package.json`), {
+  const { default: info } = await import(normalizePath(path.resolve(__dirname, `../packages/${pkg}/package.json`)), {
     assert: {
       type: 'json',
     },
@@ -47,7 +48,7 @@ async function createConfig(pkg, format) {
 
   const config = {
     input: {
-      input: path.resolve(__dirname, `../packages/${pkg}/src/index.ts`),
+      input: slashes(path.resolve(__dirname, `../packages/${pkg}/src/index.ts`)),
       external: ['vue', isEsm ? '@vue/devtools-api' : undefined, 'zod', 'yup', 'vee-validate'].filter(Boolean),
       plugins: [
         replace({
