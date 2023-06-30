@@ -24,5 +24,6 @@
     "required": "{field}-feltet er obligatorisk",
     "required_if": "{field}-feltet er obligatorisk",
     "size": "{field}-feltet må være mindre enn 0:{size}KB"
-  }
+  },
+  "messages.integer": "{field}-feltet må være et heltall"
 }

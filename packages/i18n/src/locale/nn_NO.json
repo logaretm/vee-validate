@@ -24,5 +24,6 @@
     "required": "{field} er eit obligatorisk felt",
     "required_if": "{field} er eit obligatorisk felt",
     "size": "{field}-feltet må vere mindre enn 0:{size}KB"
-  }
+  },
+  "messages.integer": "feltet må vere eit heiltal"
 }
