@@ -48,7 +48,7 @@ async function bundleDts(declarationDir, pkg) {
 
   // If we cannot find the 'index.d.ts', panic!
   if (!fs.existsSync(entry)) {
-    throw new Error('Cannot find index.d.ts at' + entry);
+    throw new Error('Cannot find index.d.ts at ' + entry);
   }
 
   // Generate .d.ts rollup

@@ -48,7 +48,10 @@ async function minify({ code, pkg, bundleName }) {
 async function build(pkg) {
   if (pkg === 'nuxt') {
     console.log(chalk.magenta(`Generating bundle for ${pkg}`));
-    const result = await exec('cd packages/nuxt && pnpm build && cd -');
+    const result =
+      process.platform === 'win32'
+        ? await exec('cd packages/nuxt && pnpm build && cd ../..')
+        : await exec('cd packages/nuxt && pnpm build && cd -');
     console.log(result.stdout);
     if (result.stderr) {
       console.error(result.stderr);
@@ -69,6 +72,7 @@ async function build(pkg) {
     } = await bundle.generate(output);
 
     const outputPath = path.join(pkgout, bundleName);
+    console.log(outputPath);
     fs.outputFileSync(outputPath, code);
     const stats = reportSize({ code, path: outputPath });
     // eslint-disable-next-line
@@ -111,4 +115,6 @@ async function build(pkg) {
     await build('i18n');
     await buildLocales();
   }
+
+  if (process.platform === 'win32') process.exit(0);
 })();
