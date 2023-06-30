@@ -72,7 +72,6 @@ async function build(pkg) {
     } = await bundle.generate(output);
 
     const outputPath = path.join(pkgout, bundleName);
-    console.log(outputPath);
     fs.outputFileSync(outputPath, code);
     const stats = reportSize({ code, path: outputPath });
     // eslint-disable-next-line
