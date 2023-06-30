@@ -15,10 +15,12 @@
   "scripts": {
     "build": "nuxt-module-build"
   },
-  ".": {
-    "types": "./dist/types.d.ts",
-    "import": "./dist/module.mjs",
-    "require": "./dist/module.cjs"
+  "exports": {
+    ".": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/module.mjs",
+      "require": "./dist/module.cjs"
+    }
   },
   "sideEffects": false,
   "keywords": [
