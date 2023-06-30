@@ -27,5 +27,6 @@
   },
   "messages.integer": "feltet må vere eit heiltal",
   "messages.length": "{field}-feltet må vere 0:{length} langt",
-  "messages.url": "{field}-feltet er ikkje ein gyldig URL"
+  "messages.url": "{field}-feltet er ikkje ein gyldig URL",
+  "messages._default": "{field}-feltet er ugyldig"
 }
