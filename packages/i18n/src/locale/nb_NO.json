@@ -26,5 +26,6 @@
     "size": "{field}-feltet må være mindre enn 0:{size}KB"
   },
   "messages.integer": "{field}-feltet må være et heltall",
-  "messages.length": "{field}-feltet må være 0:{length} langt"
+  "messages.length": "{field}-feltet må være 0:{length} langt",
+  "messages.url": "{field}-feltet er ikke en gyldig URL"
 }
