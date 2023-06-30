@@ -55,7 +55,7 @@ pnpm docs:dev
 - Make sure to mention which issues are being fixed by the PR so they can be closed properly
 - Make sure to preview all pending PRs to make sure your work won't conflict with other ongoing pull-request
 - Coordinate with ongoing conflicting PRs' authors to make it easier to merge both your PRs
-- Make sure to generate a changeset on the PR branch before merging it, this will help us generate a changelog for the next release.
+- Make sure to generate a changeset on the PR branch before merging it, this will help us generate a changelog for the next release
 
 ## Source Code
 
