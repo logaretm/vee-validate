@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.10.5
+
+### Patch Changes
+
+- 6a1dc9bd: fix: component blur event and respect model update config closes #4346
+
 ## 4.10.4
 
 ### Patch Changes
