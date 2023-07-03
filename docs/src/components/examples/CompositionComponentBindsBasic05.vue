@@ -20,7 +20,7 @@ const email = defineInputBinds('email', state => {
 const emailComponent = defineComponentBinds('emailComponent', state => {
   return {
     // validate aggressively as long as there are errors on the input
-    validateOnValueUpdate: state.errors.length > 0,
+    validateOnModelUpdate: state.errors.length > 0,
     validateOnBlur: true,
     props: {
       error: state.errors[0],
