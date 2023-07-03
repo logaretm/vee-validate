@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.10.4
+
+### Patch Changes
+
+- 2f9ca91c: fix(types): remove deep readonly type for now
+
 ## 4.10.3
 
 ### Patch Changes
