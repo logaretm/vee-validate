@@ -1,4 +1,4 @@
-import { ComputedRef, DeepReadonly, Ref, MaybeRef, MaybeRefOrGetter } from 'vue';
+import { ComputedRef, Ref, MaybeRef, MaybeRefOrGetter } from 'vue';
 import { MapValuesPathsToRefs, GenericObject, MaybeArray, MaybePromise } from './common';
 import { FieldValidationMetaInfo } from '../../../shared';
 import { Path, PathValue } from './paths';
@@ -315,7 +315,7 @@ export interface FormContext<TValues extends GenericObject = GenericObject, TOut
     | 'keepValuesOnUnmount'
     | 'values'
   > {
-  values: DeepReadonly<TValues>;
+  values: TValues;
   handleReset: () => void;
   submitForm: (e?: unknown) => Promise<void>;
   defineComponentBinds<

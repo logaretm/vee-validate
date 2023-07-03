@@ -973,7 +973,7 @@ export function useForm<
 
   return {
     ...formCtx,
-    values: readonly(formValues),
+    values: readonly(formValues) as TValues,
     handleReset: () => resetForm(),
     submitForm,
     defineComponentBinds,
