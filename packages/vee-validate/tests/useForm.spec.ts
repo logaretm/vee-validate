@@ -840,7 +840,7 @@ describe('useForm()', () => {
             }),
           });
 
-          const field = defineComponentBinds('name', { validateOnModelUpdate: true });
+          const field = defineComponentBinds('name', { validateOnModelUpdate: false });
 
           return { field, values, errors };
         },
@@ -854,10 +854,15 @@ describe('useForm()', () => {
       await flushPromises();
       const errorEl = document.getElementById('errors');
       const valuesEl = document.getElementById('values');
-      setValue(document.querySelector('input') as any, '');
+      const input = document.querySelector('input') as HTMLInputElement;
+      setValue(input, '');
+      await flushPromises();
+      expect(errorEl?.textContent).toBe('');
+      dispatchEvent(input, 'blur');
       await flushPromises();
       expect(errorEl?.textContent).toBe('name is a required field');
-      setValue(document.querySelector('input') as any, '123');
+      setValue(input, '123');
+      dispatchEvent(input, 'blur');
       await flushPromises();
       expect(errorEl?.textContent).toBe('');
       expect(valuesEl?.textContent).toBe('123');

@@ -872,11 +872,8 @@ export function useForm<
     }
 
     function onUpdateModelValue(value: TValue) {
-      setFieldValue(pathState.path as Path<TValues>, value as PathValue<TValues, TPath>);
       const validateOnModelUpdate = evalConfig().validateOnModelUpdate ?? getConfig().validateOnModelUpdate;
-      if (validateOnModelUpdate) {
-        validateField(pathState.path as Path<TValues>);
-      }
+      setFieldValue(pathState.path as Path<TValues>, value as PathValue<TValues, TPath>, validateOnModelUpdate);
     }
 
     const props = computed(() => {
@@ -894,13 +891,13 @@ export function useForm<
 
       const model = config?.model || 'modelValue';
       const base = {
+        onBlur,
         [model]: pathState.value,
         [`onUpdate:${model}`]: onUpdateModelValue,
       };
 
       if (config?.mapProps) {
         return {
-          onBlur,
           ...base,
           ...config.mapProps(omit(pathState, PRIVATE_PATH_STATE_KEYS)),
         } as BaseComponentBinds<TValue> & TExtras;
