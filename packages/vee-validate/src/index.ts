@@ -1,6 +1,7 @@
 export { validate, validateObjectSchema as validateObject } from './validate';
 export { defineRule } from './defineRule';
 export { configure } from './config';
+export { normalizeRules } from './utils';
 export { Field } from './Field';
 export { Form } from './Form';
 export { FieldArray } from './FieldArray';
