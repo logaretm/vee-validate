@@ -660,7 +660,8 @@ export function useForm<
    * Resets all fields
    */
   function resetForm(resetState?: Partial<FormState<TValues>>) {
-    const newValues = resetState?.values ? resetState.values : originalInitialValues.value;
+    let newValues = resetState?.values ? resetState.values : originalInitialValues.value;
+    newValues = isTypedSchema(schema) && isCallable(schema.cast) ? schema.cast(newValues) : newValues;
     setInitialValues(newValues);
     mutateAllPathState(state => {
       state.validated = false;

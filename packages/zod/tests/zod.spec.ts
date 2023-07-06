@@ -353,6 +353,40 @@ test('uses zod default values for initial values', async () => {
   );
 });
 
+test('reset form should cast the values', async () => {
+  const valueSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema(
+        z.object({
+          age: z.preprocess(arg => Number(arg), z.number()),
+        })
+      );
+
+      const { values, resetForm } = useForm({
+        validationSchema: schema,
+      });
+
+      resetForm({ values: { age: '12' } });
+      // submit now
+      valueSpy(values);
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(valueSpy).toHaveBeenCalledTimes(1);
+  await expect(valueSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      age: 12,
+    })
+  );
+});
+
 // #4186
 test('default values should not be undefined', async () => {
   const initialSpy = vi.fn();
