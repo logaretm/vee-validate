@@ -228,7 +228,7 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   keepValuesOnUnmount: MaybeRef<boolean>;
   validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues, TOutput>>;
   validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues, TOutput>>;
-  validateField(field: Path<TValues>): Promise<ValidationResult>;
+  validateField(field: Path<TValues>, opts?: Partial<ValidationOptions>): Promise<ValidationResult>;
   stageInitialValue(path: string, value: unknown, updateOriginal?: boolean): void;
   unsetInitialValue(path: string): void;
   handleSubmit: HandleSubmitFactory<TValues, TOutput> & { withControlled: HandleSubmitFactory<TValues, TOutput> };

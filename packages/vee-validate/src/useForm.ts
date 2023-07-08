@@ -149,6 +149,13 @@ export function useForm<
       return;
     }
 
+    // Move the error from the extras path if exists
+    if (typeof field === 'string') {
+      if (extraErrorsBag.value[normalizeFormPath(field) as Path<TValues>]) {
+        delete extraErrorsBag.value[normalizeFormPath(field) as Path<TValues>];
+      }
+    }
+
     state.errors = normalizeErrorItem(message);
     state.valid = !state.errors.length;
   }
@@ -291,10 +298,9 @@ export function useForm<
 
     pathStates.value.push(state);
 
-    // if it has errors before, validate it.
     if (errors.value[pathValue] && !initialErrors[pathValue]) {
       nextTick(() => {
-        validateField(pathValue);
+        validateField(pathValue, { mode: 'silent' });
       });
     }
 
@@ -499,6 +505,10 @@ export function useForm<
     if (idx === -1 || !pathState) {
       return;
     }
+
+    nextTick(() => {
+      validateField(path, { mode: 'silent' });
+    });
 
     if (pathState.multiple && pathState.fieldsCount) {
       pathState.fieldsCount--;
@@ -738,20 +748,20 @@ export function useForm<
     };
   }
 
-  async function validateField(path: Path<TValues>): Promise<ValidationResult> {
+  async function validateField(path: Path<TValues>, opts?: Partial<ValidationOptions>): Promise<ValidationResult> {
     const state = findPathState(path);
     if (state) {
       state.validated = true;
     }
 
     if (schema) {
-      const { results }: FormValidationResult<TValues, TOutput> = await validateSchema('validated-only');
+      const { results }: FormValidationResult<TValues, TOutput> = await validateSchema(opts?.mode || 'validated-only');
 
       return results[path] || { errors: [], valid: true };
     }
 
     if (state?.validate) {
-      return state.validate();
+      return state.validate(opts);
     }
 
     if (!state) {
