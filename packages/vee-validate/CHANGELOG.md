@@ -1,5 +1,15 @@
 # Change Log
 
+## 4.10.6
+
+### Patch Changes
+
+- 40ce7a91: feat: expose normalizeRules closes #4348
+- e9b215a7: fix: resetForm should cast typed schema values closes #4347
+- 4e11ff95: fix: validate form values on setValues by default closes #4359
+- e354a13a: fix: Normalize error paths to use brackets for indices closes #4211
+- 68080d28: feat: use silent validation when field is initialized closes #4312
+
 ## 4.10.5
 
 ### Patch Changes

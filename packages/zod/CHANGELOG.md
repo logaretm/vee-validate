@@ -1,5 +1,17 @@
 # Change Log
 
+## 4.10.6
+
+### Patch Changes
+
+- e354a13a: fix: Normalize error paths to use brackets for indices closes #4211
+- Updated dependencies [40ce7a91]
+- Updated dependencies [e9b215a7]
+- Updated dependencies [4e11ff95]
+- Updated dependencies [e354a13a]
+- Updated dependencies [68080d28]
+  - vee-validate@4.10.6
+
 ## 4.10.5
 
 ### Patch Changes

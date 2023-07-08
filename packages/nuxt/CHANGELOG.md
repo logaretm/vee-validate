@@ -1,5 +1,16 @@
 # @vee-validate/nuxt
 
+## 4.10.6
+
+### Patch Changes
+
+- Updated dependencies [40ce7a91]
+- Updated dependencies [e9b215a7]
+- Updated dependencies [4e11ff95]
+- Updated dependencies [e354a13a]
+- Updated dependencies [68080d28]
+  - vee-validate@4.10.6
+
 ## 4.10.5
 
 ### Patch Changes
