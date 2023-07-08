@@ -1,7 +1,7 @@
 import { ZodObject, input, output, ZodDefault, ZodSchema, ParseParams, ZodIssue } from 'zod';
 import { PartialDeep } from 'type-fest';
 import type { TypedSchema, TypedSchemaError } from 'vee-validate';
-import { isIndex, isObject, merge } from '../../shared';
+import { isObject, merge, normalizeFormPath } from '../../shared';
 
 /**
  * Transforms a Zod object schema to Yup's schema
@@ -49,7 +49,7 @@ export function toTypedSchema<
 
 function processIssues(issues: ZodIssue[], errors: Record<string, TypedSchemaError>): void {
   issues.forEach(issue => {
-    const path = joinPath(issue.path);
+    const path = normalizeFormPath(issue.path.join('.'));
     if (issue.code === 'invalid_union') {
       processIssues(
         issue.unionErrors.flatMap(ue => ue.issues),
@@ -67,27 +67,6 @@ function processIssues(issues: ZodIssue[], errors: Record<string, TypedSchemaErr
 
     errors[path].errors.push(issue.message);
   });
-}
-
-/**
- * Constructs a path with brackets to be compatible with vee-validate path syntax
- */
-function joinPath(path: (string | number)[]): string {
-  if (!path.length) {
-    return '';
-  }
-
-  let fullPath = String(path[0]);
-  for (let i = 1; i < path.length; i++) {
-    if (isIndex(path[i])) {
-      fullPath += `[${path[i]}]`;
-      continue;
-    }
-
-    fullPath += `.${path[i]}`;
-  }
-
-  return fullPath;
 }
 
 // Zod does not support extracting default values so the next best thing is manually extracting them.

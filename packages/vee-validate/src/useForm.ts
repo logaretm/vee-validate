@@ -64,11 +64,12 @@ import {
   normalizeErrorItem,
   normalizeEventValue,
   omit,
+  isPathsEqual,
 } from './utils';
 import { FormContextKey } from './symbols';
 import { validateTypedSchema, validateObjectSchema } from './validate';
 import { refreshInspector, registerFormWithDevTools } from './devtools';
-import { isCallable, merge } from '../../shared';
+import { isCallable, merge, normalizeFormPath } from '../../shared';
 import { getConfig } from './config';
 import { PartialDeep } from 'type-fest';
 
@@ -143,7 +144,7 @@ export function useForm<
     const state = findPathState(field);
     if (!state) {
       if (typeof field === 'string') {
-        extraErrorsBag.value[field] = normalizeErrorItem(message);
+        extraErrorsBag.value[normalizeFormPath(field) as Path<TValues>] = normalizeErrorItem(message);
       }
       return;
     }
@@ -242,7 +243,7 @@ export function useForm<
     config?: Partial<PathStateConfig>
   ): PathState<TValue> {
     const initialValue = computed(() => getFromPath(initialValues.value, toValue(path)));
-    const pathStateExists = pathStates.value.find(state => state.path === unref(path));
+    const pathStateExists = pathStates.value.find(s => isPathsEqual(s.path, toValue(path)));
     if (pathStateExists) {
       if (config?.type === 'checkbox' || config?.type === 'radio') {
         pathStateExists.multiple = true;
@@ -383,7 +384,7 @@ export function useForm<
   }
 
   function findPathState<TPath extends Path<TValues>>(path: TPath | PathState) {
-    const pathState = typeof path === 'string' ? pathStates.value.find(state => state.path === path) : path;
+    const pathState = typeof path === 'string' ? pathStates.value.find(s => isPathsEqual(s.path, path)) : path;
 
     return pathState as PathState<PathValue<TValues, TPath>> | undefined;
   }
@@ -493,7 +494,7 @@ export function useForm<
   handleSubmit.withControlled = makeSubmissionFactory(true);
 
   function removePathState<TPath extends Path<TValues>>(path: TPath, id: number) {
-    const idx = pathStates.value.findIndex(s => s.path === path);
+    const idx = pathStates.value.findIndex(s => isPathsEqual(s.path, path));
     const pathState = pathStates.value[idx];
     if (idx === -1 || !pathState) {
       return;

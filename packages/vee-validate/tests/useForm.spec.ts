@@ -3,6 +3,7 @@ import { mountWithHoc, setValue, flushPromises, runInSetup, dispatchEvent } from
 import * as yup from 'yup';
 import { onMounted, Ref } from 'vue';
 import { ModelComp, CustomModelComp } from './helpers/ModelComp';
+import { FieldContext } from '../dist/vee-validate';
 
 describe('useForm()', () => {
   const REQUIRED_MESSAGE = 'Field is required';
@@ -1202,5 +1203,49 @@ describe('useForm()', () => {
 
     await flushPromises();
     expect(form.meta.value.dirty).toBe(false);
+  });
+
+  describe('error paths can have dot or square bracket for the same field', () => {
+    test('path is bracket, mutations are dot', async () => {
+      let field!: FieldContext<unknown>;
+      let errorSetter!: FormContext['setFieldError'];
+      mountWithHoc({
+        setup() {
+          const { setFieldError } = useForm();
+          field = useField('users[0].test');
+          errorSetter = setFieldError;
+          return {};
+        },
+        template: `<div></div>`,
+      });
+
+      await flushPromises();
+      expect(field.errorMessage.value).toBe(undefined);
+      await flushPromises();
+      errorSetter('users.0.test', 'error');
+      await flushPromises();
+      expect(field.errorMessage.value).toBe('error');
+    });
+
+    test('path is dot, mutations are bracket', async () => {
+      let field!: FieldContext<unknown>;
+      let errorSetter!: FormContext['setFieldError'];
+      mountWithHoc({
+        setup() {
+          const { setFieldError } = useForm();
+          field = useField('users.0.test');
+          errorSetter = setFieldError;
+          return {};
+        },
+        template: `<div></div>`,
+      });
+
+      await flushPromises();
+      expect(field.errorMessage.value).toBe(undefined);
+      await flushPromises();
+      errorSetter('users[0].test', 'error');
+      await flushPromises();
+      expect(field.errorMessage.value).toBe('error');
+    });
   });
 });
