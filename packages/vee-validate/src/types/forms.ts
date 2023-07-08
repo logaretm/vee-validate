@@ -165,7 +165,7 @@ export interface FormActions<TValues extends GenericObject, TOutput = TValues> {
   setFieldValue<T extends Path<TValues>>(field: T, value: PathValue<TValues, T>, shouldValidate?: boolean): void;
   setFieldError(field: Path<TValues>, message: string | string[] | undefined): void;
   setErrors(fields: FormErrors<TValues>): void;
-  setValues(fields: PartialDeep<TValues>): void;
+  setValues(fields: PartialDeep<TValues>, shouldValidate?: boolean): void;
   setFieldTouched(field: Path<TValues>, isTouched: boolean): void;
   setTouched(fields: Partial<Record<Path<TValues>, boolean>>): void;
   resetForm(state?: Partial<FormState<TValues>>): void;

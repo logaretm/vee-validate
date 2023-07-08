@@ -158,6 +158,47 @@ describe('useForm()', () => {
     expect(meta[2]?.textContent).toBe('true');
   });
 
+  // #4359
+  test('setValues should validate by default', async () => {
+    let form!: FormContext<any>;
+    mountWithHoc({
+      setup() {
+        form = useForm({ validationSchema: yup.object().shape({ field: yup.string().required(REQUIRED_MESSAGE) }) });
+        form.defineInputBinds('field');
+
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    await flushPromises();
+    expect(form.errors.value.field).toBe(undefined);
+
+    form.setValues({ field: '' });
+    await flushPromises();
+    expect(form.errors.value.field).toBe(REQUIRED_MESSAGE);
+  });
+
+  test('setValues should not validate if passed false as second arg', async () => {
+    let form!: FormContext<any>;
+    mountWithHoc({
+      setup() {
+        form = useForm({ validationSchema: yup.object().shape({ field: yup.string().required(REQUIRED_MESSAGE) }) });
+        form.defineInputBinds('field');
+
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    await flushPromises();
+    expect(form.errors.value.field).toBe(undefined);
+
+    form.setValues({ field: '' }, false);
+    await flushPromises();
+    expect(form.errors.value.field).toBe(undefined);
+  });
+
   test('has a validate() method that returns an aggregate of validation results using field rules', async () => {
     let validate: any;
     mountWithHoc({

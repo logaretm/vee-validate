@@ -590,11 +590,14 @@ export function useForm<
   /**
    * Sets multiple fields values
    */
-  function setValues(fields: PartialDeep<TValues>) {
+  function setValues(fields: PartialDeep<TValues>, shouldValidate = true) {
     merge(formValues, fields);
-
     // regenerate the arrays when the form values change
     fieldArrays.forEach(f => f && f.reset());
+
+    if (shouldValidate) {
+      validate();
+    }
   }
 
   function createModel<TPath extends Path<TValues>>(path: MaybeRef<TPath>) {
@@ -670,7 +673,7 @@ export function useForm<
       setFieldValue(state.path as Path<TValues>, getFromPath(newValues, state.path), false);
       setFieldError(state.path as Path<TValues>, undefined);
     });
-    setValues(newValues);
+    setValues(newValues, false);
 
     setErrors(resetState?.errors || {});
     submitCount.value = resetState?.submitCount || 0;
