@@ -92,89 +92,6 @@ useField('password', yup.string().required().min(8));
 
 ## API Reference
 
-### TypeScript Definition
-
-The full signature of the `useField` function looks like this:
-
-```ts
-interface FieldOptions<TValue = unknown> {
-  validateOnValueUpdate?: boolean;   // if the field should be validated when the value changes (default is true)
-  initialValue?: MaybeRef<TValue>;
-  validateOnMount?: boolean; ; // if the field should be validated when the component is mounted
-  bails?: boolean; // if the field validation should run all validations
-  label?: MaybeRef<string | undefined>; // A friendly name to be used in `generateMessage` config instead of the field name, has no effect with yup rules
-  standalone?: boolean; //  // Excludes the field from participating in any `Form` or `useForm` contexts, useful for creating inputs that do contribute to the `values`, In other words, the form won't pick up or validate fields marked as standalone
-  type?: string;  // can be either `checkbox` or `radio` or `file` any other types doesn't have an effect.
-
-  // Both of these are only used if `type="checkbox"`. They are ignored otherwise
-  checkedValue?: MaybeRef<TValue>; // If a checkbox this will be used as the new field value when it is checked.
-  uncheckedValue?: MaybeRef<TValue>; // If a single checkbox this will be used as the field value when it is unchecked.
-
-  keepValueOnUnmount?: boolean; // if the form value should be kept when the field is unmounted, default is `false`
-  modelPropName?: string; // the model prop name, default is `modelValue`
-  syncVModel?: boolean; // If the model prop should be synced with value changes for `v-model` support, default is `true`
-}
-
-interface ValidationResult {
-  errors: string[];
-  valid: boolean;
-}
-
-interface FieldState<TValue = unknown> {
-  value: TValue;
-  dirty: boolean;
-  touched: boolean;
-  errors: string[];
-}
-
-export interface FieldMeta<TValue> {
-  touched: boolean; // field was blurred or attempted submit
-  dirty: boolean; // field value was changed
-  valid: boolean; // field doesn't have any errors
-  validated: boolean; // field was validated via user input
-  pending: boolean; // field is pending validation
-  initialValue: TValue | undefined; // initial field value
-}
-
-/**
- * validated-only: only mutate the previously validated fields
- * silent: do not mutate any field
- * force: validate all fields and mutate their state
- */
-export type SchemaValidationMode = 'validated-only' | 'silent' | 'force';
-
-export interface ValidationOptions {
-  mode: SchemaValidationMode;
-}
-
-function useField<TValue = unknown>(
-  fieldName: MaybeRef<string>,
-  rules?: MaybeRef<RuleExpression>,
-  opts?: FieldOptions
-): {
-  name: MaybeRef<string>;  // The field name
-  value: Ref<TValue>; // the field's current value
-  meta: FieldMeta<TValue>;
-  errors: Ref<string[]>; // all error messages
-  errorMessage: Ref<string | undefined>; // the first error message
-  label?: MaybeRef<string | undefined>;
-  type?: string;
-  bails?: boolean;
-  checkedValue?: MaybeRef<TValue>;
-  uncheckedValue?: MaybeRef<TValue>;
-  checked?: Ref<boolean>; // Present if input type is checkbox
-  resetField(state?: Partial<FieldState<TValue>>): void; // resets errors and field meta, updates the current value to its initial value
-  handleReset(): void;
-  validate(opts?: Partial<ValidationOptions>): Promise<ValidationResult>; // validates and updates the errors and field meta
-  handleChange(e: Event | unknown, shouldValidate?: boolean): void;  // updates the value and triggers validation
-  handleBlur(e?: Event): void; // updates the field meta associated with blur event
-  setState(state: Partial<FieldState<TValue>>): void;
-  setTouched(isTouched: boolean): void;
-  setErrors(message: string | string[]): void;
-  setValue(value: TValue): void;
-};
-```
-
 ### Composable API
 
 The following sections documents each available property on the `useField` composable.
@@ -313,7 +230,7 @@ Note that it is unsafe to use this function as an event handler directly, check 
 ```
 
 You can also use `handleReset` which is a safe alternative for `resetField`.
-  
+
 <CodeTitle level="4">
 
 `setErrors: (errors: string | string[]) => void`

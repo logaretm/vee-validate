@@ -252,7 +252,6 @@ const { handleSubmit, controlledValues } = useForm();
 
 const onSubmit = handleSubmit(async () => {
   // Send only controlled values to the API
-  // Only fields declared with `useField` or `useFieldModel` will be sent
   const response = await client.post('/users/', controlledValues.value);
 });
 ```
@@ -264,7 +263,6 @@ const { handleSubmit } = useForm();
 
 const onSubmit = handleSubmit.withControlled(async values => {
   // Send only controlled values to the API
-  // Only fields declared with `useField` or `useFieldModel` will be sent
   const response = await client.post('/users/', values);
 });
 ```
