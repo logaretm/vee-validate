@@ -77,81 +77,77 @@ vee-validate offers two styles to integrate form validation into your Vue.js app
 
 #### Composition API
 
-If you want more fine grained control, you can use `useField` function to compose validation logic into your component:
+The fastest way to create a form and manage its validation, behavior, and values is with the composition API.
 
-```vue
-<script setup>
-// MyInputComponent.vue
-import { useField } from 'vee-validate';
-
-const props = defineProps<{
-  name: string;
-}>();
-
-// Validator function
-const isRequired = value => (value ? true : 'This field is required');
-
-const { value, errorMessage } = useField(props.name, isRequired);
-</script>
-
-<template>
-  <input v-model="value" />
-  <span>{{ errorMessage }}</span>
-</template>
-```
-
-Then you can you can use `useForm` to make your form component automatically pick up your input fields declared with `useField` and manage them:
+Create your form with `useForm` and then use `defineInputBinds` to create your fields bindings and `handleSubmit` to use the values and send them to an API.
 
 ```vue
 <script setup>
 import { useForm } from 'vee-validate';
-import MyInputComponent from '@/components/MyInputComponent.vue';
 
-const { handleSubmit } = useForm();
+// Validation, or use `yup` or `zod`
+function required(value) {
+  return value ? true : 'This field is required';
+}
 
+// Create the form
+const { defineInputBinds, handleSubmit, errors } = useForm({
+  validationSchema: {
+    field: required,
+  },
+});
+
+// Define fields
+const field = defineInputBinds('field');
+
+// Submit handler
 const onSubmit = handleSubmit(values => {
   // Submit to API
-  console.log(values); // { email: 'email@gmail.com' }
+  console.log(values);
 });
 </script>
 
 <template>
   <form @submit="onSubmit">
-    <MyInputComponent name="email" />
+    <input v-bind="field" />
+    <span>{{ errors.field }}</span>
+
+    <button>Submit</button>
   </form>
 </template>
 ```
 
-You can do so much more than this, for more info [check the composition API documentation](https://vee-validate.logaretm.com/v4/guide/composition-api/validation/).
+You can do so much more than this, for more info [check the composition API documentation](https://vee-validate.logaretm.com/v4/guide/composition-api/getting-started/).
 
 #### Declarative Components
 
-Higher-order components are better suited for most of your cases. Register the `Field` and `Form` components and create a simple `required` validator:
-
-```js
-import { Field, Form } from 'vee-validate';
-
-export default {
-  components: {
-    Field,
-    Form,
-  },
-  methods: {
-    isRequired(value) {
-      return value ? true : 'This field is required';
-    },
-  },
-};
-```
-
-Then use the `Form` and `Field` components to render your form:
+Higher-order components can also be used to build forms. Register the `Field` and `Form` components and create a simple `required` validator:
 
 ```vue
-<Form v-slot="{ errors }">
-  <Field name="email" :rules="isRequired" />
+<script setup>
+import { Field, Form } from 'vee-validate';
 
-  <span>{{ errors.email }}</span>
-</Form>
+// Validation, or use `yup` or `zod`
+function required(value) {
+  return value ? true : 'This field is required';
+}
+
+// Submit handler
+function onSubmit(values) {
+  // Submit to API
+  console.log(values);
+}
+</script>
+
+<template>
+  <Form v-slot="{ errors }" @submit="onSubmit">
+    <Field name="field" :rules="required" />
+
+    <span>{{ errors.field }}</span>
+
+    <button>Submit</button>
+  </Form>
+</template>
 ```
 
 The `Field` component renders an `input` of type `text` by default but you can [control that](https://vee-validate.logaretm.com/v4/api/field#rendering-fields)
@@ -163,6 +159,12 @@ Read the [documentation and demos](https://vee-validate.logaretm.com/v4).
 ## Contributing
 
 You are welcome to contribute to this project, but before you do, please make sure you read the [contribution guide](/CONTRIBUTING.md).
+
+## Translations 🌎🗺
+
+[![translation badge](https://inlang.com/badge?url=github.com/logaretm/vee-validate)](https://inlang.com/editor/github.com/logaretm/vee-validate?ref=badge)
+
+To add translations, you can manually edit the JSON translation files in `packages/i18n/src/locale`, use the [inlang](https://inlang.com/) online editor, or run `pnpm machine-translate` to add missing translations using AI from Inlang.
 
 ## Credits
 
