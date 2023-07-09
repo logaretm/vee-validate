@@ -7,30 +7,33 @@ order: 1
 
 import DocTip from '@/components/DocTip.vue';
 
-# Overview
+# Why vee-validate
 
-Form validation is a difficult subject in frontend development. Not only do you have to deal with ensuring that correct values are submitted, but you should also provide a pleasant UX for your users.
+"Forms" is a difficult subject in frontend development. Not only do you have to deal with ensuring that correct values are submitted, but you should also provide a pleasant UX for your users.
 
-Doing form validation by hand is a lot of work and you probably won't cover all your needs if you decide to build your own.
+Building forms from scratch is a lot of work and you probably won't cover all your future needs as your requirements change over time, and as you add more features.
 
-**The time you spend working on a custom form validation solution is better spent building your application logic**.
+**The time you spend working on a custom form solution is better spent building your application logic**.
 
-Most validation libraries will save you a lot of time, but `vee-validate` tackles the major pain points of form validation and addresses them in a very flexible way:
+Most form libraries will save you a lot of time, but `vee-validate` tackles the major pain points of forms and then gets out of your way, some of those are:
 
-- Tracking form state
-- UI and UX
+- Form state and value tracking
+- UX
 - Synchronous and Asynchronous Validation
 - Handling submissions
 
-By only handling the complex stuff, vee-validate gets out of your way of building your awesome forms.
+vee-validate tries to handle all of the above and more by providing abstractions to these problems without any UI. This could be viewed as a double-edged sword, however, overriding UI and styles was the downfall of many component libraries and design languages.
+
+Because of that, vee-validate abstracts away the hard parts into pure logic compositions that you can add to your existing UI and component. There is nothing to override, there is no hidden cost. You can also use vee-validate to power your components internally, and as a result you can build up your form library without having to think about the hard parts.
+
+A great showcase of this approach is how vee-validate seamlessly [integrate with almost every component UI library](/examples/ui-libraries/) for Vue.js out there without any special treatment or hacks.
 
 ## Getting Started
 
 vee-validate makes use of two flavors to add validation to your forms.
 
-The first approach is using higher-order components (HOC) to validate your fields. In the next examples you will find the `Field`, `Form`, and `ErrorMessage` components being used.
-
-The second flavor is using the composition API to add validation logic into your existing components. You will be using `useField` and `useForm` to validate your fields and data.
+- **Composition API**: This is the best way to use vee-validate as it allows seamless integrations with your existing UI, or any 3rd party component library.
+- **Higher-order components (HOC)**: This approach is easy to use and is strictly used within the template, you can use it if you have simple forms and don't want to write a lot of JavaScript.
 
 Whichever approach you prefer to use, both flavors can be used interchangeably. So you can mix and match between the two approaches as needed.
 
