@@ -115,6 +115,7 @@ function onForkClick() {
     <Repl
       :store="store"
       :editor="CodeMirror"
+      :show-ts-config="false"
       :showCompileOutput="false"
       :ssr="false"
       :showImportMap="false"
