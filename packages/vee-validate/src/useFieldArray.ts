@@ -1,4 +1,5 @@
 import { Ref, unref, ref, onBeforeUnmount, watch, MaybeRef } from 'vue';
+import { klona as deepCopy } from 'klona/full';
 import { isNullOrUndefined } from '../../shared';
 import { FormContextKey } from './symbols';
 import { FieldArrayContext, FieldEntry, PrivateFieldArrayContext, PrivateFormContext } from './types';
@@ -24,7 +25,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
 
   if (!form) {
     warn(
-      'FieldArray requires being a child of `<Form/>` or `useForm` being called before it. Array fields may not work correctly'
+      'FieldArray requires being a child of `<Form/>` or `useForm` being called before it. Array fields may not work correctly',
     );
 
     return noOpApi;
@@ -77,7 +78,6 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     }
 
     const key = entryCounter++;
-
     const entry: FieldEntry<TValue> = {
       key,
       value: computedDeep<TValue>({
@@ -96,7 +96,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
 
           update(idx, value);
         },
-      }) as any, // will be auto unwrapped
+      }) as TValue, // will be auto unwrapped
       isFirst: false,
       isLast: false,
     };
@@ -127,7 +127,8 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     afterMutation();
   }
 
-  function push(value: TValue) {
+  function push(initialValue: TValue) {
+    const value = deepCopy(initialValue);
     const pathName = unref(arrayPath);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
     const normalizedPathValue = isNullOrUndefined(pathValue) ? [] : pathValue;
@@ -166,7 +167,8 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     updateEntryFlags();
   }
 
-  function insert(idx: number, value: TValue) {
+  function insert(idx: number, initialValue: TValue) {
+    const value = deepCopy(initialValue);
     const pathName = unref(arrayPath);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
     if (!Array.isArray(pathValue) || pathValue.length < idx) {
@@ -202,7 +204,8 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     form?.validate({ mode: 'validated-only' });
   }
 
-  function prepend(value: TValue) {
+  function prepend(initialValue: TValue) {
+    const value = deepCopy(initialValue);
     const pathName = unref(arrayPath);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
     const normalizedPathValue = isNullOrUndefined(pathValue) ? [] : pathValue;
