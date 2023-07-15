@@ -82,7 +82,7 @@ export interface FormOptions<
   TOutput = TValues,
   TSchema extends TypedSchema<TValues, TOutput> | FormSchema<TValues> =
     | FormSchema<TValues>
-    | TypedSchema<TValues, TOutput>
+    | TypedSchema<TValues, TOutput>,
 > {
   validationSchema?: MaybeRef<TSchema extends TypedSchema ? TypedSchema<TValues, TOutput> : any>;
   initialValues?: MaybeRef<PartialDeep<TValues> | undefined | null>;
@@ -111,7 +111,7 @@ export function useForm<
   TOutput = TValues,
   TSchema extends FormSchema<TValues> | TypedSchema<TValues, TOutput> =
     | FormSchema<TValues>
-    | TypedSchema<TValues, TOutput>
+    | TypedSchema<TValues, TOutput>,
 >(opts?: FormOptions<TValues, TOutput, TSchema>): FormContext<TValues, TOutput> {
   const formId = FORM_COUNTER++;
 
@@ -201,19 +201,25 @@ export function useForm<
    * Holds a computed reference to all fields names and labels
    */
   const fieldNames = computed(() => {
-    return pathStates.value.reduce((names, state) => {
-      names[state.path] = { name: state.path || '', label: state.label || '' };
+    return pathStates.value.reduce(
+      (names, state) => {
+        names[state.path] = { name: state.path || '', label: state.label || '' };
 
-      return names;
-    }, {} as Record<string, { name: string; label: string }>);
+        return names;
+      },
+      {} as Record<string, { name: string; label: string }>,
+    );
   });
 
   const fieldBailsMap = computed(() => {
-    return pathStates.value.reduce((map, state) => {
-      map[state.path] = state.bails ?? true;
+    return pathStates.value.reduce(
+      (map, state) => {
+        map[state.path] = state.bails ?? true;
 
-      return map;
-    }, {} as Record<string, boolean>);
+        return map;
+      },
+      {} as Record<string, boolean>,
+    );
   });
 
   // mutable non-reactive reference to initial errors
@@ -228,7 +234,7 @@ export function useForm<
   const { initialValues, originalInitialValues, setInitialValues } = useFormInitialValues<TValues>(
     pathStates,
     formValues,
-    opts
+    opts,
   );
 
   // form meta aggregations
@@ -247,7 +253,7 @@ export function useForm<
 
   function createPathState<TValue>(
     path: MaybeRefOrGetter<Path<TValues>>,
-    config?: Partial<PathStateConfig>
+    config?: Partial<PathStateConfig>,
   ): PathState<TValue> {
     const initialValue = computed(() => getFromPath(initialValues.value, toValue(path)));
     const pathStateExists = pathStates.value.find(s => isPathsEqual(s.path, toValue(path)));
@@ -380,9 +386,9 @@ export function useForm<
 
           return validation;
         },
-        { valid: formResult.valid, results: {}, errors: {} } as FormValidationResult<TValues>
+        { valid: formResult.valid, results: {}, errors: {} } as FormValidationResult<TValues>,
       );
-    }
+    },
   );
 
   function mutateAllPathState(mutation: (state: PathState) => void) {
@@ -398,15 +404,18 @@ export function useForm<
   function findHoistedPath(path: Path<TValues>) {
     const candidates = pathStates.value.filter(state => path.startsWith(state.path));
 
-    return candidates.reduce((bestCandidate, candidate) => {
-      if (!bestCandidate) {
-        return candidate as PathState<PathValue<TValues, Path<TValues>>>;
-      }
+    return candidates.reduce(
+      (bestCandidate, candidate) => {
+        if (!bestCandidate) {
+          return candidate as PathState<PathValue<TValues, Path<TValues>>>;
+        }
 
-      return (candidate.path.length > bestCandidate.path.length ? candidate : bestCandidate) as PathState<
-        PathValue<TValues, Path<TValues>>
-      >;
-    }, undefined as PathState<PathValue<TValues, Path<TValues>>> | undefined);
+        return (candidate.path.length > bestCandidate.path.length ? candidate : bestCandidate) as PathState<
+          PathValue<TValues, Path<TValues>>
+        >;
+      },
+      undefined as PathState<PathValue<TValues, Path<TValues>>> | undefined,
+    );
   }
 
   let UNSET_BATCH: Path<TValues>[] = [];
@@ -431,7 +440,7 @@ export function useForm<
   function makeSubmissionFactory(onlyControlled: boolean) {
     return function submitHandlerFactory<TReturn = unknown>(
       fn?: SubmissionHandler<TValues, TOutput, TReturn>,
-      onValidationError?: InvalidSubmissionHandler<TValues>
+      onValidationError?: InvalidSubmissionHandler<TValues>,
     ) {
       return function submissionHandler(e: unknown) {
         if (e instanceof Event) {
@@ -489,7 +498,7 @@ export function useForm<
 
               // re-throw the err so it doesn't go silent
               throw err;
-            }
+            },
           );
       };
     };
@@ -507,7 +516,7 @@ export function useForm<
     }
 
     nextTick(() => {
-      validateField(path, { mode: 'silent' });
+      validateField(path, { mode: 'silent', warn: false });
     });
 
     if (pathState.multiple && pathState.fieldsCount) {
@@ -583,7 +592,7 @@ export function useForm<
   function setFieldValue<T extends Path<TValues>>(
     field: T | PathState,
     value: PathValue<TValues, T> | undefined,
-    shouldValidate = true
+    shouldValidate = true,
   ) {
     const clonedValue = deepCopy(value);
     const path = typeof field === 'string' ? field : (field.path as Path<TValues>);
@@ -632,7 +641,7 @@ export function useForm<
 
   function useFieldModel<TPath extends Path<TValues>>(path: TPath): Ref<PathValue<TValues, TPath>>;
   function useFieldModel<TPaths extends readonly [...MaybeRef<Path<TValues>>[]]>(
-    paths: TPaths
+    paths: TPaths,
   ): MapValuesPathsToRefs<TValues, TPaths>;
   function useFieldModel<TPaths extends Path<TValues> | readonly [...MaybeRef<Path<TValues>>[]]>(pathOrPaths: TPaths) {
     if (!Array.isArray(pathOrPaths)) {
@@ -723,7 +732,7 @@ export function useForm<
             errors: result.errors,
           };
         });
-      })
+      }),
     );
 
     isValidating.value = false;
@@ -764,7 +773,8 @@ export function useForm<
       return state.validate(opts);
     }
 
-    if (!state) {
+    const shouldWarn = !state && (opts?.warn ?? true);
+    if (shouldWarn) {
       warn(`field with path ${path} was not found`);
     }
 
@@ -863,17 +873,17 @@ export function useForm<
       refreshInspector,
       {
         deep: true,
-      }
+      },
     );
   }
 
   function defineComponentBinds<
     TPath extends Path<TValues>,
     TValue = PathValue<TValues, TPath>,
-    TExtras extends GenericObject = GenericObject
+    TExtras extends GenericObject = GenericObject,
   >(
     path: MaybeRefOrGetter<TPath>,
-    config?: Partial<ComponentBindsConfig<TValue, TExtras>> | LazyComponentBindsConfig<TValue, TExtras>
+    config?: Partial<ComponentBindsConfig<TValue, TExtras>> | LazyComponentBindsConfig<TValue, TExtras>,
   ) {
     const pathState = findPathState(toValue(path)) || createPathState(path);
     const evalConfig = () => (isCallable(config) ? config(omit(pathState, PRIVATE_PATH_STATE_KEYS)) : config || {});
@@ -927,10 +937,10 @@ export function useForm<
   function defineInputBinds<
     TPath extends Path<TValues>,
     TValue = PathValue<TValues, TPath>,
-    TExtras extends GenericObject = GenericObject
+    TExtras extends GenericObject = GenericObject,
   >(
     path: MaybeRefOrGetter<TPath>,
-    config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>
+    config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>,
   ) {
     const pathState = (findPathState(toValue(path)) || createPathState(path)) as PathState<TValue>;
     const evalConfig = () => (isCallable(config) ? config(omit(pathState, PRIVATE_PATH_STATE_KEYS)) : config || {});
@@ -1000,7 +1010,7 @@ function useFormMeta<TValues extends Record<string, unknown>>(
   pathsState: Ref<PathState<unknown>[]>,
   currentValues: TValues,
   initialValues: MaybeRef<PartialDeep<TValues>>,
-  errors: Ref<FormErrors<TValues>>
+  errors: Ref<FormErrors<TValues>>,
 ) {
   const MERGE_STRATEGIES: Record<keyof Pick<FieldMeta<unknown>, 'touched' | 'pending' | 'valid'>, 'every' | 'some'> = {
     touched: 'some',
@@ -1015,12 +1025,15 @@ function useFormMeta<TValues extends Record<string, unknown>>(
   function calculateFlags() {
     const states = pathsState.value;
 
-    return keysOf(MERGE_STRATEGIES).reduce((acc, flag) => {
-      const mergeMethod = MERGE_STRATEGIES[flag];
-      acc[flag] = states[mergeMethod](s => s[flag]);
+    return keysOf(MERGE_STRATEGIES).reduce(
+      (acc, flag) => {
+        const mergeMethod = MERGE_STRATEGIES[flag];
+        acc[flag] = states[mergeMethod](s => s[flag]);
 
-      return acc;
-    }, {} as Record<keyof Omit<FieldMeta<unknown>, 'initialValue'>, boolean>);
+        return acc;
+      },
+      {} as Record<keyof Omit<FieldMeta<unknown>, 'initialValue'>, boolean>,
+    );
   }
 
   const flags = reactive(calculateFlags());
@@ -1048,7 +1061,7 @@ function useFormMeta<TValues extends Record<string, unknown>>(
 function useFormInitialValues<TValues extends GenericObject>(
   pathsState: Ref<PathState<unknown>[]>,
   formValues: TValues,
-  opts?: FormOptions<TValues>
+  opts?: FormOptions<TValues>,
 ) {
   const values = resolveInitialValues(opts) as PartialDeep<TValues>;
   const providedValues = opts?.initialValues;
@@ -1094,7 +1107,7 @@ function useFormInitialValues<TValues extends GenericObject>(
       },
       {
         deep: true,
-      }
+      },
     );
   }
 

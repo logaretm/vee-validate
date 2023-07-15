@@ -62,6 +62,7 @@ export type SchemaValidationMode = 'validated-only' | 'silent' | 'force';
 
 export interface ValidationOptions {
   mode: SchemaValidationMode;
+  warn: boolean;
 }
 
 export type FieldValidator = (opts?: Partial<ValidationOptions>) => Promise<ValidationResult>;
@@ -148,7 +149,7 @@ export type FieldContext<TValue = unknown> = Omit<PrivateFieldContext<TValue>, '
 
 export type GenericValidateFunction<TValue = unknown> = (
   value: TValue,
-  ctx: FieldValidationMetaInfo
+  ctx: FieldValidationMetaInfo,
 ) => MaybePromise<boolean | MaybeArray<string>>;
 
 export interface FormState<TValues> {
@@ -186,7 +187,7 @@ export interface SubmissionContext<TValues extends GenericObject = GenericObject
 
 export type SubmissionHandler<TValues extends GenericObject = GenericObject, TOutput = TValues, TReturn = unknown> = (
   values: TOutput,
-  ctx: SubmissionContext<TValues>
+  ctx: SubmissionContext<TValues>,
 ) => TReturn;
 
 export interface InvalidSubmissionContext<TValues extends GenericObject = GenericObject> {
@@ -197,7 +198,7 @@ export interface InvalidSubmissionContext<TValues extends GenericObject = Generi
 }
 
 export type InvalidSubmissionHandler<TValues extends GenericObject = GenericObject> = (
-  ctx: InvalidSubmissionContext<TValues>
+  ctx: InvalidSubmissionContext<TValues>,
 ) => void;
 
 export type RawFormSchema<TValues> = Record<Path<TValues>, string | GenericValidateFunction | GenericObject>;
@@ -208,7 +209,7 @@ export type FieldPathLookup<TValues extends GenericObject = GenericObject> = Par
 
 type HandleSubmitFactory<TValues extends GenericObject, TOutput = TValues> = <TReturn = unknown>(
   cb: SubmissionHandler<TValues, TOutput, TReturn>,
-  onSubmitValidationErrorCb?: InvalidSubmissionHandler<TValues>
+  onSubmitValidationErrorCb?: InvalidSubmissionHandler<TValues>,
 ) => (e?: Event) => Promise<TReturn | undefined>;
 
 export interface PrivateFormContext<TValues extends GenericObject = GenericObject, TOutput = TValues>
@@ -235,11 +236,11 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   setFieldInitialValue(path: string, value: unknown): void;
   useFieldModel<TPath extends Path<TValues>>(path: TPath): Ref<PathValue<TValues, TPath>>;
   useFieldModel<TPaths extends readonly [...MaybeRef<Path<TValues>>[]]>(
-    paths: TPaths
+    paths: TPaths,
   ): MapValuesPathsToRefs<TValues, TPaths>;
   createPathState<TPath extends Path<TValues>>(
     path: MaybeRef<TPath>,
-    config?: Partial<PathStateConfig>
+    config?: Partial<PathStateConfig>,
   ): PathState<PathValue<TValues, TPath>>;
   getPathState<TPath extends Path<TValues>>(path: TPath): PathState<PathValue<TValues, TPath>> | undefined;
   getAllPathStates(): PathState[];
@@ -265,7 +266,7 @@ export interface ComponentBindsConfig<TValue = unknown, TExtraProps extends Gene
 }
 
 export type LazyComponentBindsConfig<TValue = unknown, TExtraProps extends GenericObject = GenericObject> = (
-  state: PublicPathState<TValue>
+  state: PublicPathState<TValue>,
 ) => Partial<{
   props: TExtraProps;
   validateOnBlur: boolean;
@@ -288,7 +289,7 @@ export interface InputBindsConfig<TValue = unknown, TExtraProps extends GenericO
 }
 
 export type LazyInputBindsConfig<TValue = unknown, TExtraProps extends GenericObject = GenericObject> = (
-  state: PublicPathState<TValue>
+  state: PublicPathState<TValue>,
 ) => Partial<{
   attrs: TExtraProps;
   validateOnBlur: boolean;
@@ -321,17 +322,17 @@ export interface FormContext<TValues extends GenericObject = GenericObject, TOut
   defineComponentBinds<
     TPath extends Path<TValues>,
     TValue = PathValue<TValues, TPath>,
-    TExtras extends GenericObject = GenericObject
+    TExtras extends GenericObject = GenericObject,
   >(
     path: MaybeRefOrGetter<TPath>,
-    config?: Partial<ComponentBindsConfig<TValue, TExtras>> | LazyComponentBindsConfig<TValue, TExtras>
+    config?: Partial<ComponentBindsConfig<TValue, TExtras>> | LazyComponentBindsConfig<TValue, TExtras>,
   ): Ref<BaseComponentBinds<TValue> & TExtras>;
   defineInputBinds<
     TPath extends Path<TValues>,
     TValue = PathValue<TValues, TPath>,
-    TExtras extends GenericObject = GenericObject
+    TExtras extends GenericObject = GenericObject,
   >(
     path: MaybeRefOrGetter<TPath>,
-    config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>
+    config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>,
   ): Ref<BaseInputBinds<TValue> & TExtras>;
 }
