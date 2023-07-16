@@ -1,5 +1,12 @@
 # Change Log
 
+## 4.10.7
+
+### Patch Changes
+
+- 9290f5a9: fix: clone values inserted into field arrays closes #4372
+- 93f8001a: fix: do not warn if the validation is for removed paths closes #4368
+
 ## 4.10.6
 
 ### Patch Changes
