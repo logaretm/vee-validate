@@ -18,9 +18,9 @@ import Repl from '@/components/MdxRepl.vue';
 
 ## Imperative vs Declarative
 
-So far we've been using `useForm` to create forms and use `defineInputBinds` or `defineComponentBinds` to create our field binding objects to integrate them with our fields. However that usually requires a lot of boilerplate code to create the binding object and the field component.
+So far we've been using `useForm` to create forms and use `defineInputBinds` or `defineComponentBinds` to create field-binding objects to integrate them with our fields. However, that usually requires a lot of boilerplate code to create the binding object and the field component.
 
-For example this how a 5-field form looks like with `useForm` and `defineInputBinds`:
+For example, this is how a 5-field form looks like with `useForm` and `defineInputBinds`:
 
 ```js
 const { defineInputBinds } = useForm();
@@ -32,9 +32,9 @@ const password = defineInputBinds('password');
 const passwordConfirm = defineInputBinds('passwordConfirm');
 ```
 
-This can get ugly very quickly especially if you have a bunch of field arrays or nested fields involved. This is one of the downsides of using an imperative API, but with `useField` you can switch to declarative API and get rid of all that boilerplate code.
+This can get ugly very quickly especially if you have a lot of field arrays or nested fields involved. This is one of the downsides of using an imperative API, but with `useField` you can switch to declarative API and get rid of all that boilerplate code.
 
-`useField` is a composition function that similar to how `useForm` makes it easier to manage forms, it makes easier to create and manage input components. You should use it when creating custom input components and that means you've made the choice that vee-validate will be an integral part of your input component system.
+`useField` is a composition function that is similar to `useForm`. it makes it easier to create and manage input components. You should use it when creating custom input components and that means you've made the choice that vee-validate will be an integral part of your input component system.
 
 ## Creating a custom input component
 
@@ -69,7 +69,7 @@ Notice how much of the burden of defining fields went away as soon as switched t
 
 ## Validation
 
-All previous examples have used the form's validation schema to validate the individual fields, however you can also define a validation schema for each field individually. The same types of validation libraries are supported.
+All previous examples have used the form's validation schema to validate the individual fields, however, you can also define a validation schema for each field individually. The same types of validation libraries are supported.
 
 <DocTip title="Yup Typed Schema">
 
@@ -85,7 +85,7 @@ You can use Yup schemas to validate fields individually by passing the schema as
 
 ### Validating with Zod
 
-You can use [Zod](https://github.com/colinhacks/zod), however you will need to add `@vee-validate/zod` to your dependencies.
+You can use [Zod](https://github.com/colinhacks/zod), however, you will need to add `@vee-validate/zod` to your dependencies.
 
 ```sh
 # with npm
@@ -116,7 +116,7 @@ Another option is to just use any 3rd party validation tool you prefer.
 
 #### Default Behavior
 
-By default vee-validate runs validation whenever the `value` ref changes whether it was bound by a `v-model` or changed in your code:
+By default, vee-validate runs validation whenever the `value` ref changes whether it was bound by a `v-model` or changed in your code:
 
 ```js
 const { value } = useField('fieldName', yup.string().required());
@@ -140,7 +140,7 @@ value.value = 'something';
 
 `useField()` composition function is not concerned with any events, it only validates whenever the `value` ref changes. However, it gives you everything you need to set up your own validation experience.
 
-The `useField` function exposes some handler functions, each handles a specific aspect of the validation experience:
+The `useField` function exposes some handler functions, each handling a specific aspect of the validation experience:
 
 - `handleChange`: Updates the field value, can be configured to trigger validation or silently update the value
 - `handleBlur`: Updates the `meta.touched` flag, doesn't trigger validation.
@@ -149,7 +149,7 @@ The `useField` function exposes some handler functions, each handles a specific 
 const { handleChange, handleBlur } = useField('someField');
 ```
 
-In this example we are validating on `input` event (when the user types), which would make the validation aggressive:
+In this example, we are validating on the `input` event (when the user types), which would make the validation aggressive:
 
 <Repl files={{ 'App.vue': 'CompositionCustomField03', 'InputText.vue': 'CustomInputFieldAggressive' }} client:only />
 
@@ -162,7 +162,7 @@ With a slight adjustment we can make our validation lazy by changing the listene
 </div>
 ```
 
-Note that `handleChange` can be called anywhere, not just in the template and not as just a event handler. You can use it to mutate the field value whenever you want, as an added bonus you can choose if `handleChange` should trigger a validation or not.
+Note that `handleChange` can be called anywhere, not just in the template, and not as just an event handler. You can use it to mutate the field value whenever you want, as an added bonus you can choose if `handleChange` should trigger a validation or not.
 
 ```js
 const { handleChange } = useField('someField');
@@ -198,9 +198,9 @@ As you can see, the `useField` doesn't care which events you use `handleChange` 
 
 Consider this validation experience:
 
-- Validate on Change/Blur initially (when user leaves the control), let's call this lazy mode.
-- If the field is invalid, switch the validation to validate on input (when user types), let's call this aggressive mode.
-- If the field is valid, go back to "lazy" mode, otherwise be "aggressive".
+- Validate on Change/Blur initially (when the user leaves the control), let's call this lazy mode.
+- If the field is invalid, switch the validation to validate on input (when the user types), let's call this aggressive mode.
+- If the field is valid, go back to "lazy" mode, otherwise, be "aggressive".
 
 Implementing this requires some knowledge about how the `v-on` (we can bind objects on it) handler works.
 
@@ -216,7 +216,7 @@ const validationListeners = {
 };
 ```
 
-Then in your template you can use `v-on` to add your listener object:
+Then in your template, you can use `v-on` to add your listener object:
 
 ```vue-html
 <input @input="handleChange" :value="value" v-on="validationListeners" type="text" />
@@ -228,7 +228,7 @@ Here is a full example:
 
 ## v-model Support
 
-The `useField` function can automatically manage `v-model` integration for you. Usually you will need to do this in every component you create:
+The `useField` function can automatically manage `v-model` integration for you. Usually, you will need to do this in every component you create:
 
 ```js
 const props = defineProps({
@@ -238,7 +238,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 ```
 
-Instead you can let `useField` do that for you by telling it to enable `v-model` syncing:
+Instead, you can let `useField` do that for you by telling it to enable `v-model` syncing:
 
 ```js
 const props = defineProps({
@@ -254,7 +254,7 @@ Now whenever `value` changes, you will emit an `update:modelValue` event with th
 
 <Repl files={{ 'App.vue': 'CompositionCustomField02', 'InputText.vue': 'CustomInputFieldVModel' }} client:only />
 
-You can also use different prop names for the `modelValue`, for example `v-model:text` can be implemented by passing the model name directly to `syncVModel`.
+You can also use different prop names for the `modelValue`, for example, `v-model:text` can be implemented by passing the model name directly to `syncVModel`.
 
 ```js
 const props = defineProps({
@@ -284,7 +284,7 @@ In addition to this, you can get all errors for the field using the `errors` ref
 ```js
 const { errors, value } = useField('fieldName', yup.string().required());
 
-// contains array of error messages, otherwise empty array
+// contains an array of error messages, otherwise empty array
 errors.value;
 ```
 
@@ -310,7 +310,7 @@ You can do this in two ways depending on which validators you are using (yup or 
 
 #### Custom Labels with Yup
 
-With yup it is very straightforward, you just need to call `label()` after defining your field's validations either in field level or form level:
+With yup it is very straightforward, you just need to call `label()` after defining your field's validations either at the field level or form level:
 
 ```js
 const schema = Yup.object({
@@ -336,8 +336,8 @@ If you are interested in how to do the same for global validators check the [i18
 
 Each field has metadata associated with it, the `meta` property returned from `useField` contains information about the field:
 
-- `valid`: The current field validity, automatically updated for you.
-- `touched`: If the field was **touched**, can be updated with `setTouched` on `useField` return value.
+- `valid`: The current field validity, is automatically updated for you.
+- `touched`: If the field was **touched**, can be updated with `setTouched` on `useField`'s return value.
 - `dirty`: If the field value was updated, you cannot change its value.
 - `pending`: If the field's validations are still running, useful for long-running async validation.
 - `initialValue`: The field's initial value, is `undefined` if you didn't specify any.
@@ -364,7 +364,7 @@ interface FieldMeta {
 }
 ```
 
-Just like how the form's `meta` is readonly, this is also readonly and you cannot change it directly. Actually, only the `touched` meta value can be mutated using `handleBlur`, all other meta values are automatically updated for you as the field validates or when it changes its value.
+Just like how the form's `meta` is read-only, this is also read-only and you cannot change it directly. Actually, only the `touched` meta value can be mutated using `handleBlur`, all other meta values are automatically updated for you as the field validates or when it changes its value.
 
 ```js
 const { meta, handleBlur } = useField('fieldName');
@@ -375,7 +375,7 @@ handleBlur();
 
 <DocTip title="Valid Flag Combinations">
 
-Since the `meta.valid` flag is initially `true` (because it just means there are no errors yet), it would cause problems if you have a "success" UI state an indicator.
+Since the `meta.valid` flag is initially `true` (because it just means there are no errors yet), it would cause problems if you have a "success" UI state as an indicator.
 
 To avoid this case you should combine the `valid` flag with either `meta.dirty` or `meta.touched` to get an accurate representation. You will see that in action in the next example.
 

@@ -16,7 +16,7 @@ import Repl from '@/components/MdxRepl.vue';
 
 # Handling Forms
 
-vee-validate makes it easy to handle form submissions, resets, and DX to make your forms much easier to reason about and less of a burden to maintain. The `useForm` function allow you to easily handle:
+vee-validate makes it easy to handle form submissions, resets, and DX to make your forms much easier to reason about and less of a burden to maintain. The `useForm` function allows you to easily handle:
 
 <div class="features">
 
@@ -44,7 +44,7 @@ meta.value.initialValues;
 - `touched`: If at least one field was blurred (unfocused) inside the form.
 - `dirty`: If at least one field's value was updated.
 - `pending`: If at least one field's validation is still pending.
-- `initialValues`: All fields' initial values, packed into an object where the keys are the field names.
+- `initialValues`: All fields' initial values, this is an object where the keys are the field names.
 
 Here is a simple example where we disable the form's submit button unless a field was touched.
 
@@ -67,8 +67,8 @@ const { handleSubmit } = useForm({
 });
 
 // Creates a submission handler
-// It validate all fields and doesn't call your function unless all fields are valid
-// You can bind `onSubmit` to forms submit event, or call it directly to submit the current data.
+// It validates all fields and doesn't call your function unless all fields are valid
+// You can bind `onSubmit` to a form element's submit event, or call it directly to submit the current data.
 const onSubmit = handleSubmit(values => {
   alert(JSON.stringify(values, null, 2));
 });
@@ -86,7 +86,7 @@ As a bonus, when the returned function is used as an event handler (like in the 
 
 ### Full-Page Submissions (non-AJAX)
 
-For non-ajax submissions that trigger a full page reload, you can use the `submitForm` function instead of `handleSubmit`. You normally would use this if you are not building a single-page application. In the following example we submit the form to another tab using the `get` form method.
+For non-ajax submissions that trigger a full page reload, you can use the `submitForm` function instead of `handleSubmit`. You normally would use this if you are not building a single-page application. In the following example, we submit the form to another tab using the `get` form method.
 
 <Repl files={{ 'App.vue': 'CompositionHandlingForms13' }} client:only />
 
@@ -94,7 +94,7 @@ In that case **YOU MUST** use `submitForm` as an event handler for the `submit` 
 
 ### Handling Invalid Submissions
 
-Sometimes you want to perform some logic after a form fails to submit due to validation errors (e.g: focusing the first invalid field), you can pass a callback as the second argument to `handleSubmit` function.
+Sometimes you want to perform some logic after a form fails to submit due to validation errors (e.g. focusing the first invalid field), you can pass a callback as the second argument to the `handleSubmit` function.
 
 ```js
 const { handleSubmit } = useForm();
@@ -113,7 +113,7 @@ function onInvalidSubmit({ values, errors, results }) {
 const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
 ```
 
-Here is a quick example on how to scroll to and focus the first invalid field after a failed submission attempt.
+Here is a quick example of how to scroll to and focus the first invalid field after a failed submission attempt.
 
 <Repl files={{ 'App.vue': 'CompositionHandlingForms03' }} client:only />
 
@@ -174,7 +174,7 @@ You may have noticed in the earlier examples that you can access all fields' val
 const { values } = useForm();
 ```
 
-The `values` object is read-only and should not be mutated with a `v-model` or by assigning a value to it. This is because all mutations are done through the vee-validate API, this is because mutations to form state needs to have a context.
+The `values` object is read-only and should not be mutated with a `v-model` or by assigning a value to it. This is because all mutations are done through the vee-validate API, this is because mutations to form state need to have a context.
 
 For example:
 
@@ -189,7 +189,7 @@ In order for the form UX to be stable, we need to understand why the email value
 
 ### Initial Values
 
-Since with vee-validate you don't have to use `v-model` to track your values, the `useForm` function allows you to define the starting values for your fields, by default all fields start with `undefined` as a value.
+Since you don't have to use `v-model` to track your values, the `useForm` function allows you to define the starting values for your fields, by default all fields start with `undefined` as a value.
 
 Using the `initialValues` option you can send an object that contains the field names as keys and their values:
 
@@ -256,7 +256,7 @@ const onSubmit = handleSubmit(async () => {
 });
 ```
 
-Alternatively for less verbosity, you can create submission handlers with only the controlled values with `handleSubmit.withControlled` which has the same API as `handleSubmit`:
+Alternatively, for less verbosity, you can create submission handlers with only the controlled values with `handleSubmit.withControlled` which has the same API as `handleSubmit`:
 
 ```js
 const { handleSubmit } = useForm();
@@ -267,15 +267,15 @@ const onSubmit = handleSubmit.withControlled(async values => {
 });
 ```
 
-Here is an example that filters out some noisy initial values when submitting the form using `withControlled` modifier.
+Here is an example that filters out some noisy initial values when submitting the form using the `withControlled` modifier.
 
 <Repl files={{ 'App.vue': 'CompositionHandlingForms12' }} client:only />
 
 ## Handling Resets
 
-vee-validate also handles form resets in a similar way to submissions. When resetting the form, all fields' errors will be cleared, and meta info will be reset to defaults and the values will be reset to their original or initial values.
+vee-validate also handles form resets in a similar way to submissions. When resetting the form, all fields' errors will be cleared, meta info will be reset to defaults and the values will be reset to their original or initial values.
 
-To reset forms you can use the `resetForm` function returned by `useForm`. You can also reset the form to a new state by passing a `FormState` object to the `resetForm` function. You can then set errors, `touched` meta and the values.
+To reset forms you can use the `resetForm` function returned by `useForm`. You can also reset the form to a new state by passing a `FormState` object to the `resetForm` function. You can then set errors, `touched` meta, and the values.
 
 ```js
 const { resetForm } = useForm();
@@ -310,13 +310,13 @@ interface FormState {
 }
 ```
 
-Here is an example where a full-form is being reset:
+Here is an example where a full form is being reset:
 
 <Repl files={{ 'App.vue': 'CompositionHandlingForms08' }} client:only />
 
 ### Resetting Forms After Submit
 
-Usually you will reset your forms after a successful submission. For convenience, the `onSubmit` handler receives an additional `FormActions` object in the second argument that allows you do some actions on the form after submissions, this is the shape of the `FormActions` object:
+Usually, you will reset your forms after successful submission. For convenience, the `onSubmit` handler receives an additional `FormActions` object in the second argument that allows you to do some actions on the form after submissions, this is the shape of the `FormActions` object:
 
 ```ts
 export interface FormActions {
@@ -342,7 +342,7 @@ As you have previously seen in some examples, you have access to `errors` with `
 const { errors } = useForm();
 ```
 
-However, if you want to display multiple errors for your fields then you can use `errorBag` which is a mapping of each field's path an array of error messages for that field.
+However, if you want to display multiple errors for your fields then you can use `errorBag` which is a mapping of each field's path and an array of error messages for that field.
 
 ```js
 const { errorBag } = useForm();
@@ -375,9 +375,9 @@ useForm({
 
 ### Setting Errors Manually
 
-Quite often you will find yourself unable to replicate some validation rules on the client-side due to natural limitations. For example, `unique` email validation is complex to implement on the client-side, which the ability to set errors manually can be useful.
+Quite often you will find yourself unable to replicate some validation rules on the client-side due to natural limitations. For example, `unique` email validation is complex to implement on the client side. So the ability to set errors manually can be useful.
 
-You can set messages for fields by using either `setFieldError` which sets an error message for one field at a time, and the `setErrors` function which allows you to set error messages for multiple fields at once.
+You can set messages for fields by using either `setFieldError` which sets an error message for one field at a time, or by using the `setErrors` function which allows you to set error messages for multiple fields at once.
 
 Both functions are available as a return value from `useForm`. In the following example, we check if the server response contains any validation errors and we set them on the fields:
 
@@ -399,12 +399,12 @@ const onSubmit = handleSubmit(async values => {
   }
 
   // set multiple errors, assuming the keys are the names of the fields
-  // and the values are the error message(s)
+  // and the key's value is the error message
   setErrors(response.errors);
 });
 ```
 
-Alternatively you can use the `FormActions` passed as the second argument to the `handleSubmit` callback which contains both functions for convenience:
+Alternatively, you can use the `FormActions` passed as the second argument to the `handleSubmit` callback which contains both functions for convenience:
 
 ```js
 const onSubmit = handleSubmit(async (values, actions) => {
