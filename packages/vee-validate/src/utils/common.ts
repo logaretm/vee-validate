@@ -3,11 +3,9 @@ import {
   getCurrentInstance,
   inject,
   InjectionKey,
-  MaybeRefOrGetter,
   ref,
   Ref,
   unref,
-  toValue,
   warn as vueWarning,
   watch,
   MaybeRef,
@@ -35,12 +33,12 @@ export function getFromPath<TValue = unknown>(object: NestedRecord | undefined, 
 export function getFromPath<TValue = unknown, TFallback = TValue>(
   object: NestedRecord | undefined,
   path: string,
-  fallback?: TFallback
+  fallback?: TFallback,
 ): TValue | TFallback;
 export function getFromPath<TValue = unknown, TFallback = TValue>(
   object: NestedRecord | undefined,
   path: string,
-  fallback?: TFallback
+  fallback?: TFallback,
 ): TValue | TFallback | undefined {
   if (!object) {
     return fallback;
@@ -210,7 +208,7 @@ export function throttle<T extends (...args: any) => any>(func: T, limit: number
 
 export function debounceAsync<TFunction extends (...args: any) => Promise<any>, TResult = ReturnType<TFunction>>(
   inner: TFunction,
-  ms = 0
+  ms = 0,
 ): (...args: Parameters<TFunction>) => Promise<TResult> {
   let timer: number | null = null;
   let resolves: any[] = [];
@@ -249,7 +247,7 @@ export function applyModelModifiers<TValue = unknown>(value: TValue, modifiers: 
 
 export function withLatest<TFunction extends (...args: any[]) => Promise<any>, TResult = ReturnType<TFunction>>(
   fn: TFunction,
-  onDone: (result: Awaited<TResult>, args: Parameters<TFunction>) => void
+  onDone: (result: Awaited<TResult>, args: Parameters<TFunction>) => void,
 ) {
   let latestRun: Promise<TResult> | undefined;
 
@@ -282,7 +280,7 @@ export function computedDeep<TValue = unknown>({ get, set }: { get(): TValue; se
     },
     {
       deep: true,
-    }
+    },
   );
 
   watch(
@@ -296,14 +294,10 @@ export function computedDeep<TValue = unknown>({ get, set }: { get(): TValue; se
     },
     {
       deep: true,
-    }
+    },
   );
 
   return baseRef;
-}
-
-export function lazyToRef<T>(value: MaybeRefOrGetter<T>): Ref<T> {
-  return computed(() => toValue(value));
 }
 
 export function normalizeErrorItem(message: string | string[] | null | undefined) {

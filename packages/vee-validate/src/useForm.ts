@@ -17,6 +17,7 @@ import {
   MaybeRef,
   MaybeRefOrGetter,
 } from 'vue';
+import { PartialDeep } from 'type-fest';
 import { klona as deepCopy } from 'klona/full';
 import {
   FieldMeta,
@@ -64,14 +65,12 @@ import {
   normalizeErrorItem,
   normalizeEventValue,
   omit,
-  isPathsEqual,
 } from './utils';
 import { FormContextKey } from './symbols';
 import { validateTypedSchema, validateObjectSchema } from './validate';
 import { refreshInspector, registerFormWithDevTools } from './devtools';
 import { isCallable, merge, normalizeFormPath } from '../../shared';
 import { getConfig } from './config';
-import { PartialDeep } from 'type-fest';
 
 type FormSchema<TValues extends Record<string, unknown>> =
   | FlattenAndSetPathsType<TValues, GenericValidateFunction | string | GenericObject>
@@ -137,6 +136,17 @@ export function useForm<
 
   const extraErrorsBag: Ref<FormErrorBag<TValues>> = ref({});
 
+  const pathStateLookup = computed<Record<string, PathState>>(() => {
+    return pathStates.value.reduce(
+      (names, state) => {
+        names[normalizeFormPath(toValue(state.path))] = state;
+
+        return names;
+      },
+      {} as Record<string, PathState>,
+    );
+  });
+
   /**
    * Manually sets an error message on a specific field
    */
@@ -151,8 +161,9 @@ export function useForm<
 
     // Move the error from the extras path if exists
     if (typeof field === 'string') {
-      if (extraErrorsBag.value[normalizeFormPath(field) as Path<TValues>]) {
-        delete extraErrorsBag.value[normalizeFormPath(field) as Path<TValues>];
+      const normalizedPath = normalizeFormPath(field) as Path<TValues>;
+      if (extraErrorsBag.value[normalizedPath]) {
+        delete extraErrorsBag.value[normalizedPath];
       }
     }
 
@@ -256,7 +267,7 @@ export function useForm<
     config?: Partial<PathStateConfig>,
   ): PathState<TValue> {
     const initialValue = computed(() => getFromPath(initialValues.value, toValue(path)));
-    const pathStateExists = pathStates.value.find(s => isPathsEqual(s.path, toValue(path)));
+    const pathStateExists = pathStateLookup.value[toValue(path)];
     if (pathStateExists) {
       if (config?.type === 'checkbox' || config?.type === 'radio') {
         pathStateExists.multiple = true;
@@ -396,7 +407,8 @@ export function useForm<
   }
 
   function findPathState<TPath extends Path<TValues>>(path: TPath | PathState) {
-    const pathState = typeof path === 'string' ? pathStates.value.find(s => isPathsEqual(s.path, path)) : path;
+    const normalizedPath = typeof path === 'string' ? normalizeFormPath(path) : path;
+    const pathState = typeof normalizedPath === 'string' ? pathStateLookup.value[normalizedPath] : normalizedPath;
 
     return pathState as PathState<PathValue<TValues, TPath>> | undefined;
   }
@@ -509,7 +521,7 @@ export function useForm<
   handleSubmit.withControlled = makeSubmissionFactory(true);
 
   function removePathState<TPath extends Path<TValues>>(path: TPath, id: number) {
-    const idx = pathStates.value.findIndex(s => isPathsEqual(s.path, path));
+    const idx = pathStates.value.findIndex(s => s.path === path);
     const pathState = pathStates.value[idx];
     if (idx === -1 || !pathState) {
       return;

@@ -42,9 +42,8 @@ import {
   withLatest,
   isEqual,
   isTypedSchema,
-  lazyToRef,
 } from './utils';
-import { isCallable, isObject } from '../../shared';
+import { isCallable, isObject, normalizeFormPath } from '../../shared';
 import { FieldContextKey, FormContextKey, IS_ABSENT } from './symbols';
 import { useFieldState } from './useFieldState';
 import { refreshInspector, registerSingleFieldWithDevtools } from './devtools';
@@ -91,7 +90,7 @@ export type RuleExpression<TValue> =
 export function useField<TValue = unknown>(
   path: MaybeRefOrGetter<string>,
   rules?: MaybeRef<RuleExpression<TValue>>,
-  opts?: Partial<FieldOptions<TValue>>
+  opts?: Partial<FieldOptions<TValue>>,
 ): FieldContext<TValue> {
   if (hasCheckedAttr(opts?.type)) {
     return useFieldWithChecked(path, rules, opts);
@@ -103,7 +102,7 @@ export function useField<TValue = unknown>(
 function _useField<TValue = unknown>(
   path: MaybeRefOrGetter<string>,
   rules?: MaybeRef<RuleExpression<TValue>>,
-  opts?: Partial<FieldOptions<TValue>>
+  opts?: Partial<FieldOptions<TValue>>,
 ): FieldContext<TValue> {
   const {
     initialValue: modelValue,
@@ -122,7 +121,7 @@ function _useField<TValue = unknown>(
 
   const injectedForm = controlled ? injectWithSelf(FormContextKey) : undefined;
   const form = (controlForm as PrivateFormContext | undefined) || injectedForm;
-  const name = lazyToRef(path);
+  const name = computed(() => normalizeFormPath(toValue(path)));
 
   const validator = computed(() => {
     const schema = unref(form?.schema);
@@ -203,7 +202,7 @@ function _useField<TValue = unknown>(
       meta.valid = result.valid;
 
       return result;
-    }
+    },
   );
 
   const validateValidStateOnly = withLatest(
@@ -214,7 +213,7 @@ function _useField<TValue = unknown>(
       meta.valid = result.valid;
 
       return result;
-    }
+    },
   );
 
   function validate(opts?: Partial<ValidationOptions>) {
@@ -294,11 +293,11 @@ function _useField<TValue = unknown>(
 
         if (value === oldValue && isEqual(value, oldValue)) {
           warn(
-            'Detected a possible deep change on field `value` ref, for nested changes please either set the entire ref value or use `setValue` or `handleChange`.'
+            'Detected a possible deep change on field `value` ref, for nested changes please either set the entire ref value or use `setValue` or `handleChange`.',
           );
         }
       },
-      { deep: true }
+      { deep: true },
     );
   }
 
@@ -340,7 +339,7 @@ function _useField<TValue = unknown>(
       },
       {
         deep: true,
-      }
+      },
     );
   }
 
@@ -376,23 +375,29 @@ function _useField<TValue = unknown>(
       return {};
     }
 
-    return Object.keys(rulesVal).reduce((acc, rule: string) => {
-      const deps = extractLocators(rulesVal[rule])
-        .map((dep: any) => dep.__locatorRef)
-        .reduce((depAcc, depName) => {
-          const depValue = getFromPath(form.values, depName) || form.values[depName];
+    return Object.keys(rulesVal).reduce(
+      (acc, rule: string) => {
+        const deps = extractLocators(rulesVal[rule])
+          .map((dep: any) => dep.__locatorRef)
+          .reduce(
+            (depAcc, depName) => {
+              const depValue = getFromPath(form.values, depName) || form.values[depName];
 
-          if (depValue !== undefined) {
-            depAcc[depName] = depValue;
-          }
+              if (depValue !== undefined) {
+                depAcc[depName] = depValue;
+              }
 
-          return depAcc;
-        }, {} as Record<string, unknown>);
+              return depAcc;
+            },
+            {} as Record<string, unknown>,
+          );
 
-      Object.assign(acc, deps);
+        Object.assign(acc, deps);
 
-      return acc;
-    }, {} as Record<string, unknown>);
+        return acc;
+      },
+      {} as Record<string, unknown>,
+    );
   });
 
   // Adds a watcher that runs the validation whenever field dependencies change
@@ -492,14 +497,14 @@ function normalizeOptions<TValue>(opts: Partial<FieldOptions<TValue>> | undefine
 function useFieldWithChecked<TValue = unknown>(
   name: MaybeRefOrGetter<string>,
   rules?: MaybeRef<RuleExpression<TValue>>,
-  opts?: Partial<FieldOptions<TValue>>
+  opts?: Partial<FieldOptions<TValue>>,
 ): FieldContext<TValue> {
   const form = !opts?.standalone ? injectWithSelf(FormContextKey) : undefined;
   const checkedValue = opts?.checkedValue;
   const uncheckedValue = opts?.uncheckedValue;
 
   function patchCheckedApi(
-    field: FieldContext<TValue> & { originalHandleChange?: FieldContext['handleChange'] }
+    field: FieldContext<TValue> & { originalHandleChange?: FieldContext['handleChange'] },
   ): FieldContext<TValue> {
     const handleChange = field.handleChange;
 
@@ -590,7 +595,7 @@ function useVModel<TValue = unknown>({ prop, value, handleChange }: ModelOpts<TV
       }
 
       handleChange(newValue);
-    }
+    },
   );
 }
 

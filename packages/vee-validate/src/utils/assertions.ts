@@ -1,5 +1,5 @@
 import { Locator, TypedSchema, YupSchema } from '../types';
-import { isCallable, isObject, normalizeFormPath } from '../../../shared';
+import { isCallable, isObject } from '../../../shared';
 import { IS_ABSENT } from '../symbols';
 
 export const isClient = typeof window !== 'undefined';
@@ -185,8 +185,4 @@ export function isFile(a: unknown): a is File {
   }
 
   return a instanceof File;
-}
-
-export function isPathsEqual(lhs: string, rhs: string) {
-  return normalizeFormPath(lhs) === normalizeFormPath(rhs);
 }
