@@ -9,11 +9,12 @@ import {
   warn as vueWarning,
   watch,
   MaybeRef,
+  nextTick,
 } from 'vue';
 import { klona as deepCopy } from 'klona/full';
 import { isIndex, isNullOrUndefined, isObject, toNumber } from '../../../shared';
 import { isContainerValue, isEmptyContainer, isEqual, isNotNestedPath } from './assertions';
-import { GenericObject } from '../types';
+import { GenericObject, MaybePromise } from '../types';
 import { FormContextKey, FieldContextKey } from '../symbols';
 
 function cleanupNonNestedPath(path: string) {
@@ -326,4 +327,34 @@ export function omit<TObj extends GenericObject>(obj: TObj, keys: (keyof Generic
   }
 
   return target;
+}
+
+export function debounceNextTick<
+  TFunction extends (...args: any[]) => MaybePromise<any>,
+  TResult = ReturnType<TFunction>,
+>(inner: TFunction): (...args: Parameters<TFunction>) => Promise<TResult> {
+  let lastTick: Promise<any> | null = null;
+  let resolves: any[] = [];
+
+  return function (...args: Parameters<TFunction>) {
+    // Run the function after a certain amount of time
+
+    const thisTick = nextTick(() => {
+      if (lastTick !== thisTick) {
+        return;
+      }
+
+      // Get the result of the inner function, then apply it to the resolve function of
+      // each promise that has been created since the last time the inner function was run
+      const result = inner(...(args as any));
+
+      resolves.forEach(r => r(result));
+      resolves = [];
+      lastTick = null;
+    });
+
+    lastTick = thisTick;
+
+    return new Promise<TResult>(resolve => resolves.push(resolve));
+  };
 }

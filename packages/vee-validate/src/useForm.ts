@@ -65,6 +65,7 @@ import {
   normalizeErrorItem,
   normalizeEventValue,
   omit,
+  debounceNextTick,
 } from './utils';
 import { FormContextKey } from './symbols';
 import { validateTypedSchema, validateObjectSchema } from './validate';
@@ -136,8 +137,10 @@ export function useForm<
 
   const extraErrorsBag: Ref<FormErrorBag<TValues>> = ref({});
 
-  const pathStateLookup = computed<Record<string, PathState>>(() => {
-    return pathStates.value.reduce(
+  const pathStateLookup = ref<Record<string, PathState>>({});
+
+  const rebuildPathLookup = debounceNextTick(() => {
+    pathStateLookup.value = pathStates.value.reduce(
       (names, state) => {
         names[normalizeFormPath(toValue(state.path))] = state;
 
@@ -314,6 +317,8 @@ export function useForm<
     }) as PathState<TValue>;
 
     pathStates.value.push(state);
+    pathStateLookup.value[pathValue] = state;
+    rebuildPathLookup();
 
     if (errors.value[pathValue] && !initialErrors[pathValue]) {
       nextTick(() => {
@@ -324,7 +329,9 @@ export function useForm<
     // Handles when a path changes
     if (isRef(path)) {
       watch(path, newPath => {
+        rebuildPathLookup();
         const nextValue = deepCopy(currentValue.value);
+        pathStateLookup.value[newPath] = state;
 
         nextTick(() => {
           setInPath(formValues, newPath, nextValue);
@@ -547,6 +554,8 @@ export function useForm<
     if (!pathState.multiple || pathState.fieldsCount <= 0) {
       pathStates.value.splice(idx, 1);
       unsetInitialValue(path);
+      rebuildPathLookup();
+      delete pathStateLookup.value[path];
     }
   }
 
