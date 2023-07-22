@@ -28,7 +28,7 @@
     "dist/*.d.ts"
   ],
   "dependencies": {
-    "type-fest": "^3.13.0",
+    "type-fest": "^4.0.0",
     "vee-validate": "^4.10.7",
     "yup": "^1.2.0"
   },

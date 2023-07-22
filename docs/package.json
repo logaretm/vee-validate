@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^0.19.7",
-    "@astrojs/sitemap": "^1.4.0",
+    "@astrojs/sitemap": "^2.0.1",
     "@astrojs/vue": "^2.2.1",
     "@docsearch/css": "^3.5.1",
     "@docsearch/js": "^3.5.1",
@@ -20,7 +20,7 @@
     "@vee-validate/zod": "^4.10.7",
     "@vue/repl": "^2.5.5",
     "@vueuse/core": "^10.2.1",
-    "astro": "^2.8.3",
+    "astro": "^2.9.1",
     "autoprefixer": "^10.4.13",
     "fs-extra": "^11.1.1",
     "jsdom": "^22.1.0",
