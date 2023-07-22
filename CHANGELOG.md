@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.10.8
+
+### Patch Changes
+
+- a9a473b4: feat(perf): improve performance setFieldError and setFieldValue closes #4382
+
 ## 4.10.7
 
 ### Patch Changes
