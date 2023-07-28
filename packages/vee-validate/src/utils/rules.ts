@@ -7,7 +7,7 @@ import { isObject } from '../../../shared';
  * Normalizes the given rules expression.
  */
 export function normalizeRules(
-  rules: undefined | string | Record<string, unknown | unknown[] | Record<string, unknown>>
+  rules: undefined | string | Record<string, unknown | unknown[] | Record<string, unknown>>,
 ): Record<string, unknown[] | Record<string, unknown>> {
   const acc: Record<string, unknown[] | Record<string, unknown>> = {};
   Object.defineProperty(acc, '_$$isNormalized', {
@@ -93,11 +93,14 @@ function buildParams(provided: unknown[] | Record<string, unknown>) {
     return [provided];
   }
 
-  return Object.keys(provided).reduce((prev, key) => {
-    prev[key] = mapValueToLocator(provided[key]);
+  return Object.keys(provided).reduce(
+    (prev, key) => {
+      prev[key] = mapValueToLocator(provided[key]);
 
-    return prev;
-  }, {} as Record<string, unknown>);
+      return prev;
+    },
+    {} as Record<string, unknown>,
+  );
 }
 
 /**

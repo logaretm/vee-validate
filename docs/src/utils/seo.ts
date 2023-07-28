@@ -1,5 +1,3 @@
-import { MarkdownInstance } from 'astro';
-
 export function generateSocialImage({
   title,
   tagline,

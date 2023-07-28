@@ -75,7 +75,7 @@
     ],
     "*.js": [
       "eslint --fix",
-      "vitest run related"
+      "vitest run related --passWithNoTests"
     ]
   }
 }

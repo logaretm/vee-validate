@@ -3,7 +3,7 @@ import { FormContext, SubmissionHandler } from './types';
 import { injectWithSelf, warn } from './utils';
 
 export function useSubmitForm<TValues extends Record<string, unknown> = Record<string, unknown>>(
-  cb: SubmissionHandler<TValues>
+  cb: SubmissionHandler<TValues>,
 ) {
   const form = injectWithSelf(FormContextKey) as FormContext<TValues> | undefined;
   if (!form) {

@@ -1,5 +1,3 @@
-import { isObject } from '../../shared';
-
 /**
  * Replaces placeholder values in a string with their actual values
  */

@@ -30,7 +30,7 @@ let ID_COUNTER = 0;
 
 export function useFieldState<TValue = unknown>(
   path: MaybeRef<string>,
-  init: Partial<StateInit<TValue>>
+  init: Partial<StateInit<TValue>>,
 ): FieldStateComposable<TValue> {
   const { value, initialValue, setInitialValue } = _useFieldValue<TValue>(path, init.modelValue, init.form);
 
@@ -120,7 +120,7 @@ interface FieldValueComposable<TValue = unknown> {
 export function _useFieldValue<TValue = unknown>(
   path: MaybeRef<string>,
   modelValue?: MaybeRef<TValue>,
-  form?: PrivateFormContext
+  form?: PrivateFormContext,
 ): FieldValueComposable<TValue> {
   const modelRef = ref(unref(modelValue)) as Ref<TValue>;
 
@@ -187,7 +187,7 @@ function resolveModelValue<TValue>(
   modelValue: MaybeRef<TValue> | undefined,
   form: PrivateFormContext,
   initialValue: MaybeRef<TValue> | undefined,
-  path: MaybeRef<string>
+  path: MaybeRef<string>,
 ): TValue {
   if (isRef(modelValue)) {
     return unref(modelValue);
@@ -206,7 +206,7 @@ function resolveModelValue<TValue>(
 function createFieldMeta<TValue>(
   currentValue: Ref<TValue>,
   initialValue: MaybeRef<TValue> | undefined,
-  errors: Ref<string[]>
+  errors: Ref<string[]>,
 ) {
   const meta = reactive({
     touched: false,
@@ -227,7 +227,7 @@ function createFieldMeta<TValue>(
     {
       immediate: true,
       flush: 'sync',
-    }
+    },
   );
 
   return meta;

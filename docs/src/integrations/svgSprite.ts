@@ -15,11 +15,11 @@ const integration: AstroIntegration = {
 
             return content.replace('<svg', `<symbol id="icon-${id}"`).replace('</svg>', '</symbol>');
           });
-        })
+        }),
       );
 
       const sprite = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="hidden">${icons.join(
-        '\n'
+        '\n',
       )}</svg>`;
 
       await writeFile(path.join(path.resolve(), '../docs/dist/sprite.svg'), sprite, { encoding: 'utf-8' });

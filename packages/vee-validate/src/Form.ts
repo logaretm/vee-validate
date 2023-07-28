@@ -220,7 +220,7 @@ const FormImpl = /** #__PURE__ */ defineComponent({
           onSubmit,
           onReset: handleFormReset,
         },
-        children
+        children,
       );
     };
   },

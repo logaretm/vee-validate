@@ -6,7 +6,7 @@ type HTMLElementWithValueBinding = HTMLElement & { _value: unknown };
 export const normalizeChildren = (
   tag: string | Record<string, unknown> | undefined,
   context: SetupContext<any>,
-  slotProps: () => Record<string, unknown>
+  slotProps: () => Record<string, unknown>,
 ) => {
   if (!context.slots.default) {
     return context.slots.default;

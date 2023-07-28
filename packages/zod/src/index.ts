@@ -9,7 +9,7 @@ import { isObject, merge, normalizeFormPath } from '../../shared';
 export function toTypedSchema<
   TSchema extends ZodSchema,
   TOutput = output<TSchema>,
-  TInput = PartialDeep<input<TSchema>>
+  TInput = PartialDeep<input<TSchema>>,
 >(zodSchema: TSchema, opts?: Partial<ParseParams>): TypedSchema<TInput, TOutput> {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
@@ -53,7 +53,7 @@ function processIssues(issues: ZodIssue[], errors: Record<string, TypedSchemaErr
     if (issue.code === 'invalid_union') {
       processIssues(
         issue.unionErrors.flatMap(ue => ue.issues),
-        errors
+        errors,
       );
 
       if (!path) {
@@ -87,7 +87,7 @@ function getDefaults<Schema extends ZodSchema>(schema: Schema): unknown {
       }
 
       return [key, undefined];
-    })
+    }),
   );
 }
 

@@ -11,8 +11,8 @@ test('validates mime types', () => {
         helpers.file('file.jpg', 'image/jpeg'),
         helpers.file('file.svg', 'image/svg'),
       ],
-      params
-    )
+      params,
+    ),
   ).toBe(true);
 
   expect(validate(helpers.file('file.pdf', 'application/pdf'), params)).toBe(false);

@@ -75,7 +75,7 @@ test('shows multiple errors using error bag', async () => {
         z.object({
           email: z.string().email(EMAIL_MSG).min(7, MIN_MSG),
           password: z.string().min(8, MIN_MSG),
-        })
+        }),
       );
 
       const { useFieldModel, errorBag } = useForm({
@@ -132,7 +132,7 @@ test('validates typed schema form with zod', async () => {
         z.object({
           email: z.string().email(EMAIL_MSG).min(1, REQUIRED_MSG),
           password: z.string().min(8, MIN_MSG),
-        })
+        }),
       );
 
       const { useFieldModel, errors } = useForm({
@@ -247,7 +247,7 @@ test('uses zod for form values transformations and parsing', async () => {
       const schema = toTypedSchema(
         z.object({
           age: z.preprocess(arg => Number(arg), z.number()),
-        })
+        }),
       );
 
       const { handleSubmit } = useForm({
@@ -271,7 +271,7 @@ test('uses zod for form values transformations and parsing', async () => {
     expect.objectContaining({
       age: 11,
     }),
-    expect.anything()
+    expect.anything(),
   );
 });
 
@@ -283,7 +283,7 @@ test('uses zod default values for submission', async () => {
       const schema = toTypedSchema(
         z.object({
           age: z.number().default(11),
-        })
+        }),
       );
 
       const { handleSubmit } = useForm({
@@ -306,7 +306,7 @@ test('uses zod default values for submission', async () => {
     expect.objectContaining({
       age: 11,
     }),
-    expect.anything()
+    expect.anything(),
   );
 });
 
@@ -323,7 +323,7 @@ test('uses zod default values for initial values', async () => {
             nestedKey: z.string(),
             nestedDefault: z.string().default('nested'),
           }),
-        })
+        }),
       );
 
       const { values } = useForm({
@@ -349,7 +349,7 @@ test('uses zod default values for initial values', async () => {
       object: {
         nestedDefault: 'nested',
       },
-    })
+    }),
   );
 });
 
@@ -360,7 +360,7 @@ test('reset form should cast the values', async () => {
       const schema = toTypedSchema(
         z.object({
           age: z.preprocess(arg => Number(arg), z.number()),
-        })
+        }),
       );
 
       const { values, resetForm } = useForm({
@@ -383,7 +383,7 @@ test('reset form should cast the values', async () => {
   await expect(valueSpy).toHaveBeenLastCalledWith(
     expect.objectContaining({
       age: 12,
-    })
+    }),
   );
 });
 
@@ -395,7 +395,7 @@ test('default values should not be undefined', async () => {
       const schema = toTypedSchema(
         z.object({
           email: z.string().min(1),
-        })
+        }),
       );
 
       const { values } = useForm({

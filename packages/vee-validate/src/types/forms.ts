@@ -20,6 +20,7 @@ export interface TypedSchema<TInput = any, TOutput = TInput> {
   cast?(values: Partial<TInput>): TInput;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type YupSchema<TValues = any> = {
   __isYupSchema__: boolean;
   validate(value: any, options: GenericObject): Promise<any>;
@@ -162,6 +163,7 @@ export interface FormState<TValues> {
 export type FormErrors<TValues extends GenericObject> = Partial<Record<Path<TValues>, string | undefined>>;
 export type FormErrorBag<TValues extends GenericObject> = Partial<Record<Path<TValues>, string[]>>;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface FormActions<TValues extends GenericObject, TOutput = TValues> {
   setFieldValue<T extends Path<TValues>>(field: T, value: PathValue<TValues, T>, shouldValidate?: boolean): void;
   setFieldError(field: Path<TValues>, message: string | string[] | undefined): void;
@@ -249,6 +251,7 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   markForUnmount(path: string): void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface BaseComponentBinds<TValue = unknown, TModel = 'modelValue'> {
   onBlur: () => void;
 }

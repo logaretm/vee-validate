@@ -652,7 +652,7 @@ describe('useForm()', () => {
       expect.objectContaining({
         values: initial,
         controlled: { field: initial.field },
-      })
+      }),
     );
   });
 
@@ -689,7 +689,7 @@ describe('useForm()', () => {
     expect(spy).toHaveBeenLastCalledWith(
       expect.objectContaining({
         values: { field: initial.field },
-      })
+      }),
     );
   });
 
@@ -710,7 +710,7 @@ describe('useForm()', () => {
           spy({ values });
         });
 
-        const fields = useFieldModel(['field', 'field2']);
+        useFieldModel(['field', 'field2']);
 
         onMounted(onSubmit);
 
@@ -726,7 +726,7 @@ describe('useForm()', () => {
     expect(spy).toHaveBeenLastCalledWith(
       expect.objectContaining({
         values: { field: initial.field, field2: initial.field2 },
-      })
+      }),
     );
   });
 

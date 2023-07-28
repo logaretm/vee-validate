@@ -7,7 +7,7 @@ const RULES: Record<string, ValidationRuleFunction | SimpleValidationRuleFunctio
  */
 export function defineRule<TValue = unknown, TParams = any[] | Record<string, any>>(
   id: string,
-  validator: ValidationRuleFunction<TValue, TParams> | SimpleValidationRuleFunction<TValue, TParams>
+  validator: ValidationRuleFunction<TValue, TParams> | SimpleValidationRuleFunction<TValue, TParams>,
 ) {
   // makes sure new rules are properly formatted.
   guardExtend(id, validator);
@@ -27,7 +27,7 @@ export function resolveRule(id: string) {
  */
 function guardExtend<TValue, TParams>(
   id: string,
-  validator: ValidationRuleFunction<TValue, TParams> | SimpleValidationRuleFunction<TValue, TParams>
+  validator: ValidationRuleFunction<TValue, TParams> | SimpleValidationRuleFunction<TValue, TParams>,
 ) {
   if (isCallable(validator)) {
     return;

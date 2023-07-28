@@ -3,7 +3,7 @@ import { TypedSchema, RawFormSchema, validateObject, TypedSchemaError, validate 
 import { Optional } from '../../shared';
 
 export function toTypedSchema<TOutput = any, TInput extends Optional<TOutput> = Optional<TOutput>>(
-  rawSchema: RawFormSchema<TInput> | string
+  rawSchema: RawFormSchema<TInput> | string,
 ): TypedSchema<TInput, TOutput> {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',

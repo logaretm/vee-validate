@@ -402,7 +402,7 @@ describe('<Field />', () => {
         single: expect.any(File),
         multiple: expect.arrayContaining([expect.any(File), expect.any(File)]),
       }),
-      expect.anything()
+      expect.anything(),
     );
   });
 
@@ -1049,7 +1049,7 @@ describe('<Field />', () => {
   test('should preserve select input options value type', async () => {
     const value = ref();
 
-    const wrapper = mountWithHoc({
+    mountWithHoc({
       setup() {
         return {
           value,
@@ -1082,7 +1082,7 @@ describe('<Field />', () => {
   // #3468
   test('should avoid setting the absent value to Vue', async () => {
     const form = ref({});
-    const wrapper = mountWithHoc({
+    mountWithHoc({
       setup() {
         return {
           form,

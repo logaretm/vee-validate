@@ -102,7 +102,7 @@ test('validates typed schema form with yup', async () => {
         yup.object({
           email: yup.string().email(EMAIL_MSG).required(),
           password: yup.string().min(8, MIN_MSG),
-        })
+        }),
       );
 
       const { useFieldModel, errors } = useForm({
@@ -159,7 +159,7 @@ test('shows multiple errors using error bag', async () => {
         yup.object({
           email: yup.string().email(EMAIL_MSG).min(7, MIN_MSG),
           password: yup.string().min(8, MIN_MSG),
-        })
+        }),
       );
 
       const { useFieldModel, errorBag } = useForm({
@@ -216,7 +216,7 @@ test('uses yup for form values transformations and parsing', async () => {
       const schema = toTypedSchema(
         yup.object({
           age: yup.number().transform(val => Number(val)),
-        })
+        }),
       );
 
       const { handleSubmit } = useForm({
@@ -240,7 +240,7 @@ test('uses yup for form values transformations and parsing', async () => {
     expect.objectContaining({
       age: 11,
     }),
-    expect.anything()
+    expect.anything(),
   );
 });
 
@@ -251,7 +251,7 @@ test('uses yup default values for submitted values', async () => {
       const schema = toTypedSchema(
         yup.object({
           age: yup.number().default(11),
-        })
+        }),
       );
 
       const { handleSubmit } = useForm({
@@ -274,7 +274,7 @@ test('uses yup default values for submitted values', async () => {
     expect.objectContaining({
       age: 11,
     }),
-    expect.anything()
+    expect.anything(),
   );
 });
 
@@ -291,7 +291,7 @@ test('uses yup default values for initial values', async () => {
             nestedKey: yup.string(),
             nestedDefault: yup.string().default('nested'),
           }),
-        })
+        }),
       );
 
       const { values } = useForm({
@@ -317,6 +317,6 @@ test('uses yup default values for initial values', async () => {
       object: {
         nestedDefault: 'nested',
       },
-    })
+    }),
   );
 });

@@ -47,7 +47,7 @@ export async function validate<TValue = unknown>(
     | GenericValidateFunction<TValue>
     | GenericValidateFunction<TValue>[]
     | TypedSchema<TValue>,
-  options: ValidationOptions = {}
+  options: ValidationOptions = {},
 ): Promise<ValidationResult> {
   const shouldBail = options?.bails;
   const field: FieldValidationContext<TValue> = {
@@ -179,16 +179,19 @@ function yupToTypedSchema(yupSchema: YupSchema): TypedSchema {
           return { errors: [{ path: err.path, errors: err.errors }] };
         }
 
-        const errors: Record<string, TypedSchemaError> = err.inner.reduce((acc, curr) => {
-          const path = curr.path || '';
-          if (!acc[path]) {
-            acc[path] = { errors: [], path };
-          }
+        const errors: Record<string, TypedSchemaError> = err.inner.reduce(
+          (acc, curr) => {
+            const path = curr.path || '';
+            if (!acc[path]) {
+              acc[path] = { errors: [], path };
+            }
 
-          acc[path].errors.push(...curr.errors);
+            acc[path].errors.push(...curr.errors);
 
-          return acc;
-        }, {} as Record<string, TypedSchemaError>);
+            return acc;
+          },
+          {} as Record<string, TypedSchemaError>,
+        );
 
         return { errors: Object.values(errors) };
       }
@@ -223,7 +226,7 @@ async function validateFieldWithTypedSchema(value: unknown, schema: TypedSchema 
 async function _test(
   field: FieldValidationContext,
   value: unknown,
-  rule: { name: string; params: Record<string, unknown> | unknown[] }
+  rule: { name: string; params: Record<string, unknown> | unknown[] },
 ) {
   const validator = resolveRule(rule.name);
   if (!validator) {
@@ -281,16 +284,19 @@ function fillTargetValues(params: unknown[] | Record<string, unknown>, crossTabl
     return params.map(normalize);
   }
 
-  return Object.keys(params).reduce((acc, param) => {
-    acc[param] = normalize(params[param]);
+  return Object.keys(params).reduce(
+    (acc, param) => {
+      acc[param] = normalize(params[param]);
 
-    return acc;
-  }, {} as Record<string, unknown>);
+      return acc;
+    },
+    {} as Record<string, unknown>,
+  );
 }
 
 export async function validateTypedSchema<TValues, TOutput = TValues>(
   schema: TypedSchema<TValues> | YupSchema<TValues>,
-  values: TValues
+  values: TValues,
 ): Promise<FormValidationResult<TValues, TOutput>> {
   const typedSchema = isTypedSchema(schema) ? schema : yupToTypedSchema(schema);
   const validationResult = await typedSchema.parse(values);
@@ -321,7 +327,7 @@ export async function validateTypedSchema<TValues, TOutput = TValues>(
 export async function validateObjectSchema<TValues, TOutput>(
   schema: RawFormSchema<TValues>,
   values: TValues,
-  opts?: Partial<{ names: Record<string, { name: string; label: string }>; bailsMap: Record<string, boolean> }>
+  opts?: Partial<{ names: Record<string, { name: string; label: string }>; bailsMap: Record<string, boolean> }>,
 ): Promise<FormValidationResult<TValues, TOutput>> {
   const paths = keysOf(schema) as Path<TValues>[];
   const validations = paths.map(async path => {

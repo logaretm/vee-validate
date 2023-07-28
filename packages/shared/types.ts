@@ -13,12 +13,12 @@ export interface FieldValidationMetaInfo {
 export type ValidationRuleFunction<TValue = unknown, TParams = unknown[] | Record<string, unknown>> = (
   value: TValue,
   params: TParams,
-  ctx: FieldValidationMetaInfo
+  ctx: FieldValidationMetaInfo,
 ) => boolean | string | Promise<boolean | string>;
 
 export type SimpleValidationRuleFunction<TValue = unknown, TParams = unknown[] | Record<string, unknown>> = (
   value: TValue,
-  params: TParams
+  params: TParams,
 ) => boolean | string | Promise<boolean | string>;
 
 export type ValidationMessageGenerator = (ctx: FieldValidationMetaInfo) => string;

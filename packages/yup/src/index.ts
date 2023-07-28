@@ -4,7 +4,7 @@ import { PartialDeep } from 'type-fest';
 
 export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchema>, TInput = PartialDeep<TOutput>>(
   yupSchema: TSchema,
-  opts: ValidateOptions = { abortEarly: false }
+  opts: ValidateOptions = { abortEarly: false },
 ): TypedSchema<TInput, TOutput> {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
@@ -29,16 +29,19 @@ export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchem
           return { errors: [{ path: error.path, errors: error.errors }] };
         }
 
-        const errors: Record<string, TypedSchemaError> = error.inner.reduce((acc, curr) => {
-          const path = curr.path || '';
-          if (!acc[path]) {
-            acc[path] = { errors: [], path };
-          }
+        const errors: Record<string, TypedSchemaError> = error.inner.reduce(
+          (acc, curr) => {
+            const path = curr.path || '';
+            if (!acc[path]) {
+              acc[path] = { errors: [], path };
+            }
 
-          acc[path].errors.push(...curr.errors);
+            acc[path].errors.push(...curr.errors);
 
-          return acc;
-        }, {} as Record<string, TypedSchemaError>);
+            return acc;
+          },
+          {} as Record<string, TypedSchemaError>,
+        );
 
         // list of aggregated errors
         return { errors: Object.values(errors) };

@@ -255,7 +255,7 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
             ...ctx.attrs,
             ...fieldProps.value,
           },
-          children
+          children,
         );
       }
 

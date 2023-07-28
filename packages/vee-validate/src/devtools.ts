@@ -22,7 +22,7 @@ function installDevtoolsPlugin(app: App) {
         app,
         logo: 'https://vee-validate.logaretm.com/v4/logo.png',
       },
-      setupApiHooks
+      setupApiHooks,
     );
   }
 }
@@ -308,7 +308,7 @@ function getFieldNodeTags(
   fieldsCount: number,
   type: string | undefined,
   valid: boolean,
-  form: PrivateFormContext | undefined
+  form: PrivateFormContext | undefined,
 ) {
   const { textColor, bgColor } = getValidityColors(valid);
 
@@ -400,7 +400,7 @@ function decodeNodeId(nodeId: string): {
 }
 
 function buildFieldState(
-  state: Pick<PathState, 'errors' | 'initialValue' | 'touched' | 'dirty' | 'value' | 'valid'>
+  state: Pick<PathState, 'errors' | 'initialValue' | 'touched' | 'dirty' | 'value' | 'valid'>,
 ): CustomInspectorState {
   return {
     'Field state': [
@@ -468,14 +468,17 @@ function buildFormState(form: PrivateFormContext): CustomInspectorState {
       },
       {
         key: 'errors',
-        value: keysOf(errorBag.value).reduce((acc, key) => {
-          const message = errorBag.value[key]?.[0];
-          if (message) {
-            acc[key] = message;
-          }
+        value: keysOf(errorBag.value).reduce(
+          (acc, key) => {
+            const message = errorBag.value[key]?.[0];
+            if (message) {
+              acc[key] = message;
+            }
 
-          return acc;
-        }, {} as Record<string, string | undefined>),
+            return acc;
+          },
+          {} as Record<string, string | undefined>,
+        ),
       },
     ],
   };

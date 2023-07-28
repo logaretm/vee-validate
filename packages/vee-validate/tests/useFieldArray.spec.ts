@@ -41,7 +41,7 @@ test('can update a field entry deep model directly and validate it', async () =>
           users: yup.array().of(
             yup.object({
               name: yup.string().required(),
-            })
+            }),
           ),
         }),
         initialValues: {
@@ -196,7 +196,7 @@ test('array push noop when path is not an array', async () => {
   let arr!: FieldArrayContext;
   mountWithHoc({
     setup() {
-      const form = useForm<any>({
+      useForm<any>({
         initialValues: {
           users: 'test',
         },
@@ -252,7 +252,7 @@ test('array prepend noop when path is not an array', async () => {
   let arr!: FieldArrayContext;
   mountWithHoc({
     setup() {
-      const form = useForm<any>({
+      useForm<any>({
         initialValues: {
           users: 'test',
         },

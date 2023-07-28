@@ -283,7 +283,7 @@ describe('useField()', () => {
       mountWithHoc({
         setup() {
           const { errorMessage, validate, value, setErrors } = useField('field', val =>
-            val ? true : REQUIRED_MESSAGE
+            val ? true : REQUIRED_MESSAGE,
           );
           validateFn = validate;
           // marks it as dirty/touched
@@ -452,7 +452,7 @@ describe('useField()', () => {
           } = useField(
             'field',
             [val => (val ? true : REQUIRED_MESSAGE), val => ((val as string)?.length >= 3 ? true : MIN_MESSAGE)],
-            { bails: false }
+            { bails: false },
           );
           const {
             value: value2,
@@ -462,7 +462,7 @@ describe('useField()', () => {
           } = useField(
             'field',
             [val => ((val as string)?.length >= 3 ? true : MIN_MESSAGE), val => (val ? true : REQUIRED_MESSAGE)],
-            { bails: false }
+            { bails: false },
           );
 
           return {

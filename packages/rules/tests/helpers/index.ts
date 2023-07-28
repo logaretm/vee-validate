@@ -4,5 +4,5 @@ export default {
       name,
       type,
       size: size * 1024,
-    } as File),
+    }) as File,
 };

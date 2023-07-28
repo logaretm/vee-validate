@@ -10,7 +10,7 @@ export type MaybePromise<T> = T | Promise<T>;
 
 export type MapValuesPathsToRefs<
   TValues extends GenericObject,
-  TPaths extends readonly [...MaybeRef<Path<TValues>>[]]
+  TPaths extends readonly [...MaybeRef<Path<TValues>>[]],
 > = {
   readonly [K in keyof TPaths]: TPaths[K] extends MaybeRef<infer TKey>
     ? TKey extends Path<TValues>

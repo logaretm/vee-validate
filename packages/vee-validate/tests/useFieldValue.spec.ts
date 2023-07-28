@@ -1,5 +1,5 @@
 import { useField, useFieldValue, useForm } from '@/vee-validate';
-import { mountWithHoc, setValue, flushPromises, getValue } from './helpers';
+import { mountWithHoc, setValue, flushPromises } from './helpers';
 import { defineComponent } from 'vue';
 
 describe('useFieldValue()', () => {

@@ -88,7 +88,7 @@ test('adds items to the end of the array with push()', async () => {
     expect.objectContaining({
       users: [{ name: '111' }, { name: '333' }],
     }),
-    expect.anything()
+    expect.anything(),
   );
 
   dispatchEvent('.add', 'click');
@@ -99,7 +99,7 @@ test('adds items to the end of the array with push()', async () => {
     expect.objectContaining({
       users: [{ name: '111' }, { name: '333' }, { name: 'new' }],
     }),
-    expect.anything()
+    expect.anything(),
   );
 });
 
@@ -164,7 +164,7 @@ test('can swap array fields with swap helper', async () => {
           .of(
             yup.object({
               name: yup.string().required(REQUIRED_MESSAGE),
-            })
+            }),
           )
           .strict(),
       });
@@ -249,7 +249,7 @@ test('can swap array fields with swap helper', async () => {
         },
       ],
     }),
-    expect.anything()
+    expect.anything(),
   );
 });
 
@@ -521,7 +521,7 @@ test('can update an item value directly with .value setter', async () => {
         },
       ],
     }),
-    expect.anything()
+    expect.anything(),
   );
 });
 
@@ -575,7 +575,7 @@ test('adds items to the start of the array with prepend()', async () => {
     expect.objectContaining({
       users: [{ name: 'new' }, { name: '111' }, { name: '222' }],
     }),
-    expect.anything()
+    expect.anything(),
   );
 });
 
@@ -858,7 +858,7 @@ test('moves items around the array with move()', async () => {
     expect.objectContaining({
       users: [{ name: '4' }, { name: '1' }, { name: '2' }, { name: '3' }],
     }),
-    expect.anything()
+    expect.anything(),
   );
 });
 
