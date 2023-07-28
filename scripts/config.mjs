@@ -15,6 +15,7 @@ const formatNameMap = {
   i18n: 'VeeValidateI18n',
   zod: 'VeeValidateZod',
   yup: 'VeeValidateYup',
+  valibot: 'VeeValidateValibot',
 };
 
 const pkgNameMap = {
@@ -23,6 +24,7 @@ const pkgNameMap = {
   i18n: 'vee-validate-i18n',
   zod: 'vee-validate-zod',
   yup: 'vee-validate-yup',
+  valibot: 'vee-validate-valibot',
 };
 
 const formatMap = {
@@ -49,7 +51,9 @@ async function createConfig(pkg, format) {
   const config = {
     input: {
       input: slashes(path.resolve(__dirname, `../packages/${pkg}/src/index.ts`)),
-      external: ['vue', isEsm ? '@vue/devtools-api' : undefined, 'zod', 'yup', 'vee-validate'].filter(Boolean),
+      external: ['vue', isEsm ? '@vue/devtools-api' : undefined, 'zod', 'yup', 'vee-validate', 'valibot'].filter(
+        Boolean,
+      ),
       plugins: [
         replace({
           preventAssignment: true,

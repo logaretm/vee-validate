@@ -106,6 +106,10 @@ async function build(pkg) {
     await build('yup');
   }
 
+  if (arg === 'valibot' || !arg) {
+    await build('valibot');
+  }
+
   if (arg === 'nuxt' || !arg) {
     await build('nuxt');
   }
