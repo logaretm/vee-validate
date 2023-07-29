@@ -1,5 +1,5 @@
 import { ComputedRef, Ref, MaybeRef, MaybeRefOrGetter } from 'vue';
-import { MapValuesPathsToRefs, GenericObject, MaybeArray, MaybePromise } from './common';
+import { MapValuesPathsToRefs, GenericObject, MaybeArray, MaybePromise, FlattenAndSetPathsType } from './common';
 import { FieldValidationMetaInfo } from '../../../shared';
 import { Path, PathValue } from './paths';
 import { PartialDeep } from 'type-fest';
@@ -167,7 +167,7 @@ export type FormErrorBag<TValues extends GenericObject> = Partial<Record<Path<TV
 export interface FormActions<TValues extends GenericObject, TOutput = TValues> {
   setFieldValue<T extends Path<TValues>>(field: T, value: PathValue<TValues, T>, shouldValidate?: boolean): void;
   setFieldError(field: Path<TValues>, message: string | string[] | undefined): void;
-  setErrors(fields: FormErrors<TValues>): void;
+  setErrors(fields: Partial<FlattenAndSetPathsType<TValues, string | string[] | undefined>>): void;
   setValues(fields: PartialDeep<TValues>, shouldValidate?: boolean): void;
   setFieldTouched(field: Path<TValues>, isTouched: boolean): void;
   setTouched(fields: Partial<Record<Path<TValues>, boolean>>): void;
