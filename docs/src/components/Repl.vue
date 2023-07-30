@@ -20,7 +20,7 @@ const files = await Promise.all(
     const code = await import(`./examples/${componentName}.vue?raw`);
 
     return [filename, code.default];
-  })
+  }),
 );
 
 const store = new ReplStore({
@@ -33,6 +33,7 @@ store.setImportMap({
     'vee-validate': 'https://unpkg.com/vee-validate@latest/dist/vee-validate.esm.js',
     '@vee-validate/zod': 'https://unpkg.com/@vee-validate/zod@latest/dist/vee-validate-zod.esm.js',
     '@vee-validate/yup': 'https://unpkg.com/@vee-validate/yup@latest/dist/vee-validate-yup.esm.js',
+    '@vee-validate/valibot': 'https://unpkg.com/@vee-validate/valibot@latest/dist/vee-validate-valibot.esm.js',
     '@vee-validate/i18n': 'https://unpkg.com/@vee-validate/i18n@latest/dist/vee-validate-i18n.esm.js',
     '@vee-validate/rules': 'https://unpkg.com/@vee-validate/rules@latest/dist/vee-validate-rules.esm.js',
     'property-expr': 'https://esm-repo.netlify.app/property-expr.esm.js',
@@ -40,6 +41,7 @@ store.setImportMap({
     toposort: 'https://esm-repo.netlify.app/topsort.esm.js',
     yup: 'https://unpkg.com/yup@1.2.0/index.esm.js',
     zod: 'https://unpkg.com/zod@3.21.4/lib/index.mjs',
+    valibot: 'https://unpkg.com/browse/valibot@0.7.0/dist/index.js',
     '@vue/devtools-api': 'https://unpkg.com/@vue/devtools-api@6.5.0/lib/esm/index.js',
     vue: `https://unpkg.com/vue@${version}/dist/vue.esm-browser.prod.js`,
   },
@@ -49,11 +51,14 @@ store.setImportMap({
 store.setVueVersion(version);
 
 function onForkClick() {
-  const exampleFiles = files.reduce((acc, file) => {
-    acc[file[0]] = file[1];
+  const exampleFiles = files.reduce(
+    (acc, file) => {
+      acc[file[0]] = file[1];
 
-    return acc;
-  }, {} as Record<string, string>);
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
 
   StackBlitzSdk.openProject(getViteProjectConfig(exampleFiles), {
     newWindow: true,

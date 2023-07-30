@@ -280,13 +280,51 @@ There is a known issue with Zod's `refine` and `superRefine` not executing whene
 
 </DocTip>
 
-### Validating with global validators
+### Validating with Valibot
+
+You can also use [Valibot](https://valibot.dev/) which is is a schema library with bundle size, type safety and developer experience in mind. It is a great alternative to Yup and Zod if bundle size is a concern. You will need to use the `@vee-validate/valibot` package to use valibot schemas.
+
+```sh
+# with npm
+npm i @vee-validate/valibot
+# with pnpm
+pnpm add @vee-validate/valibot
+# with yarn
+yarn add @vee-validate/valibot
+```
+
+Then you can wrap your Valibot schemas with `toTypedSchema` function which allows vee-validate to infer form input and output types. [More on that here](/guide/composition-api/typed-schema).
+
+```ts
+import { useForm } from 'vee-validate';
+import { string, object, email, minLength } from 'valibot';
+import { toTypedSchema } from '@vee-validate/valibot';
+
+// Creates a typed schema for vee-validate
+const schema = toTypedSchema(
+  object({
+    email: string([minLength(1, 'required'), email()]),
+  }),
+);
+
+const { errors, values } = useForm({
+  validationSchema: schema,
+});
+```
+
+Here is a full example using valibot with `useForm`:
+
+<Repl files={{ 'App.vue': 'CompositionValibotBasic' }} client:only />
+
+### Other validation providers and options
+
+#### Global Rules
 
 Another option is using `@vee-validate/rules` which have been historically bundled with past versions of vee-validate. It includes rules that can be defined globally and then used anywhere using Laravel-like string expressions.
 
 You can refer to the full guide on global rules [here](/guide/global-validators).
 
-### Validating with functions
+#### Validating with functions
 
 Another option is to just use any 3rd party validation tool you prefer, something like [`validator.js`](https://github.com/validatorjs/validator.js/). Here is a quick example:
 

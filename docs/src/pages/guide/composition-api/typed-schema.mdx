@@ -12,9 +12,8 @@ next:
 ---
 
 import DocTip from '@/components/DocTip.vue';
-import DocBadge from '@/components/DocBadge.vue';
 
-# Typed Schemas <DocBadge title="v4.8" />
+# Typed Schemas
 
 <DocTip type="warn">
 
@@ -114,7 +113,7 @@ const { values, handleSubmit } = useForm({
       email: string().required(),
       password: string().required(),
       name: string(),
-    })
+    }),
   ),
 });
 
@@ -146,7 +145,7 @@ const { values, handleSubmit } = useForm({
       email: string().required().default('something@email.com'),
       password: string().required().default(''),
       name: string().default(''),
-    })
+    }),
   ),
 });
 ```
@@ -168,12 +167,12 @@ const { values, handleSubmit } = useForm({
       age: number()
         .transform(val => Number(val))
         .required(),
-    })
+    }),
   ),
 });
 ```
 
-But note that this does not change the input or output types of the casted fields. The cast will only occur when setting the initial value and when the values are submitted.
+But note that this does not change the input or output types of the casted fields. The cast will only occur when setting the initial value and when the values are submitted in the submission handler.
 
 ## Zod
 
@@ -209,7 +208,7 @@ const { values, handleSubmit } = useForm({
       email: string().min(1, 'required'),
       password: string().min(1, 'required'),
       name: string().optional(),
-    })
+    }),
   ),
 });
 
@@ -246,7 +245,7 @@ const { values, handleSubmit } = useForm({
     object({
       email: string().default('something@email.com'),
       password: string().default(''),
-    })
+    }),
   ),
 });
 ```
@@ -266,7 +265,7 @@ const { values, handleSubmit } = useForm({
   validationSchema: toTypedSchema(
     object({
       age: preprocess(val => Number(val), number()),
-    })
+    }),
   ),
 });
 
@@ -278,3 +277,92 @@ handleSubmit(submitted => {
   values.age;
 });
 ```
+
+## Valibot
+
+[Valibot](https://valibot.dev/) is a schema library with bundle size, type safety and developer experience in mind. It is a great alternative to Yup and Zod if bundle size is a concern.
+
+You can use valibot as a typed schema with the `@vee-validate/valibot` package:
+
+```sh
+# npm
+npm install @vee-validate/valibot
+# yarn
+yarn add @vee-validate/valibot
+# pnpm
+pnpm add @vee-validate/valibot
+```
+
+The `@vee-valdiate/valibot` package exposes a `toTypedSchema` function that accepts any valibot schema. Which then you can pass along to `validationSchema` option on `useForm`.
+
+This makes the form values and submitted values typed automatically and caters for both input and output types of that schema.
+
+```ts
+import { useForm } from 'vee-validate';
+import { object, string, minLength } from 'valibot';
+import { toTypedSchema } from '@vee-validate/valibot';
+
+const { values, handleSubmit } = useForm({
+  validationSchema: toTypedSchema(
+    object({
+      email: string([minLength(1, 'required')]),
+      password: string([minLength(1, 'required')]),
+      name: string(),
+    }),
+  ),
+});
+
+// ❌ Type error, which means `values` is type-safe
+values.email.endsWith('@gmail.com');
+
+handleSubmit(submitted => {
+  // No errors, because email is required!
+  submitted.email.endsWith('@gmail.com');
+
+  // ❌ Type error, because `name` is not required so it could be undefined
+  // Means that your fields are now type safe!
+  submitted.name.length;
+});
+```
+
+### Valibot default values
+
+You can also define default values on your schema directly and it will be picked up by the form:
+
+```ts
+import { useForm } from 'vee-validate';
+import { object, string, useDefault, minLength } from 'valibot';
+import { toTypedSchema } from '@vee-validate/valibot';
+
+const { values, handleSubmit } = useForm({
+  validationSchema: toTypedSchema(
+    object({
+      email: useDefault(string([minLength(1, 'required')]), 'something@email.com'),
+      password: useDefault(string([minLength(1, 'required')]), ''),
+      name: useDefault(string(), ''),
+    }),
+  ),
+});
+```
+
+Your initial values will be using the schema defaults, and also the defaults will be used if the values submitted is missing these fields.
+
+### Valibot transforms
+
+You can also define transforms to cast your fields before submission:
+
+```ts
+import { useForm } from 'vee-validate';
+import { object, number, coerce, any } from 'valibot';
+import { toTypedSchema } from '@vee-validate/valibot';
+
+const { values, handleSubmit } = useForm({
+  validationSchema: toTypedSchema(
+    object({
+      age: coerce(any(), arg => Number(arg)),
+    }),
+  ),
+});
+```
+
+But note that this does not change the input or output types of the casted fields. The cast will only occur when setting the initial value and when the values are submitted in the submission handler.

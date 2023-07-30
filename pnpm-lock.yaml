@@ -209,6 +209,9 @@ importers:
       unist-util-visit:
         specifier: ^5.0.0
         version: 5.0.0
+      valibot:
+        specifier: ^0.7.0
+        version: 0.7.0
       vee-validate:
         specifier: ^4.11.0
         version: link:../packages/vee-validate
