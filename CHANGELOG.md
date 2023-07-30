@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.11.0
+
+### Minor Changes
+
+- 2d8143f9: feat: added composition setter functions
+
 ## 4.10.9
 
 ### Patch Changes
