@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.10.9
+
+### Patch Changes
+
+- c02337f3: fix: correct the setErrors type to allow for string[]
+
 ## 4.10.8
 
 ### Patch Changes
