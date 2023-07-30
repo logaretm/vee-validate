@@ -271,6 +271,14 @@ Here is an example that filters out some noisy initial values when submitting th
 
 <Repl files={{ 'App.vue': 'CompositionHandlingForms12' }} client:only />
 
+### Setting initial values asynchronously
+
+Sometimes your data is fetched asynchronously from an API and you want to set the initial values or the current values after the data is fetched. You can do that by using `resetForm` to set both current and initial data.
+
+<Repl files={{ 'App.vue': 'CompositionHandlingForms14' }} client:only />
+
+You could alternatively use `setValues` but note that `setValues` can trigger validation and do not reset the meta state for the fields like `dirty` or `touched`.
+
 ## Handling Resets
 
 vee-validate also handles form resets in a similar way to submissions. When resetting the form, all fields' errors will be cleared, meta info will be reset to defaults and the values will be reset to their original or initial values.
