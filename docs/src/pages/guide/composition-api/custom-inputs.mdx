@@ -100,13 +100,32 @@ Then you can wrap your zod field schemas with `toTypedSchema` function. [More on
 
 <Repl files={{ 'App.vue': 'CompositionInputFieldZod' }} client:only />
 
-### Validating with global validators
+### Validating with Valibot
+
+You can use [Valibot](https://valibot.dev/) to validate your fields, however, you will need to add `@vee-validate/valibot` to your dependencies.
+
+```sh
+# with npm
+npm i @vee-validate/valibot
+# with pnpm
+pnpm add @vee-validate/valibot
+# with yarn
+yarn add @vee-validate/valibot
+```
+
+Then you can wrap your valibot field schemas with `toTypedSchema` function. [More on that here](/guide/composition-api/typed-schema).
+
+<Repl files={{ 'App.vue': 'CompositionInputFieldValibot' }} client:only />
+
+### Other validation providers
+
+#### Validating with global validators
 
 Another option is using `@vee-validate/rules` which have been historically bundled with past versions of vee-validate. It includes rules that can be defined globally and then used anywhere using Laravel-like string expressions.
 
 You can refer to the full guide on global rules [here](/guide/global-validators).
 
-### Validating with functions
+#### Validating with functions
 
 Another option is to just use any 3rd party validation tool you prefer.
 
