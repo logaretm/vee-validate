@@ -261,8 +261,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0
       valibot:
-        specifier: ^0.5.0
-        version: 0.5.0
+        specifier: ^0.6.0
+        version: 0.6.0
       vee-validate:
         specifier: ^4.10.8
         version: link:../vee-validate
@@ -11662,8 +11662,8 @@ packages:
       convert-source-map: 1.9.0
     dev: true
 
-  /valibot@0.5.0:
-    resolution: {integrity: sha512-xjL/zMuQloTyK6sVzGO4HVg3AcPb970kIi2H3yMgl7gadBKKzepje31DWRyvOxhXJnIrFX8rJM0mhkMcmWz4bg==}
+  /valibot@0.6.0:
+    resolution: {integrity: sha512-H2r15tWnHMTwCvPDN4EYBc+4ofgBjZ7J+zyJDUi1tPHhkmwDnZPPfGWtWswWU7dZqBuSovRDbZKvWPC2PExOrQ==}
     dev: false
 
   /validate-npm-package-license@3.0.4:
