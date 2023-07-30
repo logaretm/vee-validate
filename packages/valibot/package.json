@@ -1,0 +1,35 @@
+{
+  "name": "@vee-validate/valibot",
+  "version": "4.10.9",
+  "description": "vee-validate integration with valibot schema validation",
+  "author": "Abdelrahman Awad <logaretm1@gmail.com>",
+  "license": "MIT",
+  "module": "dist/vee-validate-valibot.esm.js",
+  "unpkg": "dist/vee-validate-valibot.js",
+  "main": "dist/vee-validate-valibot.js",
+  "types": "dist/vee-validate-valibot.d.ts",
+  "homepage": "https://vee-validate.logaretm.com/v4/integrations/zod-schema-validation/",
+  "repository": {
+    "url": "https://github.com/logaretm/vee-validate.git",
+    "type": "git",
+    "directory": "packages/valibot"
+  },
+  "sideEffects": false,
+  "keywords": [
+    "VueJS",
+    "Vue",
+    "validation",
+    "validator",
+    "inputs",
+    "form"
+  ],
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts"
+  ],
+  "dependencies": {
+    "type-fest": "^4.0.0",
+    "valibot": "^0.7.0",
+    "vee-validate": "^4.10.8"
+  }
+}
