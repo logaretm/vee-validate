@@ -143,7 +143,7 @@ export interface PrivateFieldContext<TValue = unknown> {
   setState(state: Partial<FieldState<TValue>>): void;
   setTouched(isTouched: boolean): void;
   setErrors(message: string | string[]): void;
-  setValue(value: TValue): void;
+  setValue(value: TValue, shouldValidate?: boolean): void;
 }
 
 export type FieldContext<TValue = unknown> = Omit<PrivateFieldContext<TValue>, 'id' | 'instances'>;
@@ -170,7 +170,7 @@ export interface FormActions<TValues extends GenericObject, TOutput = TValues> {
   setErrors(fields: Partial<FlattenAndSetPathsType<TValues, string | string[] | undefined>>): void;
   setValues(fields: PartialDeep<TValues>, shouldValidate?: boolean): void;
   setFieldTouched(field: Path<TValues>, isTouched: boolean): void;
-  setTouched(fields: Partial<Record<Path<TValues>, boolean>>): void;
+  setTouched(fields: Partial<Record<Path<TValues>, boolean>> | boolean): void;
   resetForm(state?: Partial<FormState<TValues>>): void;
   resetField(field: Path<TValues>, state?: Partial<FieldState>): void;
 }
