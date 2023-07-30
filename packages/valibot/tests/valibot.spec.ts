@@ -2,7 +2,7 @@ import { Ref } from 'vue';
 import { useField, useForm } from '@/vee-validate';
 import { string, minLength, email as emailV, object, coerce, any, number, useDefault, optional } from 'valibot';
 import { toTypedSchema } from '@/valibot';
-import { mountWithHoc, flushPromises, setValue } from 'vee-validate/tests/helpers';
+import { mountWithHoc, flushPromises, setValue } from '../../vee-validate/tests/helpers';
 
 const REQUIRED_MSG = 'field is required';
 const MIN_MSG = 'field is too short';
@@ -43,8 +43,7 @@ describe('valibot', () => {
     expect(error.textContent).toBe('');
   });
 
-  // TODO: Does not seem to be supported at the moment.
-  test.skip('generates multiple errors for any given field', async () => {
+  test('generates multiple errors for any given field', async () => {
     let errors!: Ref<string[]>;
     const wrapper = mountWithHoc({
       setup() {
@@ -72,8 +71,7 @@ describe('valibot', () => {
     expect(errors.value).toEqual([REQUIRED_MSG, MIN_MSG]);
   });
 
-  // TODO: Does not seem supported at the moment.
-  test.skip('shows multiple errors using error bag', async () => {
+  test('shows multiple errors using error bag', async () => {
     const wrapper = mountWithHoc({
       setup() {
         const schema = toTypedSchema(
