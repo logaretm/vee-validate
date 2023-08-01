@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.11.1
+
+### Patch Changes
+
+- 5e23dcb9: fix: add support for parsing range inputs
+
 ## 4.11.0
 
 ### Minor Changes

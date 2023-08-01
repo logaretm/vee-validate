@@ -1,6 +1,6 @@
 {
   "name": "@vee-validate/nuxt",
-  "version": "4.11.0",
+  "version": "4.11.1",
   "description": "Official vee-validate nuxt module",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
@@ -39,7 +39,7 @@
   "dependencies": {
     "@nuxt/kit": "^3.6.5",
     "local-pkg": "^0.4.3",
-    "vee-validate": "^4.11.0"
+    "vee-validate": "^4.11.1"
   },
   "devDependencies": {
     "@nuxt/eslint-config": "^0.1.1",
