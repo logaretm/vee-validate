@@ -6,6 +6,10 @@ function parseInputValue(el: HTMLInputElement) {
     return Number.isNaN(el.valueAsNumber) ? el.value : el.valueAsNumber;
   }
 
+  if (el.type === 'range') {
+    return Number.isNaN(el.valueAsNumber) ? el.value : el.valueAsNumber;
+  }
+
   return el.value;
 }
 

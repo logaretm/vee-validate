@@ -943,6 +943,32 @@ describe('useField()', () => {
     expect(field.value.value).toBe('');
   });
 
+  test('handleChange parses input[type=range] value', async () => {
+    let field!: FieldContext;
+
+    mountWithHoc({
+      setup() {
+        field = useField('field', undefined);
+        const { handleChange } = field;
+
+        return {
+          handleChange,
+        };
+      },
+      template: `<input type="range" min="0" max="1000" step="100" @change="handleChange" />`,
+    });
+
+    await flushPromises();
+    const input = document.querySelector('input') as HTMLInputElement;
+    setValue(input, '500');
+    await flushPromises();
+    expect(field.value.value).toBe(500);
+
+    setValue(input, '0');
+    await flushPromises();
+    expect(field.value.value).toBe(0);
+  });
+
   test('a validator can return multiple messages', async () => {
     let field!: FieldContext;
     const validator = vi.fn(val => (val ? true : [REQUIRED_MESSAGE, 'second']));
