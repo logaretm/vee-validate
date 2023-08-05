@@ -1,4 +1,4 @@
-import { computed, isRef, reactive, ref, Ref, unref, watch, MaybeRef } from 'vue';
+import { computed, isRef, reactive, ref, Ref, unref, watch, MaybeRef, MaybeRefOrGetter } from 'vue';
 import { FieldMeta, FieldState, FieldValidator, InputType, PrivateFormContext, PathState } from './types';
 import { getFromPath, isEqual, normalizeErrorItem } from './utils';
 
@@ -21,7 +21,7 @@ export interface StateInit<TValue = unknown> {
   modelValue: MaybeRef<TValue>;
   form?: PrivateFormContext;
   bails: boolean;
-  label?: MaybeRef<string | undefined>;
+  label?: MaybeRefOrGetter<string | undefined>;
   type?: InputType;
   validate?: FieldValidator;
 }

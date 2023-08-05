@@ -3,7 +3,6 @@ import {
   isRef,
   computed,
   onMounted,
-  unref,
   provide,
   getCurrentInstance,
   Ref,
@@ -13,6 +12,7 @@ import {
   toValue,
   MaybeRef,
   MaybeRefOrGetter,
+  unref,
 } from 'vue';
 import { klona as deepCopy } from 'klona/full';
 import { validate as validateValue } from './validate';
@@ -57,16 +57,16 @@ export interface FieldOptions<TValue = unknown> {
   /**
    * @deprecated Use `checkedValue` instead.
    */
-  valueProp?: MaybeRef<TValue>;
-  checkedValue?: MaybeRef<TValue>;
-  uncheckedValue?: MaybeRef<TValue>;
-  label?: MaybeRef<string | undefined>;
+  valueProp?: MaybeRefOrGetter<TValue>;
+  checkedValue?: MaybeRefOrGetter<TValue>;
+  uncheckedValue?: MaybeRefOrGetter<TValue>;
+  label?: MaybeRefOrGetter<string | undefined>;
   controlled?: boolean;
   /**
    * @deprecated Use `controlled` instead, controlled is opposite of standalone.
    */
   standalone?: boolean;
-  keepValueOnUnmount?: MaybeRef<boolean | undefined>;
+  keepValueOnUnmount?: MaybeRefOrGetter<boolean | undefined>;
   /**
    * @deprecated Pass the model prop name to `syncVModel` instead.
    */
@@ -124,7 +124,7 @@ function _useField<TValue = unknown>(
   const name = computed(() => normalizeFormPath(toValue(path)));
 
   const validator = computed(() => {
-    const schema = unref(form?.schema);
+    const schema = toValue(form?.schema);
     if (schema) {
       return undefined;
     }
@@ -170,13 +170,13 @@ function _useField<TValue = unknown>(
 
   async function validateCurrentValue(mode: SchemaValidationMode) {
     if (form?.validateSchema) {
-      return (await form.validateSchema(mode)).results[unref(name)] ?? { valid: true, errors: [] };
+      return (await form.validateSchema(mode)).results[toValue(name)] ?? { valid: true, errors: [] };
     }
 
     if (validator.value) {
       return validateValue(value.value, validator.value, {
-        name: unref(name),
-        label: unref(label),
+        name: toValue(name),
+        label: toValue(label),
         values: form?.values ?? {},
         bails,
       });
@@ -414,7 +414,7 @@ function _useField<TValue = unknown>(
   });
 
   onBeforeUnmount(() => {
-    const shouldKeepValue = unref(field.keepValueOnUnmount) ?? unref(form.keepValuesOnUnmount);
+    const shouldKeepValue = toValue(field.keepValueOnUnmount) ?? toValue(form.keepValuesOnUnmount);
     const path = toValue(name);
     if (shouldKeepValue || !form || flags.pendingUnmount[field.id]) {
       form?.removePathState(path, id);
@@ -433,7 +433,7 @@ function _useField<TValue = unknown>(
     }
 
     if (pathState?.multiple && Array.isArray(pathState.value)) {
-      const valueIdx = pathState.value.findIndex(i => isEqual(i, unref(field.checkedValue)));
+      const valueIdx = pathState.value.findIndex(i => isEqual(i, toValue(field.checkedValue)));
       if (valueIdx > -1) {
         const newVal = [...pathState.value];
         newVal.splice(valueIdx, 1);
@@ -509,8 +509,8 @@ function useFieldWithChecked<TValue = unknown>(
     const handleChange = field.handleChange;
 
     const checked = computed(() => {
-      const currentValue = unref(field.value);
-      const checkedVal = unref(checkedValue);
+      const currentValue = toValue(field.value);
+      const checkedVal = toValue(checkedValue);
 
       return Array.isArray(currentValue)
         ? currentValue.findIndex(v => isEqual(v, checkedVal)) >= 0
@@ -528,11 +528,11 @@ function useFieldWithChecked<TValue = unknown>(
       const path = toValue(name);
       const pathState = form?.getPathState(path);
       const value = normalizeEventValue(e);
-      let newValue = unref(checkedValue) ?? value;
+      let newValue = toValue(checkedValue) ?? value;
       if (form && pathState?.multiple && pathState.type === 'checkbox') {
         newValue = resolveNextCheckboxValue(getFromPath(form.values, path) || [], newValue, undefined) as TValue;
       } else if (opts?.type === 'checkbox') {
-        newValue = resolveNextCheckboxValue(unref(field.value), newValue, unref(uncheckedValue)) as TValue;
+        newValue = resolveNextCheckboxValue(toValue(field.value), newValue, toValue(uncheckedValue)) as TValue;
       }
 
       handleChange(newValue, shouldValidate);

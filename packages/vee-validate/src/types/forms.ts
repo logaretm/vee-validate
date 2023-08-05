@@ -70,7 +70,7 @@ export type FieldValidator = (opts?: Partial<ValidationOptions>) => Promise<Vali
 
 export interface PathStateConfig {
   bails: boolean;
-  label: MaybeRef<string | undefined>;
+  label: MaybeRefOrGetter<string | undefined>;
   type: InputType;
   validate: FieldValidator;
 }
@@ -128,12 +128,12 @@ export interface PrivateFieldContext<TValue = unknown> {
   meta: FieldMeta<TValue>;
   errors: Ref<string[]>;
   errorMessage: Ref<string | undefined>;
-  label?: MaybeRef<string | undefined>;
+  label?: MaybeRefOrGetter<string | undefined>;
   type?: string;
   bails?: boolean;
-  keepValueOnUnmount?: MaybeRef<boolean | undefined>;
-  checkedValue?: MaybeRef<TValue>;
-  uncheckedValue?: MaybeRef<TValue>;
+  keepValueOnUnmount?: MaybeRefOrGetter<boolean | undefined>;
+  checkedValue?: MaybeRefOrGetter<TValue>;
+  uncheckedValue?: MaybeRefOrGetter<TValue>;
   checked?: Ref<boolean>;
   resetField(state?: Partial<FieldState<TValue>>): void;
   handleReset(): void;
