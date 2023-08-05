@@ -160,12 +160,6 @@ Read the [documentation and demos](https://vee-validate.logaretm.com/v4).
 
 You are welcome to contribute to this project, but before you do, please make sure you read the [contribution guide](/CONTRIBUTING.md).
 
-## Translations 🌎🗺
-
-[![translation badge](https://inlang.com/badge?url=github.com/logaretm/vee-validate)](https://inlang.com/editor/github.com/logaretm/vee-validate?ref=badge)
-
-To add translations, you can manually edit the JSON translation files in `packages/i18n/src/locale`, use the [inlang](https://inlang.com/) online editor, or run `pnpm machine-translate` to add missing translations using AI from Inlang.
-
 ## Credits
 
 - Inspired by Laravel's [validation syntax](https://laravel.com/docs/5.4/validation)
