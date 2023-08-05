@@ -19,7 +19,9 @@ export function useValidateField(path?: MaybeRefOrGetter<string>) {
       return form?.validateField(toValue(path));
     }
 
-    warn(`field with name ${unref(path)} was not found`);
+    if (__DEV__) {
+      warn(`field with name ${unref(path)} was not found`);
+    }
 
     return Promise.resolve({
       errors: [],

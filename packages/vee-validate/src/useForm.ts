@@ -804,7 +804,9 @@ export function useForm<
 
     const shouldWarn = !state && (opts?.warn ?? true);
     if (shouldWarn) {
-      warn(`field with path ${path} was not found`);
+      if (__DEV__) {
+        warn(`field with path ${path} was not found`);
+      }
     }
 
     return Promise.resolve({ errors: [], valid: true });

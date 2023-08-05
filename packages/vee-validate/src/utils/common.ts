@@ -311,7 +311,9 @@ export function resolveFieldOrPathState(path?: MaybeRefOrGetter<string>) {
   const field = path ? undefined : inject(FieldContextKey);
 
   if (!field && !state?.value) {
-    warn(`field with name ${toValue(path)} was not found`);
+    if (__DEV__) {
+      warn(`field with name ${toValue(path)} was not found`);
+    }
   }
 
   return state || field;

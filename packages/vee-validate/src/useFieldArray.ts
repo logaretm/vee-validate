@@ -24,16 +24,19 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
   };
 
   if (!form) {
-    warn(
-      'FieldArray requires being a child of `<Form/>` or `useForm` being called before it. Array fields may not work correctly',
-    );
+    if (__DEV__) {
+      warn(
+        'FieldArray requires being a child of `<Form/>` or `useForm` being called before it. Array fields may not work correctly',
+      );
+    }
 
     return noOpApi;
   }
 
   if (!unref(arrayPath)) {
-    warn('FieldArray requires a field path to be provided, did you forget to pass the `name` prop?');
-
+    if (__DEV__) {
+      warn('FieldArray requires a field path to be provided, did you forget to pass the `name` prop?');
+    }
     return noOpApi;
   }
 
@@ -90,7 +93,9 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
         set(value: TValue) {
           const idx = fields.value.findIndex(e => e.key === key);
           if (idx === -1) {
-            warn(`Attempting to update a non-existent array item`);
+            if (__DEV__) {
+              warn(`Attempting to update a non-existent array item`);
+            }
             return;
           }
 
