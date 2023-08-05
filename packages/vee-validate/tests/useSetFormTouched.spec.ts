@@ -3,6 +3,9 @@ import { mountWithHoc, flushPromises } from './helpers';
 
 describe('useSetFormTouched()', () => {
   test('sets multiple fields touched state', async () => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // NOOP
+    });
     let setTouched!: ReturnType<typeof useSetFormTouched>;
     mountWithHoc({
       setup() {
@@ -29,6 +32,8 @@ describe('useSetFormTouched()', () => {
     await flushPromises();
     expect(touched1?.textContent).toBe('true');
     expect(touched2?.textContent).toBe('false');
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
   });
 
   test('sets all fields touched state', async () => {

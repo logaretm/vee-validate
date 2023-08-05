@@ -13,14 +13,20 @@ export function useSetFieldValue<TValue = unknown>(path?: MaybeRefOrGetter<strin
   return function setFieldValue(value: TValue, shouldValidate = true) {
     if (path && form) {
       form.setFieldValue(toValue(path), value, shouldValidate);
+      return;
     }
 
     if (field) {
       field.setValue(value, shouldValidate);
+      return;
     }
 
     if (__DEV__) {
-      warn(`Could not set value for unknown field with path "${toValue(path)}"`);
+      warn(
+        `Could not set value since there is no form context or a field named "${toValue(
+          path,
+        )}", did you forget to call "useField" or "useForm"?`,
+      );
     }
   };
 }

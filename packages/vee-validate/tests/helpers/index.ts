@@ -8,7 +8,9 @@ export function mount(component: Record<string, any>) {
 
   document.body.innerHTML = `<div id="app"></div>`;
 
-  return app.mount('#app');
+  const vm = app.mount('#app');
+
+  return vm;
 }
 
 export function mountWithHoc(component: Record<string, any>) {

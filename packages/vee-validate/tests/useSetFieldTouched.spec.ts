@@ -4,6 +4,9 @@ import { defineComponent } from 'vue';
 
 describe('useSetFieldTouched()', () => {
   test('sets a single field touched status', async () => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // NOOP
+    });
     let setTouched!: ReturnType<typeof useSetFieldTouched>;
     mountWithHoc({
       setup() {
@@ -26,6 +29,8 @@ describe('useSetFieldTouched()', () => {
     setTouched(true);
     await flushPromises();
     expect(touched?.textContent).toBe('true');
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
   });
 
   test('sets a single field isTouched status in child components without path prop', async () => {
@@ -73,7 +78,6 @@ describe('useSetFieldTouched()', () => {
 
     mountWithHoc({
       setup() {
-        useForm();
         setTouched = useSetFieldTouched('something');
 
         return {};

@@ -1,4 +1,4 @@
-import { inject, unref, MaybeRef } from 'vue';
+import { MaybeRefOrGetter, inject, toValue, unref } from 'vue';
 import { FieldContextKey, FormContextKey } from './symbols';
 import { ValidationResult } from './types';
 import { injectWithSelf, warn } from './utils';
@@ -6,7 +6,7 @@ import { injectWithSelf, warn } from './utils';
 /**
  * Validates a single field
  */
-export function useValidateField(path?: MaybeRef<string>) {
+export function useValidateField(path?: MaybeRefOrGetter<string>) {
   const form = injectWithSelf(FormContextKey);
   const field = path ? undefined : inject(FieldContextKey);
 
@@ -16,7 +16,7 @@ export function useValidateField(path?: MaybeRef<string>) {
     }
 
     if (form && path) {
-      return form?.validateField(unref(path));
+      return form?.validateField(toValue(path));
     }
 
     warn(`field with name ${unref(path)} was not found`);

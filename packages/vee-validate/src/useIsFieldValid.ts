@@ -1,10 +1,10 @@
-import { computed, MaybeRef } from 'vue';
+import { computed, MaybeRefOrGetter } from 'vue';
 import { resolveFieldOrPathState } from './utils';
 
 /**
  * If a field is validated and is valid
  */
-export function useIsFieldValid(path?: MaybeRef<string>) {
+export function useIsFieldValid(path?: MaybeRefOrGetter<string>) {
   const fieldOrPath = resolveFieldOrPathState(path);
 
   return computed(() => {

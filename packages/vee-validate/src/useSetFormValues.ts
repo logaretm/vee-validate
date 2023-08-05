@@ -10,6 +10,7 @@ export function useSetFormValues() {
   function setFormValues(fields: Record<string, unknown>) {
     if (form) {
       form.setValues(fields);
+      return;
     }
 
     if (__DEV__) {

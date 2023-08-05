@@ -1,10 +1,10 @@
-import { computed, MaybeRef } from 'vue';
+import { MaybeRefOrGetter, computed } from 'vue';
 import { resolveFieldOrPathState } from './utils';
 
 /**
  * If a field is touched or not
  */
-export function useIsFieldTouched(path?: MaybeRef<string>) {
+export function useIsFieldTouched(path?: MaybeRefOrGetter<string>) {
   const fieldOrPath = resolveFieldOrPathState(path);
 
   return computed(() => {

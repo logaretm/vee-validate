@@ -5,6 +5,9 @@ describe('useSetFormErrors()', () => {
   const REQUIRED_MESSAGE = 'Field is required';
 
   test('sets multiple fields errors', async () => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // NOOP
+    });
     let setErrors!: ReturnType<typeof useSetFormErrors>;
     mountWithHoc({
       setup() {
@@ -25,6 +28,8 @@ describe('useSetFormErrors()', () => {
     setErrors({ test: REQUIRED_MESSAGE });
     await flushPromises();
     expect(error?.textContent).toBe(REQUIRED_MESSAGE);
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
   });
 
   test('warns if form is not found', async () => {

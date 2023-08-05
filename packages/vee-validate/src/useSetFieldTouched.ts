@@ -13,14 +13,20 @@ export function useSetFieldTouched(path?: MaybeRefOrGetter<string>) {
   return function setFieldTouched(touched: boolean) {
     if (path && form) {
       form.setFieldTouched(toValue(path), touched);
+      return;
     }
 
     if (field) {
       field.setTouched(touched);
+      return;
     }
 
     if (__DEV__) {
-      warn(`Could not set touched meta for unknown field with path "${toValue(path)}"`);
+      warn(
+        `Could not set touched state since there is no form context or a field named "${toValue(
+          path,
+        )}", did you forget to call "useField" or "useForm"?`,
+      );
     }
   };
 }

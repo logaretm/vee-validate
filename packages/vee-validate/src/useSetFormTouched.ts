@@ -10,6 +10,7 @@ export function useSetFormTouched() {
   function setFormTouched(fields: Record<string, boolean> | boolean) {
     if (form) {
       form.setTouched(fields);
+      return;
     }
 
     if (__DEV__) {

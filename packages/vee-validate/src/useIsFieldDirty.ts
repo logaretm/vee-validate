@@ -1,10 +1,10 @@
-import { computed, MaybeRef } from 'vue';
+import { computed, MaybeRefOrGetter } from 'vue';
 import { resolveFieldOrPathState } from './utils';
 
 /**
  * If a field is dirty or not
  */
-export function useIsFieldDirty(path?: MaybeRef<string>) {
+export function useIsFieldDirty(path?: MaybeRefOrGetter<string>) {
   const fieldOrPath = resolveFieldOrPathState(path);
 
   return computed(() => {

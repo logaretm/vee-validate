@@ -5,11 +5,11 @@ import {
   InjectionKey,
   ref,
   Ref,
-  unref,
   warn as vueWarning,
   watch,
-  MaybeRef,
   nextTick,
+  MaybeRefOrGetter,
+  toValue,
 } from 'vue';
 import { klona as deepCopy } from 'klona/full';
 import { isIndex, isNullOrUndefined, isObject, toNumber } from '../../../shared';
@@ -305,13 +305,13 @@ export function normalizeErrorItem(message: string | string[] | null | undefined
   return Array.isArray(message) ? message : message ? [message] : [];
 }
 
-export function resolveFieldOrPathState(path?: MaybeRef<string>) {
+export function resolveFieldOrPathState(path?: MaybeRefOrGetter<string>) {
   const form = injectWithSelf(FormContextKey);
-  const state = path ? computed(() => form?.getPathState(unref(path))) : undefined;
+  const state = path ? computed(() => form?.getPathState(toValue(path))) : undefined;
   const field = path ? undefined : inject(FieldContextKey);
 
   if (!field && !state?.value) {
-    warn(`field with name ${unref(path)} was not found`);
+    warn(`field with name ${toValue(path)} was not found`);
   }
 
   return state || field;

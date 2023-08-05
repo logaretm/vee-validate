@@ -10,6 +10,7 @@ export function useSetFormErrors() {
   function setFormErrors(fields: Record<string, string | string[] | undefined>) {
     if (form) {
       form.setErrors(fields);
+      return;
     }
 
     if (__DEV__) {

@@ -3,6 +3,9 @@ import { mountWithHoc, flushPromises } from './helpers';
 
 describe('useSetFormValues()', () => {
   test('sets form values', async () => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // NOOP
+    });
     let setValues!: ReturnType<typeof useSetFormValues>;
     mountWithHoc({
       setup() {
@@ -30,6 +33,8 @@ describe('useSetFormValues()', () => {
     await flushPromises();
     expect(value1?.textContent).toBe('test1');
     expect(value2?.textContent).toBe('test2');
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
   });
 
   test('warns if form is not found', async () => {

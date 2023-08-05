@@ -4,8 +4,10 @@ import { defineComponent } from 'vue';
 
 describe('useSetFieldError()', () => {
   test('sets a single field error message', async () => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // NOOP
+    });
     let setError!: ReturnType<typeof useSetFieldError>;
-
     mountWithHoc({
       setup() {
         useForm();
@@ -29,6 +31,8 @@ describe('useSetFieldError()', () => {
     setError(msg);
     await flushPromises();
     expect(error?.textContent).toBe(msg);
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
   });
 
   test('sets a single field error message in a child component without specifying a path', async () => {
@@ -75,7 +79,6 @@ describe('useSetFieldError()', () => {
 
     mountWithHoc({
       setup() {
-        useForm();
         setError = useSetFieldError('something');
 
         return {};
