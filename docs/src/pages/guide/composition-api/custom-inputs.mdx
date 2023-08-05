@@ -413,3 +413,35 @@ To get accurate results for the `meta.dirty` flag, you must provide an initial v
 To reduce the verbosity of adding an `initialValue` prop to each field, you could provide the `initialValues` prop to your `useForm` call instead.
 
 </DocTip>
+
+## Building checkboxes
+
+Checkboxes are a hard type of input to implement, mainly because of the expectations about how it should mutate the form's value. For example, a checkbox can be used to toggle between `true` or `false` values which is common with single checkboxes. But it can also be used in a group to act as a multi-select between multiple options. In that case, it adds or removes its own "checked" value to the group value.
+
+This means checkboxes have three states to maintain:
+
+- It's own checked value. In HTML this is done with the `value` attribute for native `input[type="checkbox"]` elements.
+- The current from value and if it is a checkbox group or a single checkbox. This is usually the `modelValue` prop for components.
+- If it is checked or not, if the checked value equals or is in the form value then it is checked. This should be computed based on the previous fact.
+
+All of this can be hard to wrap your head around. However, `useField` makes this as it already handles the nuances of checkboxes.
+
+The `useField` function accepts a `type` option that you can use to tell vee-validate that the input type is a checkbox and also accepts a `checkedValue` option.
+
+```ts
+const { handleChange, checked } = useField('myCheckbox', undefined, {
+  type: 'checkbox',
+  checkedValue: 'opt1',
+});
+```
+
+A simple integration with an input element would look like this:
+
+<Repl
+  files={{ 'App.vue': 'CompositionCustomFieldCheckbox', 'CustomCheckbox.vue': 'CustomCheckboxInputBasic' }}
+  client:only
+/>
+
+Note that we are not using `v-model` with the `value` returned from `useField` here. This is because `handleChange` is better suited for checkboxes as it handles toggling the value on or off and is also aware of the form has other checkboxes so it also handles whether the value should be an array or a single value.
+
+You can find a more advanced example of checkboxes on [this page](/examples/custom-checkboxes/).
