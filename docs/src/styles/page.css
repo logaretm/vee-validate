@@ -11,15 +11,24 @@
     grid-template-areas:
       'lside content rside'
       'footer footer footer';
-    grid-template-columns: 1.5fr 50rem 0.5fr;
-    column-gap: 100px;
+    grid-template-columns: 300px 40rem 1fr;
+    column-gap: 24px;
   }
 
   @screen xl {
     grid-template-areas:
       'lside content rside'
       'footer footer footer';
-    grid-template-columns: 1fr 50rem 1fr;
+    grid-template-columns: 300px 45rem 1fr;
+    column-gap: 40px;
+  }
+
+  @screen 2xl {
+    grid-template-areas:
+      'lside content rside'
+      'footer footer footer';
+    grid-template-columns: 300px 50rem 1fr;
+    column-gap: 100px;
   }
 
   .main {
