@@ -62,10 +62,43 @@ export default defineNuxtModule<VeeValidateNuxtOptions>({
 
     const usingYup = checkForYup(options);
     if (!usingYup) {
-      checkForZod(options);
+      if (!checkForZod(options)) {
+        checkForValibot(options);
+      }
     }
   },
 }) as NuxtModule<VeeValidateNuxtOptions>;
+
+function checkForValibot(options: VeeValidateNuxtOptions) {
+  if (isPackageExists('valibot') && !isPackageExists('@vee-validate/valibot')) {
+    logger.warn(
+      'You seem to be using valibot, but you have not installed @vee-validate/valibot. Please install it to use valibot with vee-validate.',
+    );
+    return true;
+  }
+
+  if (isPackageExists('@vee-validate/valibot') && !isPackageExists('valibot')) {
+    logger.warn(
+      'You seem to be using @vee-validate/valibot, but you have not installed valibot. Please install it to use valibot with vee-validate.',
+    );
+    return true;
+  }
+
+  if (isPackageExists('@vee-validate/valibot') && isPackageExists('valibot')) {
+    logger.info('Using valibot with vee-validate');
+    if (options.autoImports) {
+      addImports({
+        name: 'toTypedSchema',
+        as: 'toTypedSchema',
+        from: '@vee-validate/valibot',
+      });
+    }
+
+    return true;
+  }
+
+  return false;
+}
 
 function checkForZod(options: VeeValidateNuxtOptions) {
   if (isPackageExists('zod') && !isPackageExists('@vee-validate/zod')) {
