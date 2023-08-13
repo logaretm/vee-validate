@@ -38,6 +38,8 @@ export {
   LazyInputBindsConfig,
   FormErrors,
   FormErrorBag,
+  BaseComponentBinds,
+  BaseInputBinds,
 } from './types';
 export { useResetForm } from './useResetForm';
 export { useIsFieldDirty } from './useIsFieldDirty';
