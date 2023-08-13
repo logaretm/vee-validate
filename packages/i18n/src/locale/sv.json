@@ -1,6 +1,7 @@
 {
   "code": "sv",
   "messages": {
+    "_default": "Fältet {field} är inte giltigt",
     "alpha": "Fältet {field} får bara innehålla alfabetiska tecken",
     "alpha_dash": "Fältet {field} får bara innehålla alfanumeriska tecken såväl som snedstreck och understreck",
     "alpha_num": "Fältet {field} får bara innehålla alfanumeriska tecken",
@@ -16,13 +17,16 @@
     "integer": "Fältet {field} måste vara ett heltal",
     "length": "Fältet {field} måste vara 0:{length} långt",
     "one_of": "Fältet {field} måste vara ett godkänt alternativ",
+    "max_value": "Fältet {field} måste vara 0:{max} eller mindre",
     "max": "Fältet {field} får inte vara längre än 0:{length} tecken",
     "mimes": "Fältet {field} måste ha en filändelse",
+    "min_value": "Fältet {field} måste vara 0:{min} eller mer",
     "min": "Fältet {field} måste minst vara 0:{length} tecken",
     "numeric": "Fältet {field} får bara innehålla numeriska tecken",
     "regex": "Fältet {field} har en felaktig formatering",
     "required": "Fältet {field} är obligatoriskt",
     "required_if": "Fältet {field} är obligatoriskt",
-    "size": "Fältet {field} måste vara mindre än 0:{size}KB"
+    "size": "Fältet {field} måste vara mindre än 0:{size}KB",
+    "url": "Fältet {field} är inte en giltig webbadress"
   }
 }
