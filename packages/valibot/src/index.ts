@@ -1,10 +1,10 @@
 import { PartialDeep } from 'type-fest';
 import type { TypedSchema, TypedSchemaError } from 'vee-validate';
-import { Output, Input, BaseSchema, safeParseAsync, parse, Issue } from 'valibot';
+import { Output, Input, BaseSchema, BaseSchemaAsync, safeParseAsync, safeParse, Issue } from 'valibot';
 import { normalizeFormPath } from '../../shared';
 
 export function toTypedSchema<
-  TSchema extends BaseSchema,
+  TSchema extends BaseSchema | BaseSchemaAsync,
   TOutput = Output<TSchema>,
   TInput = PartialDeep<Input<TSchema>>,
 >(valibotSchema: TSchema): TypedSchema<TInput, TOutput> {
@@ -27,11 +27,13 @@ export function toTypedSchema<
       };
     },
     cast(values) {
-      try {
-        return parse(valibotSchema, values);
-      } catch {
+      if (valibotSchema.async) {
         return values;
       }
+
+      const result = safeParse(valibotSchema, values);
+
+      return result.success ? result.data : values;
     },
   };
 
