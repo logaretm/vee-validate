@@ -36,6 +36,8 @@ export {
   InputBindsConfig,
   LazyComponentBindsConfig,
   LazyInputBindsConfig,
+  BaseComponentBinds,
+  BaseInputBinds,
 } from './types';
 export { useResetForm } from './useResetForm';
 export { useIsFieldDirty } from './useIsFieldDirty';
