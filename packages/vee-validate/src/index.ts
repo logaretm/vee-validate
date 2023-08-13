@@ -36,6 +36,8 @@ export {
   InputBindsConfig,
   LazyComponentBindsConfig,
   LazyInputBindsConfig,
+  FormErrors,
+  FormErrorBag,
   BaseComponentBinds,
   BaseInputBinds,
 } from './types';
