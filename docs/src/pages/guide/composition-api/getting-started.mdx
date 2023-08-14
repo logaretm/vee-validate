@@ -261,7 +261,7 @@ import { z } from 'zod';
 // Creates a typed schema for vee-validate
 const schema = toTypedSchema(
   z.object({
-    email: z.string().required().email(),
+    email: z.string().nonempty().email(),
   }),
 );
 
