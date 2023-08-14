@@ -605,6 +605,9 @@ export function useForm<
     initialValues: initialValues as Ref<TValues>,
     getAllPathStates: () => pathStates.value,
     markForUnmount,
+    isFieldTouched,
+    isFieldDirty,
+    isFieldValid,
   };
 
   /**
@@ -680,6 +683,18 @@ export function useForm<
     if (pathState) {
       pathState.touched = isTouched;
     }
+  }
+
+  function isFieldTouched(field: Path<TValues>) {
+    return !!findPathState(field)?.touched;
+  }
+
+  function isFieldDirty(field: Path<TValues>) {
+    return !!findPathState(field)?.dirty;
+  }
+
+  function isFieldValid(field: Path<TValues>) {
+    return !!findPathState(field)?.valid;
   }
 
   /**

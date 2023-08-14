@@ -1248,4 +1248,67 @@ describe('useForm()', () => {
       expect(field.errorMessage.value).toBe('error');
     });
   });
+
+  test('can query field touched state', async () => {
+    let form!: FormContext<any>;
+    mountWithHoc({
+      setup() {
+        form = useForm();
+        useField('fname');
+
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    await flushPromises();
+    expect(form.meta.value.touched).toBe(false);
+    expect(form.isFieldTouched('fname')).toBe(false);
+    form.setFieldTouched('fname', true);
+    await flushPromises();
+    expect(form.meta.value.touched).toBe(true);
+    expect(form.isFieldTouched('fname')).toBe(true);
+  });
+
+  test('can query field dirty state', async () => {
+    let form!: FormContext<any>;
+    mountWithHoc({
+      setup() {
+        form = useForm();
+        useField('fname');
+
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    await flushPromises();
+    expect(form.meta.value.dirty).toBe(false);
+    expect(form.isFieldDirty('fname')).toBe(false);
+    form.setFieldValue('fname', 'value');
+    await flushPromises();
+    expect(form.meta.value.dirty).toBe(true);
+    expect(form.isFieldDirty('fname')).toBe(true);
+  });
+
+  test('can query field valid state', async () => {
+    let form!: FormContext<any>;
+    mountWithHoc({
+      setup() {
+        form = useForm();
+        useField('fname');
+
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    await flushPromises();
+    expect(form.meta.value.valid).toBe(true);
+    expect(form.isFieldValid('fname')).toBe(true);
+    form.setFieldError('fname', 'ERROR');
+    await flushPromises();
+    expect(form.meta.value.valid).toBe(false);
+    expect(form.isFieldValid('fname')).toBe(false);
+  });
 });

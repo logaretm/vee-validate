@@ -249,6 +249,9 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   removePathState<TPath extends Path<TValues>>(path: TPath, id: number): void;
   unsetPathValue<TPath extends Path<TValues>>(path: TPath): void;
   markForUnmount(path: string): void;
+  isFieldTouched<TPath extends Path<TValues>>(path: TPath): boolean;
+  isFieldDirty<TPath extends Path<TValues>>(path: TPath): boolean;
+  isFieldValid<TPath extends Path<TValues>>(path: TPath): boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
