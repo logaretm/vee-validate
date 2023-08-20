@@ -1,5 +1,14 @@
 # Change Log
 
+## 4.11.2
+
+### Patch Changes
+
+- 2ff045c1: fix: do not warn if a form or a field was resolved closes #4399
+- 73219b40: feat: expose all internal types
+- 4947e88f: feat: expose BaseInputBinds and BaseComponentBinds interfaces #4409
+- ecbb690d: feat: query fields meta state
+
 ## 4.11.1
 
 ### Patch Changes
