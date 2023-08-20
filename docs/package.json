@@ -8,10 +8,10 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^0.19.7",
-    "@astrojs/sitemap": "^2.0.1",
+    "@astrojs/sitemap": "^2.0.2",
     "@astrojs/vue": "^2.2.1",
-    "@docsearch/css": "^3.5.1",
-    "@docsearch/js": "^3.5.1",
+    "@docsearch/css": "^3.5.2",
+    "@docsearch/js": "^3.5.2",
     "@floating-ui/dom": "^1.5.1",
     "@stackblitz/sdk": "^1.9.0",
     "@types/fs-extra": "^11.0.1",
@@ -19,10 +19,10 @@
     "@vee-validate/valibot": "^4.11.1",
     "@vee-validate/yup": "^4.11.1",
     "@vee-validate/zod": "^4.11.1",
-    "@vue/repl": "^2.5.6",
+    "@vue/repl": "^2.5.8",
     "@vueuse/core": "^10.3.0",
-    "astro": "^2.10.1",
-    "autoprefixer": "^10.4.13",
+    "astro": "^2.10.12",
+    "autoprefixer": "^10.4.15",
     "fs-extra": "^11.1.1",
     "jsdom": "^22.1.0",
     "lodash-es": "^4.17.21",
@@ -30,10 +30,10 @@
     "shiki": "^0.14.3",
     "tailwindcss": "^3.3.3",
     "unist-util-visit": "^5.0.0",
-    "valibot": "^0.7.0",
+    "valibot": "^0.12.0",
     "vee-validate": "^4.11.1",
     "vue": "^3.3.0",
     "yup": "^1.2.0",
-    "zod": "^3.21.4"
+    "zod": "^3.22.2"
   }
 }

@@ -39,7 +39,7 @@
   "dependencies": {
     "@nuxt/kit": "^3.6.5",
     "local-pkg": "^0.4.3",
-    "vee-validate": "^4.11.1"
+    "vee-validate": "4.11.1"
   },
   "devDependencies": {
     "@nuxt/eslint-config": "^0.1.1",
