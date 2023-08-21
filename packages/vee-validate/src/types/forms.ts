@@ -20,6 +20,12 @@ export interface TypedSchema<TInput = any, TOutput = TInput> {
   cast?(values: Partial<TInput>): TInput;
 }
 
+export type InferOutput<TSchema extends TypedSchema> = TSchema extends TypedSchema<any, infer TOutput>
+  ? TOutput
+  : never;
+
+export type InferInput<TSchema extends TypedSchema> = TSchema extends TypedSchema<infer TInput, any> ? TInput : never;
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type YupSchema<TValues = any> = {
   __isYupSchema__: boolean;
