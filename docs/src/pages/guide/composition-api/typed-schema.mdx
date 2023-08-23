@@ -331,15 +331,15 @@ You can also define default values on your schema directly and it will be picked
 
 ```ts
 import { useForm } from 'vee-validate';
-import { object, string, useDefault, minLength } from 'valibot';
+import { object, string, withDefault, minLength } from 'valibot';
 import { toTypedSchema } from '@vee-validate/valibot';
 
 const { values, handleSubmit } = useForm({
   validationSchema: toTypedSchema(
     object({
-      email: useDefault(string([minLength(1, 'required')]), 'something@email.com'),
-      password: useDefault(string([minLength(1, 'required')]), ''),
-      name: useDefault(string(), ''),
+      email: withDefault(string([minLength(1, 'required')]), 'something@email.com'),
+      password: withDefault(string([minLength(1, 'required')]), ''),
+      name: withDefault(string(), ''),
     }),
   ),
 });
