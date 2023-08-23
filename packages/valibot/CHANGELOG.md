@@ -1,5 +1,12 @@
 # @vee-validate/valibot
 
+## 4.11.3
+
+### Patch Changes
+
+- 663a6e02: feat: upgrade valibot support
+  - vee-validate@4.11.3
+
 ## 4.11.2
 
 ### Patch Changes
