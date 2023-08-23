@@ -20,7 +20,7 @@ export function toTypedSchema<
       }
 
       const errors: Record<string, TypedSchemaError> = {};
-      processIssues(result.error.issues, errors);
+      processIssues(result.issues, errors);
 
       return {
         errors: Object.values(errors),
