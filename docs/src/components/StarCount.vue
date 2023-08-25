@@ -19,7 +19,7 @@ const props = defineProps<{
   initialCount?: number;
 }>();
 
-const count = ref(props.initialCount || 9000);
+const count = ref(props.initialCount || 10000);
 
 onMounted(async () => {
   count.value = (await fetchStarCount()) || count.value;
