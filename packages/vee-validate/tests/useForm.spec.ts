@@ -1,7 +1,7 @@
 import { FieldMeta, FormContext, FormMeta, useField, useForm } from '@/vee-validate';
 import { mountWithHoc, setValue, flushPromises, runInSetup, dispatchEvent } from './helpers';
 import * as yup from 'yup';
-import { onMounted, Ref } from 'vue';
+import { onMounted, ref, Ref } from 'vue';
 import { ModelComp, CustomModelComp } from './helpers/ModelComp';
 import { FieldContext } from '../dist/vee-validate';
 
@@ -1310,5 +1310,43 @@ describe('useForm()', () => {
     await flushPromises();
     expect(form.meta.value.valid).toBe(false);
     expect(form.isFieldValid('fname')).toBe(false);
+  });
+
+  // #4438
+  test('silent validation should not mark a field as validated', async () => {
+    let form!: FormContext<any>;
+    const showFields = ref(false);
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          validationSchema: yup.object({
+            fname: yup.string().required(),
+            lname: yup.string().required(),
+          }),
+        });
+
+        return {
+          showFields,
+        };
+      },
+      template: `<div>
+        <template v-if="showFields">
+          <Field name="fname" />
+          <Field name="lname" />
+        </template>
+
+      </div>`,
+    });
+
+    await flushPromises();
+    showFields.value = true;
+    await flushPromises();
+    expect(form.errors.value.fname).toBe(undefined);
+    expect(form.errors.value.lname).toBe(undefined);
+
+    setValue(document.querySelector('input') as any, '123');
+    await flushPromises();
+    expect(form.errors.value.fname).toBe(undefined);
+    expect(form.errors.value.lname).toBe(undefined);
   });
 });

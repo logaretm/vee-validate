@@ -803,7 +803,7 @@ export function useForm<
 
   async function validateField(path: Path<TValues>, opts?: Partial<ValidationOptions>): Promise<ValidationResult> {
     const state = findPathState(path);
-    if (state) {
+    if (state && opts?.mode !== 'silent') {
       state.validated = true;
     }
 
