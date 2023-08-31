@@ -7,9 +7,9 @@ import { injectWithSelf, warn } from './utils';
 export function useSetFormValues() {
   const form = injectWithSelf(FormContextKey);
 
-  function setFormValues(fields: Record<string, unknown>) {
+  function setFormValues(fields: Record<string, unknown>, shouldValidate = true) {
     if (form) {
-      form.setValues(fields);
+      form.setValues(fields, shouldValidate);
       return;
     }
 
