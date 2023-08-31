@@ -50,6 +50,7 @@ import {
   ComponentBindsConfig,
   LazyInputBindsConfig,
   LazyComponentBindsConfig,
+  ResetFormOpts,
 } from './types';
 import {
   getFromPath,
@@ -631,6 +632,22 @@ export function useForm<
     }
   }
 
+  function forceSetValues(fields: PartialDeep<TValues>, shouldValidate = true) {
+    // clean up old values
+    keysOf(formValues).forEach(key => {
+      delete formValues[key];
+    });
+
+    // set up new values
+    keysOf(fields).forEach(path => {
+      setFieldValue(path as Path<TValues>, fields[path], false);
+    });
+
+    if (shouldValidate) {
+      validate();
+    }
+  }
+
   /**
    * Sets multiple fields values
    */
@@ -726,7 +743,7 @@ export function useForm<
   /**
    * Resets all fields
    */
-  function resetForm(resetState?: Partial<FormState<TValues>>) {
+  function resetForm(resetState?: Partial<FormState<TValues>>, opts?: ResetFormOpts) {
     let newValues = resetState?.values ? resetState.values : originalInitialValues.value;
     newValues = isTypedSchema(schema) && isCallable(schema.cast) ? schema.cast(newValues) : newValues;
     setInitialValues(newValues);
@@ -737,8 +754,8 @@ export function useForm<
       setFieldValue(state.path as Path<TValues>, getFromPath(newValues, state.path), false);
       setFieldError(state.path as Path<TValues>, undefined);
     });
-    setValues(newValues, false);
 
+    opts?.force ? forceSetValues(newValues, false) : setValues(newValues, false);
     setErrors(resetState?.errors || {});
     submitCount.value = resetState?.submitCount || 0;
     nextTick(() => {

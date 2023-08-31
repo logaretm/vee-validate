@@ -169,6 +169,10 @@ export interface FormState<TValues> {
 export type FormErrors<TValues extends GenericObject> = Partial<Record<Path<TValues>, string | undefined>>;
 export type FormErrorBag<TValues extends GenericObject> = Partial<Record<Path<TValues>, string[]>>;
 
+export interface ResetFormOpts {
+  force: boolean;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface FormActions<TValues extends GenericObject, TOutput = TValues> {
   setFieldValue<T extends Path<TValues>>(field: T, value: PathValue<TValues, T>, shouldValidate?: boolean): void;
@@ -177,7 +181,7 @@ export interface FormActions<TValues extends GenericObject, TOutput = TValues> {
   setValues(fields: PartialDeep<TValues>, shouldValidate?: boolean): void;
   setFieldTouched(field: Path<TValues>, isTouched: boolean): void;
   setTouched(fields: Partial<Record<Path<TValues>, boolean>> | boolean): void;
-  resetForm(state?: Partial<FormState<TValues>>): void;
+  resetForm(state?: Partial<FormState<TValues>>, opts?: Partial<ResetFormOpts>): void;
   resetField(field: Path<TValues>, state?: Partial<FieldState>): void;
 }
 

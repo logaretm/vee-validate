@@ -508,7 +508,7 @@ The number of submission attempts by the user, it increments whenever `submitFor
 
 <CodeTitle level="4">
 
-`resetForm: (state?: Partial<FormState>) => void`
+`resetForm: (state?: Partial<FormState>, opts?: ResetFormOpts) => void`
 
 </CodeTitle>
 
@@ -551,6 +551,20 @@ function onSubmit(values) {
     },
   });
 }
+```
+
+By default `resetForm` merges the previous initial values with the new one provided, meaning only the provided ones will be overwritten. You can overwrite all the fields by passing `force: true` in the second argument.
+
+```js
+const { values, resetForm } = useForm({
+  initialValues: { fname: '123', lname: '456' },
+});
+
+// values: { fname: '123', lname: '456' }
+resetForm({ values: { fname: 'test' } });
+
+// values: { fname: 'test' }
+resetForm({ values: { fname: 'test' } }, { force: true });
 ```
 
 <CodeTitle level="4">

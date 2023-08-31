@@ -1349,4 +1349,27 @@ describe('useForm()', () => {
     expect(form.errors.value.fname).toBe(undefined);
     expect(form.errors.value.lname).toBe(undefined);
   });
+
+  test('values can be reset to specifically only include the provided fields', async () => {
+    let form!: FormContext<{ fname: string; lname: string }>;
+
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          initialValues: { fname: '123', lname: '456' },
+        });
+
+        return {};
+      },
+      template: `
+        <div></div>
+      `,
+    });
+
+    await flushPromises();
+
+    form.resetForm({ values: { fname: 'test' } }, { force: true });
+    expect(form.values.lname).toBeUndefined();
+    expect(form.values.fname).toBe('test');
+  });
 });
