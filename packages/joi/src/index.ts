@@ -43,6 +43,7 @@ export function toTypedSchema<
       }
     },
     cast(values) {
+      // Joi doesn't allow to cast without validating
       const result = joiSchema.validate(values);
 
       if (result.error) {
