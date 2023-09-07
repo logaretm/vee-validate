@@ -1,8 +1,18 @@
 import type { TypedSchema, TypedSchemaError } from 'vee-validate';
 import { Schema, ValidationError } from 'joi';
 import { normalizeFormPath } from '../../shared';
+import { PartialDeep } from 'type-fest';
 
-export function toTypedSchema<TSchema extends Schema>(joiSchema: TSchema): TypedSchema {
+/**
+ * Gets the type of data from the schema
+ */
+type GetTypeOfData<T> = T extends Schema<infer U> ? U : never;
+
+export function toTypedSchema<
+  TSchema extends Schema,
+  TOutput = GetTypeOfData<TSchema>,
+  TInput = PartialDeep<GetTypeOfData<TSchema>>,
+>(joiSchema: TSchema): TypedSchema<TInput, TOutput> {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
     async parse(value) {
