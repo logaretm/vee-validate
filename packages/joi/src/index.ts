@@ -6,12 +6,12 @@ import { PartialDeep } from 'type-fest';
 /**
  * Gets the type of data from the schema
  */
-type GetTypeOfData<T> = T extends Schema<infer U> ? U : never;
+type DataTypeOf<JoiSchema> = JoiSchema extends Schema<infer U> ? U : never;
 
 export function toTypedSchema<
   TSchema extends Schema,
-  TOutput = GetTypeOfData<TSchema>,
-  TInput = PartialDeep<GetTypeOfData<TSchema>>,
+  TOutput = DataTypeOf<TSchema>,
+  TInput = PartialDeep<DataTypeOf<TSchema>>,
 >(joiSchema: TSchema): TypedSchema<TInput, TOutput> {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
