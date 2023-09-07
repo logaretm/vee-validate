@@ -1,6 +1,6 @@
 import type { TypedSchema, TypedSchemaError } from 'vee-validate';
-import { Schema, ValidationError } from 'joi';
-import { normalizeFormPath } from '../../shared';
+import { AsyncValidationOptions, Schema, ValidationError } from 'joi';
+import { merge, normalizeFormPath } from '../../shared';
 import { PartialDeep } from 'type-fest';
 
 /**
@@ -12,18 +12,21 @@ type DataTypeOf<JoiSchema> = JoiSchema extends Schema<infer U> ? U : never;
  * Transform a joi schema into TypedSchema
  *
  * @param joiSchema joi schema for transforming
+ * @param opts validation options to pass to the joi validate function
  * @returns TypedSchema for using with vee-validate
  */
 export function toTypedSchema<
   TSchema extends Schema,
   TOutput = DataTypeOf<TSchema>,
   TInput = PartialDeep<DataTypeOf<TSchema>>,
->(joiSchema: TSchema): TypedSchema<TInput, TOutput> {
+>(joiSchema: TSchema, opts?: AsyncValidationOptions): TypedSchema<TInput, TOutput> {
+  const validationOptions: AsyncValidationOptions = merge({ abortEarly: false }, opts || {});
+
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
     async parse(value) {
       try {
-        const result = await joiSchema.validateAsync(value, { abortEarly: false });
+        const result = await joiSchema.validateAsync(value, validationOptions);
 
         return {
           value: result,
