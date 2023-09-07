@@ -1,16 +1,16 @@
-# @vee-validate/zod
+# @vee-validate/joi
 
 <p align="center">
-  <a href="https://vee-validate.logaretm.com/v4/integrations/zod-schema-validation/" target="_blank">
+  <a href="https://vee-validate.logaretm.com/v4/integrations/joi-schema-validation/" target="_blank">
     <img width="150" src="https://github.com/logaretm/vee-validate/raw/main/logo.png">
   </a>
 
-  <a href="https://github.com/colinhacks/zod/" target="_blank">
-    <img width="150" src="https://github.com/colinhacks/zod/raw/master/logo.svg">
+  <a href="https://github.com/hapijs/joi/" target="_blank">
+    <img width="150" src="https://joi.dev/img/joiTransparent.png">
   </a>
 </p>
 
-> Official vee-validate integration with Zod schema validation
+> Official vee-validate integration with Joi schema validation
 
 <p align="center">
   <a href="https://github.com/sponsors/logaretm">
@@ -20,39 +20,45 @@
 
 ## Guide
 
-[Zod](https://github.com/colinhacks/zod/) is an excellent library for value validation which mirrors static typing APIs.
+[Joi](https://github.com/hapijs/joi/) is a feature rich validation library for the browser and nodejs
 
 In their own words it is a:
 
-> TypeScript-first schema validation with static type inference
+> The most powerful schema description language and data validator for JavaScript.
 
-You can use zod as a typed schema with the `@vee-validate/zod` package:
+You can use joi as a typed schema with the `@vee-validate/joi` package:
 
 ```sh
 # npm
-npm install @vee-validate/zod
+npm install @vee-validate/joi
 # yarn
-yarn add @vee-validate/zod
+yarn add @vee-validate/joi
 # pnpm
-pnpm add @vee-validate/zod
+pnpm add @vee-validate/joi
 ```
 
-The `@vee-valdiate/zod` package exposes a `toTypedSchema` function that accepts any zod schema. Which then you can pass along to `validationSchema` option on `useForm`.
+The `@vee-valdiate/joi` package exposes a `toTypedSchema` function that accepts any joi schema. Which then you can pass along to `validationSchema` option on `useForm`.
 
 This makes the form values and submitted values typed automatically and caters for both input and output types of that schema.
 
 ```ts
 import { useForm } from 'vee-validate';
-import { object, string } from 'zod';
-import { toTypedSchema } from '@vee-validate/zod';
+import { object, string } from 'joi';
+import { toTypedSchema } from '@vee-validate/joi';
+
+interface FormData {
+  email: string;
+  password: string;
+  name?: string;
+}
 
 const { values, handleSubmit } = useForm({
   validationSchema: toTypedSchema(
-    object({
-      email: string().min(1, 'required'),
-      password: string().min(1, 'required'),
+    object<FormData>({
+      email: string().min(1).required().message('required'),
+      password: string().min(1).message('required'),
       name: string().optional(),
-    })
+    }),
   ),
 });
 
@@ -69,49 +75,23 @@ handleSubmit(submitted => {
 });
 ```
 
-### Zod default values
+### Joi default values
 
-You can also define default values on your zod schema directly and it will be picked up by the form:
+You can also define default values on your joi schema directly and it will be picked up by the form:
 
 ```ts
 import { useForm } from 'vee-validate';
-import { object, string } from 'zod';
-import { toTypedSchema } from '@vee-validate/zod';
+import { object, string } from 'joi';
+import { toTypedSchema } from '@vee-validate/joi';
 
 const { values, handleSubmit } = useForm({
   validationSchema: toTypedSchema(
     object({
       email: string().default('something@email.com'),
       password: string().default(''),
-    })
+    }),
   ),
 });
 ```
 
 Your initial values will be using the schema defaults, and also the defaults will be used if the values submitted is missing these fields.
-
-### Zod preprocess
-
-You can also define preprocessors to cast your fields before submission:
-
-```ts
-import { useForm } from 'vee-validate';
-import { object, number, preprocess } from 'zod';
-import { toTypedSchema } from '@vee-validate/zod';
-
-const { values, handleSubmit } = useForm({
-  validationSchema: toTypedSchema(
-    object({
-      age: preprocess(val => Number(val), number()),
-    })
-  ),
-});
-
-// typed as `unknown` since the source value can be anything
-values.age;
-
-handleSubmit(submitted => {
-  // will be typed as number because zod made sure it is!
-  values.age;
-});
-```

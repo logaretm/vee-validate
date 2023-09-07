@@ -8,6 +8,12 @@ import { PartialDeep } from 'type-fest';
  */
 type DataTypeOf<JoiSchema> = JoiSchema extends Schema<infer U> ? U : never;
 
+/**
+ * Transform a joi schema into TypedSchema
+ *
+ * @param joiSchema joi schema for transforming
+ * @returns TypedSchema for using with vee-validate
+ */
 export function toTypedSchema<
   TSchema extends Schema,
   TOutput = DataTypeOf<TSchema>,
