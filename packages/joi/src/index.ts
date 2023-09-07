@@ -27,11 +27,13 @@ export function toTypedSchema<TSchema extends Schema>(joiSchema: TSchema): Typed
       }
     },
     cast(values) {
-      try {
-        return joiSchema.validate(values).value as typeof values;
-      } catch {
+      const result = joiSchema.validate(values);
+
+      if (result.error) {
         return values;
       }
+
+      return result.value;
     },
   };
 

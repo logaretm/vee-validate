@@ -146,14 +146,17 @@ test('shows multiple errors using error bag', async () => {
   expect(passwordError.textContent).toBe('');
 });
 
-/**
-test('validates typed schema form with zod', async () => {
+test('validates typed schema form with joi', async () => {
   const wrapper = mountWithHoc({
     setup() {
       const schema = toTypedSchema(
-        z.object({
-          email: z.string().email(EMAIL_MSG).min(1, REQUIRED_MSG),
-          password: z.string().min(8, MIN_MSG),
+        Joi.object({
+          email: Joi.string()
+            .email()
+            .rule({ keep: true, message: EMAIL_MSG })
+            .min(1)
+            .rule({ keep: true, message: REQUIRED_MSG }),
+          password: Joi.string().min(8).rule({ keep: true, message: MIN_MSG }),
         }),
       );
 
@@ -204,107 +207,14 @@ test('validates typed schema form with zod', async () => {
   expect(passwordError.textContent).toBe('');
 });
 
-// #4204
-test('handles zod union errors', async () => {
-  const wrapper = mountWithHoc({
-    setup() {
-      const schema = z.object({
-        email: z.string().email({ message: 'valid email' }).min(1, 'Email is required'),
-        name: z.string().min(1, 'Name is required'),
-      });
-
-      const schemaBothUndefined = z.object({
-        email: z.undefined(),
-        name: z.undefined(),
-      });
-
-      const bothOrNeither = schema.or(schemaBothUndefined);
-
-      const { useFieldModel, errors } = useForm({
-        validationSchema: toTypedSchema(bothOrNeither),
-      });
-
-      const [email, name] = useFieldModel(['email', 'name']);
-
-      return {
-        schema,
-        email,
-        name,
-        errors,
-      };
-    },
-    template: `
-    <div>
-      <input id="email" name="email" v-model="email" />
-      <span id="emailErr">{{ errors.email }}</span>
-
-      <input id="name" name="name" v-model="name" />
-      <span id="nameErr">{{ errors.name }}</span>
-    </div>
-    `,
-  });
-
-  const email = wrapper.$el.querySelector('#email');
-  const name = wrapper.$el.querySelector('#name');
-  const emailError = wrapper.$el.querySelector('#emailErr');
-  const nameError = wrapper.$el.querySelector('#nameErr');
-
-  await flushPromises();
-
-  setValue(name, '4');
-  await flushPromises();
-  expect(nameError.textContent).toBe('Expected undefined, received string');
-
-  setValue(email, 'test@gmail.com');
-  await flushPromises();
-
-  expect(emailError.textContent).toBe('');
-  expect(nameError.textContent).toBe('');
-});
-
-test('uses zod for form values transformations and parsing', async () => {
-  const submitSpy = vi.fn();
-  mountWithHoc({
-    setup() {
-      const schema = toTypedSchema(
-        z.object({
-          age: z.preprocess(arg => Number(arg), z.number()),
-        }),
-      );
-
-      const { handleSubmit } = useForm({
-        validationSchema: schema,
-        initialValues: { age: '11' },
-      });
-
-      // submit now
-      handleSubmit(submitSpy)();
-
-      return {
-        schema,
-      };
-    },
-    template: `<div></div>`,
-  });
-
-  await flushPromises();
-  await expect(submitSpy).toHaveBeenCalledTimes(1);
-  await expect(submitSpy).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      age: 11,
-    }),
-    expect.anything(),
-  );
-});
-
-test('uses zod default values for submission', async () => {
+test('uses joi default values for submission', async () => {
   const submitSpy = vi.fn();
 
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(
-        z.object({
-          age: z.number().default(11),
+        Joi.object({
+          age: Joi.number().default(11),
         }),
       );
 
@@ -323,8 +233,8 @@ test('uses zod default values for submission', async () => {
   });
 
   await flushPromises();
-  await expect(submitSpy).toHaveBeenCalledTimes(1);
-  await expect(submitSpy).toHaveBeenLastCalledWith(
+  expect(submitSpy).toHaveBeenCalledTimes(1);
+  expect(submitSpy).toHaveBeenLastCalledWith(
     expect.objectContaining({
       age: 11,
     }),
@@ -332,19 +242,19 @@ test('uses zod default values for submission', async () => {
   );
 });
 
-test('uses zod default values for initial values', async () => {
+test('uses joi default values for initial values', async () => {
   const initialSpy = vi.fn();
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(
-        z.object({
-          name: z.string().default('test'),
-          age: z.number().default(11),
-          unknownKey: z.string(),
-          object: z.object({
-            nestedKey: z.string(),
-            nestedDefault: z.string().default('nested'),
-          }),
+        Joi.object({
+          name: Joi.string().default('test'),
+          age: Joi.number().default(11),
+          unknownKey: Joi.string(),
+          object: Joi.object({
+            nestedKey: Joi.string(),
+            nestedDefault: Joi.string().default('nested'),
+          }).default(),
         }),
       );
 
@@ -363,8 +273,8 @@ test('uses zod default values for initial values', async () => {
   });
 
   await flushPromises();
-  await expect(initialSpy).toHaveBeenCalledTimes(1);
-  await expect(initialSpy).toHaveBeenLastCalledWith(
+  expect(initialSpy).toHaveBeenCalledTimes(1);
+  expect(initialSpy).toHaveBeenLastCalledWith(
     expect.objectContaining({
       age: 11,
       name: 'test',
@@ -380,8 +290,8 @@ test('reset form should cast the values', async () => {
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(
-        z.object({
-          age: z.preprocess(arg => Number(arg), z.number()),
+        Joi.object({
+          age: Joi.number(),
         }),
       );
 
@@ -401,8 +311,8 @@ test('reset form should cast the values', async () => {
   });
 
   await flushPromises();
-  await expect(valueSpy).toHaveBeenCalledTimes(1);
-  await expect(valueSpy).toHaveBeenLastCalledWith(
+  expect(valueSpy).toHaveBeenCalledTimes(1);
+  expect(valueSpy).toHaveBeenLastCalledWith(
     expect.objectContaining({
       age: 12,
     }),
@@ -415,8 +325,8 @@ test('default values should not be undefined', async () => {
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(
-        z.object({
-          email: z.string().min(1),
+        Joi.object({
+          email: Joi.string().min(1),
         }),
       );
 
@@ -435,7 +345,6 @@ test('default values should not be undefined', async () => {
   });
 
   await flushPromises();
-  await expect(initialSpy).toHaveBeenCalledTimes(1);
-  await expect(initialSpy).toHaveBeenLastCalledWith(expect.objectContaining({}));
+  expect(initialSpy).toHaveBeenCalledTimes(1);
+  expect(initialSpy).toHaveBeenLastCalledWith(expect.objectContaining({}));
 });
- */
