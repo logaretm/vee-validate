@@ -99,6 +99,7 @@ export interface PathState<TValue = unknown> {
   fieldsCount: number;
   __flags: {
     pendingUnmount: Record<string, boolean>;
+    pendingReset: boolean;
   };
   validate?: FieldValidator;
 }

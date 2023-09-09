@@ -309,6 +309,7 @@ export function useForm<
       multiple: false,
       __flags: {
         pendingUnmount: { [id]: false },
+        pendingReset: false,
       },
       fieldsCount: 1,
       validate: config?.validate,
@@ -733,11 +734,21 @@ export function useForm<
 
   function resetField(field: Path<TValues>, state?: Partial<FieldState>) {
     const newValue = state && 'value' in state ? state.value : getFromPath(initialValues.value, field);
+    const pathState = findPathState(field);
+    if (pathState) {
+      pathState.__flags.pendingReset = true;
+    }
 
     setFieldInitialValue(field, deepCopy(newValue));
     setFieldValue(field, newValue as PathValue<TValues, typeof field>, false);
     setFieldTouched(field, state?.touched ?? false);
     setFieldError(field, state?.errors || []);
+
+    nextTick(() => {
+      if (pathState) {
+        pathState.__flags.pendingReset = false;
+      }
+    });
   }
 
   /**
@@ -748,6 +759,7 @@ export function useForm<
     newValues = isTypedSchema(schema) && isCallable(schema.cast) ? schema.cast(newValues) : newValues;
     setInitialValues(newValues);
     mutateAllPathState(state => {
+      state.__flags.pendingReset = true;
       state.validated = false;
       state.touched = resetState?.touched?.[state.path as Path<TValues>] || false;
 
@@ -760,6 +772,10 @@ export function useForm<
     submitCount.value = resetState?.submitCount || 0;
     nextTick(() => {
       validate({ mode: 'silent' });
+
+      mutateAllPathState(state => {
+        state.__flags.pendingReset = false;
+      });
     });
   }
 
