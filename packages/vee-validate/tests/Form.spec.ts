@@ -1274,9 +1274,9 @@ describe('<Form />', () => {
       },
       template: `
       <VForm :validation-schema="schema" v-slot="{ errors, values }">
-        <Field v-model="drinks" name="drink" type="checkbox" value="" /> Coffee
-        <Field v-model="drinks" name="drink" type="checkbox" value="Tea" /> Tea
-        <Field v-model="drinks" name="drink" type="checkbox" value="Coke" /> Coke
+        <Field v-model="drinks" name="drink" type="checkbox" value="" validateOnModelUpdate /> Coffee
+        <Field v-model="drinks" name="drink" type="checkbox" value="Tea" validateOnModelUpdate /> Tea
+        <Field v-model="drinks" name="drink" type="checkbox" value="Coke" validateOnModelUpdate /> Coke
 
         <span id="err">{{ errors.drink }}</span>
         <span id="values">{{ values.drink && values.drink.toString() }}</span>

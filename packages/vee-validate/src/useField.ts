@@ -155,7 +155,7 @@ function _useField<TValue = unknown>(
   const errorMessage = computed(() => errors.value[0]);
 
   if (syncVModel) {
-    useVModel({ value, prop: syncVModel, handleChange });
+    useVModel({ value, prop: syncVModel, handleChange, validateOnModelUpdate: !!opts?.validateOnValueUpdate });
   }
 
   /**
@@ -554,9 +554,10 @@ interface ModelOpts<TValue> {
   prop: string | boolean;
   value: Ref<TValue>;
   handleChange: FieldContext['handleChange'];
+  validateOnModelUpdate: boolean;
 }
 
-function useVModel<TValue = unknown>({ prop, value, handleChange }: ModelOpts<TValue>) {
+function useVModel<TValue = unknown>({ prop, value, handleChange, validateOnModelUpdate }: ModelOpts<TValue>) {
   const vm = getCurrentInstance();
   /* istanbul ignore next */
   if (!vm || !prop) {
@@ -594,7 +595,7 @@ function useVModel<TValue = unknown>({ prop, value, handleChange }: ModelOpts<TV
         return;
       }
 
-      handleChange(newValue);
+      handleChange(newValue, validateOnModelUpdate);
     },
   );
 }

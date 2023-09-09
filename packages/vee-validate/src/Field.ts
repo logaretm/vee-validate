@@ -145,7 +145,7 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
       checkedValue: ctx.attrs.value,
       uncheckedValue,
       label,
-      validateOnValueUpdate: false,
+      validateOnValueUpdate: props.validateOnModelUpdate,
       keepValueOnUnmount: keepValue,
       syncVModel: true,
     });
