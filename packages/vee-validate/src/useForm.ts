@@ -959,6 +959,7 @@ export function useForm<
   function defineComponentBinds<
     TPath extends Path<TValues>,
     TValue = PathValue<TValues, TPath>,
+    TModel extends string = 'modelValue',
     TExtras extends GenericObject = GenericObject,
   >(
     path: MaybeRefOrGetter<TPath>,
@@ -990,7 +991,7 @@ export function useForm<
           [model]: pathState.value,
           [`onUpdate:${model}`]: onUpdateModelValue,
           ...(configVal.props || {}),
-        } as BaseComponentBinds<TValue> & TExtras;
+        } as BaseComponentBinds<TValue, TModel> & TExtras;
       }
 
       const model = config?.model || 'modelValue';
@@ -1004,10 +1005,10 @@ export function useForm<
         return {
           ...base,
           ...config.mapProps(omit(pathState, PRIVATE_PATH_STATE_KEYS)),
-        } as BaseComponentBinds<TValue> & TExtras;
+        } as BaseComponentBinds<TValue, TModel> & TExtras;
       }
 
-      return base as BaseComponentBinds<TValue> & TExtras;
+      return base as BaseComponentBinds<TValue, TModel> & TExtras;
     });
 
     return props;

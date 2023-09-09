@@ -265,10 +265,20 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   isFieldValid<TPath extends Path<TValues>>(path: TPath): boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export interface BaseComponentBinds<TValue = unknown, TModel = 'modelValue'> {
+interface ComponentModellessBinds {
   onBlur: () => void;
 }
+
+type ComponentModelBinds<TValue = any, TModel extends string = 'modelValue'> = ComponentModellessBinds & {
+  [TKey in `onUpdate:${TModel}`]: (value: TValue) => void;
+};
+
+export type BaseComponentBinds<TValue = any, TModel extends string = 'modelValue'> = ComponentModelBinds<
+  TValue,
+  TModel
+> & {
+  [k in TModel]: TValue;
+};
 
 export type PublicPathState<TValue = unknown> = Omit<
   PathState<TValue>,
@@ -339,11 +349,12 @@ export interface FormContext<TValues extends GenericObject = GenericObject, TOut
   defineComponentBinds<
     TPath extends Path<TValues>,
     TValue = PathValue<TValues, TPath>,
+    TModel extends string = 'modelValue',
     TExtras extends GenericObject = GenericObject,
   >(
     path: MaybeRefOrGetter<TPath>,
     config?: Partial<ComponentBindsConfig<TValue, TExtras>> | LazyComponentBindsConfig<TValue, TExtras>,
-  ): Ref<BaseComponentBinds<TValue> & TExtras>;
+  ): Ref<BaseComponentBinds<TValue, TModel> & TExtras>;
   defineInputBinds<
     TPath extends Path<TValues>,
     TValue = PathValue<TValues, TPath>,
