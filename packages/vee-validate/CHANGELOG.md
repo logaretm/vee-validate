@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.11.6
+
+### Patch Changes
+
+- f683e909: fix(types): infer the model value prop name correctly
+
 ## 4.11.5
 
 ### Patch Changes
