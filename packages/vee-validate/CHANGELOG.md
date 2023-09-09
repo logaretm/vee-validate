@@ -1,5 +1,12 @@
 # Change Log
 
+## 4.11.5
+
+### Patch Changes
+
+- 27c9ef24: feat(types): stronger define component bind types closes #4421
+- 804ec6fa: fix: use flags to avoid validating during reset #4404 #4467
+
 ## 4.11.4
 
 ### Patch Changes

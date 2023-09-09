@@ -168,13 +168,13 @@ importers:
         specifier: ^4.17.8
         version: 4.17.8
       '@vee-validate/valibot':
-        specifier: ^4.11.4
+        specifier: ^4.11.5
         version: link:../packages/valibot
       '@vee-validate/yup':
-        specifier: ^4.11.4
+        specifier: ^4.11.5
         version: link:../packages/yup
       '@vee-validate/zod':
-        specifier: ^4.11.4
+        specifier: ^4.11.5
         version: link:../packages/zod
       '@vue/repl':
         specifier: ^2.5.8
@@ -213,7 +213,7 @@ importers:
         specifier: ^0.13.1
         version: 0.13.1
       vee-validate:
-        specifier: ^4.11.4
+        specifier: ^4.11.5
         version: link:../packages/vee-validate
       vue:
         specifier: ^3.3.0
@@ -236,7 +236,7 @@ importers:
         specifier: ^0.4.3
         version: 0.4.3
       vee-validate:
-        specifier: 4.11.4
+        specifier: 4.11.5
         version: link:../vee-validate
     devDependencies:
       '@nuxt/eslint-config':
@@ -258,7 +258,7 @@ importers:
   packages/rules:
     dependencies:
       vee-validate:
-        specifier: 4.11.4
+        specifier: 4.11.5
         version: link:../vee-validate
 
   packages/valibot:
@@ -270,7 +270,7 @@ importers:
         specifier: ^0.13.1
         version: 0.13.1
       vee-validate:
-        specifier: 4.11.4
+        specifier: 4.11.5
         version: link:../vee-validate
 
   packages/vee-validate:
@@ -291,7 +291,7 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0
       vee-validate:
-        specifier: 4.11.4
+        specifier: 4.11.5
         version: link:../vee-validate
       yup:
         specifier: ^1.2.0
@@ -303,7 +303,7 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0
       vee-validate:
-        specifier: 4.11.4
+        specifier: 4.11.5
         version: link:../vee-validate
       zod:
         specifier: ^3.22.2

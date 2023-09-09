@@ -1,5 +1,13 @@
 # Change Log
 
+## 4.11.5
+
+### Patch Changes
+
+- Updated dependencies [27c9ef24]
+- Updated dependencies [804ec6fa]
+  - vee-validate@4.11.5
+
 ## 4.11.4
 
 ### Patch Changes
