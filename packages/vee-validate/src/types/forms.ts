@@ -285,20 +285,26 @@ export type PublicPathState<TValue = unknown> = Omit<
   'bails' | 'label' | 'multiple' | 'fieldsCount' | 'validate' | 'id' | 'type' | '__flags'
 >;
 
-export interface ComponentBindsConfig<TValue = unknown, TExtraProps extends GenericObject = GenericObject> {
+export interface ComponentBindsConfig<
+  TValue = unknown,
+  TExtraProps extends GenericObject = GenericObject,
+  TModel extends string = 'modelValue',
+> {
   mapProps: (state: PublicPathState<TValue>) => TExtraProps;
   validateOnBlur: boolean;
   validateOnModelUpdate: boolean;
-  model: string;
+  model: TModel;
 }
 
-export type LazyComponentBindsConfig<TValue = unknown, TExtraProps extends GenericObject = GenericObject> = (
-  state: PublicPathState<TValue>,
-) => Partial<{
+export type LazyComponentBindsConfig<
+  TValue = unknown,
+  TExtraProps extends GenericObject = GenericObject,
+  TModel extends string = 'modelValue',
+> = (state: PublicPathState<TValue>) => Partial<{
   props: TExtraProps;
   validateOnBlur: boolean;
   validateOnModelUpdate: boolean;
-  model: string;
+  model: TModel;
 }>;
 
 export interface BaseInputBinds<TValue = unknown> {
@@ -353,7 +359,7 @@ export interface FormContext<TValues extends GenericObject = GenericObject, TOut
     TExtras extends GenericObject = GenericObject,
   >(
     path: MaybeRefOrGetter<TPath>,
-    config?: Partial<ComponentBindsConfig<TValue, TExtras>> | LazyComponentBindsConfig<TValue, TExtras>,
+    config?: Partial<ComponentBindsConfig<TValue, TExtras, TModel>> | LazyComponentBindsConfig<TValue, TExtras, TModel>,
   ): Ref<BaseComponentBinds<TValue, TModel> & TExtras>;
   defineInputBinds<
     TPath extends Path<TValues>,

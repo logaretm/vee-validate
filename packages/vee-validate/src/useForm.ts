@@ -963,7 +963,7 @@ export function useForm<
     TExtras extends GenericObject = GenericObject,
   >(
     path: MaybeRefOrGetter<TPath>,
-    config?: Partial<ComponentBindsConfig<TValue, TExtras>> | LazyComponentBindsConfig<TValue, TExtras>,
+    config?: Partial<ComponentBindsConfig<TValue, TExtras, TModel>> | LazyComponentBindsConfig<TValue, TExtras, TModel>,
   ) {
     const pathState = findPathState(toValue(path)) || createPathState(path);
     const evalConfig = () => (isCallable(config) ? config(omit(pathState, PRIVATE_PATH_STATE_KEYS)) : config || {});
