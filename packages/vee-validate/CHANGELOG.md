@@ -1,5 +1,14 @@
 # Change Log
 
+## 4.11.4
+
+### Patch Changes
+
+- 4d8ed7eb: feat: added reset opts to force values closes #4440
+- b53400e2: fix: silent validation should not mark a field as validated
+- 8f680bf1: fix: clone the schema object before validating closes #4459
+- 5231f439: fix: respect validate on model update configuration closes #4451, closes #4467
+
 ## 4.11.3
 
 ## 4.11.2
