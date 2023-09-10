@@ -1,6 +1,7 @@
 import { InferType, Schema, ValidateOptions, ValidationError } from 'yup';
 import { TypedSchema, TypedSchemaError } from 'vee-validate';
 import { PartialDeep } from 'type-fest';
+import { isObject, merge } from '../../shared';
 
 export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchema>, TInput = PartialDeep<TOutput>>(
   yupSchema: TSchema,
@@ -51,6 +52,11 @@ export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchem
       try {
         return yupSchema.cast(values);
       } catch {
+        const defaults = yupSchema.getDefault();
+        if (isObject(defaults) && isObject(values)) {
+          return merge(defaults, values);
+        }
+
         return values;
       }
     },
