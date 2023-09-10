@@ -28,8 +28,8 @@
     "dist/*.d.ts"
   ],
   "dependencies": {
-    "type-fest": "^4.2.0",
-    "valibot": "^0.13.1",
+    "type-fest": "^4.3.1",
+    "valibot": "^0.15.0",
     "vee-validate": "4.11.6"
   }
 }
