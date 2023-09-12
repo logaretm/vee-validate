@@ -1,4 +1,5 @@
 import { resolveRule } from './defineRule';
+import { klona as deepCopy } from 'klona/full';
 import { isLocator, normalizeRules, keysOf, getFromPath, isTypedSchema, isYupValidator } from './utils';
 import { getConfig } from './config';
 import {
@@ -299,7 +300,7 @@ export async function validateTypedSchema<TValues, TOutput = TValues>(
   values: TValues,
 ): Promise<FormValidationResult<TValues, TOutput>> {
   const typedSchema = isTypedSchema(schema) ? schema : yupToTypedSchema(schema);
-  const validationResult = await typedSchema.parse(values);
+  const validationResult = await typedSchema.parse(deepCopy(values));
 
   const results: Partial<Record<Path<TValues>, ValidationResult>> = {};
   const errors: Partial<Record<Path<TValues>, string>> = {};

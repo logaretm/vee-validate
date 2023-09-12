@@ -63,7 +63,7 @@ export function useFieldState<TValue = unknown>(
       value,
       initialValue,
       meta,
-      flags: { pendingUnmount: { [id]: false } },
+      flags: { pendingUnmount: { [id]: false }, pendingReset: false },
       errors,
       setState,
     };

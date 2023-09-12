@@ -1,5 +1,27 @@
 # Change Log
 
+## 4.11.6
+
+### Patch Changes
+
+- f683e909: fix(types): infer the model value prop name correctly
+
+## 4.11.5
+
+### Patch Changes
+
+- 27c9ef24: feat(types): stronger define component bind types closes #4421
+- 804ec6fa: fix: use flags to avoid validating during reset #4404 #4467
+
+## 4.11.4
+
+### Patch Changes
+
+- 4d8ed7eb: feat: added reset opts to force values closes #4440
+- b53400e2: fix: silent validation should not mark a field as validated
+- 8f680bf1: fix: clone the schema object before validating closes #4459
+- 5231f439: fix: respect validate on model update configuration closes #4451, closes #4467
+
 ## 4.11.3
 
 ## 4.11.2

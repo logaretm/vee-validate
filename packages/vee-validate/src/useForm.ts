@@ -50,6 +50,7 @@ import {
   ComponentBindsConfig,
   LazyInputBindsConfig,
   LazyComponentBindsConfig,
+  ResetFormOpts,
 } from './types';
 import {
   getFromPath,
@@ -308,6 +309,7 @@ export function useForm<
       multiple: false,
       __flags: {
         pendingUnmount: { [id]: false },
+        pendingReset: false,
       },
       fieldsCount: 1,
       validate: config?.validate,
@@ -631,6 +633,22 @@ export function useForm<
     }
   }
 
+  function forceSetValues(fields: PartialDeep<TValues>, shouldValidate = true) {
+    // clean up old values
+    keysOf(formValues).forEach(key => {
+      delete formValues[key];
+    });
+
+    // set up new values
+    keysOf(fields).forEach(path => {
+      setFieldValue(path as Path<TValues>, fields[path], false);
+    });
+
+    if (shouldValidate) {
+      validate();
+    }
+  }
+
   /**
    * Sets multiple fields values
    */
@@ -716,33 +734,48 @@ export function useForm<
 
   function resetField(field: Path<TValues>, state?: Partial<FieldState>) {
     const newValue = state && 'value' in state ? state.value : getFromPath(initialValues.value, field);
+    const pathState = findPathState(field);
+    if (pathState) {
+      pathState.__flags.pendingReset = true;
+    }
 
     setFieldInitialValue(field, deepCopy(newValue));
     setFieldValue(field, newValue as PathValue<TValues, typeof field>, false);
     setFieldTouched(field, state?.touched ?? false);
     setFieldError(field, state?.errors || []);
+
+    nextTick(() => {
+      if (pathState) {
+        pathState.__flags.pendingReset = false;
+      }
+    });
   }
 
   /**
    * Resets all fields
    */
-  function resetForm(resetState?: Partial<FormState<TValues>>) {
+  function resetForm(resetState?: Partial<FormState<TValues>>, opts?: ResetFormOpts) {
     let newValues = resetState?.values ? resetState.values : originalInitialValues.value;
     newValues = isTypedSchema(schema) && isCallable(schema.cast) ? schema.cast(newValues) : newValues;
     setInitialValues(newValues);
     mutateAllPathState(state => {
+      state.__flags.pendingReset = true;
       state.validated = false;
       state.touched = resetState?.touched?.[state.path as Path<TValues>] || false;
 
       setFieldValue(state.path as Path<TValues>, getFromPath(newValues, state.path), false);
       setFieldError(state.path as Path<TValues>, undefined);
     });
-    setValues(newValues, false);
 
+    opts?.force ? forceSetValues(newValues, false) : setValues(newValues, false);
     setErrors(resetState?.errors || {});
     submitCount.value = resetState?.submitCount || 0;
     nextTick(() => {
       validate({ mode: 'silent' });
+
+      mutateAllPathState(state => {
+        state.__flags.pendingReset = false;
+      });
     });
   }
 
@@ -803,7 +836,7 @@ export function useForm<
 
   async function validateField(path: Path<TValues>, opts?: Partial<ValidationOptions>): Promise<ValidationResult> {
     const state = findPathState(path);
-    if (state) {
+    if (state && opts?.mode !== 'silent') {
       state.validated = true;
     }
 
@@ -926,10 +959,11 @@ export function useForm<
   function defineComponentBinds<
     TPath extends Path<TValues>,
     TValue = PathValue<TValues, TPath>,
+    TModel extends string = 'modelValue',
     TExtras extends GenericObject = GenericObject,
   >(
     path: MaybeRefOrGetter<TPath>,
-    config?: Partial<ComponentBindsConfig<TValue, TExtras>> | LazyComponentBindsConfig<TValue, TExtras>,
+    config?: Partial<ComponentBindsConfig<TValue, TExtras, TModel>> | LazyComponentBindsConfig<TValue, TExtras, TModel>,
   ) {
     const pathState = findPathState(toValue(path)) || createPathState(path);
     const evalConfig = () => (isCallable(config) ? config(omit(pathState, PRIVATE_PATH_STATE_KEYS)) : config || {});
@@ -957,7 +991,7 @@ export function useForm<
           [model]: pathState.value,
           [`onUpdate:${model}`]: onUpdateModelValue,
           ...(configVal.props || {}),
-        } as BaseComponentBinds<TValue> & TExtras;
+        } as BaseComponentBinds<TValue, TModel> & TExtras;
       }
 
       const model = config?.model || 'modelValue';
@@ -971,10 +1005,10 @@ export function useForm<
         return {
           ...base,
           ...config.mapProps(omit(pathState, PRIVATE_PATH_STATE_KEYS)),
-        } as BaseComponentBinds<TValue> & TExtras;
+        } as BaseComponentBinds<TValue, TModel> & TExtras;
       }
 
-      return base as BaseComponentBinds<TValue> & TExtras;
+      return base as BaseComponentBinds<TValue, TModel> & TExtras;
     });
 
     return props;
