@@ -230,14 +230,14 @@ importers:
   packages/joi:
     dependencies:
       joi:
-        specifier: 17.9.2
-        version: 17.9.2
+        specifier: 17.10.1
+        version: 17.10.1
       type-fest:
         specifier: ^4.2.0
         version: 4.3.1
       vee-validate:
-        specifier: 4.11.3
-        version: 4.11.3(vue@3.3.4)
+        specifier: 4.11.6
+        version: link:../vee-validate
 
   packages/nuxt:
     dependencies:
@@ -6490,8 +6490,8 @@ packages:
     resolution: {integrity: sha512-3TV69ZbrvV6U5DfQimop50jE9Dl6J8O1ja1dvBbMba/sZ3YBEQqJ2VZRoQPVnhlzjNtU1vaXRZVrVjU4qtm8yA==}
     hasBin: true
 
-  /joi@17.9.2:
-    resolution: {integrity: sha512-Itk/r+V4Dx0V3c7RLFdRh12IOjySm2/WGPMubBT92cQvRfYZhPM2W0hZlctjj72iES8jsRCwp7S/cRmWBnJ4nw==}
+  /joi@17.10.1:
+    resolution: {integrity: sha512-vIiDxQKmRidUVp8KngT8MZSOcmRVm2zV7jbMjNYWuHcJWI0bUck3nRTGQjhpPlQenIQIBC5Vp9AhcnHbWQqafw==}
     dependencies:
       '@hapi/hoek': 9.3.0
       '@hapi/topo': 5.1.0
@@ -11118,16 +11118,6 @@ packages:
       spdx-correct: 3.2.0
       spdx-expression-parse: 3.0.1
     dev: true
-
-  /vee-validate@4.11.3(vue@3.3.4):
-    resolution: {integrity: sha512-YhWORdZRE1GL6vXKj3r9f+Y8fJH5JMwMUJ4DFS44+WcTtiNXggyE3pyJPlZBqS9AgYGZ47EOv4UczkLxHqufiw==}
-    peerDependencies:
-      vue: ^3.3.4
-    dependencies:
-      '@vue/devtools-api': 6.5.0
-      type-fest: 4.3.1
-      vue: 3.3.4
-    dev: false
 
   /vfile-location@4.1.0:
     resolution: {integrity: sha512-YF23YMyASIIJXpktBa4vIGLJ5Gs88UB/XePgqPmTa7cDA+JeO3yclbpheQYCHjVHBn/yePzrXuygIL+xbvRYHw==}
