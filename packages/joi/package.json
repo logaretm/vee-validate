@@ -1,0 +1,35 @@
+{
+  "name": "@vee-validate/joi",
+  "version": "4.11.3",
+  "description": "vee-validate integration with joi schema validation",
+  "author": "Abdelrahman Awad <logaretm1@gmail.com>",
+  "license": "MIT",
+  "module": "dist/vee-validate-joi.esm.js",
+  "unpkg": "dist/vee-validate-joi.js",
+  "main": "dist/vee-validate-joi.js",
+  "types": "dist/vee-validate-joi.d.ts",
+  "homepage": "https://vee-validate.logaretm.com/v4/integrations/joi-schema-validation/",
+  "repository": {
+    "url": "https://github.com/logaretm/vee-validate.git",
+    "type": "git",
+    "directory": "packages/joi"
+  },
+  "sideEffects": false,
+  "keywords": [
+    "VueJS",
+    "Vue",
+    "validation",
+    "validator",
+    "inputs",
+    "form"
+  ],
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts"
+  ],
+  "dependencies": {
+    "joi": "17.10.1",
+    "type-fest": "^4.2.0",
+    "vee-validate": "4.11.6"
+  }
+}
