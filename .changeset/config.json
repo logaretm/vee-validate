@@ -11,7 +11,8 @@
       "@vee-validate/zod",
       "@vee-validate/yup",
       "@vee-validate/valibot",
-      "@vee-validate/nuxt"
+      "@vee-validate/nuxt",
+      "@vee-validate/joi"
     ]
   ],
   "linked": [],

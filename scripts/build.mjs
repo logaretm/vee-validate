@@ -114,6 +114,10 @@ async function build(pkg) {
     await build('nuxt');
   }
 
+  if (arg === 'joi' || !arg) {
+    await build('joi');
+  }
+
   if (arg === 'i18n' || !arg) {
     await build('i18n');
     await buildLocales();
