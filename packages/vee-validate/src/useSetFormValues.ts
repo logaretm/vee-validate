@@ -4,10 +4,10 @@ import { injectWithSelf, warn } from './utils';
 /**
  * Sets multiple fields values
  */
-export function useSetFormValues() {
+export function useSetFormValues<TValues extends Record<string, unknown> = Record<string, unknown>>() {
   const form = injectWithSelf(FormContextKey);
 
-  function setFormValues(fields: Record<string, unknown>, shouldValidate = true) {
+  function setFormValues(fields: TValues, shouldValidate = true) {
     if (form) {
       form.setValues(fields, shouldValidate);
       return;
