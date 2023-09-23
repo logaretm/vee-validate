@@ -265,11 +265,11 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   isFieldValid<TPath extends Path<TValues>>(path: TPath): boolean;
 }
 
-interface ComponentModellessBinds {
+export interface ComponentModellessBinds {
   onBlur: () => void;
 }
 
-type ComponentModelBinds<TValue = any, TModel extends string = 'modelValue'> = ComponentModellessBinds & {
+export type ComponentModelBinds<TValue = any, TModel extends string = 'modelValue'> = ComponentModellessBinds & {
   [TKey in `onUpdate:${TModel}`]: (value: TValue) => void;
 };
 
