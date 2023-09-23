@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.11.7
+
+### Patch Changes
+
+- a1414f6a: fix: export ModelessBinds type closes #4478
+
 ## 4.11.6
 
 ### Patch Changes

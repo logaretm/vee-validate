@@ -1,5 +1,13 @@
 # Change Log
 
+## 4.11.7
+
+### Patch Changes
+
+- c6a1edc4: "fix: removed default export in rules pkg closes #4470"
+- Updated dependencies [a1414f6a]
+  - vee-validate@4.11.7
+
 ## 4.11.6
 
 ### Patch Changes
