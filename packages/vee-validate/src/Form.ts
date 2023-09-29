@@ -40,7 +40,7 @@ const FormImpl = /** #__PURE__ */ defineComponent({
   inheritAttrs: false,
   props: {
     as: {
-      type: String,
+      type: null as unknown as PropType<string | null>,
       default: 'form',
     },
     validationSchema: {
@@ -196,16 +196,16 @@ const FormImpl = /** #__PURE__ */ defineComponent({
 
     return function renderForm() {
       // avoid resolving the form component as itself
-      const tag = props.as === 'form' ? props.as : (resolveDynamicComponent(props.as) as string);
+      const tag = props.as === 'form' ? props.as : !props.as ? null : (resolveDynamicComponent(props.as) as string);
       const children = normalizeChildren(tag, ctx, slotProps as any);
 
-      if (!props.as) {
+      if (!tag) {
         return children;
       }
 
       // Attributes to add on a native `form` tag
       const formAttrs =
-        props.as === 'form'
+        tag === 'form'
           ? {
               // Disables native validation as vee-validate will handle it.
               novalidate: true,

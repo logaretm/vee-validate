@@ -3,11 +3,11 @@ import { SetupContext } from 'vue';
 type HTMLElementWithValueBinding = HTMLElement & { _value: unknown };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const normalizeChildren = (
-  tag: string | Record<string, unknown> | undefined,
+export function normalizeChildren(
+  tag: string | null,
   context: SetupContext<any>,
   slotProps: () => Record<string, unknown>,
-) => {
+) {
   if (!context.slots.default) {
     return context.slots.default;
   }
@@ -19,7 +19,7 @@ export const normalizeChildren = (
   return {
     default: () => context.slots.default?.(slotProps()),
   };
-};
+}
 
 /**
  * Vue adds a `_value` prop at the moment on the input elements to store the REAL value on them, real values are different than the `value` attribute
