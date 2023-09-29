@@ -81,7 +81,7 @@ First, start by adding some markup, you can start by having a `form` wrapping a 
 ```vue
 <template>
   <div id="app">
-    <form>
+    <form novalidate>
       <input type="email" name="email" />
 
       <button>Sign up for newsletter</button>
@@ -100,6 +100,8 @@ You will notice that the form submits and you should see `?email=` added in your
 
 This is the native HTML form submission behavior. Usually, in modern applications, you don't want that and you prefer to handle submission with JavaScript.
 
+The `novalidate` attribute on the `<form>` element is meant to disable the native HTML form validation, we will get to validating the form by the end of this tutorial.
+
 <div class="tutorial-step">
 
 Add a `submit` event handler that prevents the native form submission, we will use `onSubmit` function to handle our form submission.
@@ -109,7 +111,7 @@ Add a `submit` event handler that prevents the native form submission, we will u
 ```vue{3,13-17}
 <template>
   <div id="app">
-    <form @submit.prevent="onSubmit">
+    <form novalidate @submit.prevent="onSubmit">
       <input type="email" name="email" />
 
       <button>Sign up for newsletter</button>
@@ -144,7 +146,7 @@ VeeValidate exposes 2 components that you will be using regularly, the `<Field>`
 Import them and register them on the Vue component, then replace the following elements with the vee-validate component:
 
 - Replace `<input>` with `<Field />` while keeping the same attributes.
-- Replace `<form>` with `<Form />` but remove the `.prevent` modifier.
+- Replace `<form>` with `<Form />` but remove both the `.prevent` modifier and the `novalidate` attribute.
 
 </div>
 
