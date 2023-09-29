@@ -153,7 +153,6 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
     // If there is a v-model applied on the component we need to emit the `update:modelValue` whenever the value binding changes
     const onChangeHandler = function handleChangeWithModel(e: Event | unknown, shouldValidate = true) {
       handleChange(e, shouldValidate);
-      ctx.emit('update:modelValue', value.value);
     };
 
     const sharedProps = computed(() => {
