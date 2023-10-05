@@ -1,5 +1,12 @@
 # Change Log
 
+## 4.11.8
+
+### Patch Changes
+
+- d1b5b855: fix: avoid triggering extra model value events closes #4461
+- 78c4668e: feat: allow null as a valid Form prop type closes #4483
+
 ## 4.11.7
 
 ### Patch Changes
