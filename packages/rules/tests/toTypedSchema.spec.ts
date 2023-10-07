@@ -21,12 +21,13 @@ test('validates typed schema form with global rules', async () => {
         password: 'required|min:8',
       });
 
-      const { useFieldModel, errors } = useForm({
+      const { defineField, errors } = useForm({
         validationSchema: schema,
         validateOnMount: true,
       });
 
-      const [email, password] = useFieldModel(['email', 'password']);
+      const { model: email } = defineField('email', { validateOnModelUpdate: true });
+      const { model: password } = defineField('password', { validateOnModelUpdate: true });
 
       return {
         schema,

@@ -105,12 +105,13 @@ test('validates typed schema form with yup', async () => {
         }),
       );
 
-      const { useFieldModel, errors } = useForm({
+      const { defineField, errors } = useForm({
         validationSchema: schema,
         validateOnMount: true,
       });
 
-      const [email, password] = useFieldModel(['email', 'password']);
+      const { model: email } = defineField('email', { validateOnModelUpdate: true });
+      const { model: password } = defineField('password', { validateOnModelUpdate: true });
 
       return {
         schema,
@@ -162,12 +163,13 @@ test('shows multiple errors using error bag', async () => {
         }),
       );
 
-      const { useFieldModel, errorBag } = useForm({
+      const { defineField, errorBag } = useForm({
         validationSchema: schema,
         validateOnMount: true,
       });
 
-      const [email, password] = useFieldModel(['email', 'password']);
+      const { model: email } = defineField('email', { validateOnModelUpdate: true });
+      const { model: password } = defineField('password', { validateOnModelUpdate: true });
 
       return {
         schema,
