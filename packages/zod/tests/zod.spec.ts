@@ -83,8 +83,8 @@ test('shows multiple errors using error bag', async () => {
         validateOnMount: true,
       });
 
-      const { model: email } = defineField('email', { validateOnModelUpdate: true });
-      const { model: password } = defineField('password', { validateOnModelUpdate: true });
+      const [email] = defineField('email', { validateOnModelUpdate: true });
+      const [password] = defineField('password', { validateOnModelUpdate: true });
 
       return {
         schema,
@@ -141,8 +141,8 @@ test('validates typed schema form with zod', async () => {
         validateOnMount: true,
       });
 
-      const { model: email } = defineField('email', { validateOnModelUpdate: true });
-      const { model: password } = defineField('password', { validateOnModelUpdate: true });
+      const [email] = defineField('email', { validateOnModelUpdate: true });
+      const [password] = defineField('password', { validateOnModelUpdate: true });
 
       return {
         schema,
@@ -204,8 +204,8 @@ test('handles zod union errors', async () => {
         validationSchema: toTypedSchema(bothOrNeither),
       });
 
-      const { model: email } = defineField('email', { validateOnModelUpdate: true });
-      const { model: name } = defineField('name', { validateOnModelUpdate: true });
+      const [email] = defineField('email', { validateOnModelUpdate: true });
+      const [name] = defineField('name', { validateOnModelUpdate: true });
 
       return {
         schema,

@@ -104,8 +104,8 @@ test('shows multiple errors using error bag', async () => {
         validateOnMount: true,
       });
 
-      const { model: email } = defineField('email', { validateOnModelUpdate: true });
-      const { model: password } = defineField('password', { validateOnModelUpdate: true });
+      const [email] = defineField('email', { validateOnModelUpdate: true });
+      const [password] = defineField('password', { validateOnModelUpdate: true });
 
       return {
         schema,
@@ -166,8 +166,8 @@ test('validates typed schema form with joi', async () => {
         validateOnMount: true,
       });
 
-      const { model: email } = defineField('email', { validateOnModelUpdate: true });
-      const { model: password } = defineField('password', { validateOnModelUpdate: true });
+      const [email] = defineField('email', { validateOnModelUpdate: true });
+      const [password] = defineField('password', { validateOnModelUpdate: true });
 
       return {
         schema,

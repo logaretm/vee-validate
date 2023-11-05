@@ -110,8 +110,8 @@ test('validates typed schema form with yup', async () => {
         validateOnMount: true,
       });
 
-      const { model: email } = defineField('email', { validateOnModelUpdate: true });
-      const { model: password } = defineField('password', { validateOnModelUpdate: true });
+      const [email] = defineField('email', { validateOnModelUpdate: true });
+      const [password] = defineField('password', { validateOnModelUpdate: true });
 
       return {
         schema,
@@ -168,8 +168,8 @@ test('shows multiple errors using error bag', async () => {
         validateOnMount: true,
       });
 
-      const { model: email } = defineField('email', { validateOnModelUpdate: true });
-      const { model: password } = defineField('password', { validateOnModelUpdate: true });
+      const [email] = defineField('email', { validateOnModelUpdate: true });
+      const [password] = defineField('password', { validateOnModelUpdate: true });
 
       return {
         schema,

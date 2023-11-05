@@ -86,8 +86,8 @@ describe('valibot', () => {
           validateOnMount: true,
         });
 
-        const { model: email } = defineField('email', { validateOnModelUpdate: true });
-        const { model: password } = defineField('password', { validateOnModelUpdate: true });
+        const [email] = defineField('email', { validateOnModelUpdate: true });
+        const [password] = defineField('password', { validateOnModelUpdate: true });
 
         return {
           schema,
@@ -144,8 +144,8 @@ describe('valibot', () => {
           validateOnMount: true,
         });
 
-        const { model: email } = defineField('email', { validateOnModelUpdate: true });
-        const { model: password } = defineField('password', { validateOnModelUpdate: true });
+        const [email] = defineField('email', { validateOnModelUpdate: true });
+        const [password] = defineField('password', { validateOnModelUpdate: true });
 
         return {
           schema,

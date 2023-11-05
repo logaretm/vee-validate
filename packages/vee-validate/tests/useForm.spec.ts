@@ -552,7 +552,7 @@ describe('useForm()', () => {
           },
         });
 
-        const { model, props } = defineField('test');
+        const [model, props] = defineField('test');
 
         return {
           model,
@@ -770,7 +770,7 @@ describe('useForm()', () => {
             }),
           });
 
-          const { model, props } = defineField('name');
+          const [model, props] = defineField('name');
 
           return { props, model, values, errors };
         },
@@ -807,7 +807,7 @@ describe('useForm()', () => {
             }),
           });
 
-          const { props, model } = defineField('name', { validateOnModelUpdate: false });
+          const [model, props] = defineField('name', { validateOnModelUpdate: false });
 
           return { props, model, values, errors };
         },
@@ -847,7 +847,7 @@ describe('useForm()', () => {
             }),
           });
 
-          const { model, props } = defineField('name', {
+          const [model, props] = defineField('name', {
             validateOnModelUpdate: true,
             props: state => ({ test: state.valid ? 'valid' : 'invalid' }),
           });
@@ -880,7 +880,7 @@ describe('useForm()', () => {
             }),
           });
 
-          const { model, props } = defineField('name', state => ({
+          const [model, props] = defineField('name', state => ({
             props: { test: state.valid ? 'valid' : 'invalid' },
             validateOnModelUpdate: true,
           }));
@@ -913,7 +913,7 @@ describe('useForm()', () => {
             }),
           });
 
-          const { model, props } = defineField('name');
+          const [model, props] = defineField('name');
 
           return { model, props, values, errors };
         },
@@ -947,7 +947,7 @@ describe('useForm()', () => {
             }),
           });
 
-          const { model, props } = defineField('name');
+          const [model, props] = defineField('name');
 
           return { model, props, values, errors };
         },
@@ -981,7 +981,7 @@ describe('useForm()', () => {
             }),
           });
 
-          const { model, props } = defineField('name', { validateOnInput: true });
+          const [model, props] = defineField('name', { validateOnInput: true });
 
           return { model, props, values, errors };
         },
@@ -1013,7 +1013,7 @@ describe('useForm()', () => {
             }),
           });
 
-          const { model, props } = defineField('name', {
+          const [model, props] = defineField('name', {
             validateOnInput: true,
             props: state => ({ 'aria-valid': state.valid ? 'true' : 'false' }),
           });
@@ -1046,7 +1046,7 @@ describe('useForm()', () => {
             }),
           });
 
-          const { model, props } = defineField('name', state => ({
+          const [model, props] = defineField('name', state => ({
             props: { 'aria-valid': state.valid ? 'true' : 'false' },
             validateOnModelUpdate: true,
           }));
