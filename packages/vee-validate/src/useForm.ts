@@ -1020,7 +1020,7 @@ export function useForm<
       return base as BaseFieldProps & TExtras;
     });
 
-    return [createModel(path, () => evalConfig().validateOnModelUpdate ?? false), props] as [
+    return [createModel(path, () => evalConfig().validateOnModelUpdate ?? true), props] as [
       Ref<TValue>,
       Ref<BaseFieldProps & TExtras>,
     ];
