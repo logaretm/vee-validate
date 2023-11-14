@@ -29,7 +29,7 @@
   ],
   "dependencies": {
     "type-fest": "^4.3.1",
-    "valibot": "^0.17.0",
+    "valibot": "^0.20.1",
     "vee-validate": "4.11.8"
   }
 }

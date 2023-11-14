@@ -279,8 +279,8 @@ importers:
         specifier: ^4.3.1
         version: 4.3.1
       valibot:
-        specifier: ^0.17.0
-        version: 0.17.0
+        specifier: ^0.20.1
+        version: 0.20.1
       vee-validate:
         specifier: 4.11.8
         version: link:../vee-validate
@@ -11546,6 +11546,10 @@ packages:
 
   /valibot@0.17.0:
     resolution: {integrity: sha512-ykoYfBc4HOH+osdWaFBmeL7yX35bFfKg1WdwHYZhNVuvGIRH5f2gtYT6cnU85XOsOE7R8la5RnVY6yAScWU9qg==}
+    dev: false
+
+  /valibot@0.20.1:
+    resolution: {integrity: sha512-7lToTLG5wtK76u32gq8dUK0bAw7bknTGbeNSKRJunAC2soGVnNrKngg+38Jjt6FOwH+MshUONHoFz+LgmjeYKQ==}
     dev: false
 
   /validate-npm-package-license@3.0.4:

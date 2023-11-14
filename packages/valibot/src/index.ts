@@ -21,10 +21,10 @@ export function toTypedSchema<
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
     async parse(value) {
-      const result = await safeParseAsync(valibotSchema, value);
+      const result = valibotSchema.async ? await safeParseAsync(valibotSchema, value) : safeParse(valibotSchema, value);
       if (result.success) {
         return {
-          value: result.data,
+          value: result.output,
           errors: [],
         };
       }
