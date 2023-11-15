@@ -3,9 +3,12 @@ import type { NuxtModule } from '@nuxt/schema';
 import { isPackageExists } from 'local-pkg';
 
 type ComponentName = 'Field' | 'Form' | 'ErrorMessage' | 'FieldArray';
+type TypedSchemaPackage = 'yup' | 'zod' | 'valibot' | 'none';
+
 export interface VeeValidateNuxtOptions {
   autoImports?: boolean;
   componentNames?: Partial<Record<ComponentName, string>>;
+  typedSchemaPackage?: TypedSchemaPackage;
 }
 
 const components: ComponentName[] = ['Field', 'Form', 'ErrorMessage', 'FieldArray'];
@@ -60,11 +63,24 @@ export default defineNuxtModule<VeeValidateNuxtOptions>({
       });
     }
 
-    const usingYup = checkForYup(options);
-    if (!usingYup) {
-      if (!checkForZod(options)) {
+    switch (options.typedSchemaPackage) {
+      case 'none':
+        break;
+      case 'yup':
+        checkForYup(options);
+        break;
+      case 'zod':
+        checkForZod(options);
+        break;
+      case 'valibot':
         checkForValibot(options);
-      }
+        break;
+      default:
+        if (!checkForYup(options)) {
+          if (!checkForZod(options)) {
+            checkForValibot(options);
+          }
+        }
     }
   },
 }) as NuxtModule<VeeValidateNuxtOptions>;
@@ -74,6 +90,11 @@ function checkForValibot(options: VeeValidateNuxtOptions) {
     logger.warn(
       'You seem to be using valibot, but you have not installed @vee-validate/valibot. Please install it to use valibot with vee-validate.',
     );
+
+    if (options.typedSchemaPackage === undefined) {
+      logger.info('If you wish to ignore this error, set typedSchemaPackage option to none.');
+    }
+
     return true;
   }
 
@@ -81,6 +102,7 @@ function checkForValibot(options: VeeValidateNuxtOptions) {
     logger.warn(
       'You seem to be using @vee-validate/valibot, but you have not installed valibot. Please install it to use valibot with vee-validate.',
     );
+
     return true;
   }
 
@@ -105,6 +127,13 @@ function checkForZod(options: VeeValidateNuxtOptions) {
     logger.warn(
       'You seem to be using zod, but you have not installed @vee-validate/zod. Please install it to use zod with vee-validate.',
     );
+
+    if (options.typedSchemaPackage === undefined) {
+      logger.info(
+        'If you wish to use valibot for validation, set typedSchemaPackage option to valibot. If you wish to ignore this error, set it to none.',
+      );
+    }
+
     return true;
   }
 
@@ -136,6 +165,13 @@ function checkForYup(options: VeeValidateNuxtOptions) {
     logger.warn(
       'You seem to be using yup, but you have not installed @vee-validate/yup. Please install it to use yup with vee-validate.',
     );
+
+    if (options.typedSchemaPackage === undefined) {
+      logger.info(
+        'If you wish to use zod or valibot for validation, set the appropriate typedSchemaPackage option. If you wish to ignore this error, set it to none.',
+      );
+    }
+
     return true;
   }
 
