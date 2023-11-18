@@ -1,5 +1,5 @@
 <template>
-  <input @input="handleChange" :value="value" v-on="validationListeners" type="text" />
+  <input :value="value" v-on="validationListeners" type="text" />
   <span>{{ errorMessage }}</span>
 </template>
 
