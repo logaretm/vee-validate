@@ -755,7 +755,7 @@ export function useForm<
    * Resets all fields
    */
   function resetForm(resetState?: Partial<FormState<TValues>>, opts?: ResetFormOpts) {
-    let newValues = resetState?.values ? resetState.values : originalInitialValues.value;
+    let newValues = deepCopy(resetState?.values ? resetState.values : originalInitialValues.value);
     newValues = isTypedSchema(schema) && isCallable(schema.cast) ? schema.cast(newValues) : newValues;
     setInitialValues(newValues);
     mutateAllPathState(state => {
