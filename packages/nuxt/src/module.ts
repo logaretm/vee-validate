@@ -63,24 +63,29 @@ export default defineNuxtModule<VeeValidateNuxtOptions>({
       });
     }
 
-    switch (options.typedSchemaPackage) {
-      case 'none':
-        break;
-      case 'yup':
-        checkForYup(options);
-        break;
-      case 'zod':
-        checkForZod(options);
-        break;
-      case 'valibot':
+    if (options.typedSchemaPackage === 'none') {
+      return;
+    }
+
+    if (options.typedSchemaPackage === 'yup') {
+      checkForYup(options);
+      return;
+    }
+
+    if (options.typedSchemaPackage === 'zod') {
+      checkForZod(options);
+      return;
+    }
+
+    if (options.typedSchemaPackage === 'valibot') {
+      checkForValibot(options);
+      return;
+    }
+
+    if (!checkForYup(options)) {
+      if (!checkForZod(options)) {
         checkForValibot(options);
-        break;
-      default:
-        if (!checkForYup(options)) {
-          if (!checkForZod(options)) {
-            checkForValibot(options);
-          }
-        }
+      }
     }
   },
 }) as NuxtModule<VeeValidateNuxtOptions>;
