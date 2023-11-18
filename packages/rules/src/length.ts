@@ -1,12 +1,12 @@
-import { isNullOrUndefined } from '../../shared';
-import { getSingleParam } from './utils';
+import { getSingleParam, isEmpty } from './utils';
 
 const lengthValidator = (value: unknown, params: [number | string] | { length: string | number }) => {
+  if (isEmpty(value)) {
+    return true;
+  }
+
   // Normalize the length value
   const length = getSingleParam(params, 'length');
-  if (isNullOrUndefined(value)) {
-    return false;
-  }
 
   if (typeof value === 'number') {
     value = String(value);

@@ -6,11 +6,6 @@ test('validates number of characters in a string', () => {
   expect(validate('hello', { length: 3 })).toBe(false);
 });
 
-test('null and undefined are always rejected', () => {
-  expect(validate(null as any, { length: 3 })).toBe(false);
-  expect(validate(undefined as any, { length: 3 })).toBe(false);
-});
-
 test('validates number of elements in an enumerable', () => {
   const firstSet = new Set(['h', 'e', 'y']);
   const secondSet = new Set(['h', 'e', 'l', 'l']);
@@ -26,4 +21,10 @@ test('validates number of elements in an array', () => {
 
 test('validates strings consisting of numbers', () => {
   expect(validate(123 as any, { length: 3 })).toBe(true);
+});
+
+test('skips empty values', () => {
+  expect(validate('', { length: 3 })).toBe(true);
+  expect(validate(null as any, { length: 3 })).toBe(true);
+  expect(validate(undefined as any, { length: 3 })).toBe(true);
 });
