@@ -77,7 +77,6 @@ const FormImpl = /** #__PURE__ */ defineComponent({
     },
   },
   setup(props, ctx) {
-    const initialValues = toRef(props, 'initialValues');
     const validationSchema = toRef(props, 'validationSchema');
     const keepValues = toRef(props, 'keepValues');
 
@@ -104,7 +103,7 @@ const FormImpl = /** #__PURE__ */ defineComponent({
       resetField,
     } = useForm({
       validationSchema: validationSchema.value ? validationSchema : undefined,
-      initialValues,
+      initialValues: props.initialValues,
       initialErrors: props.initialErrors,
       initialTouched: props.initialTouched,
       validateOnMount: props.validateOnMount,

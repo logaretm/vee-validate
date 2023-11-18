@@ -1,7 +1,7 @@
 import { defineRule, useField, Form, Field, useIsValidating } from '@/vee-validate';
 import { mountWithHoc, setValue, setChecked, dispatchEvent, flushPromises } from './helpers';
 import * as yup from 'yup';
-import { computed, defineComponent, onErrorCaptured, reactive, ref, Ref } from 'vue';
+import { computed, defineComponent, onErrorCaptured, ref, Ref } from 'vue';
 import { InvalidSubmissionContext } from '../src/types';
 
 describe('<Form />', () => {
@@ -202,91 +202,6 @@ describe('<Form />', () => {
     const input = wrapper.$el.querySelector('input');
 
     expect(input.value).toBe(initialValues.field);
-  });
-
-  test('initial values can be reactive and will update non-touched fields', async () => {
-    let initialValues!: Record<string, any>;
-
-    const wrapper = mountWithHoc({
-      setup() {
-        initialValues = reactive({
-          field1: 'hello',
-          field2: 'hi',
-        });
-
-        return {
-          initialValues,
-        };
-      },
-      template: `
-      <VForm :initialValues="initialValues">
-        <Field rules="required" name="field1" />
-        <Field rules="required" name="field2" />
-
-        <button id="submit">Submit</button>
-      </VForm>
-    `,
-    });
-
-    const inputs = wrapper.$el.querySelectorAll('input');
-
-    await flushPromises();
-    setValue(inputs[0], '12');
-    dispatchEvent(inputs[0], 'blur');
-    await flushPromises();
-    initialValues.field1 = 'new';
-    initialValues.field2 = 'tada';
-    await flushPromises();
-
-    // this was not updated because it was changed by user
-    expect(inputs[0].value).not.toBe(initialValues.field1);
-
-    // this is updated because it wasn't changed by user
-    expect(inputs[1].value).toBe(initialValues.field2);
-  });
-
-  test('initial values can be refs and will update non-touched fields', async () => {
-    let initialValues!: Record<string, any>;
-
-    const wrapper = mountWithHoc({
-      setup() {
-        initialValues = ref({
-          field1: 'hello',
-          field2: 'hi',
-        });
-
-        return {
-          initialValues,
-        };
-      },
-      template: `
-      <VForm :initialValues="initialValues">
-        <Field rules="required" name="field1" />
-        <Field rules="required" name="field2" />
-
-        <button id="submit">Submit</button>
-      </VForm>
-    `,
-    });
-
-    const inputs = wrapper.$el.querySelectorAll('input');
-
-    await flushPromises();
-    setValue(inputs[0], '12');
-    dispatchEvent(inputs[0], 'blur');
-    await flushPromises();
-    initialValues.value = {
-      field1: 'new',
-      field2: 'tada',
-    };
-
-    await flushPromises();
-
-    // this was not updated because it was changed by user
-    expect(inputs[0].value).not.toBe(initialValues.value.field1);
-
-    // this is updated because it wasn't changed by user
-    expect(inputs[1].value).toBe(initialValues.value.field2);
   });
 
   test('having no submit listener will submit the form natively', async () => {
