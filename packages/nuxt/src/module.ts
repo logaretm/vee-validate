@@ -35,6 +35,13 @@ const composables = [
   'useValidateForm',
 ];
 
+const schemaProviders = ['zod', 'yup', 'valibot'] as const;
+const schemaProviderResolvers: Record<(typeof schemaProviders)[number], string> = {
+  zod: '@vee-validate/zod',
+  yup: '@vee-validate/yup',
+  valibot: '@vee-validate/valibot',
+};
+
 export default defineNuxtModule<VeeValidateNuxtOptions>({
   meta: {
     name: 'vee-validate',
@@ -90,27 +97,24 @@ export default defineNuxtModule<VeeValidateNuxtOptions>({
   },
 }) as NuxtModule<VeeValidateNuxtOptions>;
 
+function checkSchemaResolverDependencies(pkgName: (typeof schemaProviders)[number]) {
+  const makeMsg = (installed: string, uninstalled: string) =>
+    `You seem to be using ${installed}, but you have not installed ${uninstalled}. Please install it to use ${pkgName} with vee-validate.`;
+
+  const resolverPkg = schemaProviderResolvers[pkgName];
+  if (isPackageExists(pkgName) && !isPackageExists(resolverPkg)) {
+    logger.warn(makeMsg(pkgName, resolverPkg));
+    return true;
+  }
+
+  if (isPackageExists(resolverPkg) && !isPackageExists(pkgName)) {
+    logger.warn(makeMsg(resolverPkg, pkgName));
+    return true;
+  }
+}
+
 function checkForValibot(options: VeeValidateNuxtOptions) {
-  if (isPackageExists('valibot') && !isPackageExists('@vee-validate/valibot')) {
-    logger.warn(
-      'You seem to be using valibot, but you have not installed @vee-validate/valibot. Please install it to use valibot with vee-validate.',
-    );
-
-    if (options.typedSchemaPackage === undefined) {
-      logger.info('If you wish to ignore this error, set typedSchemaPackage option to none.');
-    }
-
-    return true;
-  }
-
-  if (isPackageExists('@vee-validate/valibot') && !isPackageExists('valibot')) {
-    logger.warn(
-      'You seem to be using @vee-validate/valibot, but you have not installed valibot. Please install it to use valibot with vee-validate.',
-    );
-
-    return true;
-  }
-
+  checkSchemaResolverDependencies('valibot');
   if (isPackageExists('@vee-validate/valibot') && isPackageExists('valibot')) {
     logger.info('Using valibot with vee-validate');
     if (options.autoImports) {
@@ -128,27 +132,7 @@ function checkForValibot(options: VeeValidateNuxtOptions) {
 }
 
 function checkForZod(options: VeeValidateNuxtOptions) {
-  if (isPackageExists('zod') && !isPackageExists('@vee-validate/zod')) {
-    logger.warn(
-      'You seem to be using zod, but you have not installed @vee-validate/zod. Please install it to use zod with vee-validate.',
-    );
-
-    if (options.typedSchemaPackage === undefined) {
-      logger.info(
-        'If you wish to use valibot for validation, set typedSchemaPackage option to valibot. If you wish to ignore this error, set it to none.',
-      );
-    }
-
-    return true;
-  }
-
-  if (isPackageExists('@vee-validate/zod') && !isPackageExists('zod')) {
-    logger.warn(
-      'You seem to be using @vee-validate/zod, but you have not installed zod. Please install it to use zod with vee-validate.',
-    );
-    return true;
-  }
-
+  checkSchemaResolverDependencies('zod');
   if (isPackageExists('@vee-validate/zod') && isPackageExists('zod')) {
     logger.info('Using zod with vee-validate');
     if (options.autoImports) {
@@ -166,27 +150,7 @@ function checkForZod(options: VeeValidateNuxtOptions) {
 }
 
 function checkForYup(options: VeeValidateNuxtOptions) {
-  if (isPackageExists('yup') && !isPackageExists('@vee-validate/yup')) {
-    logger.warn(
-      'You seem to be using yup, but you have not installed @vee-validate/yup. Please install it to use yup with vee-validate.',
-    );
-
-    if (options.typedSchemaPackage === undefined) {
-      logger.info(
-        'If you wish to use zod or valibot for validation, set the appropriate typedSchemaPackage option. If you wish to ignore this error, set it to none.',
-      );
-    }
-
-    return true;
-  }
-
-  if (isPackageExists('@vee-validate/yup') && !isPackageExists('yup')) {
-    logger.warn(
-      'You seem to be using @vee-validate/yup, but you have not installed yup. Please install it to use yup with vee-validate.',
-    );
-    return true;
-  }
-
+  checkSchemaResolverDependencies('yup');
   if (isPackageExists('@vee-validate/yup') && isPackageExists('yup')) {
     logger.info('Using yup with vee-validate');
     if (options.autoImports) {

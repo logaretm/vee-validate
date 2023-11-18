@@ -86,7 +86,7 @@ export interface FormOptions<
     | TypedSchema<TValues, TOutput>,
 > {
   validationSchema?: MaybeRef<TSchema extends TypedSchema ? TypedSchema<TValues, TOutput> : any>;
-  initialValues?: MaybeRef<PartialDeep<TValues> | undefined | null>;
+  initialValues?: PartialDeep<TValues> | undefined | null;
   initialErrors?: FlattenAndSetPathsType<TValues, string | undefined>;
   initialTouched?: FlattenAndSetPathsType<TValues, boolean>;
   validateOnMount?: boolean;
@@ -98,7 +98,7 @@ let FORM_COUNTER = 0;
 const PRIVATE_PATH_STATE_KEYS: (keyof PathState)[] = ['bails', 'fieldsCount', 'id', 'multiple', 'type', 'validate'];
 
 function resolveInitialValues<TValues extends GenericObject = GenericObject>(opts?: FormOptions<TValues>): TValues {
-  const providedValues = unref(opts?.initialValues) || {};
+  const providedValues = opts?.initialValues || {};
   const schema = unref(opts?.validationSchema);
   if (schema && isTypedSchema(schema) && isCallable(schema.cast)) {
     return deepCopy(schema.cast(providedValues) || {});
@@ -755,7 +755,7 @@ export function useForm<
    * Resets all fields
    */
   function resetForm(resetState?: Partial<FormState<TValues>>, opts?: ResetFormOpts) {
-    let newValues = resetState?.values ? resetState.values : originalInitialValues.value;
+    let newValues = deepCopy(resetState?.values ? resetState.values : originalInitialValues.value);
     newValues = isTypedSchema(schema) && isCallable(schema.cast) ? schema.cast(newValues) : newValues;
     setInitialValues(newValues);
     mutateAllPathState(state => {
@@ -1144,7 +1144,6 @@ function useFormInitialValues<TValues extends GenericObject>(
   opts?: FormOptions<TValues>,
 ) {
   const values = resolveInitialValues(opts) as PartialDeep<TValues>;
-  const providedValues = opts?.initialValues;
   // these are the mutable initial values as the fields are mounted/unmounted
   const initialValues = ref(values) as Ref<PartialDeep<TValues>>;
   // these are the original initial value as provided by the user initially, they don't keep track of conditional fields
@@ -1175,20 +1174,6 @@ function useFormInitialValues<TValues extends GenericObject>(
       const newValue = getFromPath(initialValues.value, state.path);
       setInPath(formValues, state.path, deepCopy(newValue));
     });
-  }
-
-  if (isRef(providedValues)) {
-    watch(
-      providedValues,
-      value => {
-        if (value) {
-          setInitialValues(value, true);
-        }
-      },
-      {
-        deep: true,
-      },
-    );
   }
 
   return {

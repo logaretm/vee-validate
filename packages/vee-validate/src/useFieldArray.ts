@@ -1,11 +1,11 @@
-import { Ref, unref, ref, onBeforeUnmount, watch, MaybeRef } from 'vue';
+import { Ref, unref, ref, onBeforeUnmount, watch, MaybeRefOrGetter, toValue } from 'vue';
 import { klona as deepCopy } from 'klona/full';
 import { isNullOrUndefined } from '../../shared';
 import { FormContextKey } from './symbols';
 import { FieldArrayContext, FieldEntry, PrivateFieldArrayContext, PrivateFormContext } from './types';
 import { computedDeep, getFromPath, injectWithSelf, warn, isEqual, setInPath } from './utils';
 
-export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): FieldArrayContext<TValue> {
+export function useFieldArray<TValue = unknown>(arrayPath: MaybeRefOrGetter<string>): FieldArrayContext<TValue> {
   const form = injectWithSelf(FormContextKey, undefined) as PrivateFormContext;
   const fields: Ref<FieldEntry<TValue>[]> = ref([]);
 
@@ -48,7 +48,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
   let entryCounter = 0;
 
   function getCurrentValues() {
-    return getFromPath<TValue[]>(form?.values, unref(arrayPath), []) || [];
+    return getFromPath<TValue[]>(form?.values, toValue(arrayPath), []) || [];
   }
 
   function initFields() {
@@ -85,7 +85,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
       key,
       value: computedDeep<TValue>({
         get() {
-          const currentValues = getFromPath<TValue[]>(form?.values, unref(arrayPath), []) || [];
+          const currentValues = getFromPath<TValue[]>(form?.values, toValue(arrayPath), []) || [];
           const idx = fields.value.findIndex(e => e.key === key);
 
           return idx === -1 ? value : currentValues[idx];
@@ -116,7 +116,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
   }
 
   function remove(idx: number) {
-    const pathName = unref(arrayPath);
+    const pathName = toValue(arrayPath);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
     if (!pathValue || !Array.isArray(pathValue)) {
       return;
@@ -134,7 +134,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
 
   function push(initialValue: TValue) {
     const value = deepCopy(initialValue);
-    const pathName = unref(arrayPath);
+    const pathName = toValue(arrayPath);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
     const normalizedPathValue = isNullOrUndefined(pathValue) ? [] : pathValue;
     if (!Array.isArray(normalizedPathValue)) {
@@ -150,7 +150,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
   }
 
   function swap(indexA: number, indexB: number) {
-    const pathName = unref(arrayPath);
+    const pathName = toValue(arrayPath);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
     if (!Array.isArray(pathValue) || !(indexA in pathValue) || !(indexB in pathValue)) {
       return;
@@ -174,7 +174,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
 
   function insert(idx: number, initialValue: TValue) {
     const value = deepCopy(initialValue);
-    const pathName = unref(arrayPath);
+    const pathName = toValue(arrayPath);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
     if (!Array.isArray(pathValue) || pathValue.length < idx) {
       return;
@@ -191,7 +191,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
   }
 
   function replace(arr: TValue[]) {
-    const pathName = unref(arrayPath);
+    const pathName = toValue(arrayPath);
     form.stageInitialValue(pathName, arr);
     setInPath(form.values, pathName, arr);
     initFields();
@@ -199,7 +199,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
   }
 
   function update(idx: number, value: TValue) {
-    const pathName = unref(arrayPath);
+    const pathName = toValue(arrayPath);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
     if (!Array.isArray(pathValue) || pathValue.length - 1 < idx) {
       return;
@@ -211,7 +211,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
 
   function prepend(initialValue: TValue) {
     const value = deepCopy(initialValue);
-    const pathName = unref(arrayPath);
+    const pathName = toValue(arrayPath);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
     const normalizedPathValue = isNullOrUndefined(pathValue) ? [] : pathValue;
     if (!Array.isArray(normalizedPathValue)) {
@@ -219,14 +219,14 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
     }
 
     const newValue = [value, ...normalizedPathValue];
-    form.stageInitialValue(pathName + `[${newValue.length - 1}]`, value);
     setInPath(form.values, pathName, newValue);
+    form.stageInitialValue(pathName + `[0]`, value);
     fields.value.unshift(createEntry(value));
     afterMutation();
   }
 
   function move(oldIdx: number, newIdx: number) {
-    const pathName = unref(arrayPath);
+    const pathName = toValue(arrayPath);
     const pathValue = getFromPath<TValue[]>(form?.values, pathName);
     const newValue = isNullOrUndefined(pathValue) ? [] : [...pathValue];
 
@@ -267,7 +267,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRef<string>): Fi
   });
 
   onBeforeUnmount(() => {
-    const idx = form.fieldArrays.findIndex(i => unref(i.path) === unref(arrayPath));
+    const idx = form.fieldArrays.findIndex(i => toValue(i.path) === toValue(arrayPath));
     if (idx >= 0) {
       form.fieldArrays.splice(idx, 1);
     }
