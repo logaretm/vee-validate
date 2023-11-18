@@ -219,6 +219,12 @@ The `FieldArrayEntry` item exposes a `key` property, this property is unique and
 
 This auto-generated `key` property is very convenient as you no longer have to provide your own unique key for each item.
 
+<DocTip type="warn">
+
+The `key` property is not an index. It is a unique identifier for the array item that is independent of the array index, so you should not be using it to reference field names.
+
+</DocTip>
+
 ### Array Helpers
 
 The `<FieldArray />` slot provides the following properties and functions:

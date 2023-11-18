@@ -125,6 +125,12 @@ Here is an example of a repeatable block of fields, we mutate the field value wi
 
 Notice that we used `field.key` as the key of the iteration, this is because vee-validate generates a unique key for each array item so you can rely it on without having to generate them yourself.
 
+<DocTip type="warn">
+
+The `key` property generated on array items is not an index. It is a unique identifier for the array item that is independent of the array index, so you should not be using it to reference field names.
+
+</DocTip>
+
 ### Field Array Paths
 
 When calling `useFieldArray` you need to provide a `name` prop which is the path of the array starting from the root form value, you can use dot notation for object paths or indices for array paths.
