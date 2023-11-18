@@ -3,9 +3,12 @@ import type { NuxtModule } from '@nuxt/schema';
 import { isPackageExists } from 'local-pkg';
 
 type ComponentName = 'Field' | 'Form' | 'ErrorMessage' | 'FieldArray';
+type TypedSchemaPackage = 'yup' | 'zod' | 'valibot' | 'none';
+
 export interface VeeValidateNuxtOptions {
   autoImports?: boolean;
   componentNames?: Partial<Record<ComponentName, string>>;
+  typedSchemaPackage?: TypedSchemaPackage;
 }
 
 const components: ComponentName[] = ['Field', 'Form', 'ErrorMessage', 'FieldArray'];
@@ -67,9 +70,30 @@ export default defineNuxtModule<VeeValidateNuxtOptions>({
       });
     }
 
-    checkForYup(options);
-    checkForZod(options);
-    checkForValibot(options);
+    if (options.typedSchemaPackage === 'none') {
+      return;
+    }
+
+    if (options.typedSchemaPackage === 'yup') {
+      checkForYup(options);
+      return;
+    }
+
+    if (options.typedSchemaPackage === 'zod') {
+      checkForZod(options);
+      return;
+    }
+
+    if (options.typedSchemaPackage === 'valibot') {
+      checkForValibot(options);
+      return;
+    }
+
+    if (!checkForYup(options)) {
+      if (!checkForZod(options)) {
+        checkForValibot(options);
+      }
+    }
   },
 }) as NuxtModule<VeeValidateNuxtOptions>;
 
