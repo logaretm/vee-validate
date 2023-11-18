@@ -67,16 +67,12 @@ class Dictionary {
   }
 }
 
-let DICTIONARY: Dictionary;
+const DICTIONARY: Dictionary = new Dictionary('en', {});
 
 function localize(dictionary: RootI18nDictionary): ValidationMessageGenerator;
 function localize(locale: string, dictionary?: PartialI18nDictionary): ValidationMessageGenerator;
 
 function localize(locale: string | RootI18nDictionary, dictionary?: PartialI18nDictionary) {
-  if (!DICTIONARY) {
-    DICTIONARY = new Dictionary('en', {});
-  }
-
   const generateMessage: ValidationMessageGenerator = ctx => {
     return DICTIONARY.resolve(ctx);
   };
