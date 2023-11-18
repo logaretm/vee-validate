@@ -125,7 +125,7 @@ export interface FieldArrayContext<TValue = unknown> {
 
 export interface PrivateFieldArrayContext<TValue = unknown> extends FieldArrayContext<TValue> {
   reset(): void;
-  path: MaybeRef<string>;
+  path: MaybeRefOrGetter<string>;
 }
 
 export interface PrivateFieldContext<TValue = unknown> {
