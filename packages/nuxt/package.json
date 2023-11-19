@@ -13,7 +13,7 @@
     "directory": "packages/nuxt"
   },
   "scripts": {
-    "build": "nuxt-module-build"
+    "build": "nuxt-module-build build"
   },
   "exports": {
     ".": {
