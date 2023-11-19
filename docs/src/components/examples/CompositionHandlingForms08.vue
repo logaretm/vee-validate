@@ -1,12 +1,29 @@
+<script setup>
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
+
+const { resetForm, defineField, meta } = useForm({
+  validationSchema: yup.object({
+    name: yup.string().required(),
+    email: yup.string().email().required(),
+    password: yup.string().min(6).required(),
+  }),
+});
+
+const [email, emailAttrs] = defineField('email');
+const [name, nameAttrs] = defineField('name');
+const [password, passwordAttrs] = defineField('password');
+</script>
+
 <template>
   <form @submit="">
-    <input v-bind="name" />
+    <input v-model="name" v-bind="nameAttrs" />
     {{ errors.name }}
 
-    <input type="email" v-bind="email" />
+    <input type="email" v-model="email" v-bind="emailAttrs" />
     {{ errors.email }}
 
-    <input type="password" v-bind="password" />
+    <input type="password" v-model="password" v-bind="passwordAttrs" />
     {{ errors.password }}
 
     <button type="button" @click="resetForm()">Reset</button>
@@ -20,20 +37,3 @@
     <pre>{{ meta }}</pre>
   </form>
 </template>
-
-<script setup>
-import { useForm } from 'vee-validate';
-import * as yup from 'yup';
-
-const { resetForm, defineInputBinds, meta } = useForm({
-  validationSchema: yup.object({
-    name: yup.string().required(),
-    email: yup.string().email().required(),
-    password: yup.string().min(6).required(),
-  }),
-});
-
-const email = defineInputBinds('email');
-const name = defineInputBinds('name');
-const password = defineInputBinds('password');
-</script>

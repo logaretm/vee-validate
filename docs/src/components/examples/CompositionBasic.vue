@@ -7,12 +7,12 @@ const schema = yup.object({
   password: yup.string().min(6).required(),
 });
 
-const { defineInputBinds, errors, handleSubmit } = useForm({
+const { defineField, errors, handleSubmit } = useForm({
   validationSchema: schema,
 });
 
-const email = defineInputBinds('email');
-const password = defineInputBinds('password');
+const [email, emailAttrs] = defineField('email');
+const [password, passwordAttrs] = defineField('password');
 
 const onSubmit = handleSubmit(values => {
   alert(JSON.stringify(values, null, 2));
@@ -21,10 +21,10 @@ const onSubmit = handleSubmit(values => {
 
 <template>
   <form @submit="onSubmit">
-    <input v-bind="email" name="email" type="email" />
+    <input v-model="email" v-bind="emailAttrs" name="email" type="email" />
     <span>{{ errors.email }}</span>
 
-    <input v-bind="password" name="password" type="password" />
+    <input v-model="password" v-bind="passwordAttrs" name="password" type="password" />
     <span>{{ errors.password }}</span>
 
     <button>Submit</button>

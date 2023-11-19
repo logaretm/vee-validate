@@ -2,13 +2,13 @@
 import { useForm } from 'vee-validate';
 import CustomInput from './CustomInput.vue';
 
-const { values, defineComponentBinds } = useForm();
+const { values, defineField } = useForm();
 
-const email = defineComponentBinds('email');
+const [email, emailProps] = defineField('email');
 </script>
 
 <template>
-  <CustomInput v-bind="email" />
+  <CustomInput v-model="email" v-bind="emailProps" />
 
   <pre>values: {{ values }}</pre>
 </template>

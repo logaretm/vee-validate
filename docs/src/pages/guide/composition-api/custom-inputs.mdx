@@ -18,18 +18,18 @@ import Repl from '@/components/MdxRepl.vue';
 
 ## Imperative vs Declarative
 
-So far we've been using `useForm` to create forms and use `defineInputBinds` or `defineComponentBinds` to create field-binding objects to integrate them with our fields. However, that usually requires a lot of boilerplate code to create the binding object and the field component.
+So far we've been using `useForm` to create forms and use `defineField` to create field-binding objects to integrate them with our fields. However, that usually requires a lot of boilerplate code to create the binding object and the field component.
 
-For example, this is how a 5-field form looks like with `useForm` and `defineInputBinds`:
+For example, this is how a 5-field form looks like with `useForm` and `defineField`:
 
 ```js
-const { defineInputBinds } = useForm();
+const { defineField } = useForm();
 
-const email = defineInputBinds('email');
-const firstName = defineInputBinds('firstName');
-const lastName = defineInputBinds('lastName');
-const password = defineInputBinds('password');
-const passwordConfirm = defineInputBinds('passwordConfirm');
+const email = defineField('email');
+const firstName = defineField('firstName');
+const lastName = defineField('lastName');
+const password = defineField('password');
+const passwordConfirm = defineField('passwordConfirm');
 ```
 
 This can get ugly very quickly especially if you have a lot of field arrays or nested fields involved. This is one of the downsides of using an imperative API, but with `useField` you can switch to declarative API and get rid of all that boilerplate code.
@@ -59,13 +59,13 @@ const { value, errorMessage } = useField(() => props.name);
 </script>
 ```
 
-This works exactly the same way as with `defineInputBinds`, but now since you have a vee-validate field component, you can use it directly in any component with a form context and it will just work:
+This works exactly the same way as with `defineField`, but now since you have a vee-validate field component, you can use it directly in any component with a form context and it will just work:
 
 Here is a live example:
 
 <Repl files={{ 'App.vue': 'CompositionCustomField01', 'InputText.vue': 'CustomInputFieldBasic' }} client:only />
 
-Notice how much of the burden of defining fields went away as soon as switched to the declarative approach. This is where `useField` really shines, but that's just us getting started. Following along in this guide to make the most out of `useField`.
+Notice how much of the burden of defining fields went away as soon as switched to the declarative approach. This is where `useField` really shines, but that's just us getting started. Follow along in this guide to make the most out of `useField`.
 
 ## Validation
 

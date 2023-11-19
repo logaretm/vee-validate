@@ -17,15 +17,15 @@ async function fetchData() {
   });
 }
 
-const { errors, resetForm, handleSubmit, defineInputBinds } = useForm({
+const { errors, resetForm, handleSubmit, defineField } = useForm({
   validationSchema: yup.object({
     email: yup.string().email().required(),
     name: yup.string().required(),
   }),
 });
 
-const email = defineInputBinds('email');
-const name = defineInputBinds('name');
+const [email, emailAttrs] = defineField('email');
+const [name, nameAttrs] = defineField('name');
 
 // Fetch data on mounted
 onMounted(async () => {
@@ -41,10 +41,10 @@ const onSubmit = handleSubmit(values => {
 
 <template>
   <form @submit="onSubmit">
-    <input name="email" v-bind="email" />
+    <input name="email" v-model="email" v-bind="emailAttrs" />
     <span>{{ errors.email }}</span>
 
-    <input name="name" v-bind="name" />
+    <input name="name" v-model="name" v-bind="nameAttrs" />
     <span>{{ errors.name }}</span>
 
     <button>Submit</button>
