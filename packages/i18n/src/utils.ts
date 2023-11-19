@@ -7,8 +7,8 @@ export function interpolate(template: string, values: Record<string, any>): stri
       return placeholder in values
         ? values[placeholder]
         : values.params && placeholder in values.params
-        ? values.params[placeholder]
-        : `{${placeholder}}`;
+          ? values.params[placeholder]
+          : `{${placeholder}}`;
     }
 
     // Handles extended object params format
