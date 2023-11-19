@@ -1,5 +1,5 @@
 import { useForm, useFieldArray, FieldEntry, FormContext, FieldArrayContext } from '@/vee-validate';
-import { onMounted, Ref } from 'vue';
+import { nextTick, onMounted, Ref } from 'vue';
 import * as yup from 'yup';
 import { mountWithHoc, flushPromises } from './helpers';
 
@@ -90,7 +90,10 @@ test('warns when updating a no-longer existing item', async () => {
       onMounted(() => {
         const item = fields.value[0];
         remove(0);
-        item.value = 'test';
+
+        nextTick(() => {
+          item.value = 'test';
+        });
       });
     },
     template: `
