@@ -283,6 +283,7 @@ export interface BaseFieldProps {
 export interface InputBindsConfig<TValue = unknown, TExtraProps extends GenericObject = GenericObject> {
   props: (state: PublicPathState<TValue>) => TExtraProps;
   validateOnBlur: boolean;
+  label: MaybeRefOrGetter<string>;
   validateOnChange: boolean;
   validateOnInput: boolean;
   validateOnModelUpdate: boolean;

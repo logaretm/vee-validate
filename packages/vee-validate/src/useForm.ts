@@ -967,7 +967,9 @@ export function useForm<
     path: MaybeRefOrGetter<TPath>,
     config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>,
   ) {
-    const pathState = (findPathState(toValue(path)) || createPathState(path)) as PathState<TValue>;
+    const label = isCallable(config) ? undefined : config?.label;
+    console.log(label);
+    const pathState = (findPathState(toValue(path)) || createPathState(path, { label })) as PathState<TValue>;
     const evalConfig = () => (isCallable(config) ? config(omit(pathState, PRIVATE_PATH_STATE_KEYS)) : config || {});
 
     function onBlur() {

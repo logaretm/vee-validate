@@ -1,4 +1,4 @@
-import { FieldMeta, FormContext, FormMeta, useField, useForm } from '@/vee-validate';
+import { FieldMeta, FormContext, FormMeta, useField, useForm, defineRule, configure } from '@/vee-validate';
 import { mountWithHoc, setValue, flushPromises, dispatchEvent } from './helpers';
 import * as yup from 'yup';
 import { onMounted, ref, Ref } from 'vue';
@@ -1065,6 +1065,40 @@ describe('useForm()', () => {
       setValue(document.querySelector('input') as any, '123');
       await flushPromises();
       expect(document.body.innerHTML).toContain('aria-valid="true"');
+    });
+
+    test('can specify a label', async () => {
+      defineRule('required', (value: string) => {
+        return !!value;
+      });
+
+      configure({
+        generateMessage: ({ field }) => `${field} is bad`,
+      });
+
+      mountWithHoc({
+        setup() {
+          const { defineField, values, errors } = useForm({
+            validationSchema: {
+              name: 'required',
+            },
+          });
+
+          const [model, props] = defineField('name', { validateOnInput: true, label: 'First Name' });
+
+          return { model, props, values, errors };
+        },
+        template: `
+        <input v-model="model" v-bind="props" />
+        <span id="errors">{{ errors.name }}</span>
+      `,
+      });
+
+      await flushPromises();
+      const errorEl = document.getElementById('errors');
+      setValue(document.querySelector('input') as any, '');
+      await flushPromises();
+      expect(errorEl?.textContent).toBe('First Name is bad');
     });
   });
 
