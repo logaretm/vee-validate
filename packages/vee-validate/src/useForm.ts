@@ -968,7 +968,6 @@ export function useForm<
     config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>,
   ) {
     const label = isCallable(config) ? undefined : config?.label;
-    console.log(label);
     const pathState = (findPathState(toValue(path)) || createPathState(path, { label })) as PathState<TValue>;
     const evalConfig = () => (isCallable(config) ? config(omit(pathState, PRIVATE_PATH_STATE_KEYS)) : config || {});
 

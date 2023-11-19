@@ -80,8 +80,10 @@ For example, if you have a field called `email` in the form context, the field p
 ```ts
 const { defineField } = useForm();
 
-const email = defineField('email');
+const [email, emailAttrs] = defineField('email');
 ```
+
+Note that `defineField` generates a pair of values, the first one is the value model and the second one is the attributes/props object. The props object contain attributes or event listeners that are useful to have on the input control or component which enables custom validation triggers and more.
 
 Here is a basic example of how to use `defineField` with a simple input element:
 
@@ -138,8 +140,6 @@ Notice that for components, validations are executed immediately. This is intend
 <Repl files={{ 'App.vue': 'CompositionComponentBindsBasic03', 'CustomInput.vue': 'CustomInputBasic' }} client:only />
 
 ### Mapping attributes and props
-
-You have noticed in the previous examples that `defineField` generates a pair of values, the first one is the value model and the second one is the bindings object. The bindings object contain attributes or event listeners that are useful to have on the input control or component.
 
 But aside from the attributes and listeners that vee-validate adds to those binding objects, you can also map the attributes and props of the in. This is useful when you want to:
 
