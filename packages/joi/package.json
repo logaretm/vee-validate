@@ -28,8 +28,8 @@
     "dist/*.d.ts"
   ],
   "dependencies": {
-    "joi": "17.10.2",
-    "type-fest": "^4.2.0",
+    "joi": "17.11.0",
+    "type-fest": "^4.8.1",
     "vee-validate": "4.11.8"
   }
 }
