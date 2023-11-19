@@ -113,9 +113,9 @@ Here is a full running example:
 
 <Repl files={{ 'App.vue': 'CompositionInputBindsBasic02' }} client:only />
 
-Notice as you blur the input, the validation is then triggered and the errors are populated. By default `defineField` optimizes for lazy validation, meaning the validation will be triggered on `change` and on `blur` events.
+Notice as you type into the input, the validation is then triggered and the errors are populated. By default `defineField` optimizes for aggressive validation, meaning the validation will be triggered whenever the model changes.
 
-You can change that behavior. For example, you can make it "aggressive" by passing a configuration to `defineField` to validate `input` events.
+You can change that behavior. For example, you can make it "lazy" by passing a configuration to `defineField` to disable validation on model updates with `validateOnModelUpdate` config.
 
 <Repl files={{ 'App.vue': 'CompositionInputBindsBasic03' }} client:only />
 
