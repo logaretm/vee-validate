@@ -236,6 +236,10 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
     }
 
     ctx.expose({
+      value,
+      meta,
+      errors,
+      errorMessage,
       setErrors,
       setTouched,
       reset: resetField,
@@ -296,6 +300,10 @@ function resolveInitialValue(props: Record<string, unknown>, ctx: SetupContext<a
 
 export const Field = FieldImpl as typeof FieldImpl & {
   new (): {
+    value: FieldContext['value'];
+    meta: FieldContext['meta'];
+    errors: FieldContext['errors'];
+    errorMessage: FieldContext['errorMessage'];
     setErrors: FieldContext['setErrors'];
     setTouched: FieldContext['setTouched'];
     reset: FieldContext['resetField'];
