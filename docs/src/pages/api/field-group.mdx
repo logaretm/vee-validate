@@ -5,12 +5,28 @@ description: API reference for the Field Group component
 menuTitle: '<FieldGroup />'
 order: 5
 ---
-import CodeTitle from '@/components/CodeTitle.vue';
 
-# FieldGroup <DocBadge title="v4.5" />
+import CodeTitle from '@/components/CodeTitle.vue';
+import DocBadge from '@/components/DocBadge.vue';
+
+# FieldGroup <DocBadge title="v4.7" />
 
 The `<FieldGroup />` component is used to provide state of group of fields. It is a renderless component, meaning it doesn't render anything of its own.
-It can be
+
+```vue-html
+  <Form>
+    <FieldGroup v-slot="{ meta }">
+        <Field name="addressField" type="text" />
+        <Field name="addressField2" type="text" />
+
+        Is address group valid ? {{ meta.valid }}
+    </FieldGroup>
+    <button>Submit</button>
+  </Form>
+```
+
+It can be nested which means there can be `FieldGroup` inside `FieldGroup` (like on example):
+
 ```vue-html
   <Form>
     <FieldGroup v-slot="{ meta }">
