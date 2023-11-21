@@ -9,6 +9,7 @@ import {
   VNode,
   inject,
   onBeforeUnmount,
+  markRaw,
 } from 'vue';
 import { getConfig } from './config';
 import { RuleExpression, useField } from './useField';
@@ -234,15 +235,21 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
       };
     });
 
+    let fieldGroupData: FieldContextForFieldGroup | null = null;
+
     if (fieldGroup) {
-      const fieldGroupData: FieldContextForFieldGroup = { value, meta, errors: errors, errorMessage: errorMessage };
+      fieldGroupData = markRaw({ value, meta, errors: errors, errorMessage: errorMessage });
       fieldGroup.fields.value = [...fieldGroup.fields.value, fieldGroupData];
-      onBeforeUnmount(() => {
+    }
+
+    onBeforeUnmount(() => {
+      if (fieldGroup && fieldGroupData) {
         fieldGroup.fields.value = fieldGroup.fields.value.filter(
           (_fieldGroupData: FieldContextForFieldGroup) => _fieldGroupData !== fieldGroupData,
         );
-      });
-    }
+      }
+    });
+
     function slotProps(): FieldSlotProps {
       return {
         field: fieldProps.value,

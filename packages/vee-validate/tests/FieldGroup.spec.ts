@@ -1,5 +1,6 @@
 import { configure, defineRule } from '@/vee-validate';
 import { dispatchEvent, flushPromises, mountWithHoc, setValue } from './helpers';
+import { ref } from 'vue';
 
 vi.useFakeTimers();
 
@@ -138,6 +139,58 @@ describe('<FieldGroup />', () => {
     updateValueWithEvents(inputs[0], '1');
     await flushPromises();
 
+    expect(parentMeta.textContent).toContain('"valid": true');
+  });
+
+  test('updates validation state of fields removal', async () => {
+    const wrapper = mountWithHoc({
+      setup() {
+        const rootFieldVisible = ref(true);
+        const nestedFieldVisible = ref(true);
+
+        return { rootFieldVisible, nestedFieldVisible };
+      },
+      template: `
+      <VForm>
+        <FieldGroup v-slot="{ meta }">
+          <Field v-if="rootFieldVisible" name="field" rules="required" v-slot="{ field }">
+              <input v-bind="field" type="text">
+            </Field>
+          <FieldGroup v-slot="{ meta: nestedMeta }">
+              <Field v-if="nestedFieldVisible" name="nestedField" rules="required" v-slot="{ field }">
+                <input v-bind="field" type="text">
+              </Field>
+            <pre id="nested-meta">{{ nestedMeta }}</pre>
+          </FieldGroup>
+          <pre id="parent-meta">{{ meta }}</pre>
+          <button type="button" id="hide-root-field" @click="rootFieldVisible = false">Hide</button>
+          <button type="button" id="hide-nested-field" @click="nestedFieldVisible = false">Hide</button>
+        </FieldGroup>
+      </VForm>
+    `,
+    });
+
+    const parentMeta = wrapper.$el.querySelector('#parent-meta');
+    const nestedMeta = wrapper.$el.querySelector('#nested-meta');
+    const removeRootFieldButton = wrapper.$el.querySelector('#hide-root-field');
+    const removeNestedFieldButton = wrapper.$el.querySelector('#hide-nested-field');
+
+    await flushPromises();
+
+    expect(parentMeta.textContent).toContain('"valid": false');
+    expect(nestedMeta.textContent).toContain('"valid": false');
+
+    removeNestedFieldButton.click();
+
+    await flushPromises();
+
+    expect(parentMeta.textContent).toContain('"valid": false');
+    expect(nestedMeta.textContent).toContain('"valid": true');
+
+    removeRootFieldButton.click();
+    await flushPromises();
+
+    expect(wrapper.$el.querySelectorAll('input')).toHaveLength(0);
     expect(parentMeta.textContent).toContain('"valid": true');
   });
 });

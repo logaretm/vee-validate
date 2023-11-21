@@ -1,4 +1,16 @@
-import { computed, defineComponent, inject, provide, ref, toValue, onBeforeUnmount, UnwrapRef, VNode, Ref } from 'vue';
+import {
+  computed,
+  defineComponent,
+  inject,
+  provide,
+  ref,
+  toValue,
+  onBeforeUnmount,
+  UnwrapRef,
+  VNode,
+  Ref,
+  markRaw,
+} from 'vue';
 import {
   FieldContextForFieldGroup,
   FieldGroupContext,
@@ -46,10 +58,10 @@ const FieldGroupImpl = /** #__PURE__ */ defineComponent({
     });
 
     if (parentFieldGroup) {
-      const dataForParentFieldGroup: FieldGroupContextForParent = {
+      const dataForParentFieldGroup: FieldGroupContextForParent = markRaw({
         fields,
         meta,
-      };
+      });
       parentFieldGroup.groups.value = [...parentFieldGroup.groups.value, dataForParentFieldGroup];
 
       onBeforeUnmount(() => {
