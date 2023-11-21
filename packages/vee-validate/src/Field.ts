@@ -238,7 +238,7 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
     let fieldGroupData: FieldContextForFieldGroup | null = null;
 
     if (fieldGroup) {
-      fieldGroupData = markRaw({ value, meta, errors: errors, errorMessage: errorMessage });
+      fieldGroupData = markRaw({ value, meta, errors, errorMessage });
       fieldGroup.fields.value = [...fieldGroup.fields.value, fieldGroupData];
     }
 
