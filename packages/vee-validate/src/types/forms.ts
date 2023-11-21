@@ -155,6 +155,47 @@ export interface PrivateFieldContext<TValue = unknown> {
 
 export type FieldContext<TValue = unknown> = Omit<PrivateFieldContext<TValue>, 'id' | 'instances'>;
 
+export interface FieldExposedContext<TValue = unknown> {
+  value: FieldContext<TValue>['value'];
+  meta: FieldContext<TValue>['meta'];
+  errors: FieldContext<TValue>['errors'];
+  errorMessage: FieldContext<TValue>['errorMessage'];
+  setErrors: FieldContext<TValue>['setErrors'];
+  setTouched: FieldContext<TValue>['setTouched'];
+  reset: FieldContext<TValue>['resetField'];
+  validate: FieldContext<TValue>['validate'];
+  handleChange: FieldContext<TValue>['handleChange'];
+}
+
+export interface FieldGroupMeta {
+  touched: boolean;
+  dirty: boolean;
+  valid: boolean;
+  validated: boolean;
+  pending: boolean;
+}
+
+export interface FieldGroupContext {
+  meta: FieldGroupMeta;
+}
+
+export interface FieldContextForFieldGroup<TValue = unknown> {
+  value: FieldContext<TValue>['value'];
+  meta: FieldContext<TValue>['meta'];
+  errors: FieldContext<TValue>['errors'];
+  errorMessage: FieldContext<TValue>['errorMessage'];
+}
+
+export interface FieldGroupContextForParent {
+  fields: Ref<FieldContextForFieldGroup[]>;
+  meta: MaybeRefOrGetter<FieldGroupMeta>;
+}
+
+export interface PrivateFieldGroupContext {
+  fields: Ref<FieldContextForFieldGroup[]>;
+  groups: Ref<FieldGroupContextForParent[]>;
+}
+
 export type GenericValidateFunction<TValue = unknown> = (
   value: TValue,
   ctx: FieldValidationMetaInfo,

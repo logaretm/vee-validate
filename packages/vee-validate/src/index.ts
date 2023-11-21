@@ -3,6 +3,7 @@ export { defineRule } from './defineRule';
 export { configure } from './config';
 export { normalizeRules } from './utils';
 export { Field } from './Field';
+export { FieldGroup } from './FieldGroup';
 export { Form } from './Form';
 export { FieldArray } from './FieldArray';
 export { ErrorMessage } from './ErrorMessage';

@@ -1,0 +1,48 @@
+---
+layout: ../../layouts/PageLayout.astro
+title: FieldGroup
+description: API reference for the Field Group component
+menuTitle: '<FieldGroup />'
+order: 5
+---
+import CodeTitle from '@/components/CodeTitle.vue';
+
+# FieldGroup <DocBadge title="v4.5" />
+
+The `<FieldGroup />` component is used to provide state of group of fields. It is a renderless component, meaning it doesn't render anything of its own.
+It can be
+```vue-html
+  <Form>
+    <FieldGroup v-slot="{ meta }">
+        <Field name="firstName" type="text" />
+        <FieldGroup v-slot="{ meta: addressMeta }">
+            <Field name="addressField" type="text" />
+            <Field name="addressField2" type="text" />
+
+            Is address group valid ? {{ addressMeta.valid }}
+        </FieldGroup>
+    Is form group valid ? {{ meta.valid }} // will be true only when `firstName` and address fields are valid
+    </FieldGroup>
+    <button>Submit</button>
+  </Form>
+```
+
+## API Reference
+
+### Slots
+
+#### default
+
+The default slot gives you access to the following props:
+
+<CodeTitle level="4">
+
+`meta: FieldGroupMeta`
+
+</CodeTitle>
+This is a **read-only** property which gives access to aggregated state of fields nested inside the `FormGroup` component.
+```
+
+### Ref
+
+Ref gives access to the same `meta: FieldGroupMeta` value as slot.
