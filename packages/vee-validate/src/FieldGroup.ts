@@ -20,7 +20,7 @@ const FieldGroupImpl = /** #__PURE__ */ defineComponent({
 
     function slotProps() {
       return {
-        meta,
+        meta: meta.value,
       };
     }
 
