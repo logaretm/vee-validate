@@ -10,18 +10,13 @@ import {
   inject,
   onBeforeUnmount,
   markRaw,
+  UnwrapRef,
 } from 'vue';
 import { getConfig } from './config';
 import { RuleExpression, useField } from './useField';
 import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent } from './utils';
 import { FieldGroupContextKey, IS_ABSENT } from './symbols';
-import {
-  FieldContextForFieldGroup,
-  FieldExposedContext,
-  PrivateFieldGroupContext,
-  FieldMeta,
-  InputType,
-} from './types';
+import { FieldContextForFieldGroup, FieldExposedContext, FieldMeta, InputType } from './types';
 import { FieldContext } from '.';
 import { isCallable } from '../../shared';
 
@@ -336,10 +331,10 @@ function resolveInitialValue(props: Record<string, unknown>, ctx: SetupContext<a
 
 export const Field = FieldImpl as typeof FieldImpl & {
   new (): {
-    value: FieldContext['value'];
-    meta: FieldContext['meta'];
-    errors: FieldContext['errors'];
-    errorMessage: FieldContext['errorMessage'];
+    value: UnwrapRef<FieldContext['value']>;
+    meta: UnwrapRef<FieldContext['meta']>;
+    errors: UnwrapRef<FieldContext['errors']>;
+    errorMessage: UnwrapRef<FieldContext['errorMessage']>;
     setErrors: FieldContext['setErrors'];
     setTouched: FieldContext['setTouched'];
     reset: FieldContext['resetField'];
