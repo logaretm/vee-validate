@@ -10,6 +10,7 @@ export { ErrorMessage } from './ErrorMessage';
 export { useField, FieldOptions, RuleExpression } from './useField';
 export { useForm, FormOptions } from './useForm';
 export { useFieldArray } from './useFieldArray';
+export { useFieldGroup } from './useFieldGroup';
 export * from './types';
 export { useResetForm } from './useResetForm';
 export { useIsFieldDirty } from './useIsFieldDirty';

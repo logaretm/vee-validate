@@ -1,16 +1,37 @@
-import { computed, inject, markRaw, onBeforeUnmount, provide, ref, Ref, toValue } from 'vue/dist/vue';
-import { FieldContextForFieldGroup, FieldGroupContextForParent, PrivateFieldGroupContext } from './types';
+import {
+  computed,
+  inject,
+  markRaw,
+  onBeforeUnmount,
+  provide,
+  ref,
+  Ref,
+  toValue,
+  ComputedRef,
+  MaybeRefOrGetter,
+} from 'vue';
+import {
+  FieldContextForFieldGroup,
+  FieldGroupContextForParent,
+  FieldGroupMeta,
+  PrivateFieldGroupContext,
+} from './types';
 import { FieldGroupContextKey } from './symbols';
-import { MaybeRefOrGetter } from 'vue';
 
-export const useFieldGroup = (checkChildFieldGroups: MaybeRefOrGetter<boolean>) => {
+interface FieldGroupComposable {
+  meta: ComputedRef<FieldGroupMeta>;
+  fields: Ref<FieldContextForFieldGroup[]>;
+  groups: Ref<FieldGroupContextForParent[]>;
+}
+
+export const useFieldGroup = (checkChildFieldGroups: MaybeRefOrGetter<boolean>): FieldGroupComposable => {
   const fields: Ref<FieldContextForFieldGroup[]> = ref([]);
   const groups: Ref<FieldGroupContextForParent[]> = ref([]);
   const parentFieldGroup = inject(FieldGroupContextKey, null);
   const providerContext: PrivateFieldGroupContext = { fields, groups };
   provide(FieldGroupContextKey, providerContext);
 
-  const meta = computed(() => {
+  const meta = computed<FieldGroupMeta>(() => {
     const checkChildGroups = toValue(checkChildFieldGroups);
     const groupsMeta = {
       valid: checkChildGroups ? groups.value.every((f: FieldGroupContextForParent) => toValue(f.meta).valid) : true,
