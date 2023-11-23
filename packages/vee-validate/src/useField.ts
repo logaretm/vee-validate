@@ -28,6 +28,7 @@ import {
   PrivateFormContext,
   YupSchema,
   InputType,
+  FieldContextForFieldGroup,
 } from './types';
 import {
   normalizeRules,
@@ -44,9 +45,10 @@ import {
   isTypedSchema,
 } from './utils';
 import { isCallable, isObject, normalizeFormPath } from '../../shared';
-import { FieldContextKey, FormContextKey, IS_ABSENT } from './symbols';
+import { FieldContextKey, FieldGroupContextKey, FormContextKey, IS_ABSENT } from './symbols';
 import { useFieldState } from './useFieldState';
 import { refreshInspector, registerSingleFieldWithDevtools } from './devtools';
+import { inject, markRaw } from 'vue/dist/vue';
 
 export interface FieldOptions<TValue = unknown> {
   initialValue?: MaybeRef<TValue>;
@@ -121,6 +123,8 @@ function _useField<TValue = unknown>(
 
   const injectedForm = controlled ? injectWithSelf(FormContextKey) : undefined;
   const form = (controlForm as PrivateFormContext | undefined) || injectedForm;
+  const fieldGroup = inject(FieldGroupContextKey, null);
+
   const name = computed(() => normalizeFormPath(toValue(path)));
 
   const validator = computed(() => {
@@ -418,6 +422,18 @@ function _useField<TValue = unknown>(
     }
   });
 
+  let fieldGroupData: FieldContextForFieldGroup | null = null;
+
+  if (fieldGroup) {
+    fieldGroupData = markRaw({
+      value: field.value,
+      meta: field.meta,
+      errors: field.errors,
+      errorMessage: field.errorMessage,
+    });
+    fieldGroup.fields.value = [...fieldGroup.fields.value, fieldGroupData];
+  }
+
   onBeforeUnmount(() => {
     const shouldKeepValue = toValue(field.keepValueOnUnmount) ?? toValue(form.keepValuesOnUnmount);
     const path = toValue(name);
@@ -453,6 +469,12 @@ function _useField<TValue = unknown>(
     }
 
     form.removePathState(path, id);
+
+    if (fieldGroup && fieldGroupData) {
+      fieldGroup.fields.value = fieldGroup.fields.value.filter(
+        (_fieldGroupData: FieldContextForFieldGroup) => _fieldGroupData !== fieldGroupData,
+      );
+    }
   });
 
   return field;

@@ -1,22 +1,19 @@
 import {
-  h,
-  defineComponent,
-  toRef,
-  SetupContext,
-  resolveDynamicComponent,
   computed,
+  defineComponent,
+  h,
   PropType,
-  VNode,
-  inject,
-  onBeforeUnmount,
-  markRaw,
+  resolveDynamicComponent,
+  SetupContext,
+  toRef,
   UnwrapRef,
+  VNode,
 } from 'vue';
 import { getConfig } from './config';
 import { RuleExpression, useField } from './useField';
-import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent } from './utils';
-import { FieldGroupContextKey, IS_ABSENT } from './symbols';
-import { FieldContextForFieldGroup, FieldExposedContext, FieldMeta, InputType } from './types';
+import { hasCheckedAttr, isPropPresent, normalizeChildren, shouldHaveValueBinding } from './utils';
+import { IS_ABSENT } from './symbols';
+import { FieldExposedContext, FieldMeta, InputType } from './types';
 import { FieldContext } from '.';
 import { isCallable } from '../../shared';
 
@@ -134,7 +131,6 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
     const label = toRef(props, 'label');
     const uncheckedValue = toRef(props, 'uncheckedValue');
     const keepValue = toRef(props, 'keepValue');
-    const fieldGroup = inject(FieldGroupContextKey, null);
 
     const {
       errors,
@@ -228,21 +224,6 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
         ...sharedProps.value,
         modelValue: value.value,
       };
-    });
-
-    let fieldGroupData: FieldContextForFieldGroup | null = null;
-
-    if (fieldGroup) {
-      fieldGroupData = markRaw({ value, meta, errors, errorMessage });
-      fieldGroup.fields.value = [...fieldGroup.fields.value, fieldGroupData];
-    }
-
-    onBeforeUnmount(() => {
-      if (fieldGroup && fieldGroupData) {
-        fieldGroup.fields.value = fieldGroup.fields.value.filter(
-          (_fieldGroupData: FieldContextForFieldGroup) => _fieldGroupData !== fieldGroupData,
-        );
-      }
     });
 
     function slotProps(): FieldSlotProps {
