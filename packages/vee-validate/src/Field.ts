@@ -1,4 +1,14 @@
-import { h, defineComponent, toRef, SetupContext, resolveDynamicComponent, computed, PropType, VNode } from 'vue';
+import {
+  h,
+  defineComponent,
+  toRef,
+  SetupContext,
+  resolveDynamicComponent,
+  computed,
+  PropType,
+  VNode,
+  UnwrapRef,
+} from 'vue';
 import { getConfig } from './config';
 import { RuleExpression, useField } from './useField';
 import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent } from './utils';
@@ -236,6 +246,10 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
     }
 
     ctx.expose({
+      value,
+      meta,
+      errors,
+      errorMessage,
       setErrors,
       setTouched,
       reset: resetField,
@@ -296,6 +310,10 @@ function resolveInitialValue(props: Record<string, unknown>, ctx: SetupContext<a
 
 export const Field = FieldImpl as typeof FieldImpl & {
   new (): {
+    value: UnwrapRef<FieldContext['value']>;
+    meta: UnwrapRef<FieldContext['meta']>;
+    errors: UnwrapRef<FieldContext['errors']>;
+    errorMessage: UnwrapRef<FieldContext['errorMessage']>;
     setErrors: FieldContext['setErrors'];
     setTouched: FieldContext['setTouched'];
     reset: FieldContext['resetField'];
