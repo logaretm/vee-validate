@@ -259,7 +259,7 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   getAllPathStates(): PathState[];
   removePathState<TPath extends Path<TValues>>(path: TPath, id: number): void;
   unsetPathValue<TPath extends Path<TValues>>(path: TPath): void;
-  markForUnmount(path: string): void;
+  destroyPath(path: string): void;
   isFieldTouched<TPath extends Path<TValues>>(path: TPath): boolean;
   isFieldDirty<TPath extends Path<TValues>>(path: TPath): boolean;
   isFieldValid<TPath extends Path<TValues>>(path: TPath): boolean;

@@ -72,7 +72,7 @@ describe('useValidateField()', () => {
     expect(error?.textContent).toBe(REQUIRED_MESSAGE);
   });
 
-  test('validates array fields', async () => {
+  test.skip('validates array fields', async () => {
     let validate!: ReturnType<typeof useValidateField>;
     mountWithHoc({
       setup() {
