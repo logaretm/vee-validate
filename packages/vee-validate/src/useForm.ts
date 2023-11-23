@@ -272,11 +272,9 @@ export function useForm<
   ): PathState<TValue> {
     const initialValue = computed(() => getFromPath(initialValues.value, toValue(path)));
     const pathStateExists = pathStateLookup.value[toValue(path)];
-    if (pathStateExists) {
-      if (config?.type === 'checkbox' || config?.type === 'radio') {
-        pathStateExists.multiple = true;
-      }
-
+    const isCheckboxOrRadio = config?.type === 'checkbox' || config?.type === 'radio';
+    if (pathStateExists && isCheckboxOrRadio) {
+      pathStateExists.multiple = true;
       const id = FIELD_ID_COUNTER++;
       if (Array.isArray(pathStateExists.id)) {
         pathStateExists.id.push(id);
@@ -561,13 +559,16 @@ export function useForm<
     }
   }
 
-  function markForUnmount(path: string) {
-    return mutateAllPathState(s => {
-      if (s.path.startsWith(path)) {
-        keysOf(s.__flags.pendingUnmount).forEach(id => {
-          s.__flags.pendingUnmount[id] = true;
-        });
+  function destroyPath(path: string) {
+    keysOf(pathStateLookup.value).forEach(key => {
+      if (key.startsWith(path)) {
+        delete pathStateLookup.value[key];
       }
+    });
+
+    pathStates.value = pathStates.value.filter(s => !s.path.startsWith(path));
+    nextTick(() => {
+      rebuildPathLookup();
     });
   }
 
@@ -606,7 +607,7 @@ export function useForm<
     removePathState,
     initialValues: initialValues as Ref<TValues>,
     getAllPathStates: () => pathStates.value,
-    markForUnmount,
+    destroyPath,
     isFieldTouched,
     isFieldDirty,
     isFieldValid,

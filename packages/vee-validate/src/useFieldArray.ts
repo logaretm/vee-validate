@@ -125,7 +125,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRefOrGetter<stri
     const newValue = [...pathValue];
     newValue.splice(idx, 1);
     const fieldPath = pathName + `[${idx}]`;
-    form.markForUnmount(fieldPath);
+    form.destroyPath(fieldPath);
     form.unsetInitialValue(fieldPath);
     setInPath(form.values, pathName, newValue);
     fields.value.splice(idx, 1);
