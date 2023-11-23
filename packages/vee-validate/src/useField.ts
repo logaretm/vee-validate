@@ -364,6 +364,26 @@ function _useField<TValue = unknown>(
     }
   }
 
+  let fieldGroupData: FieldContextForFieldGroup | null = null;
+
+  if (fieldGroup) {
+    fieldGroupData = markRaw({
+      value: field.value,
+      meta: field.meta,
+      errors: field.errors,
+      errorMessage: field.errorMessage,
+    });
+    fieldGroup.fields.value = [...fieldGroup.fields.value, fieldGroupData];
+
+    onBeforeUnmount(() => {
+      if (fieldGroup && fieldGroupData) {
+        fieldGroup.fields.value = fieldGroup.fields.value.filter(
+          (_fieldGroupData: FieldContextForFieldGroup) => _fieldGroupData !== fieldGroupData,
+        );
+      }
+    });
+  }
+
   // if no associated form return the field API immediately
   if (!form) {
     return field;
@@ -423,18 +443,6 @@ function _useField<TValue = unknown>(
     }
   });
 
-  let fieldGroupData: FieldContextForFieldGroup | null = null;
-
-  if (fieldGroup) {
-    fieldGroupData = markRaw({
-      value: field.value,
-      meta: field.meta,
-      errors: field.errors,
-      errorMessage: field.errorMessage,
-    });
-    fieldGroup.fields.value = [...fieldGroup.fields.value, fieldGroupData];
-  }
-
   onBeforeUnmount(() => {
     const shouldKeepValue = toValue(field.keepValueOnUnmount) ?? toValue(form.keepValuesOnUnmount);
     const path = toValue(name);
@@ -470,12 +478,6 @@ function _useField<TValue = unknown>(
     }
 
     form.removePathState(path, id);
-
-    if (fieldGroup && fieldGroupData) {
-      fieldGroup.fields.value = fieldGroup.fields.value.filter(
-        (_fieldGroupData: FieldContextForFieldGroup) => _fieldGroupData !== fieldGroupData,
-      );
-    }
   });
 
   return field;

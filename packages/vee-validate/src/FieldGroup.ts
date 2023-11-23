@@ -14,6 +14,7 @@ const FieldGroupImpl = /** #__PURE__ */ defineComponent({
   },
   setup(props: any, ctx: any) {
     const { meta } = useFieldGroup(() => props.withChildFieldGroups);
+
     ctx.expose({
       meta,
     });
