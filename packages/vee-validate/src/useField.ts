@@ -13,6 +13,8 @@ import {
   MaybeRef,
   MaybeRefOrGetter,
   unref,
+  inject,
+  markRaw,
 } from 'vue';
 import { klona as deepCopy } from 'klona/full';
 import { validate as validateValue } from './validate';
@@ -48,7 +50,6 @@ import { isCallable, isObject, normalizeFormPath } from '../../shared';
 import { FieldContextKey, FieldGroupContextKey, FormContextKey, IS_ABSENT } from './symbols';
 import { useFieldState } from './useFieldState';
 import { refreshInspector, registerSingleFieldWithDevtools } from './devtools';
-import { inject, markRaw } from 'vue/dist/vue';
 
 export interface FieldOptions<TValue = unknown> {
   initialValue?: MaybeRef<TValue>;
