@@ -1,7 +1,8 @@
-import { InferType, Schema, ValidateOptions, ValidationError } from 'yup';
+import { AnyObjectSchema, InferType, Schema, SchemaFieldDescription, ValidateOptions, ValidationError } from 'yup';
 import { TypedSchema, TypedSchemaError } from 'vee-validate';
 import { PartialDeep } from 'type-fest';
 import { isObject, merge } from '../../shared';
+import { cleanupNonNestedPath, isNotNestedPath } from '@/vee-validate';
 
 export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchema>, TInput = PartialDeep<TOutput>>(
   yupSchema: TSchema,
@@ -60,7 +61,55 @@ export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchem
         return values;
       }
     },
+    describe(path) {
+      if (!isObjectSchema(yupSchema)) {
+        return {};
+      }
+
+      const description = getDescriptionForPath(path, yupSchema);
+      if (!description || !('tests' in description)) {
+        return {};
+      }
+
+      const required = description?.tests?.some(t => t.name === 'required') || false;
+
+      return {
+        required,
+      };
+    },
   };
 
   return schema;
+}
+
+function getDescriptionForPath(path: string, schema: AnyObjectSchema): SchemaFieldDescription | null {
+  if (!isObjectSchema(schema)) {
+    return null;
+  }
+
+  if (isNotNestedPath(path)) {
+    const field = schema.fields[cleanupNonNestedPath(path)];
+
+    return field?.describe() || null;
+  }
+
+  const paths = (path || '').split(/\.|\[(\d+)\]/).filter(Boolean);
+
+  let currentSchema = schema;
+  for (let i = 0; i < paths.length; i++) {
+    const p = paths[i];
+    if (isObjectSchema(currentSchema) && p in currentSchema.fields) {
+      currentSchema = currentSchema.fields[p] as AnyObjectSchema;
+    }
+
+    if (i === paths.length - 1) {
+      return currentSchema.describe();
+    }
+  }
+
+  return null;
+}
+
+function isObjectSchema(schema: unknown): schema is AnyObjectSchema {
+  return isObject(schema) && schema.type === 'object';
 }

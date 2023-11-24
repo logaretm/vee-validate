@@ -298,6 +298,9 @@ export function useForm<
       pending: false,
       valid: true,
       validated: !!initialErrors[pathValue]?.length,
+      required: computed(() =>
+        isTypedSchema(schema) ? (schema as TypedSchema).describe?.(toValue(path)).required ?? false : false,
+      ),
       initialValue,
       errors: shallowRef([]),
       bails: config?.bails ?? false,
