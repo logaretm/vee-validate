@@ -416,3 +416,61 @@ test('default values should not be undefined', async () => {
   await expect(initialSpy).toHaveBeenCalledTimes(1);
   await expect(initialSpy).toHaveBeenLastCalledWith(expect.objectContaining({}));
 });
+
+test('reports required state on fields', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema(
+        z.object({
+          name: z.string().optional(),
+          email: z.string(),
+          nested: z.object({
+            arr: z.array(z.object({ req: z.string(), nreq: z.string().optional() })),
+            obj: z.object({
+              req: z.string(),
+              nreq: z.string().optional(),
+            }),
+          }),
+        }),
+      );
+
+      useForm({
+        validationSchema: schema,
+      });
+
+      const { meta: name } = useField('name');
+      const { meta: email } = useField('email');
+      const { meta: req } = useField('nested.obj.req');
+      const { meta: nreq } = useField('nested.obj.nreq');
+      const { meta: arrReq } = useField('nested.arr.0.req');
+      const { meta: arrNreq } = useField('nested.arr.1.nreq');
+
+      metaSpy({
+        name: name.required,
+        email: email.required,
+        objReq: req.required,
+        objNreq: nreq.required,
+        arrReq: arrReq.required,
+        arrNreq: arrNreq.required,
+      });
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      name: false,
+      email: true,
+      objReq: true,
+      objNreq: false,
+      arrReq: true,
+      arrNreq: false,
+    }),
+  );
+});
