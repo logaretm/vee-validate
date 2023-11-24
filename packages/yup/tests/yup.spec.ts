@@ -330,6 +330,7 @@ test('reports required state on fields', async () => {
           name: yup.string(),
           email: yup.string().required(),
           nested: yup.object({
+            arr: yup.array().of(yup.object({ req: yup.string().required(), nreq: yup.string() })),
             obj: yup.object({
               req: yup.string().required(),
               nreq: yup.string(),
@@ -346,12 +347,16 @@ test('reports required state on fields', async () => {
       const { meta: email } = useField('email');
       const { meta: req } = useField('nested.obj.req');
       const { meta: nreq } = useField('nested.obj.nreq');
+      const { meta: arrReq } = useField('nested.arr.0.req');
+      const { meta: arrNreq } = useField('nested.arr.1.nreq');
 
       metaSpy({
         name: name.required,
         email: email.required,
         objReq: req.required,
         objNreq: nreq.required,
+        arrReq: arrReq.required,
+        arrNreq: arrNreq.required,
       });
 
       return {
@@ -368,6 +373,8 @@ test('reports required state on fields', async () => {
       email: true,
       objReq: true,
       objNreq: false,
+      arrReq: true,
+      arrNreq: false,
     }),
   );
 });

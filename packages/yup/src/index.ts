@@ -1,7 +1,15 @@
-import { AnyObjectSchema, InferType, Schema, SchemaFieldDescription, ValidateOptions, ValidationError } from 'yup';
+import {
+  AnyObjectSchema,
+  ArraySchema,
+  InferType,
+  Schema,
+  SchemaFieldDescription,
+  ValidateOptions,
+  ValidationError,
+} from 'yup';
 import { TypedSchema, TypedSchemaError } from 'vee-validate';
 import { PartialDeep } from 'type-fest';
-import { isObject, merge } from '../../shared';
+import { isIndex, isObject, merge } from '../../shared';
 import { cleanupNonNestedPath, isNotNestedPath } from '@/vee-validate';
 
 export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchema>, TInput = PartialDeep<TOutput>>(
@@ -100,6 +108,8 @@ function getDescriptionForPath(path: string, schema: AnyObjectSchema): SchemaFie
     const p = paths[i];
     if (isObjectSchema(currentSchema) && p in currentSchema.fields) {
       currentSchema = currentSchema.fields[p] as AnyObjectSchema;
+    } else if (isIndex(p) && isArraySchema(currentSchema)) {
+      currentSchema = currentSchema.innerType as AnyObjectSchema;
     }
 
     if (i === paths.length - 1) {
@@ -112,4 +122,8 @@ function getDescriptionForPath(path: string, schema: AnyObjectSchema): SchemaFie
 
 function isObjectSchema(schema: unknown): schema is AnyObjectSchema {
   return isObject(schema) && schema.type === 'object';
+}
+
+function isArraySchema(schema: unknown): schema is ArraySchema<any, any> {
+  return isObject(schema) && schema.type === 'array';
 }
