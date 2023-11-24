@@ -55,7 +55,7 @@ export function toTypedSchema<
       }
     },
     describe(path) {
-      const description = getDescriptionForPath(path, zodSchema);
+      const description = getSchemaForPath(path, zodSchema);
       if (!description) {
         return {};
       }
@@ -125,7 +125,7 @@ const toFormValidator = toTypedSchema;
 
 export { toFieldValidator, toFormValidator };
 
-function getDescriptionForPath(path: string, schema: ZodSchema): ZodSchema | null {
+function getSchemaForPath(path: string, schema: ZodSchema): ZodSchema | null {
   if (!isObjectSchema(schema)) {
     return null;
   }

@@ -10,8 +10,10 @@ import {
   Issue,
   getDefault,
   optional,
+  ArraySchema,
+  ObjectSchema,
 } from 'valibot';
-import { isObject, merge, normalizeFormPath } from '../../shared';
+import { isIndex, isObject, merge, normalizeFormPath } from '../../shared';
 
 export function toTypedSchema<
   TSchema extends BaseSchema | BaseSchemaAsync,
@@ -53,6 +55,18 @@ export function toTypedSchema<
 
       return values;
     },
+    describe(path) {
+      const description = getSchemaForPath(path, valibotSchema);
+      if (!description) {
+        return {};
+      }
+
+      const isOptional = (description as any).type === 'optional';
+
+      return {
+        required: !isOptional,
+      };
+    },
   };
 
   return schema;
@@ -78,4 +92,38 @@ function processIssues(issues: Issue[], errors: Record<string, TypedSchemaError>
 
     errors[path].errors.push(issue.message);
   });
+}
+
+function getSchemaForPath(path: string, schema: any): BaseSchema | null {
+  if (!isObjectSchema(schema)) {
+    return null;
+  }
+
+  const paths = (path || '').split(/\.|\[(\d+)\]/).filter(Boolean);
+
+  let currentSchema: BaseSchema = schema;
+  for (let i = 0; i < paths.length; i++) {
+    const p = paths[i];
+    if (isObjectSchema(currentSchema) && p in currentSchema.entries) {
+      currentSchema = currentSchema.entries[p];
+    }
+
+    if (isIndex(p) && isArraySchema(currentSchema)) {
+      currentSchema = currentSchema.item;
+    }
+
+    if (i === paths.length - 1) {
+      return currentSchema;
+    }
+  }
+
+  return null;
+}
+
+function isArraySchema(schema: unknown): schema is ArraySchema<any> {
+  return isObject(schema) && schema.type === 'array';
+}
+
+function isObjectSchema(schema: unknown): schema is ObjectSchema<any> {
+  return isObject(schema) && schema.type === 'object';
 }

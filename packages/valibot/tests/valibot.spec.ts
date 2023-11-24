@@ -1,6 +1,6 @@
 import { Ref } from 'vue';
 import { useField, useForm } from '@/vee-validate';
-import { string, minLength, email as emailV, object, coerce, any, number, withDefault, optional } from 'valibot';
+import { string, minLength, email as emailV, object, coerce, any, number, withDefault, optional, array } from 'valibot';
 import { toTypedSchema } from '@/valibot';
 import { mountWithHoc, flushPromises, setValue } from '../../vee-validate/tests/helpers';
 
@@ -364,4 +364,62 @@ describe('valibot', () => {
     await expect(initialSpy).toHaveBeenCalledTimes(1);
     await expect(initialSpy).toHaveBeenLastCalledWith(expect.objectContaining({}));
   });
+});
+
+test('reports required state on fields', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema(
+        object({
+          name: optional(string()),
+          email: string(),
+          nested: object({
+            arr: array(object({ req: string(), nreq: optional(string()) })),
+            obj: object({
+              req: string(),
+              nreq: optional(string()),
+            }),
+          }),
+        }),
+      );
+
+      useForm({
+        validationSchema: schema,
+      });
+
+      const { meta: name } = useField('name');
+      const { meta: email } = useField('email');
+      const { meta: req } = useField('nested.obj.req');
+      const { meta: nreq } = useField('nested.obj.nreq');
+      const { meta: arrReq } = useField('nested.arr.0.req');
+      const { meta: arrNreq } = useField('nested.arr.1.nreq');
+
+      metaSpy({
+        name: name.required,
+        email: email.required,
+        objReq: req.required,
+        objNreq: nreq.required,
+        arrReq: arrReq.required,
+        arrNreq: arrNreq.required,
+      });
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      name: false,
+      email: true,
+      objReq: true,
+      objNreq: false,
+      arrReq: true,
+      arrNreq: false,
+    }),
+  );
 });
