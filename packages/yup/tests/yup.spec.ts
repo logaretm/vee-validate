@@ -430,7 +430,7 @@ test('reports required false for non-existent fields', async () => {
   );
 });
 
-test('reports required state single field schemas', async () => {
+test('reports required state for field-level schemas', async () => {
   const metaSpy = vi.fn();
   mountWithHoc({
     setup() {
@@ -457,7 +457,7 @@ test('reports required state single field schemas', async () => {
   );
 });
 
-test('reports required state single field schemas without a form context', async () => {
+test('reports required state for field-level schemas without a form context', async () => {
   const metaSpy = vi.fn();
   mountWithHoc({
     setup() {

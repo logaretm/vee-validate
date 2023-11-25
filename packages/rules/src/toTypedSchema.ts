@@ -35,21 +35,12 @@ export function toTypedSchema<TOutput = any, TInput extends Optional<TOutput> = 
       };
     },
     describe(path) {
-      if (isObject(rawSchema) && path in rawSchema) {
-        const rules = (rawSchema as any)[path];
-        if (typeof rules === 'string') {
-          return {
-            exists: true,
-            required: rules.includes('required'),
-          };
-        }
+      if (!path) {
+        return getDescriptionFromExpression(rawSchema);
+      }
 
-        if (isObject(rules)) {
-          return {
-            exists: true,
-            required: !!rules.required,
-          };
-        }
+      if (isObject(rawSchema) && path in rawSchema) {
+        return getDescriptionFromExpression((rawSchema as any)[path]);
       }
 
       return {
@@ -60,4 +51,25 @@ export function toTypedSchema<TOutput = any, TInput extends Optional<TOutput> = 
   };
 
   return schema;
+}
+
+function getDescriptionFromExpression(rules: string | Record<string, any>) {
+  if (typeof rules === 'string') {
+    return {
+      exists: true,
+      required: rules.includes('required'),
+    };
+  }
+
+  if (isObject(rules)) {
+    return {
+      exists: true,
+      required: !!rules.required,
+    };
+  }
+
+  return {
+    required: false,
+    exists: true,
+  };
 }
