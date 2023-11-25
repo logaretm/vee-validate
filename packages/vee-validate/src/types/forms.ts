@@ -15,13 +15,14 @@ export interface TypedSchemaError {
 }
 export interface TypedSchemaPathDescription {
   required: boolean;
+  exists: boolean;
 }
 
 export interface TypedSchema<TInput = any, TOutput = TInput> {
   __type: 'VVTypedSchema';
   parse(values: TInput): Promise<{ value?: TOutput; errors: TypedSchemaError[] }>;
   cast?(values: Partial<TInput>): TInput;
-  describe?(path: Path<TInput>): Partial<TypedSchemaPathDescription>;
+  describe?(path?: Path<TInput>): Partial<TypedSchemaPathDescription>;
 }
 
 export type InferOutput<TSchema extends TypedSchema> = TSchema extends TypedSchema<any, infer TOutput>
@@ -84,6 +85,7 @@ export interface PathStateConfig {
   label: MaybeRefOrGetter<string | undefined>;
   type: InputType;
   validate: FieldValidator;
+  schema?: TypedSchema;
 }
 
 export interface PathState<TValue = unknown> {

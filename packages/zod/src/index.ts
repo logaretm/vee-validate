@@ -55,6 +55,13 @@ export function toTypedSchema<
       }
     },
     describe(path) {
+      if (!path) {
+        return {
+          required: !zodSchema.isOptional(),
+          exists: true,
+        };
+      }
+
       const description = getSchemaForPath(path, zodSchema);
       if (!description) {
         return {

@@ -56,18 +56,23 @@ export function toTypedSchema<
       return values;
     },
     describe(path) {
-      const description = getSchemaForPath(path, valibotSchema);
-      if (!description) {
+      if (!path) {
+        return {
+          required: !queryOptional(valibotSchema),
+          exists: true,
+        };
+      }
+
+      const pathSchema = getSchemaForPath(path, valibotSchema);
+      if (!pathSchema) {
         return {
           required: false,
           exists: false,
         };
       }
 
-      const isOptional = (description as any).type === 'optional';
-
       return {
-        required: !isOptional,
+        required: !queryOptional(pathSchema),
         exists: true,
       };
     },
@@ -127,6 +132,10 @@ function getSchemaForPath(path: string, schema: any): BaseSchema | null {
   }
 
   return null;
+}
+
+function queryOptional(schema: BaseSchema | BaseSchemaAsync): boolean {
+  return (schema as any).type === 'optional';
 }
 
 function isArraySchema(schema: unknown): schema is ArraySchema<any> {

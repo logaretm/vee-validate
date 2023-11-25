@@ -290,6 +290,19 @@ export function useForm<
 
     const currentValue = computed(() => getFromPath(formValues, toValue(path)));
     const pathValue = toValue(path);
+    const isRequired = computed(() => {
+      if (isTypedSchema(schema)) {
+        return (schema as TypedSchema).describe?.(toValue(path)).required ?? false;
+      }
+
+      // Path own schema
+      if (isTypedSchema(config?.schema)) {
+        return (config?.schema as TypedSchema).describe?.().required ?? false;
+      }
+
+      return false;
+    });
+
     const id = FIELD_ID_COUNTER++;
     const state = reactive({
       id,
@@ -298,9 +311,7 @@ export function useForm<
       pending: false,
       valid: true,
       validated: !!initialErrors[pathValue]?.length,
-      required: computed(() =>
-        isTypedSchema(schema) ? (schema as TypedSchema).describe?.(toValue(path)).required ?? false : false,
-      ),
+      required: isRequired,
       initialValue,
       errors: shallowRef([]),
       bails: config?.bails ?? false,

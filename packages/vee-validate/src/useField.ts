@@ -150,6 +150,7 @@ function _useField<TValue = unknown>(
     label,
     type,
     validate: validator.value ? validate : undefined,
+    schema: isTypedSchema(rules) ? (rules as any) : undefined,
   });
 
   const errorMessage = computed(() => errors.value[0]);

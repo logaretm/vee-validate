@@ -7,7 +7,13 @@ import {
   ValidateOptions,
   ValidationError,
 } from 'yup';
-import { TypedSchema, TypedSchemaError, isNotNestedPath, cleanupNonNestedPath } from 'vee-validate';
+import {
+  TypedSchema,
+  TypedSchemaError,
+  isNotNestedPath,
+  cleanupNonNestedPath,
+  TypedSchemaPathDescription,
+} from 'vee-validate';
 import { PartialDeep } from 'type-fest';
 import { isIndex, isObject, merge } from '../../shared';
 
@@ -69,24 +75,39 @@ export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchem
       }
     },
     describe(path) {
+      if (!path) {
+        return getDescriptionFromYupDescription(yupSchema.describe());
+      }
+
       const description = getDescriptionForPath(path, yupSchema);
-      if (!description || !('tests' in description)) {
+      if (!description) {
         return {
           required: false,
           exists: false,
         };
       }
 
-      const required = description?.tests?.some(t => t.name === 'required') || false;
-
-      return {
-        required,
-        exists: true,
-      };
+      return getDescriptionFromYupDescription(description);
     },
   };
 
   return schema;
+}
+
+function getDescriptionFromYupDescription(desc: SchemaFieldDescription): TypedSchemaPathDescription {
+  if ('tests' in desc) {
+    const required = desc?.tests?.some(t => t.name === 'required') || false;
+
+    return {
+      required,
+      exists: true,
+    };
+  }
+
+  return {
+    required: false,
+    exists: false,
+  };
 }
 
 function getDescriptionForPath(path: string, schema: Schema): SchemaFieldDescription | null {
