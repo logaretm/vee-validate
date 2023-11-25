@@ -1,5 +1,5 @@
 import { PartialDeep } from 'type-fest';
-import type { TypedSchema, TypedSchemaError } from 'vee-validate';
+import { cleanupNonNestedPath, isNotNestedPath, type TypedSchema, type TypedSchemaError } from 'vee-validate';
 import {
   Output,
   Input,
@@ -58,13 +58,17 @@ export function toTypedSchema<
     describe(path) {
       const description = getSchemaForPath(path, valibotSchema);
       if (!description) {
-        return {};
+        return {
+          required: false,
+          exists: false,
+        };
       }
 
       const isOptional = (description as any).type === 'optional';
 
       return {
         required: !isOptional,
+        exists: true,
       };
     },
   };
@@ -99,21 +103,26 @@ function getSchemaForPath(path: string, schema: any): BaseSchema | null {
     return null;
   }
 
+  if (isNotNestedPath(path)) {
+    return schema.entries[cleanupNonNestedPath(path)];
+  }
+
   const paths = (path || '').split(/\.|\[(\d+)\]/).filter(Boolean);
 
   let currentSchema: BaseSchema = schema;
-  for (let i = 0; i < paths.length; i++) {
+  for (let i = 0; i <= paths.length; i++) {
     const p = paths[i];
-    if (isObjectSchema(currentSchema) && p in currentSchema.entries) {
-      currentSchema = currentSchema.entries[p];
+    if (!p || !currentSchema) {
+      return currentSchema;
+    }
+
+    if (isObjectSchema(currentSchema)) {
+      currentSchema = currentSchema.entries[p] || null;
+      continue;
     }
 
     if (isIndex(p) && isArraySchema(currentSchema)) {
       currentSchema = currentSchema.item;
-    }
-
-    if (i === paths.length - 1) {
-      return currentSchema;
     }
   }
 

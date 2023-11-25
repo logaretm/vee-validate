@@ -12,7 +12,7 @@ import {
   ZodFirstPartyTypeKind,
 } from 'zod';
 import { PartialDeep } from 'type-fest';
-import type { TypedSchema, TypedSchemaError } from 'vee-validate';
+import { isNotNestedPath, type TypedSchema, type TypedSchemaError, cleanupNonNestedPath } from 'vee-validate';
 import { isIndex, isObject, merge, normalizeFormPath } from '../../shared';
 
 /**
@@ -57,11 +57,15 @@ export function toTypedSchema<
     describe(path) {
       const description = getSchemaForPath(path, zodSchema);
       if (!description) {
-        return {};
+        return {
+          required: false,
+          exists: false,
+        };
       }
 
       return {
         required: !description.isOptional(),
+        exists: true,
       };
     },
   };
@@ -130,21 +134,26 @@ function getSchemaForPath(path: string, schema: ZodSchema): ZodSchema | null {
     return null;
   }
 
+  if (isNotNestedPath(path)) {
+    return schema.shape[cleanupNonNestedPath(path)];
+  }
+
   const paths = (path || '').split(/\.|\[(\d+)\]/).filter(Boolean);
 
   let currentSchema: ZodSchema = schema;
-  for (let i = 0; i < paths.length; i++) {
+  for (let i = 0; i <= paths.length; i++) {
     const p = paths[i];
-    if (isObjectSchema(currentSchema) && p in currentSchema.shape) {
-      currentSchema = currentSchema.shape[p];
+    if (!p || !currentSchema) {
+      return currentSchema;
+    }
+
+    if (isObjectSchema(currentSchema)) {
+      currentSchema = currentSchema.shape[p] || null;
+      continue;
     }
 
     if (isIndex(p) && isArraySchema(currentSchema)) {
       currentSchema = (currentSchema._def as ZodArrayDef).type;
-    }
-
-    if (i === paths.length - 1) {
-      return currentSchema;
     }
   }
 

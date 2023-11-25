@@ -372,6 +372,7 @@ test('reports required state on fields', async () => {
     setup() {
       const schema = toTypedSchema(
         object({
+          'not.nested.path': string(),
           name: optional(string()),
           email: string(),
           nested: object({
@@ -394,6 +395,7 @@ test('reports required state on fields', async () => {
       const { meta: nreq } = useField('nested.obj.nreq');
       const { meta: arrReq } = useField('nested.arr.0.req');
       const { meta: arrNreq } = useField('nested.arr.1.nreq');
+      const { meta: notNested } = useField('[not.nested.path]');
 
       metaSpy({
         name: name.required,
@@ -402,6 +404,7 @@ test('reports required state on fields', async () => {
         objNreq: nreq.required,
         arrReq: arrReq.required,
         arrNreq: arrNreq.required,
+        notNested: notNested.required,
       });
 
       return {
@@ -420,6 +423,52 @@ test('reports required state on fields', async () => {
       objNreq: false,
       arrReq: true,
       arrNreq: false,
+      notNested: true,
+    }),
+  );
+});
+
+test('reports required false for non-existent fields', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema(
+        object({
+          name: string(),
+          nested: object({
+            arr: array(object({ prop: string() })),
+            obj: object({}),
+          }),
+        }),
+      );
+
+      useForm({
+        validationSchema: schema,
+      });
+
+      const { meta: email } = useField('email');
+      const { meta: req } = useField('nested.obj.req');
+      const { meta: arrReq } = useField('nested.arr.0.req');
+
+      metaSpy({
+        email: email.required,
+        objReq: req.required,
+        arrReq: arrReq.required,
+      });
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      email: false,
+      objReq: false,
+      arrReq: false,
     }),
   );
 });
