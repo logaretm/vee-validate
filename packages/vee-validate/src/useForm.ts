@@ -351,7 +351,9 @@ export function useForm<
 
   const validateSchema = withLatest(
     async (mode: SchemaValidationMode) => {
-      return (await mode) === 'silent' ? debouncedSilentValidation() : debouncedValidation();
+      return (await (mode === 'silent'
+        ? debouncedSilentValidation()
+        : debouncedValidation())) as FormValidationResult<TValues>;
     },
     (formResult, [mode]) => {
       // fields by id lookup
@@ -364,15 +366,19 @@ export function useForm<
       ].sort() as string[];
 
       // aggregates the paths into a single result object while applying the results on the fields
-      return paths.reduce(
+      const results = paths.reduce(
         (validation, _path) => {
-          const path = _path as Path<TValues>;
-          const pathState = findPathState(path) || findHoistedPath(path);
-          const messages = (formResult.results[path] || { errors: [] as string[] }).errors;
-          const fieldResult = {
-            errors: messages,
-            valid: !messages.length,
-          };
+          const expectedPath = _path as Path<TValues>;
+          const pathState = findPathState(expectedPath) || findHoistedPath(expectedPath);
+          const messages = formResult.results[expectedPath]?.errors || [];
+          // This is the real path of the field, because it might've been a hoisted field
+          const path = (toValue(pathState?.path) || expectedPath) as Path<TValues>;
+          // It is possible that multiple paths are collected across loops
+          // We want to merge them to avoid overriding any iteration's results
+          const fieldResult = mergeValidationResults(
+            { errors: messages, valid: !messages.length },
+            validation.results[path],
+          );
           validation.results[path] = fieldResult;
           if (!fieldResult.valid) {
             validation.errors[path] = fieldResult.errors[0];
@@ -406,6 +412,8 @@ export function useForm<
         },
         { valid: formResult.valid, results: {}, errors: {} } as FormValidationResult<TValues>,
       );
+
+      return results;
     },
   );
 
@@ -1181,5 +1189,16 @@ function useFormInitialValues<TValues extends GenericObject>(
     initialValues,
     originalInitialValues,
     setInitialValues,
+  };
+}
+
+function mergeValidationResults(a: ValidationResult, b?: ValidationResult): ValidationResult {
+  if (!b) {
+    return a;
+  }
+
+  return {
+    valid: a.valid && b.valid,
+    errors: [...a.errors, ...b.errors],
   };
 }

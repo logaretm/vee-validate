@@ -175,7 +175,9 @@ function _useField<TValue = unknown>(
 
   async function validateCurrentValue(mode: SchemaValidationMode) {
     if (form?.validateSchema) {
-      return (await form.validateSchema(mode)).results[toValue(name)] ?? { valid: true, errors: [] };
+      const { results } = await form.validateSchema(mode);
+
+      return results[toValue(name)] ?? { valid: true, errors: [] };
     }
 
     if (validator.value) {
@@ -199,7 +201,7 @@ function _useField<TValue = unknown>(
     },
     result => {
       if (flags.pendingUnmount[field.id]) {
-        return;
+        return result;
       }
 
       setState({ errors: result.errors });
