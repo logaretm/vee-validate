@@ -62,6 +62,7 @@ import {
   normalizeErrorItem,
   omit,
   debounceNextTick,
+  makeDestructurable,
 } from './utils';
 import { FormContextKey } from './symbols';
 import { validateTypedSchema, validateObjectSchema } from './validate';
@@ -1021,10 +1022,15 @@ export function useForm<
       return base as BaseFieldProps & TExtras;
     });
 
-    return [createModel(path, () => evalConfig().validateOnModelUpdate ?? true), props] as [
-      Ref<TValue>,
-      Ref<BaseFieldProps & TExtras>,
-    ];
+    const model = createModel(path, () => evalConfig().validateOnModelUpdate ?? true);
+
+    return makeDestructurable(
+      {
+        model,
+        props,
+      },
+      [model, props] as [Ref<TValue>, Ref<BaseFieldProps & TExtras>],
+    );
   }
 
   return {

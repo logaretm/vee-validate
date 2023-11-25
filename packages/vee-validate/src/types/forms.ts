@@ -328,5 +328,5 @@ export interface FormContext<TValues extends GenericObject = GenericObject, TOut
   >(
     path: MaybeRefOrGetter<TPath>,
     config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>,
-  ): [Ref<TValue>, Ref<BaseFieldProps & TExtras>];
+  ): { model: Ref<TValue>; props: Ref<BaseFieldProps & TExtras> } & [Ref<TValue>, Ref<BaseFieldProps & TExtras>];
 }
