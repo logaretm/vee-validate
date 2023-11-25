@@ -320,3 +320,112 @@ test('uses yup default values for initial values', async () => {
     }),
   );
 });
+
+test('reports required state on fields', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema(
+        yup.object({
+          'not.nested.req': yup.string().required(),
+          name: yup.string(),
+          email: yup.string().required(),
+          nested: yup.object({
+            arr: yup.array().of(yup.object({ req: yup.string().required(), nreq: yup.string() })),
+            obj: yup.object({
+              req: yup.string().required(),
+              nreq: yup.string(),
+            }),
+          }),
+        }),
+      );
+
+      useForm({
+        validationSchema: schema,
+      });
+
+      const { meta: name } = useField('name');
+      const { meta: email } = useField('email');
+      const { meta: req } = useField('nested.obj.req');
+      const { meta: nreq } = useField('nested.obj.nreq');
+      const { meta: arrReq } = useField('nested.arr.0.req');
+      const { meta: arrNreq } = useField('nested.arr.1.nreq');
+      const { meta: nonNested } = useField('[not.nested.req]');
+
+      metaSpy({
+        name: name.required,
+        email: email.required,
+        objReq: req.required,
+        objNreq: nreq.required,
+        arrReq: arrReq.required,
+        arrNreq: arrNreq.required,
+        nonNested: nonNested.required,
+      });
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      name: false,
+      email: true,
+      objReq: true,
+      objNreq: false,
+      arrReq: true,
+      arrNreq: false,
+      nonNested: true,
+    }),
+  );
+});
+
+test('reports required false for non-existent fields', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema(
+        yup.object({
+          name: yup.string(),
+          nested: yup.object({
+            arr: yup.array().of(yup.object({ prop: yup.string().required() })),
+            obj: yup.object({
+              req: yup.string().required(),
+            }),
+          }),
+        }),
+      );
+
+      useForm({
+        validationSchema: schema,
+      });
+
+      const { meta: email } = useField('email');
+      const { meta: req } = useField('nested.req');
+      const { meta: arrReq } = useField('nested.arr.0.req');
+
+      metaSpy({
+        email: email.required,
+        objReq: req.required,
+        arrReq: arrReq.required,
+      });
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      email: false,
+      objReq: false,
+      arrReq: false,
+    }),
+  );
+});

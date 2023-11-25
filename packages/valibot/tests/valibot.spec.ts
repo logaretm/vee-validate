@@ -1,6 +1,6 @@
 import { Ref } from 'vue';
 import { useField, useForm } from '@/vee-validate';
-import { string, minLength, email as emailV, object, coerce, any, number, withDefault, optional } from 'valibot';
+import { string, minLength, email as emailV, object, coerce, any, number, withDefault, optional, array } from 'valibot';
 import { toTypedSchema } from '@/valibot';
 import { mountWithHoc, flushPromises, setValue } from '../../vee-validate/tests/helpers';
 
@@ -364,4 +364,111 @@ describe('valibot', () => {
     await expect(initialSpy).toHaveBeenCalledTimes(1);
     await expect(initialSpy).toHaveBeenLastCalledWith(expect.objectContaining({}));
   });
+});
+
+test('reports required state on fields', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema(
+        object({
+          'not.nested.path': string(),
+          name: optional(string()),
+          email: string(),
+          nested: object({
+            arr: array(object({ req: string(), nreq: optional(string()) })),
+            obj: object({
+              req: string(),
+              nreq: optional(string()),
+            }),
+          }),
+        }),
+      );
+
+      useForm({
+        validationSchema: schema,
+      });
+
+      const { meta: name } = useField('name');
+      const { meta: email } = useField('email');
+      const { meta: req } = useField('nested.obj.req');
+      const { meta: nreq } = useField('nested.obj.nreq');
+      const { meta: arrReq } = useField('nested.arr.0.req');
+      const { meta: arrNreq } = useField('nested.arr.1.nreq');
+      const { meta: notNested } = useField('[not.nested.path]');
+
+      metaSpy({
+        name: name.required,
+        email: email.required,
+        objReq: req.required,
+        objNreq: nreq.required,
+        arrReq: arrReq.required,
+        arrNreq: arrNreq.required,
+        notNested: notNested.required,
+      });
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      name: false,
+      email: true,
+      objReq: true,
+      objNreq: false,
+      arrReq: true,
+      arrNreq: false,
+      notNested: true,
+    }),
+  );
+});
+
+test('reports required false for non-existent fields', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema(
+        object({
+          name: string(),
+          nested: object({
+            arr: array(object({ prop: string() })),
+            obj: object({}),
+          }),
+        }),
+      );
+
+      useForm({
+        validationSchema: schema,
+      });
+
+      const { meta: email } = useField('email');
+      const { meta: req } = useField('nested.obj.req');
+      const { meta: arrReq } = useField('nested.arr.0.req');
+
+      metaSpy({
+        email: email.required,
+        objReq: req.required,
+        arrReq: arrReq.required,
+      });
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      email: false,
+      objReq: false,
+      arrReq: false,
+    }),
+  );
 });

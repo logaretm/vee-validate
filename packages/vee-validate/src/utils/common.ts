@@ -17,7 +17,7 @@ import { isContainerValue, isEmptyContainer, isEqual, isNotNestedPath } from './
 import { GenericObject, MaybePromise } from '../types';
 import { FormContextKey, FieldContextKey } from '../symbols';
 
-function cleanupNonNestedPath(path: string) {
+export function cleanupNonNestedPath(path: string) {
   if (isNotNestedPath(path)) {
     return path.replace(/\[|\]/gi, '');
   }

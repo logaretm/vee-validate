@@ -1,6 +1,6 @@
 import { keysOf } from '../../vee-validate/src/utils';
 import { TypedSchema, RawFormSchema, validateObject, TypedSchemaError, validate } from 'vee-validate';
-import { Optional } from '../../shared';
+import { Optional, isObject } from '../../shared';
 
 export function toTypedSchema<TOutput = any, TInput extends Optional<TOutput> = Optional<TOutput>>(
   rawSchema: RawFormSchema<TInput> | string,
@@ -32,6 +32,29 @@ export function toTypedSchema<TOutput = any, TInput extends Optional<TOutput> = 
 
           return error;
         }),
+      };
+    },
+    describe(path) {
+      if (isObject(rawSchema) && path in rawSchema) {
+        const rules = (rawSchema as any)[path];
+        if (typeof rules === 'string') {
+          return {
+            exists: true,
+            required: rules.includes('required'),
+          };
+        }
+
+        if (isObject(rules)) {
+          return {
+            exists: true,
+            required: !!rules.required,
+          };
+        }
+      }
+
+      return {
+        required: false,
+        exists: false,
       };
     },
   };

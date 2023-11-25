@@ -763,7 +763,7 @@ describe('useForm()', () => {
 
   // #4320
   test('Initial values are merged with previous values to ensure meta.dirty is stable', async () => {
-    let meta!: Ref<FieldMeta<any>>;
+    let meta!: Ref<FormMeta<any>>;
 
     mountWithHoc({
       setup() {
