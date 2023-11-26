@@ -65,6 +65,7 @@ import {
   normalizeErrorItem,
   omit,
   debounceNextTick,
+  normalizeEventValue,
 } from './utils';
 import { FormContextKey } from './symbols';
 import { validateTypedSchema, validateObjectSchema } from './validate';
@@ -1061,10 +1062,29 @@ export function useForm<
   ) {
     const [model, props] = defineField(path, config);
 
+    function onBlur(e: Event) {
+      props.value.onBlur(e);
+    }
+
+    function onInput(e: Event) {
+      const value = normalizeEventValue(e) as PathValue<TValues, TPath>;
+      setFieldValue(toValue(path), value, false);
+      props.value.onInput(e);
+    }
+
+    function onChange(e: Event) {
+      const value = normalizeEventValue(e) as PathValue<TValues, TPath>;
+      setFieldValue(toValue(path), value, false);
+      props.value.onChange(e);
+    }
+
     return computed(() => {
       return {
-        value: model.value,
         ...props.value,
+        onBlur,
+        onInput,
+        onChange,
+        value: model.value,
       };
     });
   }
@@ -1084,10 +1104,15 @@ export function useForm<
     const [model, props] = defineField(path, config);
     const pathState = findPathState(toValue(path)) as PathState<TValue>;
 
+    function onUpdateModelValue(value: TValue) {
+      model.value = value;
+    }
+
     return computed(() => {
       const conf = isCallable(config) ? config(omit(pathState, PRIVATE_PATH_STATE_KEYS)) : config || {};
       return {
         [conf.model || 'modelValue']: model.value,
+        [`onUpdate:${conf.model || 'modelValue'}`]: onUpdateModelValue,
         ...props.value,
       };
     });
