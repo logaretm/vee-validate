@@ -8,6 +8,8 @@ export type MaybeArray<T> = T | T[];
 
 export type MaybePromise<T> = T | Promise<T>;
 
+export type FlattenAndSetPathsType<TRecord, TType> = { [K in Path<TRecord>]: TType };
+
 export type MapValuesPathsToRefs<
   TValues extends GenericObject,
   TPaths extends readonly [...MaybeRef<Path<TValues>>[]],
@@ -18,5 +20,3 @@ export type MapValuesPathsToRefs<
       : Ref<unknown>
     : Ref<unknown>;
 };
-
-export type FlattenAndSetPathsType<TRecord, TType> = { [K in Path<TRecord>]: TType };

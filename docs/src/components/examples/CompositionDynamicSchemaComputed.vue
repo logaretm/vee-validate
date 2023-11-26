@@ -6,22 +6,22 @@ import * as yup from 'yup';
 
 const limit = ref(5);
 
-const { errors, defineInputBinds } = useForm({
+const { errors, defineField } = useForm({
   validationSchema: computed(() =>
     toTypedSchema(
       yup.object({
         content: yup.string().max(limit.value),
-      })
-    )
+      }),
+    ),
   ),
 });
 
-const content = defineInputBinds('content');
+const [content, contentAttrs] = defineField('content');
 </script>
 
 <template>
   <input v-model.number="limit" />
 
-  <input v-bind="content" />
+  <input v-model="content" v-bind="contentAttrs" />
   <div>{{ errors.content }}</div>
 </template>

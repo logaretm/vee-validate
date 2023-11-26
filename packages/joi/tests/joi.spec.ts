@@ -99,12 +99,13 @@ test('shows multiple errors using error bag', async () => {
 
       const schema = toTypedSchema(joiSchema);
 
-      const { useFieldModel, errorBag } = useForm({
+      const { defineField, errorBag } = useForm({
         validationSchema: schema,
         validateOnMount: true,
       });
 
-      const [email, password] = useFieldModel(['email', 'password']);
+      const [email] = defineField('email', { validateOnModelUpdate: true });
+      const [password] = defineField('password', { validateOnModelUpdate: true });
 
       return {
         schema,
@@ -115,10 +116,10 @@ test('shows multiple errors using error bag', async () => {
     },
     template: `
       <div>
-        <input id="email" name="email" v-model="email" />
+        <input id="email" name="email" v-model="email"  />
         <span id="emailErr">{{ errorBag.email?.join(',') }}</span>
 
-        <input id="password" name="password" type="password" v-model="password" />
+        <input id="password" name="password" type="password" v-model="password"  />
         <span id="passwordErr">{{ errorBag.password?.join(',') }}</span>
       </div>
     `,
@@ -160,12 +161,13 @@ test('validates typed schema form with joi', async () => {
         }),
       );
 
-      const { useFieldModel, errors } = useForm({
+      const { defineField, errors } = useForm({
         validationSchema: schema,
         validateOnMount: true,
       });
 
-      const [email, password] = useFieldModel(['email', 'password']);
+      const [email] = defineField('email', { validateOnModelUpdate: true });
+      const [password] = defineField('password', { validateOnModelUpdate: true });
 
       return {
         schema,

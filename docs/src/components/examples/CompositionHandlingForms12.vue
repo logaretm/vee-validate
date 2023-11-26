@@ -1,13 +1,3 @@
-<template>
-  <form @submit="onSubmit">
-    <input name="name" v-bind="name" />
-
-    <textarea name="address" v-bind="address"></textarea>
-
-    <button>Submit</button>
-  </form>
-</template>
-
 <script setup>
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
@@ -19,14 +9,24 @@ const initialUserData = {
   createdAt: Date.now(),
 };
 
-const { defineInputBinds, handleSubmit } = useForm({
+const { defineField, handleSubmit } = useForm({
   initialValues: initialUserData,
 });
 
-const name = defineInputBinds('name');
-const address = defineInputBinds('address');
+const [name, nameAttrs] = defineField('name');
+const [address, addressAttrs] = defineField('address');
 
 const onSubmit = handleSubmit.withControlled(values => {
   alert(JSON.stringify(values, null, 2));
 });
 </script>
+
+<template>
+  <form @submit="onSubmit">
+    <input name="name" v-model="name" v-bind="nameAttrs" />
+
+    <textarea name="address" v-model="address" v-bind="addressAttrs"></textarea>
+
+    <button>Submit</button>
+  </form>
+</template>

@@ -81,12 +81,13 @@ describe('valibot', () => {
           }),
         );
 
-        const { useFieldModel, errorBag } = useForm({
+        const { defineField, errorBag } = useForm({
           validationSchema: schema,
           validateOnMount: true,
         });
 
-        const [email, password] = useFieldModel(['email', 'password']);
+        const [email] = defineField('email', { validateOnModelUpdate: true });
+        const [password] = defineField('password', { validateOnModelUpdate: true });
 
         return {
           schema,
@@ -138,12 +139,13 @@ describe('valibot', () => {
           }),
         );
 
-        const { useFieldModel, errors } = useForm({
+        const { defineField, errors } = useForm({
           validationSchema: schema,
           validateOnMount: true,
         });
 
-        const [email, password] = useFieldModel(['email', 'password']);
+        const [email] = defineField('email', { validateOnModelUpdate: true });
+        const [password] = defineField('password', { validateOnModelUpdate: true });
 
         return {
           schema,

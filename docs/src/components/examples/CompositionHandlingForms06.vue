@@ -1,8 +1,8 @@
 <template>
   <form @submit="onSubmit">
-    <input type="email" v-bind="email" />
+    <input type="email" v-model="email" v-bind="emailAttrs" />
 
-    <input type="password" v-bind="password" />
+    <input type="password" v-model="password" v-bind="passwordAttrs" />
 
     <button>Submit</button>
   </form>
@@ -11,7 +11,7 @@
 <script setup>
 import { useForm } from 'vee-validate';
 
-const { handleSubmit, defineInputBinds } = useForm({
+const { handleSubmit, defineField } = useForm({
   initialValues: {
     email: 'test@example.com',
     password: 'p@$$w0rd',
@@ -22,6 +22,6 @@ const onSubmit = handleSubmit(values => {
   console.log(JSON.stringify(values, null, 2));
 });
 
-const email = defineInputBinds('email');
-const password = defineInputBinds('password');
+const [email, emailAttrs] = defineField('email');
+const [password, passwordAttrs] = defineField('password');
 </script>

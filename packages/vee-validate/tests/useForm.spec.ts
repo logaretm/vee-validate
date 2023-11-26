@@ -1,5 +1,5 @@
-import { FieldMeta, FormContext, FormMeta, useField, useForm } from '@/vee-validate';
-import { mountWithHoc, setValue, flushPromises, runInSetup, dispatchEvent } from './helpers';
+import { FieldMeta, FormContext, FormMeta, useField, useForm, defineRule, configure } from '@/vee-validate';
+import { mountWithHoc, setValue, flushPromises, dispatchEvent } from './helpers';
 import * as yup from 'yup';
 import { onMounted, ref, Ref } from 'vue';
 import { ModelComp, CustomModelComp } from './helpers/ModelComp';
@@ -165,7 +165,7 @@ describe('useForm()', () => {
     mountWithHoc({
       setup() {
         form = useForm({ validationSchema: yup.object().shape({ field: yup.string().required(REQUIRED_MESSAGE) }) });
-        form.defineInputBinds('field');
+        form.defineField('field');
 
         return {};
       },
@@ -185,7 +185,7 @@ describe('useForm()', () => {
     mountWithHoc({
       setup() {
         form = useForm({ validationSchema: yup.object().shape({ field: yup.string().required(REQUIRED_MESSAGE) }) });
-        form.defineInputBinds('field');
+        form.defineField('field');
 
         return {};
       },
@@ -521,46 +521,6 @@ describe('useForm()', () => {
     expect(meta[2]?.textContent).toBe('false');
   });
 
-  test('Creates a writeable model for a field path', async () => {
-    await runInSetup(() => {
-      const { values, useFieldModel } = useForm({
-        initialValues: {
-          greet: 'hey',
-          age: 1,
-        },
-      });
-      const greet = useFieldModel('greet');
-      const age = useFieldModel('age');
-
-      expect(values.greet).toBe('hey');
-      expect(values.age).toBe(1);
-      greet.value = 'hello';
-      age.value = 2;
-      expect(values.greet).toBe('hello');
-      expect(values.age).toBe(2);
-    });
-  });
-
-  test('Creates multiple writeable models for given field paths', async () => {
-    await runInSetup(() => {
-      const { values, useFieldModel } = useForm({
-        initialValues: {
-          greet: 'hey',
-          age: 1,
-        },
-      });
-
-      const [age, greet] = useFieldModel(['age', 'greet']);
-
-      expect(values.greet).toBe('hey');
-      expect(values.age).toBe(1);
-      greet.value = 'hello';
-      age.value = 2;
-      expect(values.greet).toBe('hello');
-      expect(values.age).toBe(2);
-    });
-  });
-
   // #3906
   test('only latest schema validation run messages are used', async () => {
     function validator(value: string | undefined) {
@@ -586,20 +546,22 @@ describe('useForm()', () => {
 
     mountWithHoc({
       setup() {
-        const { errors, useFieldModel } = useForm({
+        const { errors, defineField } = useForm({
           validationSchema: {
             test: validator,
           },
         });
-        const model = useFieldModel('test');
+
+        const [model, props] = defineField('test');
 
         return {
           model,
           errors,
+          props,
         };
       },
       template: `
-        <input name="field" v-model="model" />
+        <input name="field" v-model="model" v-bind="props" />
         <span>{{ errors.test }}</span>
       `,
     });
@@ -689,43 +651,6 @@ describe('useForm()', () => {
     expect(spy).toHaveBeenLastCalledWith(
       expect.objectContaining({
         values: { field: initial.field },
-      }),
-    );
-  });
-
-  test('useFieldModel marks the field as controlled', async () => {
-    const spy = vi.fn();
-    const initial = {
-      field: '111',
-      field2: '222',
-      createdAt: Date.now(),
-    };
-    mountWithHoc({
-      setup() {
-        const { handleSubmit, useFieldModel } = useForm({
-          initialValues: initial,
-        });
-
-        const onSubmit = handleSubmit.withControlled(values => {
-          spy({ values });
-        });
-
-        useFieldModel(['field', 'field2']);
-
-        onMounted(onSubmit);
-
-        return {};
-      },
-      template: `
-        <div></div>
-      `,
-    });
-
-    await flushPromises();
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        values: { field: initial.field, field2: initial.field2 },
       }),
     );
   });
@@ -832,25 +757,25 @@ describe('useForm()', () => {
     expect(formMeta.value.initialValues?.field?.name).toBe('1');
   });
 
-  describe('defineComponentBinds', () => {
+  describe('defineField', () => {
     test('creates bindable object to components', async () => {
       mountWithHoc({
         components: {
           ModelComp,
         },
         setup() {
-          const { defineComponentBinds, values, errors } = useForm({
+          const { defineField, values, errors } = useForm({
             validationSchema: yup.object({
               name: yup.string().required(),
             }),
           });
 
-          const field = defineComponentBinds('name');
+          const [model, props] = defineField('name');
 
-          return { field, values, errors };
+          return { props, model, values, errors };
         },
         template: `
-        <ModelComp v-bind="field" />
+        <ModelComp v-model="model" v-bind="props" />
         <span id="errors">{{ errors.name }}</span>
         <span id="values">{{ values.name }}</span>
       `,
@@ -876,18 +801,18 @@ describe('useForm()', () => {
           ModelComp,
         },
         setup() {
-          const { defineComponentBinds, values, errors } = useForm({
+          const { defineField, values, errors } = useForm({
             validationSchema: yup.object({
               name: yup.string().required(),
             }),
           });
 
-          const field = defineComponentBinds('name', { validateOnModelUpdate: false });
+          const [model, props] = defineField('name', { validateOnModelUpdate: false });
 
-          return { field, values, errors };
+          return { props, model, values, errors };
         },
         template: `
-        <ModelComp v-bind="field" />
+        <ModelComp v-model="model" v-bind="props" />
         <span id="errors">{{ errors.name }}</span>
         <span id="values">{{ values.name }}</span>
       `,
@@ -916,21 +841,21 @@ describe('useForm()', () => {
           ModelComp,
         },
         setup() {
-          const { defineComponentBinds } = useForm({
+          const { defineField } = useForm({
             validationSchema: yup.object({
               name: yup.string().required(),
             }),
           });
 
-          const field = defineComponentBinds('name', {
+          const [model, props] = defineField('name', {
             validateOnModelUpdate: true,
-            mapProps: state => ({ test: state.valid ? 'valid' : 'invalid' }),
+            props: state => ({ test: state.valid ? 'valid' : 'invalid' }),
           });
 
-          return { field };
+          return { model, props };
         },
         template: `
-        <ModelComp v-bind="field" />
+        <ModelComp v-model="model" v-bind="props" />
       `,
       });
 
@@ -949,21 +874,21 @@ describe('useForm()', () => {
           ModelComp,
         },
         setup() {
-          const { defineComponentBinds } = useForm({
+          const { defineField } = useForm({
             validationSchema: yup.object({
               name: yup.string().required(),
             }),
           });
 
-          const field = defineComponentBinds('name', state => ({
+          const [model, props] = defineField('name', state => ({
             props: { test: state.valid ? 'valid' : 'invalid' },
             validateOnModelUpdate: true,
           }));
 
-          return { field };
+          return { model, props };
         },
         template: `
-        <ModelComp v-bind="field" />
+        <ModelComp v-model="model" v-bind="props" />
       `,
       });
 
@@ -976,24 +901,24 @@ describe('useForm()', () => {
       expect(document.body.innerHTML).toContain('valid');
     });
 
-    test('can have custom model', async () => {
+    test('works with custom model', async () => {
       mountWithHoc({
         components: {
           CustomModelComp,
         },
         setup() {
-          const { defineComponentBinds, values, errors } = useForm({
+          const { defineField, values, errors } = useForm({
             validationSchema: yup.object({
               name: yup.string().required(),
             }),
           });
 
-          const field = defineComponentBinds('name', { model: 'value' });
+          const [model, props] = defineField('name');
 
-          return { field, values, errors };
+          return { model, props, values, errors };
         },
         template: `
-        <CustomModelComp v-bind="field" />
+        <CustomModelComp v-model:value="model" v-bind="props" />
         <span id="errors">{{ errors.name }}</span>
         <span id="values">{{ values.name }}</span>
       `,
@@ -1013,60 +938,21 @@ describe('useForm()', () => {
       expect(valuesEl?.textContent).toBe('123');
     });
 
-    test('can have lazy custom model', async () => {
-      mountWithHoc({
-        components: {
-          CustomModelComp,
-        },
-        setup() {
-          const { defineComponentBinds, values, errors } = useForm({
-            validationSchema: yup.object({
-              name: yup.string().required(),
-            }),
-          });
-
-          const field = defineComponentBinds('name', () => ({ model: 'value' }));
-
-          return { field, values, errors };
-        },
-        template: `
-        <CustomModelComp v-bind="field" />
-        <span id="errors">{{ errors.name }}</span>
-        <span id="values">{{ values.name }}</span>
-      `,
-      });
-
-      await flushPromises();
-      const errorEl = document.getElementById('errors');
-      const valuesEl = document.getElementById('values');
-      setValue(document.querySelector('input') as any, '');
-      dispatchEvent(document.querySelector('input') as any, 'blur');
-      await flushPromises();
-      expect(errorEl?.textContent).toBe('name is a required field');
-      setValue(document.querySelector('input') as any, '123');
-      dispatchEvent(document.querySelector('input') as any, 'blur');
-      await flushPromises();
-      expect(errorEl?.textContent).toBe('');
-      expect(valuesEl?.textContent).toBe('123');
-    });
-  });
-
-  describe('defineInputBinds', () => {
     test('creates bindable object to HTML inputs', async () => {
       mountWithHoc({
         setup() {
-          const { defineInputBinds, values, errors } = useForm({
+          const { defineField, values, errors } = useForm({
             validationSchema: yup.object({
               name: yup.string().required(),
             }),
           });
 
-          const field = defineInputBinds('name');
+          const [model, props] = defineField('name');
 
-          return { field, values, errors };
+          return { model, props, values, errors };
         },
         template: `
-        <input v-bind="field" />
+        <input v-model="model" v-bind="props" />
         <span id="errors">{{ errors.name }}</span>
         <span id="values">{{ values.name }}</span>
       `,
@@ -1089,18 +975,18 @@ describe('useForm()', () => {
     test('can configure the validation events', async () => {
       mountWithHoc({
         setup() {
-          const { defineInputBinds, values, errors } = useForm({
+          const { defineField, values, errors } = useForm({
             validationSchema: yup.object({
               name: yup.string().required(),
             }),
           });
 
-          const field = defineInputBinds('name', { validateOnInput: true });
+          const [model, props] = defineField('name', { validateOnInput: true });
 
-          return { field, values, errors };
+          return { model, props, values, errors };
         },
         template: `
-        <input v-bind="field" />
+        <input v-model="model" v-bind="props" />
         <span id="errors">{{ errors.name }}</span>
         <span id="values">{{ values.name }}</span>
       `,
@@ -1121,21 +1007,21 @@ describe('useForm()', () => {
     test('can pass extra props', async () => {
       mountWithHoc({
         setup() {
-          const { defineInputBinds } = useForm({
+          const { defineField } = useForm({
             validationSchema: yup.object({
               name: yup.string().required(),
             }),
           });
 
-          const field = defineInputBinds('name', {
+          const [model, props] = defineField('name', {
             validateOnInput: true,
-            mapAttrs: state => ({ 'aria-valid': state.valid ? 'true' : 'false' }),
+            props: state => ({ 'aria-valid': state.valid ? 'true' : 'false' }),
           });
 
-          return { field };
+          return { model, props };
         },
         template: `
-        <input v-bind="field" />
+        <input v-model="model" v-bind="props" />
       `,
       });
 
@@ -1154,21 +1040,21 @@ describe('useForm()', () => {
           ModelComp,
         },
         setup() {
-          const { defineInputBinds } = useForm({
+          const { defineField } = useForm({
             validationSchema: yup.object({
               name: yup.string().required(),
             }),
           });
 
-          const field = defineInputBinds('name', state => ({
-            attrs: { 'aria-valid': state.valid ? 'true' : 'false' },
+          const [model, props] = defineField('name', state => ({
+            props: { 'aria-valid': state.valid ? 'true' : 'false' },
             validateOnModelUpdate: true,
           }));
 
-          return { field };
+          return { model, props };
         },
         template: `
-        <input v-bind="field" />
+        <input v-model="model" v-bind="props" />
       `,
       });
 
@@ -1179,6 +1065,40 @@ describe('useForm()', () => {
       setValue(document.querySelector('input') as any, '123');
       await flushPromises();
       expect(document.body.innerHTML).toContain('aria-valid="true"');
+    });
+
+    test('can specify a label', async () => {
+      defineRule('required', (value: string) => {
+        return !!value;
+      });
+
+      configure({
+        generateMessage: ({ field }) => `${field} is bad`,
+      });
+
+      mountWithHoc({
+        setup() {
+          const { defineField, values, errors } = useForm({
+            validationSchema: {
+              name: 'required',
+            },
+          });
+
+          const [model, props] = defineField('name', { validateOnInput: true, label: 'First Name' });
+
+          return { model, props, values, errors };
+        },
+        template: `
+        <input v-model="model" v-bind="props" />
+        <span id="errors">{{ errors.name }}</span>
+      `,
+      });
+
+      await flushPromises();
+      const errorEl = document.getElementById('errors');
+      setValue(document.querySelector('input') as any, '');
+      await flushPromises();
+      expect(errorEl?.textContent).toBe('First Name is bad');
     });
   });
 

@@ -87,13 +87,11 @@ test('warns when updating a no-longer existing item', async () => {
       });
 
       const { remove, fields } = useFieldArray('users');
-      onMounted(() => {
+      onMounted(async () => {
         const item = fields.value[0];
         remove(0);
-
-        nextTick(() => {
-          item.value = 'test';
-        });
+        await nextTick();
+        item.value = 'test';
       });
     },
     template: `

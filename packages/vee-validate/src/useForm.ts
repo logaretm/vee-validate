@@ -35,7 +35,6 @@ import {
   ValidationOptions,
   PrivateFieldArrayContext,
   InvalidSubmissionHandler,
-  MapValuesPathsToRefs,
   FieldState,
   GenericObject,
   TypedSchema,
@@ -44,13 +43,13 @@ import {
   PathValue,
   PathState,
   PathStateConfig,
-  BaseComponentBinds,
-  BaseInputBinds,
+  BaseFieldProps,
   InputBindsConfig,
-  ComponentBindsConfig,
   LazyInputBindsConfig,
-  LazyComponentBindsConfig,
   ResetFormOpts,
+  MapValuesPathsToRefs,
+  ComponentBindsConfig,
+  LazyComponentBindsConfig,
 } from './types';
 import {
   getFromPath,
@@ -64,9 +63,9 @@ import {
   isEqual,
   isTypedSchema,
   normalizeErrorItem,
-  normalizeEventValue,
   omit,
   debounceNextTick,
+  normalizeEventValue,
 } from './utils';
 import { FormContextKey } from './symbols';
 import { validateTypedSchema, validateObjectSchema } from './validate';
@@ -619,10 +618,13 @@ export function useForm<
     resetForm,
     resetField,
     handleSubmit,
+    useFieldModel,
+    defineInputBinds,
+    defineComponentBinds: defineComponentBinds as any,
+    defineField,
     stageInitialValue,
     unsetInitialValue,
     setFieldInitialValue,
-    useFieldModel,
     createPathState,
     getPathState: findPathState,
     unsetPathValue,
@@ -685,35 +687,21 @@ export function useForm<
     }
   }
 
-  function createModel<TPath extends Path<TValues>>(path: MaybeRef<TPath>) {
-    const pathState = findPathState(unref(path)) || createPathState(path);
+  function createModel<TPath extends Path<TValues>>(
+    path: MaybeRefOrGetter<TPath>,
+    shouldValidate?: MaybeRefOrGetter<boolean>,
+  ) {
+    const pathState = findPathState(toValue(path)) || createPathState(path);
 
     return computed({
       get() {
         return pathState.value;
       },
       set(value) {
-        const pathValue = unref(path);
-        setFieldValue(pathValue, value, false);
-        pathState.validated = true;
-        pathState.pending = true;
-        validateField(pathValue).then(() => {
-          pathState.pending = false;
-        });
+        const pathValue = toValue(path);
+        setFieldValue(pathValue, value, toValue(shouldValidate) ?? false);
       },
     }) as Ref<PathValue<TValues, TPath>>;
-  }
-
-  function useFieldModel<TPath extends Path<TValues>>(path: TPath): Ref<PathValue<TValues, TPath>>;
-  function useFieldModel<TPaths extends readonly [...MaybeRef<Path<TValues>>[]]>(
-    paths: TPaths,
-  ): MapValuesPathsToRefs<TValues, TPaths>;
-  function useFieldModel<TPaths extends Path<TValues> | readonly [...MaybeRef<Path<TValues>>[]]>(pathOrPaths: TPaths) {
-    if (!Array.isArray(pathOrPaths)) {
-      return createModel(pathOrPaths as any);
-    }
-
-    return pathOrPaths.map(createModel) as unknown as MapValuesPathsToRefs<TValues, any>;
   }
 
   /**
@@ -979,6 +967,131 @@ export function useForm<
     );
   }
 
+  function defineField<
+    TPath extends Path<TValues>,
+    TValue = PathValue<TValues, TPath>,
+    TExtras extends GenericObject = GenericObject,
+  >(
+    path: MaybeRefOrGetter<TPath>,
+    config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>,
+  ) {
+    const label = isCallable(config) ? undefined : config?.label;
+    const pathState = (findPathState(toValue(path)) || createPathState(path, { label })) as PathState<TValue>;
+    const evalConfig = () => (isCallable(config) ? config(omit(pathState, PRIVATE_PATH_STATE_KEYS)) : config || {});
+
+    function onBlur() {
+      pathState.touched = true;
+      const validateOnBlur = evalConfig().validateOnBlur ?? getConfig().validateOnBlur;
+      if (validateOnBlur) {
+        validateField(pathState.path as Path<TValues>);
+      }
+    }
+
+    function onInput() {
+      const validateOnInput = evalConfig().validateOnInput ?? getConfig().validateOnInput;
+      if (validateOnInput) {
+        nextTick(() => {
+          validateField(pathState.path as Path<TValues>);
+        });
+      }
+    }
+
+    function onChange() {
+      const validateOnChange = evalConfig().validateOnChange ?? getConfig().validateOnChange;
+      if (validateOnChange) {
+        nextTick(() => {
+          validateField(pathState.path as Path<TValues>);
+        });
+      }
+    }
+
+    const props = computed(() => {
+      const base: BaseFieldProps = {
+        onChange,
+        onInput,
+        onBlur,
+      };
+
+      if (isCallable(config)) {
+        return {
+          ...base,
+          ...(config(omit(pathState, PRIVATE_PATH_STATE_KEYS)).props || {}),
+        } as BaseFieldProps & TExtras;
+      }
+
+      if (config?.props) {
+        return {
+          ...base,
+          ...config.props(omit(pathState, PRIVATE_PATH_STATE_KEYS)),
+        } as BaseFieldProps & TExtras;
+      }
+
+      return base as BaseFieldProps & TExtras;
+    });
+
+    const model = createModel(path, () => evalConfig().validateOnModelUpdate ?? true);
+
+    return [model, props] as [Ref<TValue>, Ref<BaseFieldProps & TExtras>];
+  }
+
+  /**
+   * @deprecated use defineField instead
+   */
+  function useFieldModel<TPath extends Path<TValues>>(path: TPath): Ref<PathValue<TValues, TPath>>;
+  function useFieldModel<TPaths extends readonly [...MaybeRef<Path<TValues>>[]]>(
+    paths: TPaths,
+  ): MapValuesPathsToRefs<TValues, TPaths>;
+  function useFieldModel<TPaths extends Path<TValues> | readonly [...MaybeRef<Path<TValues>>[]]>(pathOrPaths: TPaths) {
+    if (!Array.isArray(pathOrPaths)) {
+      return createModel(pathOrPaths as any);
+    }
+
+    return pathOrPaths.map(p => createModel(p, true)) as unknown as MapValuesPathsToRefs<TValues, any>;
+  }
+
+  /**
+   * @deprecated use defineField instead
+   */
+  function defineInputBinds<
+    TPath extends Path<TValues>,
+    TValue = PathValue<TValues, TPath>,
+    TExtras extends GenericObject = GenericObject,
+  >(
+    path: MaybeRefOrGetter<TPath>,
+    config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>,
+  ) {
+    const [model, props] = defineField(path, config);
+
+    function onBlur(e: Event) {
+      props.value.onBlur(e);
+    }
+
+    function onInput(e: Event) {
+      const value = normalizeEventValue(e) as PathValue<TValues, TPath>;
+      setFieldValue(toValue(path), value, false);
+      props.value.onInput(e);
+    }
+
+    function onChange(e: Event) {
+      const value = normalizeEventValue(e) as PathValue<TValues, TPath>;
+      setFieldValue(toValue(path), value, false);
+      props.value.onChange(e);
+    }
+
+    return computed(() => {
+      return {
+        ...props.value,
+        onBlur,
+        onInput,
+        onChange,
+        value: model.value,
+      };
+    });
+  }
+
+  /**
+   * @deprecated use defineField instead
+   */
   function defineComponentBinds<
     TPath extends Path<TValues>,
     TValue = PathValue<TValues, TPath>,
@@ -988,112 +1101,21 @@ export function useForm<
     path: MaybeRefOrGetter<TPath>,
     config?: Partial<ComponentBindsConfig<TValue, TExtras, TModel>> | LazyComponentBindsConfig<TValue, TExtras, TModel>,
   ) {
-    const pathState = findPathState(toValue(path)) || createPathState(path);
-    const evalConfig = () => (isCallable(config) ? config(omit(pathState, PRIVATE_PATH_STATE_KEYS)) : config || {});
-
-    function onBlur() {
-      pathState.touched = true;
-      const validateOnBlur = evalConfig().validateOnBlur ?? getConfig().validateOnBlur;
-      if (validateOnBlur) {
-        validateField(pathState.path as Path<TValues>);
-      }
-    }
+    const [model, props] = defineField(path, config);
+    const pathState = findPathState(toValue(path)) as PathState<TValue>;
 
     function onUpdateModelValue(value: TValue) {
-      const validateOnModelUpdate = evalConfig().validateOnModelUpdate ?? getConfig().validateOnModelUpdate;
-      setFieldValue(pathState.path as Path<TValues>, value as PathValue<TValues, TPath>, validateOnModelUpdate);
+      model.value = value;
     }
 
-    const props = computed(() => {
-      if (isCallable(config)) {
-        const configVal = config(pathState);
-        const model = configVal.model || 'modelValue';
-
-        return {
-          onBlur,
-          [model]: pathState.value,
-          [`onUpdate:${model}`]: onUpdateModelValue,
-          ...(configVal.props || {}),
-        } as BaseComponentBinds<TValue, TModel> & TExtras;
-      }
-
-      const model = config?.model || 'modelValue';
-      const base = {
-        onBlur,
-        [model]: pathState.value,
-        [`onUpdate:${model}`]: onUpdateModelValue,
+    return computed(() => {
+      const conf = isCallable(config) ? config(omit(pathState, PRIVATE_PATH_STATE_KEYS)) : config || {};
+      return {
+        [conf.model || 'modelValue']: model.value,
+        [`onUpdate:${conf.model || 'modelValue'}`]: onUpdateModelValue,
+        ...props.value,
       };
-
-      if (config?.mapProps) {
-        return {
-          ...base,
-          ...config.mapProps(omit(pathState, PRIVATE_PATH_STATE_KEYS)),
-        } as BaseComponentBinds<TValue, TModel> & TExtras;
-      }
-
-      return base as BaseComponentBinds<TValue, TModel> & TExtras;
     });
-
-    return props;
-  }
-
-  function defineInputBinds<
-    TPath extends Path<TValues>,
-    TValue = PathValue<TValues, TPath>,
-    TExtras extends GenericObject = GenericObject,
-  >(
-    path: MaybeRefOrGetter<TPath>,
-    config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>,
-  ) {
-    const pathState = (findPathState(toValue(path)) || createPathState(path)) as PathState<TValue>;
-    const evalConfig = () => (isCallable(config) ? config(omit(pathState, PRIVATE_PATH_STATE_KEYS)) : config || {});
-
-    function onBlur() {
-      pathState.touched = true;
-      const validateOnBlur = evalConfig().validateOnBlur ?? getConfig().validateOnBlur;
-      if (validateOnBlur) {
-        validateField(pathState.path as Path<TValues>);
-      }
-    }
-
-    function onInput(e: Event) {
-      const value = normalizeEventValue(e) as PathValue<TValues, TPath>;
-      const validateOnInput = evalConfig().validateOnInput ?? getConfig().validateOnInput;
-      setFieldValue(pathState.path as Path<TValues>, value, validateOnInput);
-    }
-
-    function onChange(e: Event) {
-      const value = normalizeEventValue(e) as PathValue<TValues, TPath>;
-      const validateOnChange = evalConfig().validateOnChange ?? getConfig().validateOnChange;
-      setFieldValue(pathState.path as Path<TValues>, value, validateOnChange);
-    }
-
-    const props = computed(() => {
-      const base: BaseInputBinds<TValue> = {
-        value: pathState.value,
-        onChange,
-        onInput,
-        onBlur,
-      };
-
-      if (isCallable(config)) {
-        return {
-          ...base,
-          ...(config(omit(pathState, PRIVATE_PATH_STATE_KEYS)).attrs || {}),
-        } as BaseInputBinds<TValue> & TExtras;
-      }
-
-      if (config?.mapAttrs) {
-        return {
-          ...base,
-          ...config.mapAttrs(omit(pathState, PRIVATE_PATH_STATE_KEYS)),
-        } as BaseInputBinds<TValue> & TExtras;
-      }
-
-      return base as BaseInputBinds<TValue> & TExtras;
-    });
-
-    return props;
   }
 
   return {
@@ -1101,8 +1123,6 @@ export function useForm<
     values: readonly(formValues) as TValues,
     handleReset: () => resetForm(),
     submitForm,
-    defineComponentBinds,
-    defineInputBinds,
   };
 }
 
