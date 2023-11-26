@@ -47,6 +47,9 @@ import {
   InputBindsConfig,
   LazyInputBindsConfig,
   ResetFormOpts,
+  MapValuesPathsToRefs,
+  ComponentBindsConfig,
+  LazyComponentBindsConfig,
 } from './types';
 import {
   getFromPath,
@@ -614,6 +617,10 @@ export function useForm<
     resetForm,
     resetField,
     handleSubmit,
+    useFieldModel,
+    defineInputBinds,
+    defineComponentBinds: defineComponentBinds as any,
+    defineField,
     stageInitialValue,
     unsetInitialValue,
     setFieldInitialValue,
@@ -1026,12 +1033,71 @@ export function useForm<
     return [model, props] as [Ref<TValue>, Ref<BaseFieldProps & TExtras>];
   }
 
+  /**
+   * @deprecated use defineField instead
+   */
+  function useFieldModel<TPath extends Path<TValues>>(path: TPath): Ref<PathValue<TValues, TPath>>;
+  function useFieldModel<TPaths extends readonly [...MaybeRef<Path<TValues>>[]]>(
+    paths: TPaths,
+  ): MapValuesPathsToRefs<TValues, TPaths>;
+  function useFieldModel<TPaths extends Path<TValues> | readonly [...MaybeRef<Path<TValues>>[]]>(pathOrPaths: TPaths) {
+    if (!Array.isArray(pathOrPaths)) {
+      return createModel(pathOrPaths as any);
+    }
+
+    return pathOrPaths.map(p => createModel(p, true)) as unknown as MapValuesPathsToRefs<TValues, any>;
+  }
+
+  /**
+   * @deprecated use defineField instead
+   */
+  function defineInputBinds<
+    TPath extends Path<TValues>,
+    TValue = PathValue<TValues, TPath>,
+    TExtras extends GenericObject = GenericObject,
+  >(
+    path: MaybeRefOrGetter<TPath>,
+    config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>,
+  ) {
+    const [model, props] = defineField(path, config);
+
+    return computed(() => {
+      return {
+        value: model.value,
+        ...props.value,
+      };
+    });
+  }
+
+  /**
+   * @deprecated use defineField instead
+   */
+  function defineComponentBinds<
+    TPath extends Path<TValues>,
+    TValue = PathValue<TValues, TPath>,
+    TModel extends string = 'modelValue',
+    TExtras extends GenericObject = GenericObject,
+  >(
+    path: MaybeRefOrGetter<TPath>,
+    config?: Partial<ComponentBindsConfig<TValue, TExtras, TModel>> | LazyComponentBindsConfig<TValue, TExtras, TModel>,
+  ) {
+    const [model, props] = defineField(path, config);
+    const pathState = findPathState(toValue(path)) as PathState<TValue>;
+
+    return computed(() => {
+      const conf = isCallable(config) ? config(omit(pathState, PRIVATE_PATH_STATE_KEYS)) : config || {};
+      return {
+        [conf.model || 'modelValue']: model.value,
+        ...props.value,
+      };
+    });
+  }
+
   return {
     ...formCtx,
     values: readonly(formValues) as TValues,
     handleReset: () => resetForm(),
     submitForm,
-    defineField,
   };
 }
 
