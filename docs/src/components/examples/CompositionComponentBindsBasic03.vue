@@ -10,7 +10,7 @@ const { values, errors, defineField } = useForm({
 });
 
 const [email, emailProps] = defineField('email', {
-  validateOnValueUpdate: false,
+  validateOnModelUpdate: false,
 });
 </script>
 
