@@ -1,5 +1,18 @@
 # Change Log
 
+## 4.12.0
+
+### Patch Changes
+
+- e35c361c: fix: make length rule consistent with other rules closes #4522
+- Updated dependencies [f9a95843]
+- Updated dependencies [bbecc973]
+- Updated dependencies [f688896f]
+- Updated dependencies [2abb8966]
+- Updated dependencies [e370413b]
+- Updated dependencies [95b701f7]
+  - vee-validate@4.12.0
+
 ## 4.11.8
 
 ### Patch Changes
