@@ -1,5 +1,19 @@
 # Change Log
 
+## 4.12.0
+
+### Minor Changes
+
+- bbecc973: feat: deprecate reactive initial values closes #4402
+
+### Patch Changes
+
+- f9a95843: feat: add label support to defineField closes #4530
+- f688896f: fix: avoid overriding paths and destroy path on remove closes #4476 closes #4557
+- 2abb8966: fix: clone values before reset closes #4536
+- e370413b: fix: handle hoisted paths overriding one another
+- 95b701f7: feat: allow getters for field arrays
+
 ## 4.11.8
 
 ### Patch Changes
