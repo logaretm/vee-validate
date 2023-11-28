@@ -1351,4 +1351,36 @@ describe('useForm()', () => {
     form.resetField('fname', { value: 'test' });
     expect(form.meta.value.dirty).toBe(false);
   });
+
+  test('defineField respects global model config', async () => {
+    let form!: FormContext<{ fname: string; lname: string }>;
+    let model!: Ref<string>;
+    configure({
+      validateOnModelUpdate: false,
+    });
+
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          initialValues: { fname: '123', lname: '456' },
+          validationSchema: yup.object({
+            fname: yup.string().required(),
+          }),
+        });
+
+        const field = form.defineField('fname');
+        model = field[0];
+
+        return {};
+      },
+      template: `
+        <div></div>
+      `,
+    });
+
+    await flushPromises();
+    model.value = '';
+    await flushPromises();
+    await expect(form.errors.value.fname).toBe(undefined);
+  });
 });
