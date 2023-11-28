@@ -1,5 +1,12 @@
 # Change Log
 
+## 4.12.1
+
+### Patch Changes
+
+- 36f6b9e6: fix: reset form and field behaviors for unspecified values closes #4564
+- c1c6f399: fix: unref initial values when initializing the form closes #4563
+
 ## 4.12.0
 
 ### Minor Changes
