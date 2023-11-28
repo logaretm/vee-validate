@@ -750,7 +750,7 @@ export function useForm<
       pathState.__flags.pendingReset = true;
     }
 
-    setFieldInitialValue(field, deepCopy(newValue));
+    setFieldInitialValue(field, deepCopy(newValue), true);
     setFieldValue(field, newValue as PathValue<TValues, typeof field>, false);
     setFieldTouched(field, state?.touched ?? false);
     setFieldError(field, state?.errors || []);
@@ -768,6 +768,7 @@ export function useForm<
   function resetForm(resetState?: Partial<FormState<TValues>>, opts?: ResetFormOpts) {
     let newValues = deepCopy(resetState?.values ? resetState.values : originalInitialValues.value);
     newValues = isTypedSchema(schema) && isCallable(schema.cast) ? schema.cast(newValues) : newValues;
+    newValues = opts?.force ? newValues : merge(originalInitialValues.value, newValues);
     setInitialValues(newValues);
     mutateAllPathState(state => {
       state.__flags.pendingReset = true;
@@ -886,8 +887,11 @@ export function useForm<
     }
   }
 
-  function setFieldInitialValue(path: string, value: unknown) {
+  function setFieldInitialValue(path: string, value: unknown, updateOriginal = false) {
     setInPath(initialValues.value, path, deepCopy(value));
+    if (updateOriginal) {
+      setInPath(originalInitialValues.value, path, deepCopy(value));
+    }
   }
 
   async function _validateSchema(): Promise<FormValidationResult<TValues, TOutput>> {

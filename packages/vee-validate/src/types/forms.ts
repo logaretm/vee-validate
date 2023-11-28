@@ -328,7 +328,7 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   stageInitialValue(path: string, value: unknown, updateOriginal?: boolean): void;
   unsetInitialValue(path: string): void;
   handleSubmit: HandleSubmitFactory<TValues, TOutput> & { withControlled: HandleSubmitFactory<TValues, TOutput> };
-  setFieldInitialValue(path: string, value: unknown): void;
+  setFieldInitialValue(path: string, value: unknown, updateOriginal?: boolean): void;
   createPathState<TPath extends Path<TValues>>(
     path: MaybeRef<TPath>,
     config?: Partial<PathStateConfig>,

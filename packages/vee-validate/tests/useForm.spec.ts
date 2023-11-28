@@ -1,9 +1,17 @@
-import { FieldMeta, FormContext, FormMeta, useField, useForm, defineRule, configure } from '@/vee-validate';
+import {
+  FieldMeta,
+  FormContext,
+  FormMeta,
+  useField,
+  useForm,
+  defineRule,
+  configure,
+  FieldContext,
+} from '@/vee-validate';
 import { mountWithHoc, setValue, flushPromises, dispatchEvent } from './helpers';
 import * as yup from 'yup';
 import { onMounted, ref, Ref } from 'vue';
 import { ModelComp, CustomModelComp } from './helpers/ModelComp';
-import { FieldContext } from '../dist/vee-validate';
 
 describe('useForm()', () => {
   const REQUIRED_MESSAGE = 'Field is required';
@@ -1291,5 +1299,56 @@ describe('useForm()', () => {
     form.resetForm({ values: { fname: 'test' } }, { force: true });
     expect(form.values.lname).toBeUndefined();
     expect(form.values.fname).toBe('test');
+  });
+
+  test('reset should not make unspecified values undefined', async () => {
+    let form!: FormContext<{ fname: string; lname: string }>;
+
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          initialValues: { fname: '123', lname: '456' },
+        });
+
+        form.defineField('fname');
+        form.defineField('lname');
+
+        return {};
+      },
+      template: `
+        <div></div>
+      `,
+    });
+
+    await flushPromises();
+
+    form.resetForm({ values: { fname: 'test' } });
+    expect(form.values.lname).toBe('456');
+    expect(form.values.fname).toBe('test');
+  });
+
+  test('reset field should make the dirty state false', async () => {
+    let form!: FormContext<{ fname: string; lname: string }>;
+
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          initialValues: { fname: '123', lname: '456' },
+        });
+
+        form.defineField('fname');
+        form.defineField('lname');
+
+        return {};
+      },
+      template: `
+        <div></div>
+      `,
+    });
+
+    await flushPromises();
+
+    form.resetField('fname', { value: 'test' });
+    expect(form.meta.value.dirty).toBe(false);
   });
 });

@@ -141,7 +141,7 @@ export function _useFieldValue<TValue = unknown>(
       return;
     }
 
-    form.stageInitialValue(unref(path), value, true);
+    form.setFieldInitialValue(unref(path), value, true);
   }
 
   const initialValue = computed(resolveInitialValue);
