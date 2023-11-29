@@ -1,5 +1,4 @@
 import {
-  computed,
   inject,
   markRaw,
   onBeforeUnmount,
@@ -7,8 +6,9 @@ import {
   ref,
   Ref,
   toValue,
-  ComputedRef,
   MaybeRefOrGetter,
+  reactive,
+  watchEffect,
 } from 'vue';
 import {
   FieldContextForFieldGroup,
@@ -19,7 +19,7 @@ import {
 import { FieldGroupContextKey } from './symbols';
 
 interface FieldGroupComposable {
-  meta: ComputedRef<FieldGroupMeta>;
+  meta: FieldGroupMeta;
   fields: Ref<FieldContextForFieldGroup[]>;
   groups: Ref<FieldGroupContextForParent[]>;
 }
@@ -31,7 +31,7 @@ export const useFieldGroup = (checkChildFieldGroups: MaybeRefOrGetter<boolean> =
   const providerContext: PrivateFieldGroupContext = { fields, groups };
   provide(FieldGroupContextKey, providerContext);
 
-  const meta = computed<FieldGroupMeta>(() => {
+  const calculateMeta = (): FieldGroupMeta => {
     const checkChildGroups = toValue(checkChildFieldGroups);
     const groupsMeta = {
       valid: checkChildGroups ? groups.value.every((f: FieldGroupContextForParent) => toValue(f.meta).valid) : true,
@@ -58,6 +58,15 @@ export const useFieldGroup = (checkChildFieldGroups: MaybeRefOrGetter<boolean> =
       validated: groupsMeta.validated && fieldsMeta.validated,
       pending: groupsMeta.pending || fieldsMeta.pending,
     };
+  };
+
+  const meta = reactive(calculateMeta());
+
+  watchEffect(() => {
+    const newMeta = calculateMeta();
+    for (const key in newMeta) {
+      meta[key as keyof FieldGroupMeta] = newMeta[key as keyof FieldGroupMeta];
+    }
   });
 
   if (parentFieldGroup) {
