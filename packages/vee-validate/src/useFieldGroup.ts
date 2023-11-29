@@ -24,7 +24,7 @@ interface FieldGroupComposable {
   groups: Ref<FieldGroupContextForParent[]>;
 }
 
-export const useFieldGroup = (checkChildFieldGroups: MaybeRefOrGetter<boolean>): FieldGroupComposable => {
+export const useFieldGroup = (checkChildFieldGroups: MaybeRefOrGetter<boolean> = true): FieldGroupComposable => {
   const fields: Ref<FieldContextForFieldGroup[]> = ref([]);
   const groups: Ref<FieldGroupContextForParent[]> = ref([]);
   const parentFieldGroup = inject(FieldGroupContextKey, null);
