@@ -1,5 +1,12 @@
 # Change Log
 
+## 4.12.2
+
+### Patch Changes
+
+- b2203c8e: fix: apply schema casts when submitting closes #4565
+- ec8a4d7e: fix: defineField should respect global validateOnModelUpdate closes #4567
+
 ## 4.12.1
 
 ### Patch Changes
