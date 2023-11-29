@@ -356,6 +356,53 @@ test('uses zod default values for initial values', async () => {
   );
 });
 
+test('uses zod transforms values for submitted values', async () => {
+  const onSubmitSpy = vi.fn();
+  let onSubmit!: () => void;
+  let model!: Ref<string | undefined>;
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema(
+        z
+          .object({
+            random: z.string().min(3),
+          })
+          .transform(() => {
+            return {
+              random: 'modified',
+            };
+          }),
+      );
+
+      const { handleSubmit, defineField } = useForm({
+        validationSchema: schema,
+      });
+
+      model = defineField('random')[0];
+
+      // submit now
+      onSubmit = handleSubmit(onSubmitSpy);
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  model.value = 'test';
+  onSubmit();
+  await flushPromises();
+  await expect(onSubmitSpy).toHaveBeenCalledTimes(1);
+  await expect(onSubmitSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      random: 'modified',
+    }),
+    expect.anything(),
+  );
+});
+
 test('reset form should cast the values', async () => {
   const valueSpy = vi.fn();
   mountWithHoc({

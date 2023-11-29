@@ -426,6 +426,10 @@ export function useForm<
         { valid: formResult.valid, results: {}, errors: {} } as FormValidationResult<TValues>,
       );
 
+      if (formResult.values) {
+        results.values = formResult.values;
+      }
+
       return results;
     },
   );
@@ -767,8 +771,8 @@ export function useForm<
    */
   function resetForm(resetState?: Partial<FormState<TValues>>, opts?: ResetFormOpts) {
     let newValues = deepCopy(resetState?.values ? resetState.values : originalInitialValues.value);
-    newValues = isTypedSchema(schema) && isCallable(schema.cast) ? schema.cast(newValues) : newValues;
     newValues = opts?.force ? newValues : merge(originalInitialValues.value, newValues);
+    newValues = isTypedSchema(schema) && isCallable(schema.cast) ? schema.cast(newValues) : newValues;
     setInitialValues(newValues);
     mutateAllPathState(state => {
       state.__flags.pendingReset = true;
