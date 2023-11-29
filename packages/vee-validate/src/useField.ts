@@ -13,7 +13,6 @@ import {
   MaybeRef,
   MaybeRefOrGetter,
   unref,
-  inject,
   markRaw,
 } from 'vue';
 import { klona as deepCopy } from 'klona/full';
@@ -124,7 +123,7 @@ function _useField<TValue = unknown>(
 
   const injectedForm = controlled ? injectWithSelf(FormContextKey) : undefined;
   const form = (controlForm as PrivateFormContext | undefined) || injectedForm;
-  const fieldGroup = inject(FieldGroupContextKey, null);
+  const fieldGroup = injectWithSelf(FieldGroupContextKey, null);
 
   const name = computed(() => normalizeFormPath(toValue(path)));
 

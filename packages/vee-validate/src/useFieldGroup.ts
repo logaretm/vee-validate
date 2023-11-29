@@ -71,6 +71,9 @@ export const useFieldGroup = (checkChildFieldGroups: MaybeRefOrGetter<boolean>):
       parentFieldGroup.groups.value = parentFieldGroup.groups.value.filter(
         (_dataForParentFieldGroup: FieldGroupContextForParent) => _dataForParentFieldGroup !== dataForParentFieldGroup,
       );
+
+      groups.value = [];
+      fields.value = [];
     });
   }
 
