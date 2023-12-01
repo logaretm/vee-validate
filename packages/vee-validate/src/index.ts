@@ -7,6 +7,7 @@ export { Form } from './Form';
 export { FieldArray } from './FieldArray';
 export { ErrorMessage } from './ErrorMessage';
 export { useField, FieldOptions, RuleExpression } from './useField';
+export { useFieldRef } from './useFieldRef';
 export { useForm, FormOptions } from './useForm';
 export { useFieldArray } from './useFieldArray';
 export * from './types';
