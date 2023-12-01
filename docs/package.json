@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^1.1.5",
+    "@astrojs/partytown": "^2.0.2",
     "@astrojs/sitemap": "^3.0.3",
     "@astrojs/vue": "^3.0.4",
     "@docsearch/css": "^3.5.2",

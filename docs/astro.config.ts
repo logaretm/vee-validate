@@ -7,6 +7,8 @@ import highlight from './highlight';
 import baseLink from './baseLink';
 import { svgSprite } from './src/integrations/svgSprite';
 
+import partytown from '@astrojs/partytown';
+
 // https://astro.build/config
 export default defineConfig({
   site: process.env.NODE_ENV === 'production' ? 'https://vee-validate.logaretm.com/' : 'http://localhost:4321/',
@@ -19,5 +21,10 @@ export default defineConfig({
       remarkPlugins: [baseLink('/v4'), highlight, remarkGfm],
     }),
     svgSprite,
+    partytown({
+      config: {
+        forward: ['dataLayer.push'],
+      },
+    }),
   ],
 });

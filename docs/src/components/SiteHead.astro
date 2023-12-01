@@ -33,5 +33,14 @@ const links = generateLinks({
   {metaTags.map(t => <meta content={t.content} name={t.name} property={t.property} />)}
   {links.map(t => <link href={t.href} rel={t.rel} />)}
   <script is:inline src="/v4/loadTheme.js"></script>
-  <!-- <script src="https://cdn.usefathom.com/script.js" data-site="OYTLUCCD" defer></script> -->
+  <script type="text/partytown" src="https://www.googletagmanager.com/gtag/js?id=G-T7VXTJ0MFH"></script>
+  <script type="text/partytown">
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'G-T7VXTJ0MFH');
+  </script>
 </head>
