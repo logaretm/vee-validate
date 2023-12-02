@@ -219,7 +219,7 @@ function onForkClick() {
 
 .dark {
   .vue-repl {
-    --bg: hsl(240 6% 9%) !important;
+    --bg: #1c1c21 !important;
     --bg-soft: hsl(240 6% 9%) !important;
     --border: #333 !important;
     --text-light: #aaa !important;
@@ -228,7 +228,7 @@ function onForkClick() {
 
     &:deep(.CodeMirror) {
       color: var(--symbols);
-      background-color: #22212c;
+      background-color: #1c1c21;
       --symbols: #f8f8f2;
       --base: #f8f8f2;
       --comment: #7970a9;
