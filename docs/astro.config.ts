@@ -14,6 +14,11 @@ export default defineConfig({
   site: process.env.NODE_ENV === 'production' ? 'https://vee-validate.logaretm.com/' : 'http://localhost:4321/',
   trailingSlash: 'always',
   base: '/v4',
+  vite: {
+    ssr: {
+      noExternal: ['@vue/repl'],
+    },
+  },
   integrations: [
     vue(),
     sitemap(),

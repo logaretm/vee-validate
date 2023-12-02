@@ -87,7 +87,7 @@ Note that `defineField` generates a pair of values, the first one is the value m
 
 Here is a basic example of how to use `defineField` with a simple input element:
 
-<Repl files={{ 'App.vue': 'CompositionInputBindsBasic01' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionInputBindsBasic01' }} client:visible />
 
 Notice that as you type in the input, the `values` are automatically updated with the value changes.
 
@@ -111,13 +111,13 @@ const [email, emailAttrs] = defineField('email');
 
 Here is a full running example:
 
-<Repl files={{ 'App.vue': 'CompositionInputBindsBasic02' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionInputBindsBasic02' }} client:visible />
 
 Notice as you type into the input, the validation is then triggered and the errors are populated. By default `defineField` optimizes for aggressive validation, meaning the validation will be triggered whenever the model changes.
 
 You can change that behavior. For example, you can make it "lazy" by passing a configuration to `defineField` to disable validation on model updates with `validateOnModelUpdate` config.
 
-<Repl files={{ 'App.vue': 'CompositionInputBindsBasic03' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionInputBindsBasic03' }} client:visible />
 
 Now as you type in the field, the input is immediately validated. You can do more with dynamic configurations.
 
@@ -127,17 +127,17 @@ Similarly to HTML inputs, you can achieve the same results with the same `define
 
 Following the previous examples we can achieve value tracking like this:
 
-<Repl files={{ 'App.vue': 'CompositionComponentBindsBasic01', 'CustomInput.vue': 'CustomInputBasic' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionComponentBindsBasic01', 'CustomInput.vue': 'CustomInputBasic' }} client:visible />
 
 As you type into the input, notice that the `values` are being updated.
 
 Let's add validation to the previous example:
 
-<Repl files={{ 'App.vue': 'CompositionComponentBindsBasic02', 'CustomInput.vue': 'CustomInputBasic' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionComponentBindsBasic02', 'CustomInput.vue': 'CustomInputBasic' }} client:visible />
 
 Notice that for components, validations are executed immediately. This is intended because component implementations are not standardized across the Vue ecosystem as there is no guarantee it will emit the same range of events as the native HTML elements. However, you can customize the validation trigger if you know the components you are using are emitting the right events to support the behavior.
 
-<Repl files={{ 'App.vue': 'CompositionComponentBindsBasic03', 'CustomInput.vue': 'CustomInputBasic' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionComponentBindsBasic03', 'CustomInput.vue': 'CustomInputBasic' }} client:visible />
 
 ### Mapping attributes and props
 
@@ -179,7 +179,7 @@ Here is an example that shows how to make the validation behavior "eager". Meani
 
 But once it is invalid, it validates on each input event, making it "eager" for success.
 
-<Repl files={{ 'App.vue': 'CompositionComponentBindsBasic05' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionComponentBindsBasic05' }} client:visible />
 
 ## Form Schema
 
@@ -217,7 +217,7 @@ const { errors, values } = useForm({
 });
 ```
 
-<Repl files={{ 'App.vue': 'CompositionYupBasic' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionYupBasic' }} client:visible />
 
 <DocTip title="Yup Schema Optimizations" type="warn">
 
@@ -259,7 +259,7 @@ const { errors, values } = useForm({
 
 Here is a full example using zod with `useForm`:
 
-<Repl files={{ 'App.vue': 'CompositionZodBasic' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionZodBasic' }} client:visible />
 
 <DocTip title="refine/superRefine">
 
@@ -301,7 +301,7 @@ const { errors, values } = useForm({
 
 Here is a full example using valibot with `useForm`:
 
-<Repl files={{ 'App.vue': 'CompositionValibotBasic' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionValibotBasic' }} client:visible />
 
 ### Other validation providers and options
 
@@ -315,7 +315,7 @@ You can refer to the full guide on global rules [here](/guide/global-validators)
 
 Another option is to just use any 3rd party validation tool you prefer, something like [`validator.js`](https://github.com/validatorjs/validator.js/). Here is a quick example:
 
-<Repl files={{ 'App.vue': 'CompositionValidateFnBasic' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionValidateFnBasic' }} client:visible />
 
 Or you could use any custom function.
 
@@ -329,10 +329,10 @@ Both `zod` and `yup` are very good at defining schemas especially nested values 
 
 There are a few ways you can create dynamic schemas (reactive) where it changes the validation rules based on some state. The first way to do that is with `computed`.
 
-<Repl files={{ 'App.vue': 'CompositionDynamicSchemaComputed' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionDynamicSchemaComputed' }} client:visible />
 
 When the validation schema value changes, only the fields that were validated at least once will be re-validated, the other fields won't be validated to avoid aggressive validation behavior.
 
 There are other ways depending on which validation library you are using. For example, with `yup` you can achieve the same with `yup.lazy` or `zod.lazy`:
 
-<Repl files={{ 'App.vue': 'CompositionDynamicSchemaYupLazy' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionDynamicSchemaYupLazy' }} client:visible />

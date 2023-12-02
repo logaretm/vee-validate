@@ -2,15 +2,15 @@
 import { ref, version } from 'vue';
 import { useFullscreen } from '@vueuse/core';
 import { Repl, ReplStore } from '@vue/repl';
-import StackBlitzSdk from '@stackblitz/sdk';
-// @ts-ignore
-import CodeMirror from '@vue/repl/codemirror-editor';
-import '@vue/repl/style.css';
 import { getViteProjectConfig } from '@/utils/examples';
+import StackBlitzSdk from '@stackblitz/sdk';
 
 const props = defineProps<{
   files: Record<string, string>;
+  editor: any;
 }>();
+
+console.log(props.editor);
 
 const containerRef = ref<HTMLElement>();
 const { isFullscreen, toggle: toggleFullscreen } = useFullscreen(containerRef);
@@ -119,7 +119,7 @@ function onForkClick() {
     </div>
     <Repl
       :store="store"
-      :editor="CodeMirror"
+      :editor="editor"
       :show-ts-config="false"
       :showCompileOutput="false"
       :ssr="false"
@@ -141,6 +141,12 @@ function onForkClick() {
 
   &:deep(iframe) {
     margin: 0;
+  }
+
+  &:deep(.wrapper) {
+    &:has(.toggle) {
+      @apply hidden;
+    }
   }
 
   &:deep(.stretch) {

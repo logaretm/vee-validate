@@ -48,7 +48,7 @@ meta.value.initialValues;
 
 Here is a simple example where we disable the form's submit button unless a field was touched.
 
-<Repl files={{ 'App.vue': 'CompositionHandlingForms01' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionHandlingForms01' }} client:visible />
 
 ## Handling Submissions
 
@@ -76,7 +76,7 @@ const onSubmit = handleSubmit(values => {
 
 Here is an example that makes use of `handleSubmit` to validate before submitting the form.
 
-<Repl files={{ 'App.vue': 'CompositionHandlingForms02' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionHandlingForms02' }} client:visible />
 
 The `handleSubmit` function will only execute your callback once the returned function (`onSubmit` in the example) if all fields are valid, meaning you don't have to handle if the form is invalid in your logic.
 
@@ -88,7 +88,7 @@ As a bonus, when the returned function is used as an event handler (like in the 
 
 For non-ajax submissions that trigger a full page reload, you can use the `submitForm` function instead of `handleSubmit`. You normally would use this if you are not building a single-page application. In the following example, we submit the form to another tab using the `get` form method.
 
-<Repl files={{ 'App.vue': 'CompositionHandlingForms13' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionHandlingForms13' }} client:visible />
 
 In that case **YOU MUST** use `submitForm` as an event handler for the `submit` event for a native `form` element, otherwise, it would have no effect.
 
@@ -115,7 +115,7 @@ const onSubmit = handleSubmit(onSuccess, onInvalidSubmit);
 
 Here is a quick example of how to scroll to and focus the first invalid field after a failed submission attempt.
 
-<Repl files={{ 'App.vue': 'CompositionHandlingForms03' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionHandlingForms03' }} client:visible />
 
 ### Submission Progress
 
@@ -127,7 +127,7 @@ The `isSubmitting` state will be set to `true` once the validation of the form s
 const { isSubmitting } = useForm();
 ```
 
-<Repl files={{ 'App.vue': 'CompositionHandlingForms04' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionHandlingForms04' }} client:visible />
 
 ### Submit Count
 
@@ -139,7 +139,7 @@ const { submitCount } = useForm();
 
 Maybe you want to lock the form if too many attempts were made, or you want to show a message after the first submission attempt.
 
-<Repl files={{ 'App.vue': 'CompositionHandlingForms05' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionHandlingForms05' }} client:visible />
 
 ### Submission Behavior
 
@@ -202,7 +202,7 @@ const { defineInputBinds } = useForm({
 });
 ```
 
-<Repl files={{ 'App.vue': 'CompositionHandlingForms06' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionHandlingForms06' }} client:visible />
 
 <DocTip>
 
@@ -234,7 +234,7 @@ setValues({
 });
 ```
 
-<Repl files={{ 'App.vue': 'CompositionHandlingForms07' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionHandlingForms07' }} client:visible />
 
 ### Controlled Values
 
@@ -269,13 +269,13 @@ const onSubmit = handleSubmit.withControlled(async values => {
 
 Here is an example that filters out some noisy initial values when submitting the form using the `withControlled` modifier.
 
-<Repl files={{ 'App.vue': 'CompositionHandlingForms12' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionHandlingForms12' }} client:visible />
 
 ### Setting initial values asynchronously
 
 Sometimes your data is fetched asynchronously from an API and you want to set the initial values or the current values after the data is fetched. You can do that by using `resetForm` to set both current and initial data.
 
-<Repl files={{ 'App.vue': 'CompositionHandlingForms14' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionHandlingForms14' }} client:visible />
 
 You could alternatively use `setValues` but note that `setValues` can trigger validation and do not reset the meta state for the fields like `dirty` or `touched`.
 
@@ -320,7 +320,7 @@ interface FormState {
 
 Here is an example where a full form is being reset:
 
-<Repl files={{ 'App.vue': 'CompositionHandlingForms08' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionHandlingForms08' }} client:visible />
 
 ### Resetting Forms After Submit
 
@@ -340,7 +340,7 @@ export interface FormActions {
 
 This is an example of using the form actions object to reset the form:
 
-<Repl files={{ 'App.vue': 'CompositionHandlingForms09' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionHandlingForms09' }} client:visible />
 
 ## Errors
 
@@ -358,7 +358,7 @@ const { errorBag } = useForm();
 
 Here is an example that displays multiple errors for a field:
 
-<Repl files={{ 'App.vue': 'CompositionHandlingForms10' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionHandlingForms10' }} client:visible />
 
 ### Initial Errors
 
@@ -433,4 +433,4 @@ const onSubmit = handleSubmit(async (values, actions) => {
 
 Here is an example that sets form errors after submission, usually you will have a backend API that returns the errors:
 
-<Repl files={{ 'App.vue': 'CompositionHandlingForms11' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionHandlingForms11' }} client:visible />

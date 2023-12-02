@@ -1,5 +1,10 @@
 <template>
-  <button @click="$emit('update:modelValue', !modelValue)" class="burger burger-squeeze" :class="{ open: modelValue }">
+  <button
+    @click="$emit('update:modelValue', !modelValue)"
+    class="burger burger-squeeze"
+    aria-label="Menu"
+    :class="{ open: modelValue }"
+  >
     <div class="burger-lines"></div>
   </button>
 </template>
@@ -90,17 +95,41 @@ defineProps({
   .burger.burger-squeeze .burger-lines,
   .burger.burger-squeeze .burger-lines:after,
   .burger.burger-squeeze .burger-lines:before {
-    -webkit-transition: 0.2s top 0.2s, 0.1s left, 0.2s transform, 0.4s background-color 0.2s;
-    -o-transition: 0.2s top 0.2s, 0.1s left, 0.2s transform, 0.4s background-color 0.2s;
-    transition: 0.2s top 0.2s, 0.1s left, 0.2s transform, 0.4s background-color 0.2s;
+    -webkit-transition:
+      0.2s top 0.2s,
+      0.1s left,
+      0.2s transform,
+      0.4s background-color 0.2s;
+    -o-transition:
+      0.2s top 0.2s,
+      0.1s left,
+      0.2s transform,
+      0.4s background-color 0.2s;
+    transition:
+      0.2s top 0.2s,
+      0.1s left,
+      0.2s transform,
+      0.4s background-color 0.2s;
   }
 
   .burger.burger-squeeze.open .burger-lines,
   .burger.burger-squeeze.open .burger-lines:after,
   .burger.burger-squeeze.open .burger-lines:before {
-    -webkit-transition: 0.2s background-color, 0.2s top, 0.2s left, 0.2s transform 0.15s;
-    -o-transition: 0.2s background-color, 0.2s top, 0.2s left, 0.2s transform 0.15s;
-    transition: 0.2s background-color, 0.2s top, 0.2s left, 0.2s transform 0.15s;
+    -webkit-transition:
+      0.2s background-color,
+      0.2s top,
+      0.2s left,
+      0.2s transform 0.15s;
+    -o-transition:
+      0.2s background-color,
+      0.2s top,
+      0.2s left,
+      0.2s transform 0.15s;
+    transition:
+      0.2s background-color,
+      0.2s top,
+      0.2s left,
+      0.2s transform 0.15s;
   }
 }
 .burger.burger-squeeze.open .burger-lines {
