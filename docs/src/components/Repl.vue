@@ -10,8 +10,6 @@ const props = defineProps<{
   editor: any;
 }>();
 
-console.log(props.editor);
-
 const containerRef = ref<HTMLElement>();
 const { isFullscreen, toggle: toggleFullscreen } = useFullscreen(containerRef);
 
