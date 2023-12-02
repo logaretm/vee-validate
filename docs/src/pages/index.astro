@@ -4,6 +4,7 @@ import SponsorButton from '@/components/SponsorButton.vue';
 import Icon from '@/components/Icon.vue';
 import MainPageExample from '@/components/MainPageExample.vue';
 import StarCount from '@/components/StarCount.vue';
+import FeatureCard from '@/components/FeatureCard.vue';
 import { features } from '@/constants';
 import UiLibraries from '@/components/UiLibraries.vue';
 
@@ -73,14 +74,7 @@ const highlights = [
   </div>
 
   <section class="mt-12 md:mt-24 grid grid-cols-1 md:grid-cols-3 gap-5 mx-auto min-w-0 max-w-6xl">
-    {
-      highlights.map(feature => (
-        <div class="bg-gradient-to-br from-gray-200 to-gray-100 dark:from-zinc-800 dark:to-zinc-900 p-6 rounded-lg font-display shadow-sm">
-          <h3 class="text-xl font-bold">{feature.title}</h3>
-          <p class="mt-4 font-display font-medium text-gray-600 dark:text-gray-300" set:html={feature.details} />
-        </div>
-      ))
-    }
+    {highlights.map(feature => <FeatureCard feature={feature} client:visible />)}
   </section>
 
   <section class="mt-24 flex flex-col mx-auto items-center">
