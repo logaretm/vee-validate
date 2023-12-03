@@ -600,7 +600,7 @@ handleReset();
 
 <DocTip>
 
-This is deprecated, please use `defineInputBinds` or `defineComponentBinds` instead.
+This is deprecated, please use `defineField` instead.
 
 </DocTip>
 
@@ -636,6 +636,12 @@ const [email, password] = useFieldModel(['email', 'password']);
 
 </CodeTitle>
 
+<DocTip>
+
+This is deprecated, please use `defineField` instead.
+
+</DocTip>
+
 This creates a bindable object for the specified field. The bindable object only works with native HTML input elements, for components use `defineComponentBinds` instead.
 
 The `defineInputBinds` must be called in the `setup` function.
@@ -667,6 +673,12 @@ const password = defineInputBinds('password');
 
 </CodeTitle>
 
+<DocTip>
+
+This is deprecated, please use `defineField` instead.
+
+</DocTip>
+
 This creates a bindable object for the specified field. The bindable object only works with components, for native HTML input elements use `defineInputBinds` instead.
 
 The `defineComponentBinds` must be called in the `setup` function.
@@ -691,4 +703,86 @@ const { errors, defineComponentBinds } = useForm();
 const email = defineComponentBinds('email');
 const password = defineComponentBinds('password');
 </script>
+```
+
+<CodeTitle level="4">
+
+`defineField`
+
+</CodeTitle>
+
+This function returns a model and a props/attributes pair.
+
+The `defineField` must be called in the `setup` function.
+
+`defineField` accepts a single field path, You can use either root field paths or nested paths like `some.user.path` with dot notation.
+
+```vue
+<template>
+  <input v-model="email" v-bind="emailProps" />
+  <span>{{ errors.email }}</span>
+
+  <input v-model="password" v-bind="passwordProps" type="password" />
+  <span>{{ errors.password }}</span>
+</template>
+
+<script setup>
+import { useForm } from 'vee-validate';
+
+const { errors, defineField } = useForm();
+
+const [email, emailProps] = defineField('email');
+const [password, passwordProps] = defineField('password');
+</script>
+```
+
+This function also works with custom components.
+
+You can configure the props/attributes that are bound to the component by passing a second argument to `defineField`. You can use this configuration to adjust the `field` validation behavior and more with the individual elements you are using or the component library of your choice. Check the [UI library examples](/examples/ui-libraries) for live examples.
+
+```ts
+const [field, props] = defineField('field', {
+  // A getter that computes and adds any additional props to the component
+  // It receives the current field state as an argument
+  props(state) {
+    // This is just an example, by default this is an empty object
+    return {
+      'aria-invalid': state.errors.length > 0 ? 'true' : 'false',
+    };
+  },
+  // A label for the field, only used with global validation rules
+  label: 'a label',
+  // Validates when `blur` event is emitted from the element/component
+  validateOnBlur: true,
+  // Validates when `change` event is emitted from the element/component
+  validateOnChange: true,
+  // Validates when `input` event is emitted from the element/component
+  validateOnInput: false,
+  // Validates when the returned model value changes
+  validateOnModelUpdate: true,
+});
+```
+
+You can also have a lazy configuration by passing a function that returns the configuration object. The only difference is `props` is now a plain object instead of a getter function.
+
+This means you can change any of the configuration based on the field state:
+
+```ts
+const [field, props] = defineField('field', state => {
+  return {
+    // A getter that computes and adds any additional props to the component
+    props: {
+      // This is just an example, by default this is an empty object
+      'aria-invalid': state.errors.length > 0 ? 'true' : 'false',
+    },
+    // Validates when `blur` event is emitted from the element/component
+    validateOnBlur: true,
+    // Validates when `change` event is emitted from the element/component
+    validateOnChange: true,
+    // Validates when `input` event is emitted from the element/component
+    validateOnInput: false,
+    // Validates when the returned model value changes
+    validateOnModelUpdate: true,
+  };
+});
 ```
