@@ -1,7 +1,7 @@
 {
   "name": "vee-validate",
   "version": "4.12.2",
-  "description": "Form Validation for Vue.js",
+  "description": "Painless forms for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
   "module": "dist/vee-validate.esm.js",

@@ -1,7 +1,7 @@
 {
   "name": "vee-validate-monorepo",
   "private": true,
-  "description": "Form Validation for Vue.js",
+  "description": "Painless forms for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
   "type": "module",
