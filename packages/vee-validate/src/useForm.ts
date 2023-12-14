@@ -719,15 +719,31 @@ export function useForm<
   }
 
   function isFieldTouched(field: Path<TValues>) {
-    return !!findPathState(field)?.touched;
+    const pathState = findPathState(field);
+    if (pathState) {
+      return pathState.touched;
+    }
+
+    // Find all nested paths and consider their touched state
+    return pathStates.value.filter(s => s.path.startsWith(field)).some(s => s.touched);
   }
 
   function isFieldDirty(field: Path<TValues>) {
-    return !!findPathState(field)?.dirty;
+    const pathState = findPathState(field);
+    if (pathState) {
+      return pathState.dirty;
+    }
+
+    return pathStates.value.filter(s => s.path.startsWith(field)).some(s => s.dirty);
   }
 
   function isFieldValid(field: Path<TValues>) {
-    return !!findPathState(field)?.valid;
+    const pathState = findPathState(field);
+    if (pathState) {
+      return pathState.valid;
+    }
+
+    return pathStates.value.filter(s => s.path.startsWith(field)).every(s => s.valid);
   }
 
   /**
