@@ -1,12 +1,4 @@
-import {
-  AnyObjectSchema,
-  ArraySchema,
-  InferType,
-  Schema,
-  SchemaFieldDescription,
-  ValidateOptions,
-  ValidationError,
-} from 'yup';
+import { AnyObjectSchema, ArraySchema, InferType, Schema, ValidateOptions, ValidationError } from 'yup';
 import {
   TypedSchema,
   TypedSchemaError,
@@ -76,10 +68,10 @@ export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchem
     },
     describe(path) {
       if (!path) {
-        return getDescriptionFromYupDescription(yupSchema.describe());
+        return getDescriptionFromYupSpec(yupSchema.spec);
       }
 
-      const description = getDescriptionForPath(path, yupSchema);
+      const description = getSpecForPath(path, yupSchema);
       if (!description) {
         return {
           required: false,
@@ -87,30 +79,21 @@ export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchem
         };
       }
 
-      return getDescriptionFromYupDescription(description);
+      return getDescriptionFromYupSpec(description);
     },
   };
 
   return schema;
 }
 
-function getDescriptionFromYupDescription(desc: SchemaFieldDescription): TypedSchemaPathDescription {
-  if ('tests' in desc) {
-    const required = desc?.tests?.some(t => t.name === 'required') || false;
-
-    return {
-      required,
-      exists: true,
-    };
-  }
-
+function getDescriptionFromYupSpec(spec: AnyObjectSchema['spec']): TypedSchemaPathDescription {
   return {
-    required: false,
-    exists: false,
+    required: !spec.optional,
+    exists: true,
   };
 }
 
-function getDescriptionForPath(path: string, schema: Schema): SchemaFieldDescription | null {
+function getSpecForPath(path: string, schema: Schema): AnyObjectSchema['spec'] | null {
   if (!isObjectSchema(schema)) {
     return null;
   }
@@ -118,7 +101,7 @@ function getDescriptionForPath(path: string, schema: Schema): SchemaFieldDescrip
   if (isNotNestedPath(path)) {
     const field = schema.fields[cleanupNonNestedPath(path)];
 
-    return field?.describe() || null;
+    return (field as AnyObjectSchema)?.spec || null;
   }
 
   const paths = (path || '').split(/\.|\[(\d+)\]/).filter(Boolean);
@@ -133,7 +116,7 @@ function getDescriptionForPath(path: string, schema: Schema): SchemaFieldDescrip
     }
 
     if (i === paths.length - 1) {
-      return currentSchema.describe();
+      return currentSchema.spec;
     }
   }
 
