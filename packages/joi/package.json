@@ -29,7 +29,7 @@
   ],
   "dependencies": {
     "joi": "17.11.0",
-    "type-fest": "^4.8.2",
+    "type-fest": "^4.8.3",
     "vee-validate": "4.12.2"
   }
 }

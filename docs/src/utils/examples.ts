@@ -22,7 +22,7 @@ export function getViteProjectConfig(files: Record<string, string>): Project {
     "@vee-validate/rules": "^${version}",
     "@vee-validate/i18n": "^${version}",
     "vee-validate": "^${version}",
-    "vue": "^3.3.8",
+    "vue": "^3.3.11",
     "yup": "latest",
     "zod": "latest"
   },
