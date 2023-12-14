@@ -131,7 +131,7 @@ export function useForm<
   const fieldArrays: PrivateFieldArrayContext[] = [];
 
   // a private ref for all form values
-  const formValues = reactive(resolveInitialValues(opts));
+  const formValues = reactive(resolveInitialValues(opts)) as TValues;
 
   const pathStates = ref<PathState<unknown>[]>([]);
 
@@ -503,7 +503,7 @@ export function useForm<
 
             if (result.valid && typeof fn === 'function') {
               const controlled = deepCopy(controlledValues.value);
-              let submittedValues = (onlyControlled ? controlled : values) as TOutput;
+              let submittedValues = (onlyControlled ? controlled : values) as unknown as TOutput;
               if (result.values) {
                 submittedValues = result.values;
               }
