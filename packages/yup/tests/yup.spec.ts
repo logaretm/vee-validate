@@ -331,6 +331,7 @@ test('reports required state on fields', async () => {
         yup.object({
           'not.nested.req': yup.string().required(),
           name: yup.string(),
+          num: yup.number().required(),
           email: yup.string().required(),
           nested: yup.object({
             arr: yup.array().of(yup.object({ req: yup.string().required(), nreq: yup.string() })),
@@ -347,6 +348,7 @@ test('reports required state on fields', async () => {
       });
 
       const { meta: name } = useField('name');
+      const { meta: num } = useField('num');
       const { meta: email } = useField('email');
       const { meta: req } = useField('nested.obj.req');
       const { meta: nreq } = useField('nested.obj.nreq');
@@ -356,6 +358,7 @@ test('reports required state on fields', async () => {
 
       metaSpy({
         name: name.required,
+        num: num.required,
         email: email.required,
         objReq: req.required,
         objNreq: nreq.required,
@@ -376,6 +379,7 @@ test('reports required state on fields', async () => {
     expect.objectContaining({
       name: false,
       email: true,
+      num: true,
       objReq: true,
       objNreq: false,
       arrReq: true,
