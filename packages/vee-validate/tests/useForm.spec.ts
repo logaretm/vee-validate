@@ -1183,6 +1183,8 @@ describe('useForm()', () => {
       setup() {
         form = useForm();
         useField('fname');
+        useField('nested.lname');
+        useField('nested.fname');
 
         return {};
       },
@@ -1192,10 +1194,13 @@ describe('useForm()', () => {
     await flushPromises();
     expect(form.meta.value.touched).toBe(false);
     expect(form.isFieldTouched('fname')).toBe(false);
+    expect(form.isFieldTouched('nested')).toBe(false);
     form.setFieldTouched('fname', true);
+    form.setFieldTouched('nested.lname', true);
     await flushPromises();
     expect(form.meta.value.touched).toBe(true);
     expect(form.isFieldTouched('fname')).toBe(true);
+    expect(form.isFieldTouched('nested')).toBe(true);
   });
 
   test('can query field dirty state', async () => {
@@ -1204,6 +1209,8 @@ describe('useForm()', () => {
       setup() {
         form = useForm();
         useField('fname');
+        useField('nested.lname');
+        useField('nested.fname');
 
         return {};
       },
@@ -1213,10 +1220,13 @@ describe('useForm()', () => {
     await flushPromises();
     expect(form.meta.value.dirty).toBe(false);
     expect(form.isFieldDirty('fname')).toBe(false);
+    expect(form.isFieldDirty('nested')).toBe(false);
     form.setFieldValue('fname', 'value');
+    form.setFieldValue('nested.lname', 'value');
     await flushPromises();
     expect(form.meta.value.dirty).toBe(true);
     expect(form.isFieldDirty('fname')).toBe(true);
+    expect(form.isFieldDirty('nested')).toBe(true);
   });
 
   test('can query field valid state', async () => {
@@ -1225,6 +1235,8 @@ describe('useForm()', () => {
       setup() {
         form = useForm();
         useField('fname');
+        useField('nested.lname');
+        useField('nested.fname');
 
         return {};
       },
@@ -1234,10 +1246,13 @@ describe('useForm()', () => {
     await flushPromises();
     expect(form.meta.value.valid).toBe(true);
     expect(form.isFieldValid('fname')).toBe(true);
+    expect(form.isFieldValid('nested')).toBe(true);
     form.setFieldError('fname', 'ERROR');
+    form.setFieldError('nested.lname', 'ERROR');
     await flushPromises();
     expect(form.meta.value.valid).toBe(false);
     expect(form.isFieldValid('fname')).toBe(false);
+    expect(form.isFieldValid('nested')).toBe(false);
   });
 
   // #4438
