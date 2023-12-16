@@ -8,7 +8,6 @@ import {
   Ref,
   ComponentInternalInstance,
   onBeforeUnmount,
-  warn,
   toValue,
   MaybeRef,
   MaybeRefOrGetter,
@@ -43,7 +42,7 @@ import {
   isEqual,
   isTypedSchema,
 } from './utils';
-import { isCallable, isObject, normalizeFormPath } from '../../shared';
+import { isCallable, normalizeFormPath } from '../../shared';
 import { FieldContextKey, FormContextKey, IS_ABSENT } from './symbols';
 import { useFieldState } from './useFieldState';
 import { refreshInspector, registerSingleFieldWithDevtools } from './devtools';
@@ -290,24 +289,6 @@ function _useField<TValue = unknown>(
       setValue(newValue, validateOnValueUpdate);
     },
   });
-
-  if (__DEV__) {
-    watch(
-      valueProxy,
-      (value, oldValue) => {
-        if (!isObject(value)) {
-          return;
-        }
-
-        if (value === oldValue && isEqual(value, oldValue)) {
-          warn(
-            'Detected a possible deep change on field `value` ref, for nested changes please either set the entire ref value or use `setValue` or `handleChange`.',
-          );
-        }
-      },
-      { deep: true },
-    );
-  }
 
   const field: PrivateFieldContext<TValue> = {
     id,
