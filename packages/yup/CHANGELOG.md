@@ -1,5 +1,15 @@
 # Change Log
 
+## 4.12.3
+
+### Patch Changes
+
+- a07ba1d: fix: use spec to find required state closes #4598
+- Updated dependencies [72e4379]
+- Updated dependencies [a18c19f]
+- Updated dependencies [e2171f8]
+  - vee-validate@4.12.3
+
 ## 4.12.2
 
 ### Patch Changes

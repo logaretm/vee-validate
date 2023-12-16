@@ -1,5 +1,15 @@
 # Change Log
 
+## 4.12.3
+
+### Patch Changes
+
+- 797f663: fix: use a better email re pulled from zod closes #4585
+- Updated dependencies [72e4379]
+- Updated dependencies [a18c19f]
+- Updated dependencies [e2171f8]
+  - vee-validate@4.12.3
+
 ## 4.12.2
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # Change Log
 
+## 4.12.3
+
+### Patch Changes
+
+- 72e4379: fix: remove deep data mutation warning closes #4597
+- a18c19f: feat: allow path meta querying for nested fields closes #4575
+- e2171f8: feat: expose some state on form instance
+
 ## 4.12.2
 
 ### Patch Changes
