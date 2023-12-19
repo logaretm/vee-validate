@@ -79,7 +79,7 @@ vee-validate offers two styles to integrate form validation into your Vue.js app
 
 The fastest way to create a form and manage its validation, behavior, and values is with the composition API.
 
-Create your form with `useForm` and then use `defineInputBinds` to create your fields bindings and `handleSubmit` to use the values and send them to an API.
+Create your form with `useForm` and then use `defineField` to create your field model and props/attributes and `handleSubmit` to use the values and send them to an API.
 
 ```vue
 <script setup>
@@ -91,14 +91,14 @@ function required(value) {
 }
 
 // Create the form
-const { defineInputBinds, handleSubmit, errors } = useForm({
+const { defineField, handleSubmit, errors } = useForm({
   validationSchema: {
     field: required,
   },
 });
 
 // Define fields
-const field = defineInputBinds('field');
+const [field, fieldProps] = defineField('field');
 
 // Submit handler
 const onSubmit = handleSubmit(values => {
@@ -109,7 +109,7 @@ const onSubmit = handleSubmit(values => {
 
 <template>
   <form @submit="onSubmit">
-    <input v-bind="field" />
+    <input v-model="field" v-bind="fieldProps" />
     <span>{{ errors.field }}</span>
 
     <button>Submit</button>

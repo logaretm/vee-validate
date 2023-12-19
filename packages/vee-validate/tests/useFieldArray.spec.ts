@@ -1,7 +1,7 @@
-import { useForm, useFieldArray, FieldEntry, FormContext, FieldArrayContext } from '@/vee-validate';
-import { nextTick, onMounted, Ref } from 'vue';
+import { useForm, useFieldArray, FieldEntry, FormContext, FieldArrayContext, useField } from '@/vee-validate';
+import { defineComponent, nextTick, onMounted, Ref } from 'vue';
 import * as yup from 'yup';
-import { mountWithHoc, flushPromises } from './helpers';
+import { mountWithHoc, flushPromises, setValue } from './helpers';
 
 test('can update a field entry model directly', async () => {
   mountWithHoc({
@@ -87,13 +87,11 @@ test('warns when updating a no-longer existing item', async () => {
       });
 
       const { remove, fields } = useFieldArray('users');
-      onMounted(() => {
+      onMounted(async () => {
         const item = fields.value[0];
         remove(0);
-
-        nextTick(() => {
-          item.value = 'test';
-        });
+        await nextTick();
+        item.value = 'test';
       });
     },
     template: `
@@ -521,4 +519,61 @@ test('array move initializes the array if undefined', async () => {
   arr.move(0, 0);
   await flushPromises();
   expect(arr.fields.value).toHaveLength(0);
+});
+
+// #4557
+test('errors are available to the newly inserted items', async () => {
+  let arr!: FieldArrayContext;
+  const InputText = defineComponent({
+    props: {
+      name: {
+        type: String,
+        required: true,
+      },
+    },
+    setup(props) {
+      const { value, errorMessage } = useField(() => props.name);
+
+      return {
+        value,
+        errorMessage,
+      };
+    },
+    template: '<input v-model="value" /> <span>{{errorMessage}}</span>',
+  });
+
+  mountWithHoc({
+    components: { InputText },
+    setup() {
+      useForm<any>({
+        initialValues: {
+          users: ['one', 'three'],
+        },
+        validationSchema: yup.object({
+          users: yup.array().of(yup.string().required().min(1)),
+        }),
+      });
+
+      arr = useFieldArray('users');
+
+      return {
+        fields: arr.fields,
+      };
+    },
+    template: `
+      <div>
+        <InputText v-for="(field, idx) in fields" :key="field.key" :name="'users[' + idx + ']'"  />
+      </div>
+    `,
+  });
+  const inputAt = (idx: number) => (document.querySelectorAll('input') || [])[idx] as HTMLInputElement;
+  const spanAt = (idx: number) => (document.querySelectorAll('span') || [])[idx] as HTMLSpanElement;
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(2);
+  arr.insert(1, '');
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(3);
+  setValue(inputAt(1), '');
+  await flushPromises();
+  expect(spanAt(1).textContent).toBeTruthy();
 });

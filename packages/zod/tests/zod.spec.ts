@@ -78,12 +78,13 @@ test('shows multiple errors using error bag', async () => {
         }),
       );
 
-      const { useFieldModel, errorBag } = useForm({
+      const { defineField, errorBag } = useForm({
         validationSchema: schema,
         validateOnMount: true,
       });
 
-      const [email, password] = useFieldModel(['email', 'password']);
+      const [email] = defineField('email', { validateOnModelUpdate: true });
+      const [password] = defineField('password', { validateOnModelUpdate: true });
 
       return {
         schema,
@@ -135,12 +136,13 @@ test('validates typed schema form with zod', async () => {
         }),
       );
 
-      const { useFieldModel, errors } = useForm({
+      const { defineField, errors } = useForm({
         validationSchema: schema,
         validateOnMount: true,
       });
 
-      const [email, password] = useFieldModel(['email', 'password']);
+      const [email] = defineField('email', { validateOnModelUpdate: true });
+      const [password] = defineField('password', { validateOnModelUpdate: true });
 
       return {
         schema,
@@ -198,11 +200,12 @@ test('handles zod union errors', async () => {
 
       const bothOrNeither = schema.or(schemaBothUndefined);
 
-      const { useFieldModel, errors } = useForm({
+      const { defineField, errors } = useForm({
         validationSchema: toTypedSchema(bothOrNeither),
       });
 
-      const [email, name] = useFieldModel(['email', 'name']);
+      const [email] = defineField('email', { validateOnModelUpdate: true });
+      const [name] = defineField('name', { validateOnModelUpdate: true });
 
       return {
         schema,
@@ -353,6 +356,53 @@ test('uses zod default values for initial values', async () => {
   );
 });
 
+test('uses zod transforms values for submitted values', async () => {
+  const onSubmitSpy = vi.fn();
+  let onSubmit!: () => void;
+  let model!: Ref<string | undefined>;
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema(
+        z
+          .object({
+            random: z.string().min(3),
+          })
+          .transform(() => {
+            return {
+              random: 'modified',
+            };
+          }),
+      );
+
+      const { handleSubmit, defineField } = useForm({
+        validationSchema: schema,
+      });
+
+      model = defineField('random')[0];
+
+      // submit now
+      onSubmit = handleSubmit(onSubmitSpy);
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  model.value = 'test';
+  onSubmit();
+  await flushPromises();
+  await expect(onSubmitSpy).toHaveBeenCalledTimes(1);
+  await expect(onSubmitSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      random: 'modified',
+    }),
+    expect.anything(),
+  );
+});
+
 test('reset form should cast the values', async () => {
   const valueSpy = vi.fn();
   mountWithHoc({
@@ -415,4 +465,164 @@ test('default values should not be undefined', async () => {
   await flushPromises();
   await expect(initialSpy).toHaveBeenCalledTimes(1);
   await expect(initialSpy).toHaveBeenLastCalledWith(expect.objectContaining({}));
+});
+
+test('reports required state on fields', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema(
+        z.object({
+          'not.nested.req': z.string(),
+          name: z.string().optional(),
+          email: z.string(),
+          nested: z.object({
+            arr: z.array(z.object({ req: z.string(), nreq: z.string().optional() })),
+            obj: z.object({
+              req: z.string(),
+              nreq: z.string().optional(),
+            }),
+          }),
+        }),
+      );
+
+      useForm({
+        validationSchema: schema,
+      });
+
+      const { meta: name } = useField('name');
+      const { meta: email } = useField('email');
+      const { meta: req } = useField('nested.obj.req');
+      const { meta: nreq } = useField('nested.obj.nreq');
+      const { meta: arrReq } = useField('nested.arr.0.req');
+      const { meta: arrNreq } = useField('nested.arr.1.nreq');
+      const { meta: nonNested } = useField('[not.nested.req]');
+
+      metaSpy({
+        name: name.required,
+        email: email.required,
+        objReq: req.required,
+        objNreq: nreq.required,
+        arrReq: arrReq.required,
+        arrNreq: arrNreq.required,
+        nonNested: nonNested.required,
+      });
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      name: false,
+      email: true,
+      objReq: true,
+      objNreq: false,
+      arrReq: true,
+      arrNreq: false,
+      nonNested: true,
+    }),
+  );
+});
+
+test('reports required false for non-existent fields', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema(
+        z.object({
+          name: z.string(),
+          nested: z.object({
+            arr: z.array(z.object({ prop: z.string() })),
+            obj: z.object({}),
+          }),
+        }),
+      );
+
+      useForm({
+        validationSchema: schema,
+      });
+
+      const { meta: email } = useField('email');
+      const { meta: req } = useField('nested.obj.req');
+      const { meta: arrReq } = useField('nested.arr.0.req');
+
+      metaSpy({
+        email: email.required,
+        objReq: req.required,
+        arrReq: arrReq.required,
+      });
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      email: false,
+      objReq: false,
+      arrReq: false,
+    }),
+  );
+});
+
+test('reports required state for field-level schemas', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      useForm();
+      const { meta: req } = useField('req', toTypedSchema(z.string()));
+      const { meta: nreq } = useField('nreq', toTypedSchema(z.string().optional()));
+
+      metaSpy({
+        req: req.required,
+        nreq: nreq.required,
+      });
+
+      return {};
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      req: true,
+      nreq: false,
+    }),
+  );
+});
+
+test('reports required state for field-level schemas without a form context', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const { meta: req } = useField('req', toTypedSchema(z.string()));
+      const { meta: nreq } = useField('nreq', toTypedSchema(z.string().optional()));
+
+      metaSpy({
+        req: req.required,
+        nreq: nreq.required,
+      });
+
+      return {};
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      req: true,
+      nreq: false,
+    }),
+  );
 });

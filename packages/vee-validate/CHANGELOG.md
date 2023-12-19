@@ -1,5 +1,41 @@
 # Change Log
 
+## 4.12.3
+
+### Patch Changes
+
+- 72e4379: fix: remove deep data mutation warning closes #4597
+- a18c19f: feat: allow path meta querying for nested fields closes #4575
+- e2171f8: feat: expose some state on form instance
+
+## 4.12.2
+
+### Patch Changes
+
+- b2203c8e: fix: apply schema casts when submitting closes #4565
+- ec8a4d7e: fix: defineField should respect global validateOnModelUpdate closes #4567
+
+## 4.12.1
+
+### Patch Changes
+
+- 36f6b9e6: fix: reset form and field behaviors for unspecified values closes #4564
+- c1c6f399: fix: unref initial values when initializing the form closes #4563
+
+## 4.12.0
+
+### Minor Changes
+
+- bbecc973: feat: deprecate reactive initial values closes #4402
+
+### Patch Changes
+
+- f9a95843: feat: add label support to defineField closes #4530
+- f688896f: fix: avoid overriding paths and destroy path on remove closes #4476 closes #4557
+- 2abb8966: fix: clone values before reset closes #4536
+- e370413b: fix: handle hoisted paths overriding one another
+- 95b701f7: feat: allow getters for field arrays
+
 ## 4.11.8
 
 ### Patch Changes

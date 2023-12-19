@@ -191,6 +191,9 @@ const FormImpl = /** #__PURE__ */ defineComponent({
       getValues,
       getMeta,
       getErrors,
+      values,
+      meta,
+      errors,
     });
 
     return function renderForm() {
@@ -240,6 +243,9 @@ export const Form = FormImpl as typeof FormImpl & {
     getValues: FormSlotProps['getValues'];
     getMeta: FormSlotProps['getMeta'];
     getErrors: FormSlotProps['getErrors'];
+    meta: FormSlotProps['meta'];
+    values: FormSlotProps['values'];
+    errors: FormSlotProps['errors'];
     $slots: {
       default: (arg: FormSlotProps) => VNode[];
     };

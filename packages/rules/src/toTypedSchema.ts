@@ -1,6 +1,6 @@
 import { keysOf } from '../../vee-validate/src/utils';
 import { TypedSchema, RawFormSchema, validateObject, TypedSchemaError, validate } from 'vee-validate';
-import { Optional } from '../../shared';
+import { Optional, isObject } from '../../shared';
 
 export function toTypedSchema<TOutput = any, TInput extends Optional<TOutput> = Optional<TOutput>>(
   rawSchema: RawFormSchema<TInput> | string,
@@ -34,7 +34,42 @@ export function toTypedSchema<TOutput = any, TInput extends Optional<TOutput> = 
         }),
       };
     },
+    describe(path) {
+      if (!path) {
+        return getDescriptionFromExpression(rawSchema);
+      }
+
+      if (isObject(rawSchema) && path in rawSchema) {
+        return getDescriptionFromExpression((rawSchema as any)[path]);
+      }
+
+      return {
+        required: false,
+        exists: false,
+      };
+    },
   };
 
   return schema;
+}
+
+function getDescriptionFromExpression(rules: string | Record<string, any>) {
+  if (typeof rules === 'string') {
+    return {
+      exists: true,
+      required: rules.includes('required'),
+    };
+  }
+
+  if (isObject(rules)) {
+    return {
+      exists: true,
+      required: !!rules.required,
+    };
+  }
+
+  return {
+    required: false,
+    exists: true,
+  };
 }

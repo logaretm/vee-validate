@@ -1,25 +1,25 @@
 <script setup>
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/valibot';
-import { email, string, minLength, object } from 'valibot';
+import { email as emailValidator, string, minLength, object } from 'valibot';
 
-const { errors, defineInputBinds } = useForm({
+const { errors, defineField } = useForm({
   validationSchema: toTypedSchema(
     object({
-      email: string([minLength(1, 'Email is required'), email()]),
+      email: string([minLength(1, 'Email is required'), emailValidator()]),
       password: string([minLength(6, 'password too short')]),
     }),
   ),
 });
 
-const emailField = defineInputBinds('email');
-const passwordField = defineInputBinds('password');
+const [email, emailAttrs] = defineField('email');
+const [password, passwordAttrs] = defineField('password');
 </script>
 
 <template>
-  <input v-bind="emailField" />
+  <input v-model="email" v-bind="emailAttrs" />
   <div>{{ errors.email }}</div>
 
-  <input v-bind="passwordField" />
+  <input v-model="password" v-bind="passwordAttrs" />
   <div>{{ errors.password }}</div>
 </template>

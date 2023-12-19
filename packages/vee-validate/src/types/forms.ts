@@ -1,5 +1,5 @@
 import { ComputedRef, Ref, MaybeRef, MaybeRefOrGetter } from 'vue';
-import { MapValuesPathsToRefs, GenericObject, MaybeArray, MaybePromise, FlattenAndSetPathsType } from './common';
+import { GenericObject, MaybeArray, MaybePromise, FlattenAndSetPathsType, MapValuesPathsToRefs } from './common';
 import { FieldValidationMetaInfo } from '../../../shared';
 import { Path, PathValue } from './paths';
 import { PartialDeep } from 'type-fest';
@@ -13,11 +13,16 @@ export interface TypedSchemaError {
   path?: string;
   errors: string[];
 }
+export interface TypedSchemaPathDescription {
+  required: boolean;
+  exists: boolean;
+}
 
 export interface TypedSchema<TInput = any, TOutput = TInput> {
   __type: 'VVTypedSchema';
   parse(values: TInput): Promise<{ value?: TOutput; errors: TypedSchemaError[] }>;
   cast?(values: Partial<TInput>): TInput;
+  describe?(path?: Path<TInput>): Partial<TypedSchemaPathDescription>;
 }
 
 export type InferOutput<TSchema extends TypedSchema> = TSchema extends TypedSchema<any, infer TOutput>
@@ -39,6 +44,7 @@ export interface FieldMeta<TValue> {
   dirty: boolean;
   valid: boolean;
   validated: boolean;
+  required: boolean;
   pending: boolean;
   initialValue?: TValue;
 }
@@ -79,6 +85,7 @@ export interface PathStateConfig {
   label: MaybeRefOrGetter<string | undefined>;
   type: InputType;
   validate: FieldValidator;
+  schema?: TypedSchema;
 }
 
 export interface PathState<TValue = unknown> {
@@ -87,6 +94,7 @@ export interface PathState<TValue = unknown> {
   touched: boolean;
   dirty: boolean;
   valid: boolean;
+  required: boolean;
   validated: boolean;
   pending: boolean;
   initialValue: TValue | undefined;
@@ -266,65 +274,35 @@ type HandleSubmitFactory<TValues extends GenericObject, TOutput = TValues> = <TR
   onSubmitValidationErrorCb?: InvalidSubmissionHandler<TValues>,
 ) => (e?: Event) => Promise<TReturn | undefined>;
 
-export interface PrivateFormContext<TValues extends GenericObject = GenericObject, TOutput = TValues>
-  extends FormActions<TValues> {
-  formId: number;
-  values: TValues;
-  initialValues: Ref<Partial<TValues>>;
-  controlledValues: Ref<TValues>;
-  fieldArrays: PrivateFieldArrayContext[];
-  submitCount: Ref<number>;
-  schema?: MaybeRef<RawFormSchema<TValues> | TypedSchema<TValues, TOutput> | YupSchema<TValues> | undefined>;
-  errorBag: Ref<FormErrorBag<TValues>>;
-  errors: ComputedRef<FormErrors<TValues>>;
-  meta: ComputedRef<FormMeta<TValues>>;
-  isSubmitting: Ref<boolean>;
-  isValidating: Ref<boolean>;
-  keepValuesOnUnmount: MaybeRef<boolean>;
-  validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues, TOutput>>;
-  validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues, TOutput>>;
-  validateField(field: Path<TValues>, opts?: Partial<ValidationOptions>): Promise<ValidationResult>;
-  stageInitialValue(path: string, value: unknown, updateOriginal?: boolean): void;
-  unsetInitialValue(path: string): void;
-  handleSubmit: HandleSubmitFactory<TValues, TOutput> & { withControlled: HandleSubmitFactory<TValues, TOutput> };
-  setFieldInitialValue(path: string, value: unknown): void;
-  useFieldModel<TPath extends Path<TValues>>(path: TPath): Ref<PathValue<TValues, TPath>>;
-  useFieldModel<TPaths extends readonly [...MaybeRef<Path<TValues>>[]]>(
-    paths: TPaths,
-  ): MapValuesPathsToRefs<TValues, TPaths>;
-  createPathState<TPath extends Path<TValues>>(
-    path: MaybeRef<TPath>,
-    config?: Partial<PathStateConfig>,
-  ): PathState<PathValue<TValues, TPath>>;
-  getPathState<TPath extends Path<TValues>>(path: TPath): PathState<PathValue<TValues, TPath>> | undefined;
-  getAllPathStates(): PathState[];
-  removePathState<TPath extends Path<TValues>>(path: TPath, id: number): void;
-  unsetPathValue<TPath extends Path<TValues>>(path: TPath): void;
-  markForUnmount(path: string): void;
-  isFieldTouched<TPath extends Path<TValues>>(path: TPath): boolean;
-  isFieldDirty<TPath extends Path<TValues>>(path: TPath): boolean;
-  isFieldValid<TPath extends Path<TValues>>(path: TPath): boolean;
-}
-
-export interface ComponentModellessBinds {
-  onBlur: () => void;
-}
-
-export type ComponentModelBinds<TValue = any, TModel extends string = 'modelValue'> = ComponentModellessBinds & {
-  [TKey in `onUpdate:${TModel}`]: (value: TValue) => void;
-};
-
-export type BaseComponentBinds<TValue = any, TModel extends string = 'modelValue'> = ComponentModelBinds<
-  TValue,
-  TModel
-> & {
-  [k in TModel]: TValue;
-};
-
 export type PublicPathState<TValue = unknown> = Omit<
   PathState<TValue>,
   'bails' | 'label' | 'multiple' | 'fieldsCount' | 'validate' | 'id' | 'type' | '__flags'
 >;
+
+export interface BaseFieldProps {
+  onBlur: (e: Event) => void;
+  onChange: (e: Event) => void;
+  onInput: (e: Event) => void;
+}
+
+export interface InputBindsConfig<TValue = unknown, TExtraProps extends GenericObject = GenericObject> {
+  props: (state: PublicPathState<TValue>) => TExtraProps;
+  validateOnBlur: boolean;
+  label: MaybeRefOrGetter<string>;
+  validateOnChange: boolean;
+  validateOnInput: boolean;
+  validateOnModelUpdate: boolean;
+}
+
+export type LazyInputBindsConfig<TValue = unknown, TExtraProps extends GenericObject = GenericObject> = (
+  state: PublicPathState<TValue>,
+) => Partial<{
+  props: TExtraProps;
+  validateOnBlur: boolean;
+  validateOnChange: boolean;
+  validateOnInput: boolean;
+  validateOnModelUpdate: boolean;
+}>;
 
 export interface ComponentBindsConfig<
   TValue = unknown,
@@ -348,6 +326,21 @@ export type LazyComponentBindsConfig<
   model: TModel;
 }>;
 
+export interface ComponentModellessBinds {
+  onBlur: () => void;
+}
+
+export type ComponentModelBinds<TValue = any, TModel extends string = 'modelValue'> = ComponentModellessBinds & {
+  [TKey in `onUpdate:${TModel}`]: (value: TValue) => void;
+};
+
+export type BaseComponentBinds<TValue = any, TModel extends string = 'modelValue'> = ComponentModelBinds<
+  TValue,
+  TModel
+> & {
+  [k in TModel]: TValue;
+};
+
 export interface BaseInputBinds<TValue = unknown> {
   value: TValue | undefined;
   onBlur: (e: Event) => void;
@@ -355,21 +348,82 @@ export interface BaseInputBinds<TValue = unknown> {
   onInput: (e: Event) => void;
 }
 
-export interface InputBindsConfig<TValue = unknown, TExtraProps extends GenericObject = GenericObject> {
-  mapAttrs: (state: PublicPathState<TValue>) => TExtraProps;
-  validateOnBlur: boolean;
-  validateOnChange: boolean;
-  validateOnInput: boolean;
+export interface PrivateFormContext<TValues extends GenericObject = GenericObject, TOutput = TValues>
+  extends FormActions<TValues> {
+  formId: number;
+  values: TValues;
+  initialValues: Ref<Partial<TValues>>;
+  controlledValues: Ref<TValues>;
+  fieldArrays: PrivateFieldArrayContext[];
+  submitCount: Ref<number>;
+  schema?: MaybeRef<RawFormSchema<TValues> | TypedSchema<TValues, TOutput> | YupSchema<TValues> | undefined>;
+  errorBag: Ref<FormErrorBag<TValues>>;
+  errors: ComputedRef<FormErrors<TValues>>;
+  meta: ComputedRef<FormMeta<TValues>>;
+  isSubmitting: Ref<boolean>;
+  isValidating: Ref<boolean>;
+  keepValuesOnUnmount: MaybeRef<boolean>;
+  validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues, TOutput>>;
+  validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues, TOutput>>;
+  validateField(field: Path<TValues>, opts?: Partial<ValidationOptions>): Promise<ValidationResult>;
+  stageInitialValue(path: string, value: unknown, updateOriginal?: boolean): void;
+  unsetInitialValue(path: string): void;
+  handleSubmit: HandleSubmitFactory<TValues, TOutput> & { withControlled: HandleSubmitFactory<TValues, TOutput> };
+  setFieldInitialValue(path: string, value: unknown, updateOriginal?: boolean): void;
+  createPathState<TPath extends Path<TValues>>(
+    path: MaybeRef<TPath>,
+    config?: Partial<PathStateConfig>,
+  ): PathState<PathValue<TValues, TPath>>;
+  getPathState<TPath extends Path<TValues>>(path: TPath): PathState<PathValue<TValues, TPath>> | undefined;
+  getAllPathStates(): PathState[];
+  removePathState<TPath extends Path<TValues>>(path: TPath, id: number): void;
+  unsetPathValue<TPath extends Path<TValues>>(path: TPath): void;
+  destroyPath(path: string): void;
+  isFieldTouched<TPath extends Path<TValues>>(path: TPath): boolean;
+  isFieldDirty<TPath extends Path<TValues>>(path: TPath): boolean;
+  isFieldValid<TPath extends Path<TValues>>(path: TPath): boolean;
+  defineField<
+    TPath extends Path<TValues>,
+    TValue = PathValue<TValues, TPath>,
+    TExtras extends GenericObject = GenericObject,
+  >(
+    path: MaybeRefOrGetter<TPath>,
+    config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>,
+  ): [Ref<TValue>, Ref<BaseFieldProps & TExtras>];
+  /**
+   * @deprecated use defineField instead
+   */
+  useFieldModel<TPath extends Path<TValues>>(path: TPath): Ref<PathValue<TValues, TPath>>;
+  /**
+   * @deprecated use defineField instead
+   */
+  useFieldModel<TPaths extends readonly [...MaybeRef<Path<TValues>>[]]>(
+    paths: TPaths,
+  ): MapValuesPathsToRefs<TValues, TPaths>;
+  /**
+   * @deprecated use defineField instead
+   */
+  defineComponentBinds<
+    TPath extends Path<TValues>,
+    TValue = PathValue<TValues, TPath>,
+    TModel extends string = 'modelValue',
+    TExtras extends GenericObject = GenericObject,
+  >(
+    path: MaybeRefOrGetter<TPath>,
+    config?: Partial<ComponentBindsConfig<TValue, TExtras, TModel>> | LazyComponentBindsConfig<TValue, TExtras, TModel>,
+  ): Ref<BaseComponentBinds<TValue, TModel> & TExtras>;
+  /**
+   * @deprecated use defineField instead
+   */
+  defineInputBinds<
+    TPath extends Path<TValues>,
+    TValue = PathValue<TValues, TPath>,
+    TExtras extends GenericObject = GenericObject,
+  >(
+    path: MaybeRefOrGetter<TPath>,
+    config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>,
+  ): Ref<BaseInputBinds<TValue> & TExtras>;
 }
-
-export type LazyInputBindsConfig<TValue = unknown, TExtraProps extends GenericObject = GenericObject> = (
-  state: PublicPathState<TValue>,
-) => Partial<{
-  attrs: TExtraProps;
-  validateOnBlur: boolean;
-  validateOnChange: boolean;
-  validateOnInput: boolean;
-}>;
 
 export interface FormContext<TValues extends GenericObject = GenericObject, TOutput = TValues>
   extends Omit<
@@ -393,21 +447,4 @@ export interface FormContext<TValues extends GenericObject = GenericObject, TOut
   values: TValues;
   handleReset: () => void;
   submitForm: (e?: unknown) => Promise<void>;
-  defineComponentBinds<
-    TPath extends Path<TValues>,
-    TValue = PathValue<TValues, TPath>,
-    TModel extends string = 'modelValue',
-    TExtras extends GenericObject = GenericObject,
-  >(
-    path: MaybeRefOrGetter<TPath>,
-    config?: Partial<ComponentBindsConfig<TValue, TExtras, TModel>> | LazyComponentBindsConfig<TValue, TExtras, TModel>,
-  ): Ref<BaseComponentBinds<TValue, TModel> & TExtras>;
-  defineInputBinds<
-    TPath extends Path<TValues>,
-    TValue = PathValue<TValues, TPath>,
-    TExtras extends GenericObject = GenericObject,
-  >(
-    path: MaybeRefOrGetter<TPath>,
-    config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>,
-  ): Ref<BaseInputBinds<TValue> & TExtras>;
 }

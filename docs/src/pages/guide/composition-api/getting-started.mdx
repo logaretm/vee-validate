@@ -69,23 +69,25 @@ Creating a form context does a few things:
 
 With `useForm` declared, you are now ready to integrate the form with your elements and components. vee-validate is agnostic to the UI you are using.
 
-In the following couple of sections, you will learn how to associate your components and elements with the form and how to get value collection, validation, and error messages working.
+You will learn how to associate your components and elements with the form and how to get value collection, validation, and error messages working.
 
-#### HTML Inputs
+### HTML Inputs
 
-`useForm` provides a function called `defineInputBinds`. This function accepts a field path and returns an object containing the bindings for the input element. The field path is a string that represents the path to the field in the form context.
+`useForm` provides a function called `defineField`. This function accepts a field path and returns a value model and an object containing the bindings for the input element. The field path is a string that represents the path to the field in the form context.
 
 For example, if you have a field called `email` in the form context, the field path will be `email`.
 
 ```ts
-const { defineInputBinds } = useForm();
+const { defineField } = useForm();
 
-const email = defineInputBinds('email');
+const [email, emailAttrs] = defineField('email');
 ```
 
-Here is a basic example of how to use `defineInputBinds` with a simple input element:
+Note that `defineField` generates a pair of values, the first one is the value model and the second one is the attributes/props object. The props object contain attributes or event listeners that are useful to have on the input control or component which enables custom validation triggers and more.
 
-<Repl files={{ 'App.vue': 'CompositionInputBindsBasic01' }} client:only />
+Here is a basic example of how to use `defineField` with a simple input element:
+
+<Repl files={{ 'App.vue': 'CompositionInputBindsBasic01' }} client:visible />
 
 Notice that as you type in the input, the `values` are automatically updated with the value changes.
 
@@ -100,70 +102,58 @@ const schema = yup.object({
   email: yup.string().required().email(),
 });
 
-const { defineInputBinds } = useForm({
+const { defineField } = useForm({
   validationSchema: schema,
 });
 
-const email = defineInputBinds('email');
+const [email, emailAttrs] = defineField('email');
 ```
 
 Here is a full running example:
 
-<Repl files={{ 'App.vue': 'CompositionInputBindsBasic02' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionInputBindsBasic02' }} client:visible />
 
-Notice as you blur the input, the validation is then triggered and the errors are populated. By default `defineInputBinds` optimizes for lazy validation, meaning the validation will be triggered on `change` and on `blur` events.
+Notice as you type into the input, the validation is then triggered and the errors are populated. By default `defineField` optimizes for aggressive validation, meaning the validation will be triggered whenever the model changes.
 
-You can change that behavior. For example, you can make it "aggressive" by passing a configuration to `defineInputBinds` to validate `input` events.
+You can change that behavior. For example, you can make it "lazy" by passing a configuration to `defineField` to disable validation on model updates with `validateOnModelUpdate` config.
 
-<Repl files={{ 'App.vue': 'CompositionInputBindsBasic03' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionInputBindsBasic03' }} client:visible />
 
 Now as you type in the field, the input is immediately validated. You can do more with dynamic configurations.
 
-### Component Binds
+### Components
 
-Similarly to HTML inputs, you can achieve the same results for components with the `defineComponentBinds` function. This function accepts a field path and returns an object containing the bindings for the component.
-
-```ts
-const { defineComponentBinds } = useForm();
-
-const email = defineComponentBinds('email');
-```
+Similarly to HTML inputs, you can achieve the same results with the same `defineField` function.
 
 Following the previous examples we can achieve value tracking like this:
 
-<Repl files={{ 'App.vue': 'CompositionComponentBindsBasic01', 'CustomInput.vue': 'CustomInputBasic' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionComponentBindsBasic01', 'CustomInput.vue': 'CustomInputBasic' }} client:visible />
 
-As you type into the input, notice that the `values` are being updated. This means you don't need to use `v-model` on your inputs or components.
+As you type into the input, notice that the `values` are being updated.
 
 Let's add validation to the previous example:
 
-<Repl files={{ 'App.vue': 'CompositionComponentBindsBasic02', 'CustomInput.vue': 'CustomInputBasic' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionComponentBindsBasic02', 'CustomInput.vue': 'CustomInputBasic' }} client:visible />
 
 Notice that for components, validations are executed immediately. This is intended because component implementations are not standardized across the Vue ecosystem as there is no guarantee it will emit the same range of events as the native HTML elements. However, you can customize the validation trigger if you know the components you are using are emitting the right events to support the behavior.
 
-<Repl files={{ 'App.vue': 'CompositionComponentBindsBasic03', 'CustomInput.vue': 'CustomInputBasic' }} client:only />
-
-In case the component you are working with does not use the `modelValue` prop and the `update:modelValue` event, you can pass the `model` option to tell vee-validate which prop and event to use for that component binds. In the following example, the `CustomInput` uses the `value` prop and the `update:value` event.
-
-<Repl
-  files={{ 'App.vue': 'CompositionComponentBindsBasic06', 'CustomInput.vue': 'CustomInputBasicValueEvent' }}
-  client:only
-/>
+<Repl files={{ 'App.vue': 'CompositionComponentBindsBasic03', 'CustomInput.vue': 'CustomInputBasic' }} client:visible />
 
 ### Mapping attributes and props
 
-With both `defineInputBinds` and `defineComponentBinds` you can map the attributes and props of the in. This is useful when you want to:
+But aside from the attributes and listeners that vee-validate adds to those binding objects, you can also map the attributes and props of the in. This is useful when you want to:
 
-- Use a component or an element that doesn't support `v-model`.
 - When you want to map the attributes/props to a different name.
-- Pass new attributes/props to the component/element.
+- Pass new attributes/props to the component/element based on the field state.
 
-You can use `mapProps` or `mapAttrs` (For elements) to include any additional props or attributes you need to add to the component/element.
+You can use `props` to include any additional props or attributes you need to add to the component/element.
 
 ```ts
-const { defineInputBinds } = useForm({
+const { defineField } = useForm({
   // ...
 });
+
+const [email, emailProps] = defineField('email', { props: state => ({ error: state.errors[0] }) });
 ```
 
 In the following example, we have a component that accepts an `error` string prop and shows that message if it is not empty. This is common in many UI libraries as they try not to lock you into a specific validation library.
@@ -183,16 +173,13 @@ Notice that `form` also gives you access to `errors` so you can reference them a
 
 ### Dynamic configuration
 
-Instead of passing a static configuration object to either `defineInputBinds` or `defineComponentBinds`, you could pass a function that returns different configuration values. This is useful when you want the configuration to be dynamic based on the field state.
+Instead of passing a static configuration object `defineField`, you could pass a function that returns different configuration values. This is useful when you want the configuration to be dynamic based on the field state.
 
 Here is an example that shows how to make the validation behavior "eager". Meaning if the field does not have any errors then it will only validate on `change`.
 
 But once it is invalid, it validates on each input event, making it "eager" for success.
 
-<Repl
-  files={{ 'App.vue': 'CompositionComponentBindsBasic05', 'CustomInput.vue': 'CustomInputBasicError' }}
-  client:only
-/>
+<Repl files={{ 'App.vue': 'CompositionComponentBindsBasic05' }} client:visible />
 
 ## Form Schema
 
@@ -230,7 +217,7 @@ const { errors, values } = useForm({
 });
 ```
 
-<Repl files={{ 'App.vue': 'CompositionYupBasic' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionYupBasic' }} client:visible />
 
 <DocTip title="Yup Schema Optimizations" type="warn">
 
@@ -272,7 +259,7 @@ const { errors, values } = useForm({
 
 Here is a full example using zod with `useForm`:
 
-<Repl files={{ 'App.vue': 'CompositionZodBasic' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionZodBasic' }} client:visible />
 
 <DocTip title="refine/superRefine">
 
@@ -314,7 +301,7 @@ const { errors, values } = useForm({
 
 Here is a full example using valibot with `useForm`:
 
-<Repl files={{ 'App.vue': 'CompositionValibotBasic' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionValibotBasic' }} client:visible />
 
 ### Other validation providers and options
 
@@ -328,7 +315,7 @@ You can refer to the full guide on global rules [here](/guide/global-validators)
 
 Another option is to just use any 3rd party validation tool you prefer, something like [`validator.js`](https://github.com/validatorjs/validator.js/). Here is a quick example:
 
-<Repl files={{ 'App.vue': 'CompositionValidateFnBasic' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionValidateFnBasic' }} client:visible />
 
 Or you could use any custom function.
 
@@ -342,10 +329,10 @@ Both `zod` and `yup` are very good at defining schemas especially nested values 
 
 There are a few ways you can create dynamic schemas (reactive) where it changes the validation rules based on some state. The first way to do that is with `computed`.
 
-<Repl files={{ 'App.vue': 'CompositionDynamicSchemaComputed' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionDynamicSchemaComputed' }} client:visible />
 
 When the validation schema value changes, only the fields that were validated at least once will be re-validated, the other fields won't be validated to avoid aggressive validation behavior.
 
 There are other ways depending on which validation library you are using. For example, with `yup` you can achieve the same with `yup.lazy` or `zod.lazy`:
 
-<Repl files={{ 'App.vue': 'CompositionDynamicSchemaYupLazy' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionDynamicSchemaYupLazy' }} client:visible />

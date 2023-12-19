@@ -1,20 +1,8 @@
-<template>
-  <form @submit="onSubmit">
-    <input type="email" v-bind="email" />
-    <div>{{ errors.email }}</div>
-
-    <input type="password" v-bind="password" />
-    <div>{{ errors.password }}</div>
-
-    <button>Submit</button>
-  </form>
-</template>
-
 <script setup>
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 
-const { errors, handleSubmit, defineInputBinds } = useForm({
+const { errors, handleSubmit, defineField } = useForm({
   validationSchema: yup.object({
     email: yup.string().email().required(),
     password: yup.string().min(6).required(),
@@ -27,6 +15,18 @@ const onSubmit = handleSubmit(values => {
   alert(JSON.stringify(values, null, 2));
 });
 
-const email = defineInputBinds('email');
-const password = defineInputBinds('password');
+const [email, emailAttrs] = defineField('email');
+const [password, passwordAttrs] = defineField('password');
 </script>
+
+<template>
+  <form @submit="onSubmit">
+    <input type="email" v-model="email" v-bind="emailAttrs" />
+    <div>{{ errors.email }}</div>
+
+    <input type="password" v-model="password" v-bind="passwordAttrs" />
+    <div>{{ errors.password }}</div>
+
+    <button>Submit</button>
+  </form>
+</template>

@@ -1,7 +1,19 @@
-import { ZodObject, input, output, ZodDefault, ZodSchema, ParseParams, ZodIssue } from 'zod';
+import {
+  ZodObject,
+  input,
+  output,
+  ZodDefault,
+  ZodSchema,
+  ParseParams,
+  ZodIssue,
+  AnyZodObject,
+  ZodArrayDef,
+  ZodArray,
+  ZodFirstPartyTypeKind,
+} from 'zod';
 import { PartialDeep } from 'type-fest';
-import type { TypedSchema, TypedSchemaError } from 'vee-validate';
-import { isObject, merge, normalizeFormPath } from '../../shared';
+import { isNotNestedPath, type TypedSchema, type TypedSchemaError, cleanupNonNestedPath } from 'vee-validate';
+import { isIndex, isObject, merge, normalizeFormPath } from '../../shared';
 
 /**
  * Transforms a Zod object schema to Yup's schema
@@ -41,6 +53,27 @@ export function toTypedSchema<
 
         return values;
       }
+    },
+    describe(path) {
+      if (!path) {
+        return {
+          required: !zodSchema.isOptional(),
+          exists: true,
+        };
+      }
+
+      const description = getSchemaForPath(path, zodSchema);
+      if (!description) {
+        return {
+          required: false,
+          exists: false,
+        };
+      }
+
+      return {
+        required: !description.isOptional(),
+        exists: true,
+      };
     },
   };
 
@@ -102,3 +135,46 @@ const toFieldValidator = toTypedSchema;
 const toFormValidator = toTypedSchema;
 
 export { toFieldValidator, toFormValidator };
+
+function getSchemaForPath(path: string, schema: ZodSchema): ZodSchema | null {
+  if (!isObjectSchema(schema)) {
+    return null;
+  }
+
+  if (isNotNestedPath(path)) {
+    return schema.shape[cleanupNonNestedPath(path)];
+  }
+
+  const paths = (path || '').split(/\.|\[(\d+)\]/).filter(Boolean);
+
+  let currentSchema: ZodSchema = schema;
+  for (let i = 0; i <= paths.length; i++) {
+    const p = paths[i];
+    if (!p || !currentSchema) {
+      return currentSchema;
+    }
+
+    if (isObjectSchema(currentSchema)) {
+      currentSchema = currentSchema.shape[p] || null;
+      continue;
+    }
+
+    if (isIndex(p) && isArraySchema(currentSchema)) {
+      currentSchema = (currentSchema._def as ZodArrayDef).type;
+    }
+  }
+
+  return null;
+}
+
+function getDefType(schema: ZodSchema) {
+  return (schema._def as any).typeName as ZodFirstPartyTypeKind;
+}
+
+function isArraySchema(schema: ZodSchema): schema is ZodArray<any, any> {
+  return getDefType(schema) === ZodFirstPartyTypeKind.ZodArray;
+}
+
+function isObjectSchema(schema: ZodSchema): schema is AnyZodObject {
+  return getDefType(schema) === ZodFirstPartyTypeKind.ZodObject;
+}

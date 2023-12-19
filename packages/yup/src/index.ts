@@ -1,7 +1,13 @@
-import { InferType, Schema, ValidateOptions, ValidationError } from 'yup';
-import { TypedSchema, TypedSchemaError } from 'vee-validate';
+import { AnyObjectSchema, ArraySchema, InferType, Schema, ValidateOptions, ValidationError } from 'yup';
+import {
+  TypedSchema,
+  TypedSchemaError,
+  isNotNestedPath,
+  cleanupNonNestedPath,
+  TypedSchemaPathDescription,
+} from 'vee-validate';
 import { PartialDeep } from 'type-fest';
-import { isObject, merge } from '../../shared';
+import { isIndex, isObject, merge } from '../../shared';
 
 export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchema>, TInput = PartialDeep<TOutput>>(
   yupSchema: TSchema,
@@ -60,7 +66,67 @@ export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchem
         return values;
       }
     },
+    describe(path) {
+      if (!path) {
+        return getDescriptionFromYupSpec(yupSchema.spec);
+      }
+
+      const description = getSpecForPath(path, yupSchema);
+      if (!description) {
+        return {
+          required: false,
+          exists: false,
+        };
+      }
+
+      return getDescriptionFromYupSpec(description);
+    },
   };
 
   return schema;
+}
+
+function getDescriptionFromYupSpec(spec: AnyObjectSchema['spec']): TypedSchemaPathDescription {
+  return {
+    required: !spec.optional,
+    exists: true,
+  };
+}
+
+function getSpecForPath(path: string, schema: Schema): AnyObjectSchema['spec'] | null {
+  if (!isObjectSchema(schema)) {
+    return null;
+  }
+
+  if (isNotNestedPath(path)) {
+    const field = schema.fields[cleanupNonNestedPath(path)];
+
+    return (field as AnyObjectSchema)?.spec || null;
+  }
+
+  const paths = (path || '').split(/\.|\[(\d+)\]/).filter(Boolean);
+
+  let currentSchema = schema;
+  for (let i = 0; i < paths.length; i++) {
+    const p = paths[i];
+    if (isObjectSchema(currentSchema) && p in currentSchema.fields) {
+      currentSchema = currentSchema.fields[p] as AnyObjectSchema;
+    } else if (isIndex(p) && isArraySchema(currentSchema)) {
+      currentSchema = currentSchema.innerType as AnyObjectSchema;
+    }
+
+    if (i === paths.length - 1) {
+      return currentSchema.spec;
+    }
+  }
+
+  return null;
+}
+
+function isObjectSchema(schema: unknown): schema is AnyObjectSchema {
+  return isObject(schema) && schema.type === 'object';
+}
+
+function isArraySchema(schema: unknown): schema is ArraySchema<any, any> {
+  return isObject(schema) && schema.type === 'array';
 }

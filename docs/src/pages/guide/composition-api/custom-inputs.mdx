@@ -18,18 +18,18 @@ import Repl from '@/components/MdxRepl.vue';
 
 ## Imperative vs Declarative
 
-So far we've been using `useForm` to create forms and use `defineInputBinds` or `defineComponentBinds` to create field-binding objects to integrate them with our fields. However, that usually requires a lot of boilerplate code to create the binding object and the field component.
+So far we've been using `useForm` to create forms and use `defineField` to create field-binding objects to integrate them with our fields. However, that usually requires a lot of boilerplate code to create the binding object and the field component.
 
-For example, this is how a 5-field form looks like with `useForm` and `defineInputBinds`:
+For example, this is how a 5-field form looks like with `useForm` and `defineField`:
 
 ```js
-const { defineInputBinds } = useForm();
+const { defineField } = useForm();
 
-const email = defineInputBinds('email');
-const firstName = defineInputBinds('firstName');
-const lastName = defineInputBinds('lastName');
-const password = defineInputBinds('password');
-const passwordConfirm = defineInputBinds('passwordConfirm');
+const email = defineField('email');
+const firstName = defineField('firstName');
+const lastName = defineField('lastName');
+const password = defineField('password');
+const passwordConfirm = defineField('passwordConfirm');
 ```
 
 This can get ugly very quickly especially if you have a lot of field arrays or nested fields involved. This is one of the downsides of using an imperative API, but with `useField` you can switch to declarative API and get rid of all that boilerplate code.
@@ -59,13 +59,13 @@ const { value, errorMessage } = useField(() => props.name);
 </script>
 ```
 
-This works exactly the same way as with `defineInputBinds`, but now since you have a vee-validate field component, you can use it directly in any component with a form context and it will just work:
+This works exactly the same way as with `defineField`, but now since you have a vee-validate field component, you can use it directly in any component with a form context and it will just work:
 
 Here is a live example:
 
-<Repl files={{ 'App.vue': 'CompositionCustomField01', 'InputText.vue': 'CustomInputFieldBasic' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionCustomField01', 'InputText.vue': 'CustomInputFieldBasic' }} client:visible />
 
-Notice how much of the burden of defining fields went away as soon as switched to the declarative approach. This is where `useField` really shines, but that's just us getting started. Following along in this guide to make the most out of `useField`.
+Notice how much of the burden of defining fields went away as soon as switched to the declarative approach. This is where `useField` really shines, but that's just us getting started. Follow along in this guide to make the most out of `useField`.
 
 ## Validation
 
@@ -81,7 +81,7 @@ You can only validate using field-level validation or form-level validation, you
 
 You can use Yup schemas to validate fields individually by passing the schema as the second argument to `useField`.
 
-<Repl files={{ 'App.vue': 'CompositionInputFieldYup' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionInputFieldYup' }} client:visible />
 
 ### Validating with Zod
 
@@ -98,7 +98,7 @@ yarn add @vee-validate/zod
 
 Then you can wrap your zod field schemas with `toTypedSchema` function. [More on that here](/guide/composition-api/typed-schema).
 
-<Repl files={{ 'App.vue': 'CompositionInputFieldZod' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionInputFieldZod' }} client:visible />
 
 ### Validating with Valibot
 
@@ -115,7 +115,7 @@ yarn add @vee-validate/valibot
 
 Then you can wrap your valibot field schemas with `toTypedSchema` function. [More on that here](/guide/composition-api/typed-schema).
 
-<Repl files={{ 'App.vue': 'CompositionInputFieldValibot' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionInputFieldValibot' }} client:visible />
 
 ### Other validation providers
 
@@ -129,7 +129,7 @@ You can refer to the full guide on global rules [here](/guide/global-validators)
 
 Another option is to just use any 3rd party validation tool you prefer.
 
-<Repl files={{ 'App.vue': 'CompositionInputFieldFn' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionInputFieldFn' }} client:visible />
 
 ### Triggers
 
@@ -170,7 +170,7 @@ const { handleChange, handleBlur } = useField('someField');
 
 In this example, we are validating on the `input` event (when the user types), which would make the validation aggressive:
 
-<Repl files={{ 'App.vue': 'CompositionCustomField03', 'InputText.vue': 'CustomInputFieldAggressive' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionCustomField03', 'InputText.vue': 'CustomInputFieldAggressive' }} client:visible />
 
 With a slight adjustment we can make our validation lazy by changing the listener to `@change` (validates when the user leaves the control):
 
@@ -243,7 +243,7 @@ Then in your template, you can use `v-on` to add your listener object:
 
 Here is a full example:
 
-<Repl files={{ 'App.vue': 'CompositionCustomField03', 'InputText.vue': 'CustomInputFieldEager' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionCustomField03', 'InputText.vue': 'CustomInputFieldEager' }} client:visible />
 
 ## v-model Support
 
@@ -271,7 +271,7 @@ const { value, errorMessage } = useField('fieldName', undefined, {
 
 Now whenever `value` changes, you will emit an `update:modelValue` event with the new value. This is useful when you want to use `v-model` with your custom input component:
 
-<Repl files={{ 'App.vue': 'CompositionCustomField02', 'InputText.vue': 'CustomInputFieldVModel' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionCustomField02', 'InputText.vue': 'CustomInputFieldVModel' }} client:visible />
 
 You can also use different prop names for the `modelValue`, for example, `v-model:text` can be implemented by passing the model name directly to `syncVModel`.
 
@@ -309,7 +309,10 @@ errors.value;
 
 Here is an example where each field displays its entire range of error messages:
 
-<Repl files={{ 'App.vue': 'CompositionCustomField04', 'InputText.vue': 'CustomInputFieldMultiErrors' }} client:only />
+<Repl
+  files={{ 'App.vue': 'CompositionCustomField04', 'InputText.vue': 'CustomInputFieldMultiErrors' }}
+  client:visible
+/>
 
 ### Custom Field Labels
 
@@ -402,7 +405,7 @@ To avoid this case you should combine the `valid` flag with either `meta.dirty` 
 
 In the following example, we the various meta information flags to style the input with some styling.
 
-<Repl files={{ 'App.vue': 'CompositionCustomField05', 'InputText.vue': 'CustomInputFieldMeta' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionCustomField05', 'InputText.vue': 'CustomInputFieldMeta' }} client:visible />
 
 <DocTip title="Field Dirty Flag and Initial Values">
 

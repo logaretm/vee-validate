@@ -21,12 +21,13 @@ test('validates typed schema form with global rules', async () => {
         password: 'required|min:8',
       });
 
-      const { useFieldModel, errors } = useForm({
+      const { defineField, errors } = useForm({
         validationSchema: schema,
         validateOnMount: true,
       });
 
-      const [email, password] = useFieldModel(['email', 'password']);
+      const [email] = defineField('email', { validateOnModelUpdate: true });
+      const [password] = defineField('password', { validateOnModelUpdate: true });
 
       return {
         schema,
@@ -99,4 +100,134 @@ test('validates typed field with global rules', async () => {
   setValue(input, '12345678');
   await flushPromises();
   expect(error.textContent).toBe('');
+});
+
+test('reports required state on fields', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema({
+        name: 'required',
+        email: { required: true },
+        nreq: 'min:8',
+      });
+
+      useForm({
+        validationSchema: schema,
+      });
+
+      const { meta: name } = useField('name');
+      const { meta: email } = useField('email');
+      const { meta: nreq } = useField('nreq');
+
+      metaSpy({
+        name: name.required,
+        email: email.required,
+        nreq: nreq.required,
+      });
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      name: true,
+      email: true,
+      nreq: false,
+    }),
+  );
+});
+
+test('reports required false for non-existent fields', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema({
+        name: 'required',
+      });
+
+      useForm({
+        validationSchema: schema,
+      });
+
+      const { meta: email } = useField('email');
+      const { meta: req } = useField('req');
+
+      metaSpy({
+        email: email.required,
+        req: req.required,
+      });
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      email: false,
+      req: false,
+    }),
+  );
+});
+
+test('reports required state for field-level schemas', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      useForm();
+      const { meta: req } = useField('req', toTypedSchema('required'));
+      const { meta: nreq } = useField('nreq', toTypedSchema('email'));
+
+      metaSpy({
+        req: req.required,
+        nreq: nreq.required,
+      });
+
+      return {};
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      req: true,
+      nreq: false,
+    }),
+  );
+});
+
+test('reports required state for field-level schemas without a form context', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const { meta: req } = useField('req', toTypedSchema('required'));
+      const { meta: nreq } = useField('nreq', toTypedSchema('email'));
+
+      metaSpy({
+        req: req.required,
+        nreq: nreq.required,
+      });
+
+      return {};
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      req: true,
+      nreq: false,
+    }),
+  );
 });

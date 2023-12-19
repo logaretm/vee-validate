@@ -1,13 +1,13 @@
-<template>
-  <input v-bind="name" />
-
-  <button :disabled="!meta.touched">Submit</button>
-</template>
-
 <script setup>
 import { useForm } from 'vee-validate';
 
-const { meta, defineInputBinds } = useForm();
+const { meta, defineField } = useForm();
 
-const name = defineInputBinds('name');
+const [name, nameAttrs] = defineField('name');
 </script>
+
+<template>
+  <input v-model="name" v-bind="nameAttrs" />
+
+  <button :disabled="!meta.touched">Submit</button>
+</template>

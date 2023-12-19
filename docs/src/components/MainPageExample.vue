@@ -22,22 +22,18 @@
     </div>
 
     <div v-if="currentFlavor === 'components'" class="w-full">
-      <Suspense>
-        <Repl :files="{ 'App.vue': 'ComponentsBasic' }" />
-      </Suspense>
+      <MdxRepl :files="{ 'App.vue': 'ComponentsBasic' }" />
     </div>
 
     <div v-else class="w-full">
-      <Suspense>
-        <Repl :files="{ 'App.vue': 'CompositionBasic' }" />
-      </Suspense>
+      <MdxRepl :files="{ 'App.vue': 'CompositionBasic' }" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import Repl from './Repl.vue';
+import MdxRepl from './MdxRepl.vue';
 
 const currentFlavor = ref<'components' | 'composition'>('components');
 

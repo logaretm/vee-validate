@@ -2,19 +2,19 @@
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 
-const { values, errors, defineInputBinds } = useForm({
+const { values, errors, defineField } = useForm({
   validationSchema: yup.object({
     email: yup.string().email().required(),
   }),
 });
 
-const email = defineInputBinds('email', {
-  validateOnInput: true,
+const [email, emailAttrs] = defineField('email', {
+  validateOnModelUpdate: false,
 });
 </script>
 
 <template>
-  <input v-bind="email" />
+  <input v-model="email" v-bind="emailAttrs" />
 
   <pre>values: {{ values }}</pre>
   <pre>errors: {{ errors }}</pre>

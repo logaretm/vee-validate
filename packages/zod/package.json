@@ -1,6 +1,6 @@
 {
   "name": "@vee-validate/zod",
-  "version": "4.11.8",
+  "version": "4.12.3",
   "description": "vee-validate integration with zod schema validation",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
@@ -28,8 +28,8 @@
     "dist/*.d.ts"
   ],
   "dependencies": {
-    "type-fest": "^4.8.1",
-    "vee-validate": "4.11.8",
+    "type-fest": "^4.8.3",
+    "vee-validate": "4.12.3",
     "zod": "^3.22.4"
   }
 }

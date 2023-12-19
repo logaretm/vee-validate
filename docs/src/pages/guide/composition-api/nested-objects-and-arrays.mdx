@@ -43,7 +43,7 @@ Submitting the previous form would result in the following values being passed t
 
 Here is a live example so you can see it in action.
 
-<Repl files={{ 'App.vue': 'CompositionNested01' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionNested01' }} client:visible />
 
 You are not limited to a specific depth, you can nest as much as you like.
 
@@ -60,7 +60,7 @@ const githubLink = defineInputBinds('links[1]');
 
 Here is the same example as above but in array format:
 
-<Repl files={{ 'App.vue': 'CompositionNested02' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionNested02' }} client:visible />
 
 Submitting the previous form would result in the following values being passed to your handler:
 
@@ -101,7 +101,7 @@ Submitting the previous form would result in the following values being passed t
 
 Here is a live example on that:
 
-<Repl files={{ 'App.vue': 'CompositionNested03' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionNested03' }} client:visible />
 
 ## Field Arrays
 
@@ -121,7 +121,7 @@ The `useFieldArray` exposes a few properties and functions to help you manage th
 
 Here is an example of a repeatable block of fields, we mutate the field value with `v-model` directly on the iteration item value.
 
-<Repl files={{ 'App.vue': 'CompositionNested04' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionNested04' }} client:visible />
 
 Notice that we used `field.key` as the key of the iteration, this is because vee-validate generates a unique key for each array item so you can rely it on without having to generate them yourself.
 
@@ -203,6 +203,6 @@ Since vee-validate supports `yup` and `zod` schemas, referencing the nested fiel
 
 If you are using yup, you can utilize the nested `yup.object` or `yup.array` schemas to provide validation for your nested fields, here is an example:
 
-<Repl files={{ 'App.vue': 'CompositionNested05' }} client:only />
+<Repl files={{ 'App.vue': 'CompositionNested05' }} client:visible />
 
 You can [visit this link](/examples/array-fields) for a practical example using nested arrays.

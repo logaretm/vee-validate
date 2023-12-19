@@ -1,21 +1,7 @@
-<template>
-  <form @submit="onSubmit">
-    <input type="email" v-bind="email" />
-    <span>{{ errors.email }}</span>
-
-    <input type="password" v-bind="password" />
-    <span>{{ errors.password }}</span>
-
-    <button :disabled="isSubmitting">
-      {{ isSubmitting ? 'Submitting...' : 'Submit' }}
-    </button>
-  </form>
-</template>
-
 <script setup>
 import { useForm } from 'vee-validate';
 
-const { handleSubmit, defineInputBinds, isSubmitting, errors } = useForm();
+const { handleSubmit, defineField, isSubmitting, errors } = useForm();
 
 const onSubmit = handleSubmit(values => {
   // Simulates a 2 second delay
@@ -27,6 +13,20 @@ const onSubmit = handleSubmit(values => {
   });
 });
 
-const email = defineInputBinds('email');
-const password = defineInputBinds('password');
+const [email, emailAttrs] = defineField('email');
+const [password, passwordAttrs] = defineField('password');
 </script>
+
+<template>
+  <form @submit="onSubmit">
+    <input type="email" v-model="email" v-bind="emailAttrs" />
+    <span>{{ errors.email }}</span>
+
+    <input type="password" v-model="password" v-bind="passwordAttrs" />
+    <span>{{ errors.password }}</span>
+
+    <button :disabled="isSubmitting">
+      {{ isSubmitting ? 'Submitting...' : 'Submit' }}
+    </button>
+  </form>
+</template>

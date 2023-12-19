@@ -2,14 +2,12 @@
 import { ref, version } from 'vue';
 import { useFullscreen } from '@vueuse/core';
 import { Repl, ReplStore } from '@vue/repl';
-import StackBlitzSdk from '@stackblitz/sdk';
-// @ts-ignore
-import CodeMirror from '@vue/repl/codemirror-editor';
-import '@vue/repl/style.css';
 import { getViteProjectConfig } from '@/utils/examples';
+import StackBlitzSdk from '@stackblitz/sdk';
 
 const props = defineProps<{
   files: Record<string, string>;
+  editor: any;
 }>();
 
 const containerRef = ref<HTMLElement>();
@@ -41,7 +39,7 @@ store.setImportMap({
     toposort: 'https://esm-repo.netlify.app/topsort.esm.js',
     yup: 'https://unpkg.com/yup@1.2.0/index.esm.js',
     zod: 'https://unpkg.com/zod@3.21.4/lib/index.mjs',
-    valibot: 'https://unpkg.com/browse/valibot@0.7.0/dist/index.js',
+    valibot: 'https://unpkg.com/valibot@0.21.0/dist/index.js',
     '@vue/devtools-api': 'https://unpkg.com/@vue/devtools-api@6.5.0/lib/esm/index.js',
     vue: `https://unpkg.com/vue@${version}/dist/vue.esm-browser.prod.js`,
   },
@@ -119,7 +117,7 @@ function onForkClick() {
     </div>
     <Repl
       :store="store"
-      :editor="CodeMirror"
+      :editor="editor"
       :show-ts-config="false"
       :showCompileOutput="false"
       :ssr="false"
@@ -141,6 +139,12 @@ function onForkClick() {
 
   &:deep(iframe) {
     margin: 0;
+  }
+
+  &:deep(.wrapper) {
+    &:has(.toggle) {
+      @apply hidden;
+    }
   }
 
   &:deep(.stretch) {
@@ -213,7 +217,7 @@ function onForkClick() {
 
 .dark {
   .vue-repl {
-    --bg: hsl(240 6% 9%) !important;
+    --bg: #1c1c21 !important;
     --bg-soft: hsl(240 6% 9%) !important;
     --border: #333 !important;
     --text-light: #aaa !important;
@@ -222,7 +226,7 @@ function onForkClick() {
 
     &:deep(.CodeMirror) {
       color: var(--symbols);
-      background-color: #22212c;
+      background-color: #1c1c21;
       --symbols: #f8f8f2;
       --base: #f8f8f2;
       --comment: #7970a9;

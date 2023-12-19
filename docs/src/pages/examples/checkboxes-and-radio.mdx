@@ -27,7 +27,7 @@ The only requirements are that the fields:
 When using `Field` slot props with checkbox/radio components, you still need to provide the `type` and `value` props to the `Field` node itself.
 
 ```vue-html
-<Field v-slot="{ field }" name="terms" type="checkbox" :value="true">
+<Field v-slot="{ field }" name="terms" type="checkbox" :value="true" :unchecked-value="false">
   <label>
     <input type="checkbox" name="terms" v-bind="field" :value="true" />
     I agree

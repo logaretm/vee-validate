@@ -17,7 +17,7 @@ import { isContainerValue, isEmptyContainer, isEqual, isNotNestedPath } from './
 import { GenericObject, MaybePromise } from '../types';
 import { FormContextKey, FieldContextKey } from '../symbols';
 
-function cleanupNonNestedPath(path: string) {
+export function cleanupNonNestedPath(path: string) {
   if (isNotNestedPath(path)) {
     return path.replace(/\[|\]/gi, '');
   }
@@ -246,10 +246,10 @@ export function applyModelModifiers<TValue = unknown>(value: TValue, modifiers: 
   return value;
 }
 
-export function withLatest<TFunction extends (...args: any[]) => Promise<any>, TResult = ReturnType<TFunction>>(
-  fn: TFunction,
-  onDone: (result: Awaited<TResult>, args: Parameters<TFunction>) => void,
-) {
+export function withLatest<
+  TFunction extends (...args: any[]) => Promise<any>,
+  TResult = Awaited<ReturnType<TFunction>>,
+>(fn: TFunction, onDone: (result: TResult, args: Parameters<TFunction>) => TResult) {
   let latestRun: Promise<TResult> | undefined;
 
   return async function runLatest(...args: Parameters<TFunction>) {
@@ -261,9 +261,8 @@ export function withLatest<TFunction extends (...args: any[]) => Promise<any>, T
     }
 
     latestRun = undefined;
-    onDone(result, args);
 
-    return result;
+    return onDone(result, args);
   };
 }
 

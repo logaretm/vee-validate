@@ -4,6 +4,7 @@ import SponsorButton from '@/components/SponsorButton.vue';
 import Icon from '@/components/Icon.vue';
 import MainPageExample from '@/components/MainPageExample.vue';
 import StarCount from '@/components/StarCount.vue';
+import FeatureCard from '@/components/FeatureCard.vue';
 import { features } from '@/constants';
 import UiLibraries from '@/components/UiLibraries.vue';
 
@@ -39,7 +40,7 @@ const highlights = [
           class="bg-clip-text bg-gradient-to-r from-emerald-600 to-emerald-400 text-transparent leading-tight"
           >Vue
         </span>
-        forms
+         forms
       </p>
       <p class="mt-4 text-lg text-white-800 font-display">
         VeeValidate is the most popular Vue.js form library. It takes care of value tracking, validation, errors,
@@ -48,7 +49,7 @@ const highlights = [
 
       <div class="mt-8 flex items-center gap-4">
         <a
-          class="flex items-center bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 py-3 px-6 text-white rounded-lg text-center focus:outline-none focus:ring focus:ring-emerald-500 text-sm md:text-base font-medium font-display select-none whitespace-nowrap"
+          class="flex items-center bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 py-3 px-6 text-white rounded-lg text-center focus:outline-none focus:ring focus:ring-emerald-500 text-sm md:text-base font-medium font-display select-none whitespace-nowrap transition-colors duration-200"
           href="/v4/guide/overview/"
         >
           Get Started
@@ -57,7 +58,7 @@ const highlights = [
         </a>
 
         <a
-          class="bg-gray-200 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-800 py-3 px-6 rounded-lg text-center focus:outline-none whitespace-nowrap focus:ring focus:ring-emerald-500 font-medium font-display select-none text-sm md:text-base"
+          class="bg-gray-200 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-800 py-3 px-6 rounded-lg text-center focus:outline-none whitespace-nowrap focus:ring focus:ring-emerald-500 font-medium font-display select-none text-sm md:text-base transition-colors duration-200"
           href="/v4/examples/checkboxes-and-radio/"
         >
           Live Examples
@@ -73,14 +74,7 @@ const highlights = [
   </div>
 
   <section class="mt-12 md:mt-24 grid grid-cols-1 md:grid-cols-3 gap-5 mx-auto min-w-0 max-w-6xl">
-    {
-      highlights.map(feature => (
-        <div class="bg-gradient-to-br from-gray-200 to-gray-100 dark:from-zinc-800 dark:to-zinc-900 p-6 rounded-lg font-display shadow-sm">
-          <h3 class="text-xl font-bold">{feature.title}</h3>
-          <p class="mt-4 font-display font-medium text-gray-600 dark:text-gray-300" set:html={feature.details} />
-        </div>
-      ))
-    }
+    {highlights.map(feature => <FeatureCard feature={feature} client:visible />)}
   </section>
 
   <section class="mt-24 flex flex-col mx-auto items-center">
@@ -99,9 +93,15 @@ const highlights = [
   </section>
 
   <section class="mt-24 flex flex-col mx-auto items-center">
-    <h2 class="text-center text-gray-500 dark:text-gray-200 font-display font-bold text-2xl md:text-4xl">Sponsors</h2>
+    <h2 class="text-center text-gray-500 dark:text-gray-200 font-display font-bold text-2xl md:text-4xl mb-6">
+      Sponsors
+    </h2>
 
-    <object data="https://sponsors.logaretm.com/sponsors.svg" type="image/svg+xml" class="max-w-full"></object>
+    <object
+      data="https://sponsors.logaretm.com/sponsors.svg"
+      type="image/svg+xml"
+      class="max-w-full"
+      aria-label="Sponsors Image"></object>
 
     <p class="mt-8 font-display text-gray-600 dark:text-gray-400 text-center">
       You can also help this this project and my other projects by donating one time or by sponsoring via the following
@@ -132,6 +132,6 @@ const highlights = [
       In this example, value tracking, validation and submissions are handled in just a few lines of code
     </p>
 
-    <MainPageExample client:only />
+    <MainPageExample client:visible />
   </section>
 </HomeLayout>

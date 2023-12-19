@@ -1,13 +1,13 @@
 <script setup>
 import { useForm } from 'vee-validate';
 
-const { values, defineInputBinds } = useForm();
+const { values, defineField } = useForm();
 
-const email = defineInputBinds('email');
+const [email, emailAttrs] = defineField('email');
 </script>
 
 <template>
-  <input v-bind="email" type="text" />
+  <input v-model="email" v-bind="emailAttrs" type="text" />
 
   <pre>values: {{ values }}</pre>
 </template>

@@ -1,5 +1,5 @@
 import { PartialDeep } from 'type-fest';
-import type { TypedSchema, TypedSchemaError } from 'vee-validate';
+import { cleanupNonNestedPath, isNotNestedPath, type TypedSchema, type TypedSchemaError } from 'vee-validate';
 import {
   Output,
   Input,
@@ -10,8 +10,10 @@ import {
   Issue,
   getDefault,
   optional,
+  ArraySchema,
+  ObjectSchema,
 } from 'valibot';
-import { isObject, merge, normalizeFormPath } from '../../shared';
+import { isIndex, isObject, merge, normalizeFormPath } from '../../shared';
 
 export function toTypedSchema<
   TSchema extends BaseSchema | BaseSchemaAsync,
@@ -53,6 +55,27 @@ export function toTypedSchema<
 
       return values;
     },
+    describe(path) {
+      if (!path) {
+        return {
+          required: !queryOptional(valibotSchema),
+          exists: true,
+        };
+      }
+
+      const pathSchema = getSchemaForPath(path, valibotSchema);
+      if (!pathSchema) {
+        return {
+          required: false,
+          exists: false,
+        };
+      }
+
+      return {
+        required: !queryOptional(pathSchema),
+        exists: true,
+      };
+    },
   };
 
   return schema;
@@ -78,4 +101,47 @@ function processIssues(issues: Issue[], errors: Record<string, TypedSchemaError>
 
     errors[path].errors.push(issue.message);
   });
+}
+
+function getSchemaForPath(path: string, schema: any): BaseSchema | null {
+  if (!isObjectSchema(schema)) {
+    return null;
+  }
+
+  if (isNotNestedPath(path)) {
+    return schema.entries[cleanupNonNestedPath(path)];
+  }
+
+  const paths = (path || '').split(/\.|\[(\d+)\]/).filter(Boolean);
+
+  let currentSchema: BaseSchema = schema;
+  for (let i = 0; i <= paths.length; i++) {
+    const p = paths[i];
+    if (!p || !currentSchema) {
+      return currentSchema;
+    }
+
+    if (isObjectSchema(currentSchema)) {
+      currentSchema = currentSchema.entries[p] || null;
+      continue;
+    }
+
+    if (isIndex(p) && isArraySchema(currentSchema)) {
+      currentSchema = currentSchema.item;
+    }
+  }
+
+  return null;
+}
+
+function queryOptional(schema: BaseSchema | BaseSchemaAsync): boolean {
+  return (schema as any).type === 'optional';
+}
+
+function isArraySchema(schema: unknown): schema is ArraySchema<any> {
+  return isObject(schema) && schema.type === 'array';
+}
+
+function isObjectSchema(schema: unknown): schema is ObjectSchema<any> {
+  return isObject(schema) && schema.type === 'object';
 }

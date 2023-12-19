@@ -1,7 +1,7 @@
 {
   "name": "vee-validate",
-  "version": "4.11.8",
-  "description": "Form Validation for Vue.js",
+  "version": "4.12.3",
+  "description": "Painless forms for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
   "module": "dist/vee-validate.esm.js",
@@ -28,10 +28,10 @@
     "dist/*.d.ts"
   ],
   "peerDependencies": {
-    "vue": "^3.3.8"
+    "vue": "^3.3.11"
   },
   "dependencies": {
     "@vue/devtools-api": "^6.5.1",
-    "type-fest": "^4.8.1"
+    "type-fest": "^4.8.3"
   }
 }

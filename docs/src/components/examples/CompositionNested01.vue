@@ -1,7 +1,7 @@
 <template>
   <form @submit="onSubmit">
-    <input v-bind="twitter" type="url" placeholder="twitter" />
-    <input v-bind="github" type="url" placeholder="github" />
+    <input v-model="twitter" type="url" placeholder="twitter" />
+    <input v-model="github" type="url" placeholder="github" />
 
     <button>Submit</button>
   </form>
@@ -10,11 +10,11 @@
 <script setup>
 import { useForm } from 'vee-validate';
 
-const { handleSubmit, defineInputBinds } = useForm();
+const { handleSubmit, defineField } = useForm();
 const onSubmit = handleSubmit(values => {
   alert(JSON.stringify(values, null, 2));
 });
 
-const twitter = defineInputBinds('links.twitter');
-const github = defineInputBinds('links.github');
+const [twitter] = defineField('links.twitter');
+const [github] = defineField('links.github');
 </script>

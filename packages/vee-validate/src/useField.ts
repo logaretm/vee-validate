@@ -8,7 +8,6 @@ import {
   Ref,
   ComponentInternalInstance,
   onBeforeUnmount,
-  warn,
   toValue,
   MaybeRef,
   MaybeRefOrGetter,
@@ -45,7 +44,7 @@ import {
   isEqual,
   isTypedSchema,
 } from './utils';
-import { isCallable, isObject, normalizeFormPath } from '../../shared';
+import { isCallable, normalizeFormPath } from '../../shared';
 import { FieldContextKey, FieldGroupContextKey, FormContextKey, IS_ABSENT } from './symbols';
 import { useFieldState } from './useFieldState';
 import { refreshInspector, registerSingleFieldWithDevtools } from './devtools';
@@ -154,6 +153,7 @@ function _useField<TValue = unknown>(
     label,
     type,
     validate: validator.value ? validate : undefined,
+    schema: isTypedSchema(rules) ? (rules as any) : undefined,
   });
 
   const errorMessage = computed(() => errors.value[0]);
@@ -179,7 +179,9 @@ function _useField<TValue = unknown>(
 
   async function validateCurrentValue(mode: SchemaValidationMode) {
     if (form?.validateSchema) {
-      return (await form.validateSchema(mode)).results[toValue(name)] ?? { valid: true, errors: [] };
+      const { results } = await form.validateSchema(mode);
+
+      return results[toValue(name)] ?? { valid: true, errors: [] };
     }
 
     if (validator.value) {
@@ -203,7 +205,7 @@ function _useField<TValue = unknown>(
     },
     result => {
       if (flags.pendingUnmount[field.id]) {
-        return;
+        return result;
       }
 
       setState({ errors: result.errors });
@@ -291,24 +293,6 @@ function _useField<TValue = unknown>(
       setValue(newValue, validateOnValueUpdate);
     },
   });
-
-  if (__DEV__) {
-    watch(
-      valueProxy,
-      (value, oldValue) => {
-        if (!isObject(value)) {
-          return;
-        }
-
-        if (value === oldValue && isEqual(value, oldValue)) {
-          warn(
-            'Detected a possible deep change on field `value` ref, for nested changes please either set the entire ref value or use `setValue` or `handleChange`.',
-          );
-        }
-      },
-      { deep: true },
-    );
-  }
 
   const field: PrivateFieldContext<TValue> = {
     id,

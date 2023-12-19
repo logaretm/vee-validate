@@ -68,7 +68,13 @@ Currently we are using TypeScript for the codebase, feel free to use any of it's
 
 Each test file represents a unit test to the corresponding file in the src folder.
 
-To run the tests:
+You need to build the files before you run the tests:
+
+```sh
+pnpm build
+```
+
+Then to run the tests:
 
 ```sh
 pnpm test
