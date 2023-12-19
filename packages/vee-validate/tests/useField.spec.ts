@@ -1009,4 +1009,55 @@ describe('useField()', () => {
     await flushPromises();
     expect(field.errors.value).toHaveLength(0);
   });
+
+  // #4603
+  test('should not remove field value if field with same path was created between scheduling and execution of previous field unset operation', async () => {
+    vi.useFakeTimers();
+    let form!: FormContext;
+    mountWithHoc({
+      setup() {
+        form = useForm();
+        const toggle = ref(false);
+        const value = ref('');
+
+        onMounted(async () => {
+          await new Promise(resolve => {
+            setTimeout(() => resolve(null), 1000);
+          });
+
+          toggle.value = true;
+          value.value = 'test';
+        });
+        return { form, toggle, value };
+      },
+      template: `
+      <template v-if="!toggle">
+        <CustomField name="field" :model-value="value" />
+      </template>
+      <template v-if="toggle">
+        <CustomField name="field" :model-value="value" />
+      </template>
+      `,
+      components: {
+        CustomField: {
+          props: {
+            name: String,
+            modelValue: String,
+          },
+          setup(props: any) {
+            useField(props.name, undefined, {
+              initialValue: props.modelValue,
+            });
+          },
+          template: `<input type="text" :value="modelValue" :name="name" />`,
+        },
+      },
+    });
+
+    await flushPromises();
+    vi.advanceTimersByTime(1000);
+    await flushPromises();
+
+    expect(form.values.field).toEqual('test');
+  });
 });
