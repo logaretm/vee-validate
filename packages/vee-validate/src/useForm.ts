@@ -289,6 +289,12 @@ export function useForm<
 
     const currentValue = computed(() => getFromPath(formValues, toValue(path)));
     const pathValue = toValue(path);
+
+    const unsetBatchIndex = UNSET_BATCH.findIndex(_path => _path === pathValue);
+    if (unsetBatchIndex !== -1) {
+      UNSET_BATCH.splice(unsetBatchIndex, 1);
+    }
+
     const isRequired = computed(() => {
       if (isTypedSchema(schema)) {
         return (schema as TypedSchema).describe?.(toValue(path)).required ?? false;
