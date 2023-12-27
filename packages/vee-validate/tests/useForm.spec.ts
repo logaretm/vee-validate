@@ -1398,4 +1398,31 @@ describe('useForm()', () => {
     await flushPromises();
     await expect(form.errors.value.fname).toBe(undefined);
   });
+
+  test('checks if both source and target are POJO before setting properties', async () => {
+    let form!: FormContext<{ file: { name: string; size: number } }>;
+    const f1 = new File([''], 'f1.text');
+    const f2 = { name: 'f2.text', size: 123 };
+
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          initialValues: { file: f1 },
+        });
+
+        form.defineField('file');
+
+        return {};
+      },
+      template: `
+        <div></div>
+      `,
+    });
+
+    await flushPromises();
+    expect(form.values.file).toBeInstanceOf(File);
+    expect(form.values.file).toBe(f1);
+    form.setValues({ file: f2 });
+    expect(form.values.file).toEqual(f2);
+  });
 });
