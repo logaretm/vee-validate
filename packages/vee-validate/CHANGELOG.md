@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.12.4
+
+### Patch Changes
+
+- 2a09a58: "fix: check if both source and target objects are POJOs"
+
 ## 4.12.3
 
 ### Patch Changes

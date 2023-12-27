@@ -1,6 +1,6 @@
 {
   "name": "@vee-validate/joi",
-  "version": "4.12.3",
+  "version": "4.12.4",
   "description": "vee-validate integration with joi schema validation",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
@@ -30,6 +30,6 @@
   "dependencies": {
     "joi": "17.11.0",
     "type-fest": "^4.8.3",
-    "vee-validate": "4.12.3"
+    "vee-validate": "4.12.4"
   }
 }
