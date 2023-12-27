@@ -51,7 +51,7 @@ export function isPlainObject(value: any) {
 
 export function merge(target: any, source: any) {
   Object.keys(source).forEach(key => {
-    if (isPlainObject(source[key])) {
+    if (isPlainObject(source[key]) && isPlainObject(target[key])) {
       if (!target[key]) {
         target[key] = {};
       }
