@@ -19,4 +19,10 @@ If you want to integrate vee-validate with state management solutions you can do
 
 The example integrates a form state into the store by utilizing a setup function when defining a store. This makes vee-validate act as a state provider for the form where the form values become your store state and submit function becomes your store action.
 
+<DocTip type="warn">
+
+Using `useForm` inside Pinia stores may cause unwanted behavior as lifecycle hooks only execute against the component that first initialized the store.
+
+</DocTip>
+
 <LiveExample client:visible id="vee-validate-v4-pinia" />
