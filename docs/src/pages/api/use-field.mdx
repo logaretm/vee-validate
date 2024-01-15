@@ -356,3 +356,41 @@ checked.value; // true or false
 ```
 
 For more information on how you might use the `checked` property, check the [custom checkboxes example](/examples/custom-checkboxes).
+
+## Additional options
+
+To pass additional configuration to your fields you can use more options.
+
+```vue
+<template>
+  <div>
+    <input v-model="value" />
+    <span>{{ errorMessage }}</span>
+  </div>
+</template>
+
+<script setup>
+  import { useField } from 'vee-validate';
+
+  // a simple `company` field with some options passed into it
+  const { value, errorMessage } = useField('company', ..., {
+    label: 'Your company',
+    type: 'text',
+    initialValue: ''
+  });
+</script>
+```
+
+| Field options                          |
+|----------------------------------------|
+| `type`                                 |
+| `label`                                |
+| `initialValue`                         |
+| `validateOnMount`                      |
+| `bails `                               |
+| `standalone`                           |
+| `validateOnValueUpdate`                |
+| `keepValueOnUnmount`                   |
+| `syncVModel`                           |
+| `checkedValue` (checkbox/radio only)   |
+| `uncheckedValue` (checkbox/radio only) |
