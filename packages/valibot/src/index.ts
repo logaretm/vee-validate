@@ -26,7 +26,7 @@ export function toTypedSchema<
       const result = await safeParseAsync(valibotSchema, value);
       if (result.success) {
         return {
-          value: result.data,
+          value: result.output,
           errors: [],
         };
       }
@@ -45,7 +45,7 @@ export function toTypedSchema<
 
       const result = safeParse(valibotSchema, values);
       if (result.success) {
-        return result.data;
+        return result.output;
       }
 
       const defaults = getDefault(optional(valibotSchema));
