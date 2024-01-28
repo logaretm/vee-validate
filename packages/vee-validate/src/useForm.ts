@@ -1095,20 +1095,20 @@ export function useForm<
   ) {
     const [model, props] = defineField(path, config);
 
-    function onBlur(e: Event) {
-      props.value.onBlur(e);
+    function onBlur() {
+      props.value.onBlur();
     }
 
     function onInput(e: Event) {
       const value = normalizeEventValue(e) as PathValue<TValues, TPath>;
       setFieldValue(toValue(path), value, false);
-      props.value.onInput(e);
+      props.value.onInput();
     }
 
     function onChange(e: Event) {
       const value = normalizeEventValue(e) as PathValue<TValues, TPath>;
       setFieldValue(toValue(path), value, false);
-      props.value.onChange(e);
+      props.value.onChange();
     }
 
     return computed(() => {

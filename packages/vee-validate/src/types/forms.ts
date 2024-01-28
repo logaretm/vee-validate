@@ -239,9 +239,9 @@ export type PublicPathState<TValue = unknown> = Omit<
 >;
 
 export interface BaseFieldProps {
-  onBlur: (e: Event) => void;
-  onChange: (e: Event) => void;
-  onInput: (e: Event) => void;
+  onBlur: () => void;
+  onChange: () => void;
+  onInput: () => void;
 }
 
 export interface InputBindsConfig<TValue = unknown, TExtraProps extends GenericObject = GenericObject> {
