@@ -559,7 +559,9 @@ export function useForm<
   handleSubmit.withControlled = makeSubmissionFactory(true);
 
   function removePathState<TPath extends Path<TValues>>(path: TPath, id: number) {
-    const idx = pathStates.value.findIndex(s => s.path === path);
+    const idx = pathStates.value.findIndex(s => {
+      return s.path === path && (Array.isArray(s.id) ? s.id.includes(id) : s.id === id);
+    });
     const pathState = pathStates.value[idx];
     if (idx === -1 || !pathState) {
       return;

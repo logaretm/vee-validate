@@ -1,8 +1,8 @@
-import { defineRule, useField, Form, Field, useIsValidating } from '@/vee-validate';
+import { defineRule, useField, Form, Field, useIsValidating, useForm } from '@/vee-validate';
 import { mountWithHoc, setValue, setChecked, dispatchEvent, flushPromises } from './helpers';
 import * as yup from 'yup';
 import { computed, defineComponent, onErrorCaptured, ref, Ref } from 'vue';
-import { InvalidSubmissionContext } from '../src/types';
+import { InvalidSubmissionContext, PrivateFormContext } from '../src/types';
 
 describe('<Form />', () => {
   const REQUIRED_MESSAGE = `This field is required`;
@@ -3140,4 +3140,41 @@ test('radio fields with single field component binding', async () => {
   await flushPromises();
   expect(model.value).toBe('Tea');
   expect(submit).toHaveBeenLastCalledWith({ drink: 'Tea' }, expect.anything());
+});
+
+// #4643
+test('removes proper pathState when field is unmounting', async () => {
+  const renderTemplateField = ref(false);
+  let form!: PrivateFormContext;
+
+  mountWithHoc({
+    template: `
+      <form>
+        <Field v-if="renderTemplateField" name="foo" rules="required" />
+      </form>
+    `,
+    setup() {
+      form = useForm() as unknown as PrivateFormContext;
+      useField('foo');
+      return { renderTemplateField };
+    },
+  });
+
+  expect(form.meta.value.valid).toBe(true);
+  expect(form.getAllPathStates()).toMatchObject([{ id: 0, path: 'foo' }]);
+
+  renderTemplateField.value = true;
+  await flushPromises();
+
+  expect(form.meta.value.valid).toBe(false);
+  expect(form.getAllPathStates()).toMatchObject([
+    { id: 0, path: 'foo' },
+    { id: 1, path: 'foo' },
+  ]);
+
+  renderTemplateField.value = false;
+  await flushPromises();
+
+  expect(form.meta.value.valid).toBe(true);
+  expect(form.getAllPathStates()).toMatchObject([{ id: 0, path: 'foo' }]);
 });
