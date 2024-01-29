@@ -1,5 +1,12 @@
 # Change Log
 
+## 4.12.5
+
+### Patch Changes
+
+- d779980: fix: make sure removePathState removes the correct path state
+- 9eda544: "fix: remove event arg from define field handlers for component compat closes #4637"
+
 ## 4.12.4
 
 ### Patch Changes
