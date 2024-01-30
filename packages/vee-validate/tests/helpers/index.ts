@@ -1,6 +1,6 @@
 import { createApp, ComponentPublicInstance } from 'vue';
 import flushP from 'flush-promises';
-import { Field, Form, ErrorMessage, FieldArray } from '@/vee-validate';
+import { Field, FieldGroup, Form, ErrorMessage, FieldArray } from '@/vee-validate';
 
 export function mount(component: Record<string, any>) {
   const app = createApp(component);
@@ -17,6 +17,7 @@ export function mountWithHoc(component: Record<string, any>) {
   component.components = {
     ...(component.components || {}),
     Field,
+    FieldGroup,
     VForm: Form,
     ErrorMessage,
     FieldArray,
@@ -106,7 +107,7 @@ export async function runInSetup(cb: () => any) {
       cb();
     },
     template: `
-        <div></div>
-    `,
+          <div></div>
+        `,
   });
 }

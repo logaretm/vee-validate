@@ -12,6 +12,7 @@ import {
   MaybeRef,
   MaybeRefOrGetter,
   unref,
+  markRaw,
 } from 'vue';
 import { klona as deepCopy } from 'klona/full';
 import { validate as validateValue } from './validate';
@@ -27,6 +28,7 @@ import {
   PrivateFormContext,
   YupSchema,
   InputType,
+  FieldContextForFieldGroup,
 } from './types';
 import {
   normalizeRules,
@@ -43,7 +45,7 @@ import {
   isTypedSchema,
 } from './utils';
 import { isCallable, normalizeFormPath } from '../../shared';
-import { FieldContextKey, FormContextKey, IS_ABSENT } from './symbols';
+import { FieldContextKey, FieldGroupContextKey, FormContextKey, IS_ABSENT } from './symbols';
 import { useFieldState } from './useFieldState';
 import { refreshInspector, registerSingleFieldWithDevtools } from './devtools';
 
@@ -120,6 +122,8 @@ function _useField<TValue = unknown>(
 
   const injectedForm = controlled ? injectWithSelf(FormContextKey) : undefined;
   const form = (controlForm as PrivateFormContext | undefined) || injectedForm;
+  const fieldGroup = injectWithSelf(FieldGroupContextKey, null);
+
   const name = computed(() => normalizeFormPath(toValue(path)));
 
   const validator = computed(() => {
@@ -341,6 +345,26 @@ function _useField<TValue = unknown>(
     if (!form) {
       registerSingleFieldWithDevtools(field);
     }
+  }
+
+  let fieldGroupData: FieldContextForFieldGroup | null = null;
+
+  if (fieldGroup) {
+    fieldGroupData = markRaw({
+      value: field.value,
+      meta: field.meta,
+      errors: field.errors,
+      errorMessage: field.errorMessage,
+    });
+    fieldGroup.fields.value = [...fieldGroup.fields.value, fieldGroupData];
+
+    onBeforeUnmount(() => {
+      if (fieldGroup && fieldGroupData) {
+        fieldGroup.fields.value = fieldGroup.fields.value.filter(
+          (_fieldGroupData: FieldContextForFieldGroup) => _fieldGroupData !== fieldGroupData,
+        );
+      }
+    });
   }
 
   // if no associated form return the field API immediately

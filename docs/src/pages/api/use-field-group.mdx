@@ -1,0 +1,50 @@
+---
+layout: ../../layouts/PageLayout.astro
+title: useFieldGroup
+description: API reference for the useFieldGroup composition API function
+menuTitle: 'useFieldGroup()'
+order: 5
+---
+
+import CodeTitle from '@/components/CodeTitle.vue';
+import DocBadge from '@/components/DocBadge.vue';
+
+# useFieldGroup <DocBadge title="v4.7" />
+
+`useFieldGroup` composable is used to provide state of group of fields. It finds all fields created in the context of component and aggregates their state.
+
+```vue
+<template>
+  <Form>
+    <input v-model="value" />
+    <input v-model="value2" />
+    <button>Submit</button>
+  </Form>
+</template>
+  <script setup>
+import { useField, useFieldGroup } from 'vee-validate';
+
+const { meta } = useFieldGroup();
+const { value, errorMessage } = useField('name', inputValue => !!inputValue);
+const { value: value2, errorMessage } = useField('name2', inputValue => !!inputValue);
+</script>
+```
+
+## API Reference
+
+### Props
+
+| Prop                  | Type                           | Required/Default | Description                                                                                                                                                                                                                     |
+| :-------------------- | :----------------------------- | :--------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| checkChildFieldGroups                    | `boolean`                       | `true`         | Determines if the field group's final state will also check nested field groups |
+
+### Slots
+### Composable API
+
+The following sections documents each available property on the `useFieldGroup` composable.
+
+<CodeTitle level="4">
+    `meta: FieldGroupMeta`
+</CodeTitle>
+
+Contains useful information/flags about the field status, should be treated as **read only**.

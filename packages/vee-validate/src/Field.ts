@@ -1,19 +1,19 @@
 import {
-  h,
-  defineComponent,
-  toRef,
-  SetupContext,
-  resolveDynamicComponent,
   computed,
+  defineComponent,
+  h,
   PropType,
-  VNode,
+  resolveDynamicComponent,
+  SetupContext,
+  toRef,
   UnwrapRef,
+  VNode,
 } from 'vue';
 import { getConfig } from './config';
 import { RuleExpression, useField } from './useField';
-import { normalizeChildren, hasCheckedAttr, shouldHaveValueBinding, isPropPresent } from './utils';
+import { hasCheckedAttr, isPropPresent, normalizeChildren, shouldHaveValueBinding } from './utils';
 import { IS_ABSENT } from './symbols';
-import { FieldMeta, InputType } from './types';
+import { FieldExposedContext, FieldMeta, InputType } from './types';
 import { FieldContext } from '.';
 import { isCallable } from '../../shared';
 
@@ -245,7 +245,7 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
       };
     }
 
-    ctx.expose({
+    const context: FieldExposedContext = {
       value,
       meta,
       errors,
@@ -255,7 +255,9 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
       reset: resetField,
       validate: validateField,
       handleChange,
-    });
+    };
+
+    ctx.expose(context);
 
     return () => {
       const tag = resolveDynamicComponent(resolveTag(props, ctx)) as string;
