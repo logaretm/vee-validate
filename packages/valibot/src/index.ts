@@ -7,7 +7,7 @@ import {
   BaseSchemaAsync,
   safeParseAsync,
   safeParse,
-  Issue,
+  SchemaIssue,
   getDefault,
   optional,
   ArraySchema,
@@ -81,7 +81,7 @@ export function toTypedSchema<
   return schema;
 }
 
-function processIssues(issues: Issue[], errors: Record<string, TypedSchemaError>): void {
+function processIssues(issues: SchemaIssue[], errors: Record<string, TypedSchemaError>): void {
   issues.forEach(issue => {
     const path = normalizeFormPath((issue.path || []).map(p => p.key).join('.'));
     if (issue.issues?.length) {
