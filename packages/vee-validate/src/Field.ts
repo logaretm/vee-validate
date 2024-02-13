@@ -33,12 +33,12 @@ interface SharedBindingObject<TValue = any> {
   'onUpdate:modelValue'?: ((e: TValue) => unknown) | undefined;
 }
 
-interface FieldBindingObject<TValue = any> extends SharedBindingObject<TValue> {
+export interface FieldBindingObject<TValue = any> extends SharedBindingObject<TValue> {
   value?: TValue;
   checked?: boolean;
 }
 
-interface ComponentFieldBindingObject<TValue = any> extends SharedBindingObject<TValue> {
+export interface ComponentFieldBindingObject<TValue = any> extends SharedBindingObject<TValue> {
   modelValue?: TValue;
 }
 
