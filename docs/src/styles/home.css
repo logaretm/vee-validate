@@ -18,5 +18,9 @@
 }
 
 #ad {
-  @apply !fixed bottom-4 right-4;
+  @apply hidden;
+
+  @screen md {
+    @apply block !fixed bottom-4 right-4;
+  }
 }
