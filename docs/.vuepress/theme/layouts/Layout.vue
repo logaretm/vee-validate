@@ -33,7 +33,7 @@ import UpgradeNotice from '@theme/components/UpgradeNotice.vue';
 let isLoaded = false;
 
 export default {
-  components: { Home, Page, Sidebar, Navbar, Ad, UpgradeNotice, Analytics },
+  components: { Home, Page, Sidebar, Navbar, Ad, UpgradeNotice },
   data() {
     return {
       isSidebarOpen: false

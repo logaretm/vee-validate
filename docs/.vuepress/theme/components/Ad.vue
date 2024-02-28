@@ -34,6 +34,7 @@ export default {
 
 <style lang="stylus">
 #ad
+  position: fixed
   bottom: 10px
   right: 10px
 </style>
