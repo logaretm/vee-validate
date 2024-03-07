@@ -1,6 +1,6 @@
 import { Ref } from 'vue';
 import { useField, useForm } from '@/vee-validate';
-import { string, minLength, email as emailV, object, coerce, any, number, withDefault, optional, array } from 'valibot';
+import { string, minLength, email as emailV, object, coerce, any, number, optional, array } from 'valibot';
 import { toTypedSchema } from '@/valibot';
 import { mountWithHoc, flushPromises, setValue } from '../../vee-validate/tests/helpers';
 
@@ -229,7 +229,7 @@ describe('valibot', () => {
       setup() {
         const schema = toTypedSchema(
           object({
-            age: withDefault(number(), 11),
+            age: optional(number(), 11),
           }),
         );
 
@@ -263,13 +263,13 @@ describe('valibot', () => {
       setup() {
         const schema = toTypedSchema(
           object({
-            name: withDefault(string(), 'test'),
-            age: withDefault(number(), 11),
+            name: optional(string(), 'test'),
+            age: optional(number(), 11),
             unknownKey: optional(string()),
-            object: withDefault(
+            object: optional(
               object({
                 nestedKey: optional(string()),
-                nestedDefault: withDefault(string(), 'nested'),
+                nestedDefault: optional(string(), 'nested'),
               }),
               {} as any,
             ),
