@@ -49,7 +49,7 @@ export async function validate<TValue = unknown>(
     | GenericValidateFunction<TValue>[]
     | TypedSchema<TValue>,
   options: ValidationOptions = {},
-): Promise<ValidationResult> {
+): Promise<ValidationResult<TValue>> {
   const shouldBail = options?.bails;
   const field: FieldValidationContext<TValue> = {
     name: options?.name || '{field}',
@@ -65,6 +65,7 @@ export async function validate<TValue = unknown>(
   return {
     errors,
     valid: !errors.length,
+    value: result.value,
   };
 }
 
@@ -108,12 +109,14 @@ async function _validate<TValue = unknown>(field: FieldValidationContext<TValue>
 
       if (field.bails) {
         return {
+          value: undefined,
           errors,
         };
       }
     }
 
     return {
+      value: undefined,
       errors,
     };
   }
@@ -136,6 +139,7 @@ async function _validate<TValue = unknown>(field: FieldValidationContext<TValue>
       errors.push(result.error);
       if (field.bails) {
         return {
+          value: undefined,
           errors,
         };
       }
@@ -143,6 +147,7 @@ async function _validate<TValue = unknown>(field: FieldValidationContext<TValue>
   }
 
   return {
+    value: undefined,
     errors,
   };
 }
@@ -217,6 +222,7 @@ async function validateFieldWithTypedSchema(value: unknown, schema: TypedSchema 
   }
 
   return {
+    value: result.value,
     errors: messages,
   };
 }

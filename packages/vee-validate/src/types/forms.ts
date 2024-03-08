@@ -4,9 +4,10 @@ import { FieldValidationMetaInfo } from '../../../shared';
 import { Path, PathValue } from './paths';
 import { PartialDeep } from 'type-fest';
 
-export interface ValidationResult {
+export interface ValidationResult<TValue = unknown> {
   errors: string[];
   valid: boolean;
+  value?: TValue;
 }
 
 export interface TypedSchemaError {

@@ -356,7 +356,49 @@ test('uses zod default values for initial values', async () => {
   );
 });
 
-test('uses zod transforms values for submitted values', async () => {
+test('uses zod field transforms for submitted values', async () => {
+  const onSubmitSpy = vi.fn();
+  let onSubmit!: () => void;
+
+  const wrapper = mountWithHoc({
+    setup() {
+      const { handleSubmit } = useForm<{
+        test: string;
+      }>();
+
+      const testRules = toTypedSchema(z.string().transform(value => `modified: ${value}`));
+      const { value } = useField('test', testRules);
+
+      // submit now
+      onSubmit = handleSubmit(onSubmitSpy);
+
+      return {
+        value,
+      };
+    },
+    template: `
+      <div>
+          <input v-model="value" type="text">
+      </div>
+    `,
+  });
+
+  const input = wrapper.$el.querySelector('input');
+
+  setValue(input, '12345678');
+  await flushPromises();
+  onSubmit();
+  await flushPromises();
+  await expect(onSubmitSpy).toHaveBeenCalledTimes(1);
+  await expect(onSubmitSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      test: 'modified: 12345678',
+    }),
+    expect.anything(),
+  );
+});
+
+test('uses zod form transforms for submitted values', async () => {
   const onSubmitSpy = vi.fn();
   let onSubmit!: () => void;
   let model!: Ref<string | undefined>;
