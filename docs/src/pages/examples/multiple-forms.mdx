@@ -1,0 +1,85 @@
+---
+layout: ../../layouts/PageLayout.astro
+title: Multiple forms
+description: Use multiple forms on one page
+order: 12
+---
+
+# Multiple forms
+
+Some use cases will require you to have multiple independent forms on one page. This is possible by passing in the form object from `useForm` to your fields as an option.
+
+In this example we have two different form objects that will each be bound to one field. This way the forms can be submitted independently.
+
+```vue
+<script setup>
+import {reactive} from 'vue';
+import {useForm, useField} from 'vee-validate';
+
+const form = useForm();
+const secondForm = useForm();
+
+const formField = reactive(useField(
+    'firstField', // name
+    'required', // rules
+    {
+      // options
+      label: 'First field',
+      type: 'text',
+      form: form
+    }));
+
+const secondFormField = reactive(useField(
+    'secondFormField', // name
+    'required', // rules
+    {
+      // options
+      label: 'Second field',
+      type: 'text',
+      form: secondForm,
+    }));
+
+function onInvalidSubmit({errors}) {
+  return console.log(errors)
+}
+
+const onFormSuccess = () => {
+  console.log(form.values)
+};
+const onSecondFormSuccess = () => {
+  console.log(secondForm.values)
+};
+
+const onSubmit = form.handleSubmit(onSuccess, onInvalidSubmit);
+const onSecondFormSubmit = secondForm.handleSubmit(onSecondFormSuccess, onInvalidSubmit);
+</script>
+
+<template>
+  <form
+      @submit="onSubmit"
+  >
+    <input
+        v-model="formField.value"
+        name="formField"
+    />
+    <button
+        v-model="secondFormField.value"
+        type="submit"
+    >
+      Submit
+    </button>
+  </form>
+  <form
+      @submit="onSecondFormSubmit"
+  >
+    <input
+        name="secondFormField"
+    />
+    <button
+        type="submit"
+    >
+      Submit
+    </button>
+  </form>
+</template>
+```
