@@ -6,7 +6,7 @@ const { frontmatter } = Astro.props;
 
 const title = frontmatter?.title || 'VeeValidate: Painless Vue.js forms';
 const description = frontmatter?.description || 'Painless Vue.js forms';
-const path = frontmatter?.url || '/';
+const path = frontmatter?.url || '/v4/';
 const image = generateSocialImage({
   title: title,
   tagline: description,
