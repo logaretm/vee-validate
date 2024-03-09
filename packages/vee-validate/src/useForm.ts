@@ -856,6 +856,7 @@ export function useForm<
             key: state.path,
             valid: true,
             errors: [],
+            value: state.value,
           });
         }
 
@@ -864,6 +865,7 @@ export function useForm<
             key: state.path,
             valid: result.valid,
             errors: result.errors,
+            value: result.value ?? state.value,
           };
         });
       }),
@@ -873,11 +875,15 @@ export function useForm<
 
     const results: Partial<FlattenAndSetPathsType<TValues, ValidationResult>> = {};
     const errors: Partial<FlattenAndSetPathsType<TValues, string>> = {};
+    const values: Partial<FlattenAndSetPathsType<TValues, TOutput>> = {};
+
     for (const validation of validations) {
       results[validation.key as Path<TValues>] = {
         valid: validation.valid,
         errors: validation.errors,
       };
+
+      values[validation.key as Path<TValues>] = validation.value as any;
 
       if (validation.errors.length) {
         errors[validation.key as Path<TValues>] = validation.errors[0];
@@ -886,6 +892,7 @@ export function useForm<
 
     return {
       valid: validations.every(r => r.valid),
+      values: values as any,
       results,
       errors,
     };
