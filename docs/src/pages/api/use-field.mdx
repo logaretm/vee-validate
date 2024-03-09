@@ -98,11 +98,11 @@ The following sections documents each available property on the `useField` compo
 
 <CodeTitle level="4">
 
-`name: string`
+`name: string | Ref<string> | () => string`
 
 </CodeTitle>
 
-The field name, this is a static string and cannot be changed.
+The field name, it can be a string or a reactive ref to a string or a getter than returns a string. It is used to identify the field and specify its value path.
 
 <CodeTitle level="4">
 
@@ -370,19 +370,19 @@ To pass additional configuration to your fields you can use more options.
 </template>
 
 <script setup>
-  import { useField } from 'vee-validate';
+import { useField } from 'vee-validate';
 
-  // a simple `company` field with some options passed into it
-  const { value, errorMessage } = useField('company', ..., {
-    label: 'Your company',
-    type: 'text',
-    initialValue: ''
-  });
+// a simple `company` field with some options passed into it
+const { value, errorMessage } = useField('company', ..., {
+  label: 'Your company',
+  type: 'text',
+  initialValue: ''
+});
 </script>
 ```
 
 | Field options                          |
-|----------------------------------------|
+| -------------------------------------- |
 | `type`                                 |
 | `label`                                |
 | `initialValue`                         |
