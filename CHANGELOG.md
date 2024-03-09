@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.12.6
+
+### Patch Changes
+
+- 07d01fd: fix: re-apply errors to avoid race conditions
+
 ## 4.12.5
 
 ### Patch Changes

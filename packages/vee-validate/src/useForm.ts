@@ -436,6 +436,23 @@ export function useForm<
         results.values = formResult.values;
       }
 
+      keysOf(results.results).forEach(path => {
+        const pathState = findPathState(path);
+        if (!pathState) {
+          return;
+        }
+
+        if (mode === 'silent') {
+          return;
+        }
+
+        if (mode === 'validated-only' && !pathState.validated) {
+          return;
+        }
+
+        setFieldError(pathState, results.results[path]?.errors);
+      });
+
       return results;
     },
   );
