@@ -197,7 +197,7 @@ _*Iterate over both `users` and `links`:*_
     <div v-for="(userEntry, userIdx) in users">
       <FieldArray :name="`users[${userIdx}].links`" v-slot="{ fields: links }">
         <div v-for="(entry, idx) in fields" :key="entry.key">
-          <Field :name="`users[${userIdx}].links[idx]`" />
+          <Field :name="`users[${userIdx}].links[${idx}]`" />
         </div>
       </FieldArray>
     </div>
