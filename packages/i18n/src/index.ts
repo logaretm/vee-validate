@@ -1,4 +1,5 @@
 import { isCallable, FieldValidationMetaInfo, ValidationMessageGenerator, merge } from '../../shared';
+import { InterpolateOptions } from '../../shared/types';
 import { interpolate } from './utils';
 
 export { FieldValidationMetaInfo };
@@ -18,15 +19,21 @@ class Dictionary {
   public locale: string;
 
   private container: RootI18nDictionary;
+  private interpolateOptions: InterpolateOptions;
 
-  public constructor(locale: string, dictionary: RootI18nDictionary) {
+  public constructor(
+    locale: string,
+    dictionary: RootI18nDictionary,
+    interpolateOptions: InterpolateOptions = { prefix: '{', suffix: '}' },
+  ) {
     this.container = {};
     this.locale = locale;
+    this.interpolateOptions = interpolateOptions;
     this.merge(dictionary);
   }
 
-  public resolve(ctx: FieldValidationMetaInfo) {
-    return this.format(this.locale, ctx);
+  public resolve(ctx: FieldValidationMetaInfo, interpolateOptions?: InterpolateOptions) {
+    return this.format(this.locale, ctx, interpolateOptions);
   }
 
   public getLocaleDefault(locale: string, field: string): string | ValidationMessageGenerator | undefined {
@@ -41,14 +48,16 @@ class Dictionary {
     return this.container[locale]?.names?.[name] || name;
   }
 
-  public format(locale: string, ctx: FieldValidationMetaInfo) {
+  public format(locale: string, ctx: FieldValidationMetaInfo, interpolateOptions?: InterpolateOptions) {
     let message!: ValidationMessageTemplate | undefined;
     const { rule, form, label, name } = ctx;
     const fieldName = this.resolveLabel(locale, name, label);
 
     if (!rule) {
       message = this.getLocaleDefault(locale, name) || `${fieldName} is not valid`;
-      return isCallable(message) ? message(ctx) : interpolate(message, { ...form, field: fieldName });
+      return isCallable(message)
+        ? message(ctx)
+        : interpolate(message, { ...form, field: fieldName }, interpolateOptions ?? this.interpolateOptions);
     }
 
     // find if specific message for that field was specified.
@@ -59,7 +68,11 @@ class Dictionary {
 
     return isCallable(message)
       ? message(ctx)
-      : interpolate(message, { ...form, field: fieldName, params: rule.params });
+      : interpolate(
+          message,
+          { ...form, field: fieldName, params: rule.params },
+          interpolateOptions ?? this.interpolateOptions,
+        );
   }
 
   public merge(dictionary: RootI18nDictionary) {
@@ -71,10 +84,19 @@ const DICTIONARY: Dictionary = new Dictionary('en', {});
 
 function localize(dictionary: RootI18nDictionary): ValidationMessageGenerator;
 function localize(locale: string, dictionary?: PartialI18nDictionary): ValidationMessageGenerator;
+function localize(
+  locale: string,
+  dictionary?: PartialI18nDictionary,
+  interpolateOptions?: InterpolateOptions,
+): ValidationMessageGenerator;
 
-function localize(locale: string | RootI18nDictionary, dictionary?: PartialI18nDictionary) {
+function localize(
+  locale: string | RootI18nDictionary,
+  dictionary?: PartialI18nDictionary,
+  interpolateOptions?: InterpolateOptions,
+) {
   const generateMessage: ValidationMessageGenerator = ctx => {
-    return DICTIONARY.resolve(ctx);
+    return DICTIONARY.resolve(ctx, interpolateOptions);
   };
 
   if (typeof locale === 'string') {

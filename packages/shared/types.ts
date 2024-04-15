@@ -24,3 +24,8 @@ export type SimpleValidationRuleFunction<TValue = unknown, TParams = unknown[] |
 export type ValidationMessageGenerator = (ctx: FieldValidationMetaInfo) => string;
 
 export type Optional<T> = T extends Record<string, any> ? Partial<T> : T | undefined;
+
+export type InterpolateOptions = {
+  prefix: string;
+  suffix: string;
+};
