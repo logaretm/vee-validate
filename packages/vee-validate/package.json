@@ -1,6 +1,6 @@
 {
   "name": "vee-validate",
-  "version": "4.12.6",
+  "version": "4.12.7",
   "description": "Painless forms for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
@@ -28,7 +28,8 @@
     "dist/*.d.ts"
   ],
   "peerDependencies": {
-    "vue": "^3.4.26"  },
+    "vue": "^3.4.26"
+  },
   "dependencies": {
     "@vue/devtools-api": "^6.6.1",
     "type-fest": "^4.8.3"

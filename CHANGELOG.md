@@ -1,5 +1,13 @@
 # Change Log
 
+## 4.12.7
+
+### Patch Changes
+
+- 1376794: fix: handle meta.required for single field schemas closes #4738
+- 1376794: fix: add try-catch for schema description logic across all major schema providers
+- c4415f8: fix: ensure meta.required is reactive whenever the schema changes closes #4738
+
 ## 4.12.6
 
 ### Patch Changes
