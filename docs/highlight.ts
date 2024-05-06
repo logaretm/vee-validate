@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import * as shiki from 'shiki';
 import { JSDOM } from 'jsdom';
 import { visit } from 'unist-util-visit';

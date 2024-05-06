@@ -97,7 +97,8 @@ let FORM_COUNTER = 0;
 const PRIVATE_PATH_STATE_KEYS: (keyof PathState)[] = ['bails', 'fieldsCount', 'id', 'multiple', 'type', 'validate'];
 
 function resolveInitialValues<TValues extends GenericObject = GenericObject>(opts?: FormOptions<TValues>): TValues {
-  const providedValues = { ...toValue(opts?.initialValues || {}) };
+  const givenInitial = opts?.initialValues || {};
+  const providedValues = { ...toValue(givenInitial) };
   const schema = unref(opts?.validationSchema);
   if (schema && isTypedSchema(schema) && isCallable(schema.cast)) {
     return deepCopy(schema.cast(providedValues) || {});

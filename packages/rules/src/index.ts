@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 import alpha from './alpha';
 import alpha_dash from './alpha_dash';
 import alpha_num from './alpha_num';

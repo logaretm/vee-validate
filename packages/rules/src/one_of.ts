@@ -10,7 +10,6 @@ const oneOfValidator = (value: unknown, list: unknown[]): boolean => {
   }
 
   return Array.from(list).some(item => {
-    // eslint-disable-next-line
     return item == value;
   });
 };

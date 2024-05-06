@@ -9,7 +9,6 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRefOrGetter<stri
   const form = injectWithSelf(FormContextKey, undefined) as PrivateFormContext;
   const fields: Ref<FieldEntry<TValue>[]> = ref([]);
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const noOp = () => {};
   const noOpApi: FieldArrayContext<TValue> = {
     fields,

@@ -11,7 +11,6 @@ const urlValidator = (value: unknown, params: [string | RegExp | undefined] | { 
   }
 
   try {
-    // eslint-disable-next-line no-new
     new URL(value as string);
   } catch {
     return false;

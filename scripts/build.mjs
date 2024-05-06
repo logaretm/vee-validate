@@ -74,7 +74,7 @@ async function build(pkg) {
     const outputPath = path.join(pkgout, bundleName);
     fs.outputFileSync(outputPath, code);
     const stats = reportSize({ code, path: outputPath });
-    // eslint-disable-next-line
+     
     console.log(`${chalk.green('Output File:')} ${bundleName} ${stats}`);
 
     if (format === 'umd') {

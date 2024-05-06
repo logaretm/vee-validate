@@ -28,7 +28,6 @@ beforeEach(() => {
   };
 });
 
-// eslint-disable-next-line
 test('validates image dimensions', async () => {
   let result = await validate(helpers.file('file.jpg', 'image/jpeg', 10), { width: 150, height: 100 });
   expect(result).toBe(true);

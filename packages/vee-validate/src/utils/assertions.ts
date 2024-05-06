@@ -119,7 +119,7 @@ export function isEqual(a: any, b: any) {
     var length, i, keys;
     if (Array.isArray(a)) {
       length = a.length;
-      // eslint-disable-next-line eqeqeq
+
       if (length != b.length) return false;
       for (i = length; i-- !== 0; ) if (!isEqual(a[i], b[i])) return false;
       return true;
@@ -151,7 +151,7 @@ export function isEqual(a: any, b: any) {
 
     if (ArrayBuffer.isView(a) && ArrayBuffer.isView(b)) {
       length = (a as any).length;
-      // eslint-disable-next-line eqeqeq
+
       if (length != (b as any).length) return false;
       for (i = length; i-- !== 0; ) if ((a as any)[i] !== (b as any)[i]) return false;
       return true;
@@ -175,7 +175,7 @@ export function isEqual(a: any, b: any) {
   }
 
   // true if both NaN, false otherwise
-  // eslint-disable-next-line no-self-compare
+
   return a !== a && b !== b;
 }
 
