@@ -1,4 +1,4 @@
-import { computed, isRef, reactive, ref, Ref, unref, watch, MaybeRef, MaybeRefOrGetter } from 'vue';
+import { computed, isRef, reactive, ref, Ref, unref, watch, MaybeRef, MaybeRefOrGetter, toValue } from 'vue';
 import { FieldMeta, FieldState, FieldValidator, InputType, PrivateFormContext, PathState } from './types';
 import { getFromPath, isEqual, normalizeErrorItem } from './utils';
 import { TypedSchema } from '../dist/vee-validate';
@@ -212,7 +212,7 @@ function createFieldMeta<TValue>(
   errors: Ref<string[]>,
   schema?: TypedSchema<TValue>,
 ) {
-  const isRequired = schema?.describe?.().required ?? false;
+  const isRequired = computed(() => toValue(schema)?.describe?.().required ?? false);
 
   const meta = reactive({
     touched: false,

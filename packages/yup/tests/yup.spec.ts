@@ -1,5 +1,5 @@
-import { Ref } from 'vue';
-import { useField, useForm } from '@/vee-validate';
+import { Ref, ref } from 'vue';
+import { FieldMeta, useField, useForm } from '@/vee-validate';
 import { toTypedSchema } from '@/yup';
 import { mountWithHoc, flushPromises, setValue } from 'vee-validate/tests/helpers';
 import * as yup from 'yup';
@@ -387,6 +387,40 @@ test('reports required state on fields', async () => {
       nonNested: true,
     }),
   );
+});
+
+test('reports required state reactively', async () => {
+  let meta!: FieldMeta<any>;
+  const schema = ref(
+    toTypedSchema(
+      yup.object({
+        name: yup.string().required(),
+      }),
+    ),
+  );
+
+  mountWithHoc({
+    setup() {
+      useForm({
+        validationSchema: schema,
+      });
+
+      const field = useField('name');
+      meta = field.meta;
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(meta.required).toBe(true);
+
+  schema.value = toTypedSchema(yup.object({ name: yup.string() }));
+  await flushPromises();
+  await expect(meta.required).toBe(false);
 });
 
 test('reports required false for non-existent fields', async () => {

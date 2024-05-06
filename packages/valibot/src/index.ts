@@ -56,25 +56,36 @@ export function toTypedSchema<
       return values;
     },
     describe(path) {
-      if (!path) {
+      try {
+        if (!path) {
+          return {
+            required: !queryOptional(valibotSchema),
+            exists: true,
+          };
+        }
+
+        const pathSchema = getSchemaForPath(path, valibotSchema);
+        if (!pathSchema) {
+          return {
+            required: false,
+            exists: false,
+          };
+        }
+
         return {
-          required: !queryOptional(valibotSchema),
+          required: !queryOptional(pathSchema),
           exists: true,
         };
-      }
+      } catch {
+        if (__DEV__) {
+          console.warn(`Failed to describe path ${path} on the schema, returning a default description.`);
+        }
 
-      const pathSchema = getSchemaForPath(path, valibotSchema);
-      if (!pathSchema) {
         return {
           required: false,
           exists: false,
         };
       }
-
-      return {
-        required: !queryOptional(pathSchema),
-        exists: true,
-      };
     },
   };
 

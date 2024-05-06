@@ -67,19 +67,30 @@ export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchem
       }
     },
     describe(path) {
-      if (!path) {
-        return getDescriptionFromYupSpec(yupSchema.spec);
-      }
+      try {
+        if (!path) {
+          return getDescriptionFromYupSpec(yupSchema.spec);
+        }
 
-      const description = getSpecForPath(path, yupSchema);
-      if (!description) {
+        const description = getSpecForPath(path, yupSchema);
+        if (!description) {
+          return {
+            required: false,
+            exists: false,
+          };
+        }
+
+        return getDescriptionFromYupSpec(description);
+      } catch {
+        if (__DEV__) {
+          console.warn(`Failed to describe path ${path} on the schema, returning a default description.`);
+        }
+
         return {
           required: false,
           exists: false,
         };
       }
-
-      return getDescriptionFromYupSpec(description);
     },
   };
 

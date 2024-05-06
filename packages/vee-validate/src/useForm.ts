@@ -296,13 +296,15 @@ export function useForm<
     }
 
     const isRequired = computed(() => {
-      if (isTypedSchema(schema)) {
-        return (schema as TypedSchema).describe?.(toValue(path)).required ?? false;
+      const schemaValue = toValue(schema);
+      if (isTypedSchema(schemaValue)) {
+        return schemaValue.describe?.(toValue(path)).required ?? false;
       }
 
       // Path own schema
-      if (isTypedSchema(config?.schema)) {
-        return (config?.schema as TypedSchema).describe?.().required ?? false;
+      const configSchemaValue = toValue(config?.schema);
+      if (isTypedSchema(configSchemaValue)) {
+        return configSchemaValue.describe?.().required ?? false;
       }
 
       return false;

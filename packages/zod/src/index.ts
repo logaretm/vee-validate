@@ -55,25 +55,36 @@ export function toTypedSchema<
       }
     },
     describe(path) {
-      if (!path) {
+      try {
+        if (!path) {
+          return {
+            required: !zodSchema.isOptional(),
+            exists: true,
+          };
+        }
+
+        const description = getSchemaForPath(path, zodSchema);
+        if (!description) {
+          return {
+            required: false,
+            exists: false,
+          };
+        }
+
         return {
-          required: !zodSchema.isOptional(),
+          required: !description.isOptional(),
           exists: true,
         };
-      }
+      } catch {
+        if (__DEV__) {
+          console.warn(`Failed to describe path ${path} on the schema, returning a default description.`);
+        }
 
-      const description = getSchemaForPath(path, zodSchema);
-      if (!description) {
         return {
           required: false,
           exists: false,
         };
       }
-
-      return {
-        required: !description.isOptional(),
-        exists: true,
-      };
     },
   };
 
