@@ -84,7 +84,7 @@ export interface PathStateConfig {
   label: MaybeRefOrGetter<string | undefined>;
   type: InputType;
   validate: FieldValidator;
-  schema?: TypedSchema;
+  schema?: MaybeRefOrGetter<TypedSchema | undefined>;
 }
 
 export interface PathState<TValue = unknown> {

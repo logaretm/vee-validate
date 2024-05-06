@@ -25,7 +25,7 @@ export interface StateInit<TValue = unknown> {
   label?: MaybeRefOrGetter<string | undefined>;
   type?: InputType;
   validate?: FieldValidator;
-  schema?: TypedSchema<TValue>;
+  schema?: MaybeRefOrGetter<TypedSchema<TValue> | undefined>;
 }
 
 let ID_COUNTER = 0;
@@ -210,7 +210,7 @@ function createFieldMeta<TValue>(
   currentValue: Ref<TValue>,
   initialValue: MaybeRef<TValue> | undefined,
   errors: Ref<string[]>,
-  schema?: TypedSchema<TValue>,
+  schema?: MaybeRefOrGetter<TypedSchema<TValue> | undefined>,
 ) {
   const isRequired = computed(() => toValue(schema)?.describe?.().required ?? false);
 

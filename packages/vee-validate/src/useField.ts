@@ -142,14 +142,15 @@ function _useField<TValue = unknown>(
     return normalizeRules(rulesValue);
   });
 
+  const isTyped = !isCallable(validator.value) && isTypedSchema(toValue(rules));
   const { id, value, initialValue, meta, setState, errors, flags } = useFieldState<TValue>(name, {
     modelValue,
     form,
     bails,
     label,
     type,
-    validate: validator.value ? validate : undefined,
-    schema: isTypedSchema(rules) ? (rules as any) : undefined,
+    validate: validator.value && !isTyped ? validate : undefined,
+    schema: isTyped ? (rules as any) : undefined,
   });
 
   const errorMessage = computed(() => errors.value[0]);
