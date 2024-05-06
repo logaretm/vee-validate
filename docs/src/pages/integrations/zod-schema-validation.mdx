@@ -74,7 +74,7 @@ import { toTypedSchema } from '@vee-validate/zod';
 import * as zod from 'zod';
 
 const fieldSchema = toTypedSchema(
-  zod.string().nonempty('Field is required').email({ message: 'Must be a valid email' })
+  zod.string().min(1, { message: 'Field is required' }).email({ message: 'Must be a valid email' })
 );
 const { value, errorMessage } = useField('email', fieldSchema);
 </script>
@@ -108,8 +108,8 @@ import * as zod from 'zod';
 
 const validationSchema = toTypedSchema(
   zod.object({
-    email: zod.string().nonempty('This is required').email({ message: 'Must be a valid email' }),
-    password: zod.string().nonempty('This is required').min(8, { message: 'Too short' }),
+    email: zod.string().min(1, { message: 'This is required' }).email({ message: 'Must be a valid email' }),
+    password: zod.string().min(1, { message: 'This is required' }).min(8, { message: 'Too short' }),
   })
 );
 
@@ -141,8 +141,8 @@ import * as zod from 'zod';
 
 const validationSchema = toTypedSchema(
   zod.object({
-    email: zod.string().nonempty('This is required').email({ message: 'Must be a valid email' }),
-    password: zod.string().nonempty('This is required').min(8, { message: 'Too short' }),
+    email: zod.string().min(1, { message: 'This is required' }).email({ message: 'Must be a valid email' }),
+    password: zod.string().min(1, { message: 'This is required' }).min(8, { message: 'Too short' }),
   })
 );
 
