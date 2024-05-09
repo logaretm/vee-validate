@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.12.8
+
+### Patch Changes
+
+- f8bab9c: "fix: field-level validation not working with typed scheams closes #4744"
+
 ## 4.12.7
 
 ### Patch Changes
