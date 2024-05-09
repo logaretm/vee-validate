@@ -149,7 +149,7 @@ function _useField<TValue = unknown>(
     bails,
     label,
     type,
-    validate: validator.value && !isTyped ? validate : undefined,
+    validate: validator.value ? validate : undefined,
     schema: isTyped ? (rules as any) : undefined,
   });
 
