@@ -660,3 +660,45 @@ test('reports required state for field-level schemas without a form context', as
     }),
   );
 });
+
+test('uses transformed value as submitted value', async () => {
+  const onSubmitSpy = vi.fn();
+  let onSubmit!: () => void;
+
+  const wrapper = mountWithHoc({
+    setup() {
+      const { handleSubmit } = useForm<{
+        test: string;
+      }>();
+
+      const testRules = toTypedSchema(z.string().transform(value => `modified: ${value}`));
+      const { value } = useField('test', testRules);
+
+      // submit now
+      onSubmit = handleSubmit(onSubmitSpy);
+
+      return {
+        value,
+      };
+    },
+    template: `
+      <div>
+          <input v-model="value" type="text">
+      </div>
+    `,
+  });
+
+  const input = wrapper.$el.querySelector('input');
+
+  setValue(input, '12345678');
+  await flushPromises();
+  onSubmit();
+  await flushPromises();
+  await expect(onSubmitSpy).toHaveBeenCalledTimes(1);
+  await expect(onSubmitSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      test: 'modified: 12345678',
+    }),
+    expect.anything(),
+  );
+});

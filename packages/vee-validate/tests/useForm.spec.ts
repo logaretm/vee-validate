@@ -240,6 +240,7 @@ describe('useForm()', () => {
           errors: [REQUIRED_MESSAGE],
         },
       },
+      values: {},
     });
   });
 

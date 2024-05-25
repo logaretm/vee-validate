@@ -26,6 +26,7 @@ import {
   ValidationResult,
   FormState,
   FormValidationResult,
+  FlattenAndMapPathsValidationResult,
   PrivateFormContext,
   FormContext,
   FormErrors,
@@ -109,7 +110,7 @@ function resolveInitialValues<TValues extends GenericObject = GenericObject>(opt
 
 export function useForm<
   TValues extends GenericObject = GenericObject,
-  TOutput = TValues,
+  TOutput extends GenericObject = TValues,
   TSchema extends FormSchema<TValues> | TypedSchema<TValues, TOutput> =
     | FormSchema<TValues>
     | TypedSchema<TValues, TOutput>,
@@ -266,10 +267,10 @@ export function useForm<
 
   const schema = opts?.validationSchema;
 
-  function createPathState<TValue>(
-    path: MaybeRefOrGetter<Path<TValues>>,
-    config?: Partial<PathStateConfig>,
-  ): PathState<TValue> {
+  function createPathState<TPath extends Path<TValues>>(
+    path: MaybeRefOrGetter<TPath>,
+    config?: Partial<PathStateConfig<TOutput[TPath]>>,
+  ): PathState<TValues[TPath], TOutput[TPath]> {
     const initialValue = computed(() => getFromPath(initialValues.value, toValue(path)));
     const pathStateExists = pathStateLookup.value[toValue(path)];
     const isCheckboxOrRadio = config?.type === 'checkbox' || config?.type === 'radio';
@@ -285,7 +286,7 @@ export function useForm<
       pathStateExists.fieldsCount++;
       pathStateExists.__flags.pendingUnmount[id] = false;
 
-      return pathStateExists as PathState<TValue>;
+      return pathStateExists as PathState<TValues[TPath], TOutput[TPath]>;
     }
 
     const currentValue = computed(() => getFromPath(formValues, toValue(path)));
@@ -336,7 +337,7 @@ export function useForm<
       dirty: computed(() => {
         return !isEqual(unref(currentValue), unref(initialValue));
       }),
-    }) as PathState<TValue>;
+    }) as PathState<TValues[TPath], TOutput[TPath]>;
 
     pathStates.value.push(state);
     pathStateLookup.value[pathValue] = state;
@@ -510,7 +511,7 @@ export function useForm<
   function makeSubmissionFactory(onlyControlled: boolean) {
     return function submitHandlerFactory<TReturn = unknown>(
       fn?: SubmissionHandler<TValues, TOutput, TReturn>,
-      onValidationError?: InvalidSubmissionHandler<TValues>,
+      onValidationError?: InvalidSubmissionHandler<TValues, TOutput>,
     ) {
       return function submissionHandler(e: unknown) {
         if (e instanceof Event) {
@@ -529,9 +530,10 @@ export function useForm<
 
             if (result.valid && typeof fn === 'function') {
               const controlled = deepCopy(controlledValues.value);
-              let submittedValues = (onlyControlled ? controlled : values) as unknown as TOutput;
+              const submittedValues = (onlyControlled ? controlled : values) as unknown as TOutput;
+
               if (result.values) {
-                submittedValues = result.values;
+                Object.assign(submittedValues, result.values);
               }
 
               return fn(submittedValues, {
@@ -859,14 +861,16 @@ export function useForm<
             key: state.path,
             valid: true,
             errors: [],
+            value: undefined,
           });
         }
 
-        return state.validate(opts).then((result: ValidationResult) => {
+        return state.validate(opts).then(result => {
           return {
             key: state.path,
             valid: result.valid,
             errors: result.errors,
+            value: result.value,
           };
         });
       }),
@@ -874,13 +878,19 @@ export function useForm<
 
     isValidating.value = false;
 
-    const results: Partial<FlattenAndSetPathsType<TValues, ValidationResult>> = {};
+    const results: Partial<FlattenAndMapPathsValidationResult<TValues, TOutput>> = {};
     const errors: Partial<FlattenAndSetPathsType<TValues, string>> = {};
+    const values: Partial<TOutput> = {};
+
     for (const validation of validations) {
       results[validation.key as Path<TValues>] = {
         valid: validation.valid,
         errors: validation.errors,
       };
+
+      if (validation.value) {
+        setInPath(values, validation.key, validation.value);
+      }
 
       if (validation.errors.length) {
         errors[validation.key as Path<TValues>] = validation.errors[0];
@@ -891,10 +901,14 @@ export function useForm<
       valid: validations.every(r => r.valid),
       results,
       errors,
+      values,
     };
   }
 
-  async function validateField(path: Path<TValues>, opts?: Partial<ValidationOptions>): Promise<ValidationResult> {
+  async function validateField<TPath extends Path<TValues>>(
+    path: TPath,
+    opts?: Partial<ValidationOptions>,
+  ): Promise<ValidationResult<TOutput[TPath]>> {
     const state = findPathState(path);
     if (state && opts?.mode !== 'silent') {
       state.validated = true;
@@ -1291,7 +1305,10 @@ function useFormInitialValues<TValues extends GenericObject>(
   };
 }
 
-function mergeValidationResults(a: ValidationResult, b?: ValidationResult): ValidationResult {
+function mergeValidationResults<TValue extends GenericObject>(
+  a: ValidationResult<TValue>,
+  b?: ValidationResult<TValue>,
+): ValidationResult<TValue> {
   if (!b) {
     return a;
   }

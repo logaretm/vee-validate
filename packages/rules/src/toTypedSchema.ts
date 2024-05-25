@@ -1,5 +1,5 @@
 import { keysOf } from '../../vee-validate/src/utils';
-import { TypedSchema, RawFormSchema, validateObject, TypedSchemaError, validate } from 'vee-validate';
+import { TypedSchema, RawFormSchema, validateObject, TypedSchemaError, validate, GenericObject } from 'vee-validate';
 import { Optional, isObject } from '../../shared';
 
 export function toTypedSchema<TOutput = any, TInput extends Optional<TOutput> = Optional<TOutput>>(
@@ -21,7 +21,7 @@ export function toTypedSchema<TOutput = any, TInput extends Optional<TOutput> = 
         };
       }
 
-      const result = await validateObject<TInput, TOutput>(rawSchema, values);
+      const result = await validateObject(rawSchema, values as GenericObject | undefined);
 
       return {
         errors: keysOf(result.errors).map(path => {

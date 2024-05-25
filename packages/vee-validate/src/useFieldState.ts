@@ -18,14 +18,14 @@ export interface FieldStateComposable<TValue = unknown> {
   setState(state: Partial<StateSetterInit<TValue>>): void;
 }
 
-export interface StateInit<TValue = unknown> {
-  modelValue: MaybeRef<TValue>;
+export interface StateInit<TInput = unknown, TOutput = TInput> {
+  modelValue: MaybeRef<TInput>;
   form?: PrivateFormContext;
   bails: boolean;
   label?: MaybeRefOrGetter<string | undefined>;
   type?: InputType;
-  validate?: FieldValidator;
-  schema?: MaybeRefOrGetter<TypedSchema<TValue> | undefined>;
+  validate?: FieldValidator<TOutput>;
+  schema?: MaybeRefOrGetter<TypedSchema<TInput> | undefined>;
 }
 
 let ID_COUNTER = 0;
