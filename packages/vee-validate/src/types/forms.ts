@@ -18,9 +18,13 @@ export interface TypedSchemaPathDescription {
   exists: boolean;
 }
 
+export interface TypedSchemaContext {
+  formData: GenericObject;
+}
+
 export interface TypedSchema<TInput = any, TOutput = TInput> {
   __type: 'VVTypedSchema';
-  parse(values: TInput): Promise<{ value?: TOutput; errors: TypedSchemaError[] }>;
+  parse(values: TInput, context?: TypedSchemaContext): Promise<{ value?: TOutput; errors: TypedSchemaError[] }>;
   cast?(values: Partial<TInput>): TInput;
   describe?(path?: Path<TInput>): Partial<TypedSchemaPathDescription>;
 }

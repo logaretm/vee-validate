@@ -11,6 +11,7 @@ import {
   YupSchema,
   TypedSchemaError,
   Path,
+  TypedSchemaContext,
 } from './types';
 import { isCallable, FieldValidationMetaInfo } from '../../shared';
 
@@ -72,12 +73,13 @@ export async function validate<TValue = unknown>(
  * Starts the validation process.
  */
 async function _validate<TValue = unknown>(field: FieldValidationContext<TValue>, value: TValue) {
-  if (isTypedSchema(field.rules) || isYupValidator(field.rules)) {
-    return validateFieldWithTypedSchema(value, field.rules);
+  const rules = field.rules;
+  if (isTypedSchema(rules) || isYupValidator(rules)) {
+    return validateFieldWithTypedSchema(value, { ...field, rules });
   }
 
   // if a generic function or chain of generic functions
-  if (isCallable(field.rules) || Array.isArray(field.rules)) {
+  if (isCallable(rules) || Array.isArray(rules)) {
     const ctx = {
       field: field.label || field.name,
       name: field.name,
@@ -87,7 +89,7 @@ async function _validate<TValue = unknown>(field: FieldValidationContext<TValue>
     };
 
     // Normalize the pipeline
-    const pipeline = Array.isArray(field.rules) ? field.rules : [field.rules];
+    const pipeline = Array.isArray(rules) ? rules : [rules];
     const length = pipeline.length;
     const errors: ReturnType<typeof _generateFieldError>[] = [];
 
@@ -120,7 +122,7 @@ async function _validate<TValue = unknown>(field: FieldValidationContext<TValue>
 
   const normalizedContext = {
     ...field,
-    rules: normalizeRules(field.rules),
+    rules: normalizeRules(rules),
   };
   const errors: ReturnType<typeof _generateFieldError>[] = [];
   const rulesKeys = Object.keys(normalizedContext.rules);
@@ -161,9 +163,9 @@ function isYupError(err: unknown): err is YupError {
 function yupToTypedSchema(yupSchema: YupSchema): TypedSchema {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
-    async parse(values: any) {
+    async parse(values: any, context?: TypedSchemaContext) {
       try {
-        const output = await yupSchema.validate(values, { abortEarly: false });
+        const output = await yupSchema.validate(values, { abortEarly: false, context: context?.formData || {} });
 
         return {
           output,
@@ -205,9 +207,12 @@ function yupToTypedSchema(yupSchema: YupSchema): TypedSchema {
 /**
  * Handles yup validation
  */
-async function validateFieldWithTypedSchema(value: unknown, schema: TypedSchema | YupSchema) {
-  const typedSchema = isTypedSchema(schema) ? schema : yupToTypedSchema(schema);
-  const result = await typedSchema.parse(value);
+async function validateFieldWithTypedSchema(
+  value: unknown,
+  context: FieldValidationContext<any> & { rules: TypedSchema | YupSchema },
+) {
+  const typedSchema = isTypedSchema(context.rules) ? context.rules : yupToTypedSchema(context.rules);
+  const result = await typedSchema.parse(value, { formData: context.formData });
 
   const messages: string[] = [];
   for (const error of result.errors) {

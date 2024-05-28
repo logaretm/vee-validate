@@ -3178,3 +3178,47 @@ test('removes proper pathState when field is unmounting', async () => {
   expect(form.meta.value.valid).toBe(true);
   expect(form.getAllPathStates()).toMatchObject([{ id: 0, path: 'foo' }]);
 });
+
+test('provides form values as yup context refs', async () => {
+  mountWithHoc({
+    setup() {
+      const pw = yup.string().required().min(3).label('Password');
+      const cpw = yup
+        .string()
+        .required()
+        .oneOf([yup.ref('$password')])
+        .label('Confirm Password');
+
+      return {
+        pw,
+        cpw,
+      };
+    },
+    template: `
+      <VForm  v-slot="{ errors }">
+        <Field id="password" name="password" type="password" :rules="pw" />
+        <span id="passwordErr">{{ errors.password }}</span>
+
+        <Field id="confirmPassword" name="confirmPassword" type="password" :rules="cpw" />
+        <span id="confirmPasswordErr">{{ errors.confirmPassword }}</span>
+
+        <button>Validate</button>
+      </VForm>
+    `,
+  });
+
+  const pwError = document.querySelector('#passwordErr');
+  const cpwError = document.querySelector('#confirmPasswordErr');
+
+  await flushPromises();
+  setValue(document.querySelector('#password') as HTMLInputElement, '123');
+  setValue(document.querySelector('#confirmPassword') as HTMLInputElement, '12');
+  await flushPromises();
+
+  expect(pwError?.textContent).toBeFalsy();
+  expect(cpwError?.textContent).toBeTruthy();
+  setValue(document.querySelector('#confirmPassword') as HTMLInputElement, '123');
+  await flushPromises();
+  expect(pwError?.textContent).toBeFalsy();
+  expect(cpwError?.textContent).toBeFalsy();
+});
