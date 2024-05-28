@@ -343,12 +343,12 @@ const schema = Yup.object({
 
 #### Custom Labels with Zod
 
-With Zod it is similar, you call the `label` function and give it the name you want to use in the generated message.
+Zod does not have a built-in `label` method, but you can override the default error messages by passing a custom message to the chained validator.
 
 ```js
 const schema = z.object({
-  email_addr: z.string().email().label('Email Address'),
-  acc_password: z.string().min(5).label('Your Password'),
+  email_addr: z.string().email({ message: 'Email Address be a valid email address' });
+  acc_password: z.string().min(5, { message: 'Password be at least 5 characters long' });
 });
 ```
 
