@@ -234,6 +234,38 @@ Here is an example that show cases interpolation for different cases:
 
 <LiveExample client:visible id="vee-validate-v4-i18n-interpolation" />
 
+#### Custom Interpolation Prefix and Suffix
+
+You also have the ability to customize the `prefix` and `suffix` of the interpolated values, by default they are `{` and `}` respectively.
+
+Configure them by passing a third parameter of `InterpolateOptions` to the `localize` function:
+
+```js
+import { defineRule, configure } from 'vee-validate';
+import { between } from '@vee-validate/rules';
+import { localize } from '@vee-validate/i18n';
+
+// Define the rule globally
+defineRule('between', between);
+
+configure({
+  // Generates an English message locale generator
+  generateMessage: localize(
+    'en',
+    {
+      messages: {
+        // use double `{{` and `}}` i18next-like curly braces for the interpolated values, instead of the default `{` and `}`
+        between: `The {{field}} field must be between {{min}} and {{max}}`,
+      },
+    },
+    {
+      prefix: '{{',
+      suffix: '}}',
+    },
+  ),
+});
+```
+
 ### Loading Locale From CDN
 
 If you are using Vue.js over CDN, you can still load the locale files without having to copy them to your code, the `@vee-validate/i18n` library exposes a `loadLocaleFromURL` function that accepts a URL to a locale file.
