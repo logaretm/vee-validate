@@ -1316,6 +1316,37 @@ describe('useForm()', () => {
     expect(form.values.fname).toBe('test');
   });
 
+  test('reset should be able to set initial values to undefined with force: true', async () => {
+    let form!: FormContext<{ lname: string; fname: string }>;
+
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          initialValues: { fname: '123', lname: '456' },
+        });
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    await flushPromises();
+
+    // FAIL
+    form.resetForm({ values: { lname: '789' } }, { force: true });
+    expect(form.meta.value.initialValues?.fname).toBeUndefined(); // This is not undefined. It stayed at value '123'
+    expect(form.meta.value.initialValues?.lname).toBe('789');
+
+    // FAIL
+    form.resetForm({ values: {} }, { force: true });
+    expect(form.meta.value.initialValues?.fname).toBeUndefined();
+    expect(form.meta.value.initialValues?.lname).toBeUndefined();
+
+    // PASS
+    form.resetForm({ values: { lname: undefined, fname: undefined } }, { force: true });
+    expect(form.meta.value.initialValues?.fname).toBeUndefined();
+    expect(form.meta.value.initialValues?.lname).toBeUndefined();
+  });
+
   test('reset should not make unspecified values undefined', async () => {
     let form!: FormContext<{ fname: string; lname: string }>;
 

@@ -817,7 +817,7 @@ export function useForm<
     let newValues = deepCopy(resetState?.values ? resetState.values : originalInitialValues.value);
     newValues = opts?.force ? newValues : merge(originalInitialValues.value, newValues);
     newValues = isTypedSchema(schema) && isCallable(schema.cast) ? schema.cast(newValues) : newValues;
-    setInitialValues(newValues);
+    setInitialValues(newValues, { force: opts?.force });
     mutateAllPathState(state => {
       state.__flags.pendingReset = true;
       state.validated = false;
@@ -1233,6 +1233,11 @@ function useFormMeta<TValues extends Record<string, unknown>>(
   });
 }
 
+interface SetFormInitialValuesOpts {
+  updateFields?: boolean;
+  force?: boolean;
+}
+
 /**
  * Manages the initial values prop
  */
@@ -1251,11 +1256,16 @@ function useFormInitialValues<TValues extends GenericObject>(
   // these only change when the user explicitly changes the initial values or when the user resets them with new values.
   const originalInitialValues = ref<PartialDeep<TValues>>(deepCopy(values)) as Ref<PartialDeep<TValues>>;
 
-  function setInitialValues(values: PartialDeep<TValues>, updateFields = false) {
-    initialValues.value = merge(deepCopy(initialValues.value) || {}, deepCopy(values));
-    originalInitialValues.value = merge(deepCopy(originalInitialValues.value) || {}, deepCopy(values));
+  function setInitialValues(values: PartialDeep<TValues>, opts?: SetFormInitialValuesOpts) {
+    if (opts?.force) {
+      initialValues.value = deepCopy(values);
+      originalInitialValues.value = deepCopy(values);
+    } else {
+      initialValues.value = merge(deepCopy(initialValues.value) || {}, deepCopy(values));
+      originalInitialValues.value = merge(deepCopy(originalInitialValues.value) || {}, deepCopy(values));
+    }
 
-    if (!updateFields) {
+    if (!opts?.updateFields) {
       return;
     }
 
