@@ -1,4 +1,4 @@
-import { useField, useForm, useResetForm } from '@/vee-validate';
+import { FormContext, useField, useForm, useResetForm } from '@/vee-validate';
 import { mountWithHoc, setValue, flushPromises } from './helpers';
 
 describe('useResetForm()', () => {
@@ -72,5 +72,31 @@ describe('useResetForm()', () => {
     await flushPromises();
     expect(spy).toHaveBeenCalled();
     spy.mockRestore();
+  });
+
+  test('resets a form with passed options', async () => {
+    let resetForm: any;
+    let form!: FormContext<{ fname: string; lname: string }>;
+
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          initialValues: { fname: '123', lname: '456' },
+        });
+
+        resetForm = useResetForm();
+
+        return {};
+      },
+      template: `
+        <div></div>
+      `,
+    });
+
+    await flushPromises();
+
+    resetForm({ values: { fname: 'test' } }, { force: true });
+    expect(form.values.lname).toBeUndefined();
+    expect(form.values.fname).toBe('test');
   });
 });

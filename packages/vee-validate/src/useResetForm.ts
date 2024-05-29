@@ -1,5 +1,5 @@
 import { FormContextKey } from './symbols';
-import { FormState } from './types';
+import { FormState, ResetFormOpts } from './types';
 import { injectWithSelf, warn } from './utils';
 
 export function useResetForm<TValues extends Record<string, unknown> = Record<string, unknown>>() {
@@ -10,11 +10,11 @@ export function useResetForm<TValues extends Record<string, unknown> = Record<st
     }
   }
 
-  return function resetForm(state?: Partial<FormState<TValues>>) {
+  return function resetForm(state?: Partial<FormState<TValues>>, opts?: ResetFormOpts) {
     if (!form) {
       return;
     }
 
-    return form.resetForm(state);
+    return form.resetForm(state, opts);
   };
 }
