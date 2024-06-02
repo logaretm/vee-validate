@@ -4,10 +4,15 @@ import { FieldValidationMetaInfo } from '../../../shared';
 import { Path, PathValue } from './paths';
 import { PartialDeep } from 'type-fest';
 
-export interface ValidationResult {
+export interface ValidationResult<TValue = unknown> {
   errors: string[];
   valid: boolean;
+  value?: TValue;
 }
+
+export type FlattenAndMapPathsValidationResult<TInput extends GenericObject, TOutput extends GenericObject> = {
+  [K in Path<TInput>]: ValidationResult<TOutput[K]>;
+};
 
 export interface TypedSchemaError {
   path?: string;
@@ -81,17 +86,17 @@ export interface ValidationOptions {
   warn: boolean;
 }
 
-export type FieldValidator = (opts?: Partial<ValidationOptions>) => Promise<ValidationResult>;
+export type FieldValidator<TOutput> = (opts?: Partial<ValidationOptions>) => Promise<ValidationResult<TOutput>>;
 
-export interface PathStateConfig {
+export interface PathStateConfig<TOutput> {
   bails: boolean;
   label: MaybeRefOrGetter<string | undefined>;
   type: InputType;
-  validate: FieldValidator;
+  validate: FieldValidator<TOutput>;
   schema?: MaybeRefOrGetter<TypedSchema | undefined>;
 }
 
-export interface PathState<TValue = unknown> {
+export interface PathState<TInput = unknown, TOutput = TInput> {
   id: number | number[];
   path: string;
   touched: boolean;
@@ -100,8 +105,8 @@ export interface PathState<TValue = unknown> {
   required: boolean;
   validated: boolean;
   pending: boolean;
-  initialValue: TValue | undefined;
-  value: TValue | undefined;
+  initialValue: TInput | undefined;
+  value: TInput | undefined;
   errors: string[];
   bails: boolean;
   label: string | undefined;
@@ -112,7 +117,7 @@ export interface PathState<TValue = unknown> {
     pendingUnmount: Record<string, boolean>;
     pendingReset: boolean;
   };
-  validate?: FieldValidator;
+  validate?: FieldValidator<TOutput>;
 }
 
 export interface FieldEntry<TValue = unknown> {
@@ -139,29 +144,29 @@ export interface PrivateFieldArrayContext<TValue = unknown> extends FieldArrayCo
   path: MaybeRefOrGetter<string>;
 }
 
-export interface PrivateFieldContext<TValue = unknown> {
+export interface PrivateFieldContext<TInput = unknown, TOutput = TInput> {
   id: number;
   name: MaybeRef<string>;
-  value: Ref<TValue>;
-  meta: FieldMeta<TValue>;
+  value: Ref<TInput>;
+  meta: FieldMeta<TInput>;
   errors: Ref<string[]>;
   errorMessage: Ref<string | undefined>;
   label?: MaybeRefOrGetter<string | undefined>;
   type?: string;
   bails?: boolean;
   keepValueOnUnmount?: MaybeRefOrGetter<boolean | undefined>;
-  checkedValue?: MaybeRefOrGetter<TValue>;
-  uncheckedValue?: MaybeRefOrGetter<TValue>;
+  checkedValue?: MaybeRefOrGetter<TInput>;
+  uncheckedValue?: MaybeRefOrGetter<TInput>;
   checked?: Ref<boolean>;
-  resetField(state?: Partial<FieldState<TValue>>): void;
+  resetField(state?: Partial<FieldState<TInput>>): void;
   handleReset(): void;
-  validate: FieldValidator;
+  validate: FieldValidator<TOutput>;
   handleChange(e: Event | unknown, shouldValidate?: boolean): void;
   handleBlur(e?: Event, shouldValidate?: boolean): void;
-  setState(state: Partial<FieldState<TValue>>): void;
+  setState(state: Partial<FieldState<TInput>>): void;
   setTouched(isTouched: boolean): void;
   setErrors(message: string | string[]): void;
-  setValue(value: TValue, shouldValidate?: boolean): void;
+  setValue(value: TInput, shouldValidate?: boolean): void;
 }
 
 export type FieldContext<TValue = unknown> = Omit<PrivateFieldContext<TValue>, 'id' | 'instances'>;
@@ -197,33 +202,38 @@ export interface FormActions<TValues extends GenericObject, TOutput = TValues> {
   resetField(field: Path<TValues>, state?: Partial<FieldState>): void;
 }
 
-export interface FormValidationResult<TValues, TOutput = TValues> {
+export interface FormValidationResult<TInput extends GenericObject, TOutput extends GenericObject = TInput> {
   valid: boolean;
-  results: Partial<Record<Path<TValues>, ValidationResult>>;
-  errors: Partial<Record<Path<TValues>, string>>;
-  values?: TOutput;
+  results: Partial<FlattenAndMapPathsValidationResult<TInput, TOutput>>;
+  errors: Partial<Record<Path<TInput>, string>>;
+  values?: Partial<TOutput>;
+  source: 'schema' | 'fields' | 'none';
 }
 
-export interface SubmissionContext<TValues extends GenericObject = GenericObject> extends FormActions<TValues> {
+export interface SubmissionContext<TInput extends GenericObject = GenericObject> extends FormActions<TInput> {
   evt?: Event;
-  controlledValues: Partial<TValues>;
+  controlledValues: Partial<TInput>;
 }
 
-export type SubmissionHandler<TValues extends GenericObject = GenericObject, TOutput = TValues, TReturn = unknown> = (
+export type SubmissionHandler<TInput extends GenericObject = GenericObject, TOutput = TInput, TReturn = unknown> = (
   values: TOutput,
-  ctx: SubmissionContext<TValues>,
+  ctx: SubmissionContext<TInput>,
 ) => TReturn;
 
-export interface InvalidSubmissionContext<TValues extends GenericObject = GenericObject> {
-  values: TValues;
+export interface InvalidSubmissionContext<
+  TInput extends GenericObject = GenericObject,
+  TOutput extends GenericObject = TInput,
+> {
+  values: TInput;
   evt?: Event;
-  errors: Partial<Record<Path<TValues>, string>>;
-  results: Partial<Record<Path<TValues>, ValidationResult>>;
+  errors: Partial<Record<Path<TInput>, string>>;
+  results: FormValidationResult<TInput, TOutput>['results'];
 }
 
-export type InvalidSubmissionHandler<TValues extends GenericObject = GenericObject> = (
-  ctx: InvalidSubmissionContext<TValues>,
-) => void;
+export type InvalidSubmissionHandler<
+  TInput extends GenericObject = GenericObject,
+  TOutput extends GenericObject = TInput,
+> = (ctx: InvalidSubmissionContext<TInput, TOutput>) => void;
 
 export type RawFormSchema<TValues> = Record<Path<TValues>, string | GenericValidateFunction | GenericObject>;
 
@@ -231,9 +241,9 @@ export type FieldPathLookup<TValues extends GenericObject = GenericObject> = Par
   Record<Path<TValues>, PrivateFieldContext | PrivateFieldContext[]>
 >;
 
-type HandleSubmitFactory<TValues extends GenericObject, TOutput = TValues> = <TReturn = unknown>(
+type HandleSubmitFactory<TValues extends GenericObject, TOutput extends GenericObject = TValues> = <TReturn = unknown>(
   cb: SubmissionHandler<TValues, TOutput, TReturn>,
-  onSubmitValidationErrorCb?: InvalidSubmissionHandler<TValues>,
+  onSubmitValidationErrorCb?: InvalidSubmissionHandler<TValues, TOutput>,
 ) => (e?: Event) => Promise<TReturn | undefined>;
 
 export type PublicPathState<TValue = unknown> = Omit<
@@ -310,8 +320,10 @@ export interface BaseInputBinds<TValue = unknown> {
   onInput: (e: Event) => void;
 }
 
-export interface PrivateFormContext<TValues extends GenericObject = GenericObject, TOutput = TValues>
-  extends FormActions<TValues> {
+export interface PrivateFormContext<
+  TValues extends GenericObject = GenericObject,
+  TOutput extends GenericObject = TValues,
+> extends FormActions<TValues> {
   formId: number;
   values: TValues;
   initialValues: Ref<Partial<TValues>>;
@@ -327,14 +339,17 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   keepValuesOnUnmount: MaybeRef<boolean>;
   validateSchema?: (mode: SchemaValidationMode) => Promise<FormValidationResult<TValues, TOutput>>;
   validate(opts?: Partial<ValidationOptions>): Promise<FormValidationResult<TValues, TOutput>>;
-  validateField(field: Path<TValues>, opts?: Partial<ValidationOptions>): Promise<ValidationResult>;
+  validateField<TPath extends Path<TValues>>(
+    field: TPath,
+    opts?: Partial<ValidationOptions>,
+  ): Promise<ValidationResult<TOutput[TPath]>>;
   stageInitialValue(path: string, value: unknown, updateOriginal?: boolean): void;
   unsetInitialValue(path: string): void;
   handleSubmit: HandleSubmitFactory<TValues, TOutput> & { withControlled: HandleSubmitFactory<TValues, TOutput> };
   setFieldInitialValue(path: string, value: unknown, updateOriginal?: boolean): void;
   createPathState<TPath extends Path<TValues>>(
     path: MaybeRef<TPath>,
-    config?: Partial<PathStateConfig>,
+    config?: Partial<PathStateConfig<TOutput[TPath]>>,
   ): PathState<PathValue<TValues, TPath>>;
   getPathState<TPath extends Path<TValues>>(path: TPath): PathState<PathValue<TValues, TPath>> | undefined;
   getAllPathStates(): PathState[];
@@ -387,7 +402,7 @@ export interface PrivateFormContext<TValues extends GenericObject = GenericObjec
   ): Ref<BaseInputBinds<TValue> & TExtras>;
 }
 
-export interface FormContext<TValues extends GenericObject = GenericObject, TOutput = TValues>
+export interface FormContext<TValues extends GenericObject = GenericObject, TOutput extends GenericObject = TValues>
   extends Omit<
     PrivateFormContext<TValues, TOutput>,
     | 'formId'

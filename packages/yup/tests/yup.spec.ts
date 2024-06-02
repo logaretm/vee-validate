@@ -546,6 +546,47 @@ test('reports required state for field-level schemas without a form context', as
   );
 });
 
+test('uses transformed value as submitted value', async () => {
+  const onSubmitSpy = vi.fn();
+  let onSubmit!: () => void;
+
+  const wrapper = mountWithHoc({
+    setup() {
+      const { handleSubmit } = useForm<{
+        req: string;
+      }>();
+
+      const { value } = useField('test', toTypedSchema(yup.string().transform(val => `modified: ${val}`)));
+
+      // submit now
+      onSubmit = handleSubmit(onSubmitSpy);
+
+      return {
+        value,
+      };
+    },
+    template: `
+      <div>
+        <input v-model="value" type="text">
+      </div>
+    `,
+  });
+
+  const input = wrapper.$el.querySelector('input');
+
+  setValue(input, '12345678');
+  await flushPromises();
+  onSubmit();
+  await flushPromises();
+  await expect(onSubmitSpy).toHaveBeenCalledTimes(1);
+  await expect(onSubmitSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      test: 'modified: 12345678',
+    }),
+    expect.anything(),
+  );
+});
+
 test('supports yup.strip', async () => {
   const onSubmitSpy = vi.fn();
   let onSubmit!: () => void;

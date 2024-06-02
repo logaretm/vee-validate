@@ -6,13 +6,13 @@ import { injectWithSelf, warn } from './utils';
 /**
  * Validates a single field
  */
-export function useValidateField(path?: MaybeRefOrGetter<string>) {
+export function useValidateField<TOutput>(path?: MaybeRefOrGetter<string>) {
   const form = injectWithSelf(FormContextKey);
   const field = path ? undefined : inject(FieldContextKey);
 
-  return function validateField(): Promise<ValidationResult> {
+  return function validateField(): Promise<ValidationResult<TOutput>> {
     if (field) {
-      return field.validate();
+      return field.validate() as Promise<ValidationResult<TOutput>>;
     }
 
     if (form && path) {
