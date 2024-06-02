@@ -73,7 +73,10 @@ export async function validate<TInput, TOutput>(
 /**
  * Starts the validation process.
  */
-async function _validate<TInput = unknown, TOutput = TInput>(field: FieldValidationContext<TInput, TOutput>, value: TInput) {
+async function _validate<TInput = unknown, TOutput = TInput>(
+  field: FieldValidationContext<TInput, TOutput>,
+  value: TInput,
+) {
   const rules = field.rules;
   if (isTypedSchema(rules) || isYupValidator(rules)) {
     return validateFieldWithTypedSchema(value, { ...field, rules });
@@ -329,6 +332,7 @@ export async function validateTypedSchema<TValues extends GenericObject, TOutput
     results,
     errors,
     values: validationResult.value,
+    source: 'schema',
   };
 }
 
@@ -374,5 +378,6 @@ export async function validateObjectSchema<TValues extends GenericObject, TOutpu
     valid: isAllValid,
     results,
     errors,
+    source: 'schema',
   };
 }

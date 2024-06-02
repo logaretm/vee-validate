@@ -207,6 +207,7 @@ export interface FormValidationResult<TInput extends GenericObject, TOutput exte
   results: Partial<FlattenAndMapPathsValidationResult<TInput, TOutput>>;
   errors: Partial<Record<Path<TInput>, string>>;
   values?: Partial<TOutput>;
+  source: 'schema' | 'fields' | 'none';
 }
 
 export interface SubmissionContext<TInput extends GenericObject = GenericObject> extends FormActions<TInput> {

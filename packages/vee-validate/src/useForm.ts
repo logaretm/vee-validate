@@ -433,11 +433,17 @@ export function useForm<
 
           return validation;
         },
-        { valid: formResult.valid, results: {}, errors: {} } as FormValidationResult<TValues>,
+        {
+          valid: formResult.valid,
+          results: {},
+          errors: {},
+          source: formResult.source,
+        } as FormValidationResult<TValues>,
       );
 
       if (formResult.values) {
         results.values = formResult.values;
+        results.source = formResult.source;
       }
 
       keysOf(results.results).forEach(path => {
@@ -530,10 +536,13 @@ export function useForm<
 
             if (result.valid && typeof fn === 'function') {
               const controlled = deepCopy(controlledValues.value);
-              const submittedValues = (onlyControlled ? controlled : values) as unknown as TOutput;
+              let submittedValues = (onlyControlled ? controlled : values) as unknown as TOutput;
 
               if (result.values) {
-                Object.assign(submittedValues, result.values);
+                submittedValues =
+                  result.source === 'schema'
+                    ? (result.values as TOutput)
+                    : Object.assign({}, submittedValues, result.values);
               }
 
               return fn(submittedValues, {
@@ -902,6 +911,7 @@ export function useForm<
       results,
       errors,
       values,
+      source: 'fields',
     };
   }
 
@@ -959,7 +969,7 @@ export function useForm<
   async function _validateSchema(): Promise<FormValidationResult<TValues, TOutput>> {
     const schemaValue = unref(schema);
     if (!schemaValue) {
-      return { valid: true, results: {}, errors: {} };
+      return { valid: true, results: {}, errors: {}, source: 'none' };
     }
 
     isValidating.value = true;
