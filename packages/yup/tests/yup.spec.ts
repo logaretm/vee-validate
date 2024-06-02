@@ -545,3 +545,53 @@ test('reports required state for field-level schemas without a form context', as
     }),
   );
 });
+
+test('supports yup.strip', async () => {
+  const onSubmitSpy = vi.fn();
+  let onSubmit!: () => void;
+
+  const wrapper = mountWithHoc({
+    setup() {
+      const { handleSubmit } = useForm({
+        validationSchema: toTypedSchema(
+          yup.object({
+            test: yup.string().strip(),
+            name: yup.string(),
+          }),
+        ),
+      });
+
+      const { value: test } = useField('test');
+      const { value: name } = useField('name');
+
+      // submit now
+      onSubmit = handleSubmit(onSubmitSpy);
+
+      return { test, name };
+    },
+    template: `
+      <div>
+        <input id="test" v-model="test" type="text">
+        <input id="name" v-model="name" type="text">
+      </div>
+    `,
+  });
+
+  await flushPromises();
+
+  const test = wrapper.$el.querySelector('#test');
+  const name = wrapper.$el.querySelector('#name');
+
+  setValue(test, '12345678');
+  setValue(name, '12345678');
+  await flushPromises();
+  onSubmit();
+  await flushPromises();
+  await expect(onSubmitSpy).toHaveBeenCalledTimes(1);
+  await expect(onSubmitSpy).toHaveBeenLastCalledWith(
+    expect.not.objectContaining({
+      test: expect.anything(),
+    }),
+    expect.anything(),
+  );
+});
