@@ -1,6 +1,6 @@
 import { Ref, ref } from 'vue';
+import * as v from 'valibot';
 import { FieldMeta, useField, useForm } from '@/vee-validate';
-import { string, minLength, email as emailV, object, coerce, any, number, optional, array } from 'valibot';
 import { toTypedSchema } from '@/valibot';
 import { mountWithHoc, flushPromises, setValue } from '../../vee-validate/tests/helpers';
 
@@ -12,7 +12,7 @@ describe('valibot', () => {
   test('validates typed field with valibot', async () => {
     const wrapper = mountWithHoc({
       setup() {
-        const schema = string([minLength(1, REQUIRED_MSG), minLength(8, MIN_MSG)]);
+        const schema = v.pipe(v.string(), v.minLength(1, REQUIRED_MSG), v.minLength(8, MIN_MSG));
         const rules = toTypedSchema(schema);
         const { value, errorMessage } = useField('test', rules);
 
@@ -47,7 +47,7 @@ describe('valibot', () => {
     let errors!: Ref<string[]>;
     const wrapper = mountWithHoc({
       setup() {
-        const schema = string([minLength(1, REQUIRED_MSG), minLength(8, MIN_MSG)]);
+        const schema = v.pipe(v.string(), v.minLength(1, REQUIRED_MSG), v.minLength(8, MIN_MSG));
         const rules = toTypedSchema(schema);
         const { value, errors: fieldErrors } = useField('test', rules);
 
@@ -72,11 +72,11 @@ describe('valibot', () => {
   });
 
   test('reports required state reactively', async () => {
-    let meta!: FieldMeta<any>;
+    let meta!: FieldMeta<unknown>;
     const schema = ref(
       toTypedSchema(
-        object({
-          name: string(),
+        v.object({
+          name: v.string(),
         }),
       ),
     );
@@ -100,7 +100,7 @@ describe('valibot', () => {
     await flushPromises();
     await expect(meta.required).toBe(true);
 
-    schema.value = toTypedSchema(object({ name: optional(string()) }));
+    schema.value = toTypedSchema(v.object({ name: v.optional(v.string()) }));
     await flushPromises();
     await expect(meta.required).toBe(false);
   });
@@ -109,9 +109,9 @@ describe('valibot', () => {
     const wrapper = mountWithHoc({
       setup() {
         const schema = toTypedSchema(
-          object({
-            email: string([emailV(EMAIL_MSG), minLength(7, MIN_MSG)]),
-            password: string([minLength(8, MIN_MSG)]),
+          v.object({
+            email: v.pipe(v.string(), v.email(EMAIL_MSG), v.minLength(7, MIN_MSG)),
+            password: v.pipe(v.string(), v.minLength(8, MIN_MSG)),
           }),
         );
 
@@ -167,9 +167,9 @@ describe('valibot', () => {
     const wrapper = mountWithHoc({
       setup() {
         const schema = toTypedSchema(
-          object({
-            email: string([emailV(EMAIL_MSG), minLength(1, MIN_MSG)]),
-            password: string([minLength(8, MIN_MSG)]),
+          v.object({
+            email: v.pipe(v.string(), v.email(EMAIL_MSG), v.minLength(1, MIN_MSG)),
+            password: v.pipe(v.string(), v.minLength(8, MIN_MSG)),
           }),
         );
 
@@ -226,8 +226,11 @@ describe('valibot', () => {
     mountWithHoc({
       setup() {
         const schema = toTypedSchema(
-          object({
-            age: coerce(any(), v => Number(v)),
+          v.object({
+            age: v.pipe(
+              v.unknown(),
+              v.transform(v => Number(v)),
+            ),
           }),
         );
 
@@ -262,8 +265,8 @@ describe('valibot', () => {
     mountWithHoc({
       setup() {
         const schema = toTypedSchema(
-          object({
-            age: optional(number(), 11),
+          v.object({
+            age: v.optional(v.number(), 11),
           }),
         );
 
@@ -296,16 +299,16 @@ describe('valibot', () => {
     mountWithHoc({
       setup() {
         const schema = toTypedSchema(
-          object({
-            name: optional(string(), 'test'),
-            age: optional(number(), 11),
-            unknownKey: optional(string()),
-            object: optional(
-              object({
-                nestedKey: optional(string()),
-                nestedDefault: optional(string(), 'nested'),
+          v.object({
+            name: v.optional(v.string(), 'test'),
+            age: v.optional(v.number(), 11),
+            unknownKey: v.optional(v.string()),
+            object: v.optional(
+              v.object({
+                nestedKey: v.optional(v.string()),
+                nestedDefault: v.optional(v.string(), 'nested'),
               }),
-              {} as any,
+              {},
             ),
           }),
         );
@@ -342,8 +345,11 @@ describe('valibot', () => {
     mountWithHoc({
       setup() {
         const schema = toTypedSchema(
-          object({
-            age: coerce(any(), arg => Number(arg)),
+          v.object({
+            age: v.pipe(
+              v.unknown(),
+              v.transform(arg => Number(arg)),
+            ),
           }),
         );
 
@@ -377,8 +383,8 @@ describe('valibot', () => {
     mountWithHoc({
       setup() {
         const schema = toTypedSchema(
-          object({
-            email: string([minLength(1)]),
+          v.object({
+            email: v.pipe(v.string(), v.minLength(1)),
           }),
         );
 
@@ -407,15 +413,15 @@ test('reports required state on fields', async () => {
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(
-        object({
-          'not.nested.path': string(),
-          name: optional(string()),
-          email: string(),
-          nested: object({
-            arr: array(object({ req: string(), nreq: optional(string()) })),
-            obj: object({
-              req: string(),
-              nreq: optional(string()),
+        v.object({
+          'not.nested.path': v.string(),
+          name: v.optional(v.string()),
+          email: v.string(),
+          nested: v.object({
+            arr: v.array(v.object({ req: v.string(), nreq: v.optional(v.string()) })),
+            obj: v.object({
+              req: v.string(),
+              nreq: v.optional(v.string()),
             }),
           }),
         }),
@@ -469,11 +475,11 @@ test('reports required false for non-existent fields', async () => {
   mountWithHoc({
     setup() {
       const schema = toTypedSchema(
-        object({
-          name: string(),
-          nested: object({
-            arr: array(object({ prop: string() })),
-            obj: object({}),
+        v.object({
+          name: v.string(),
+          nested: v.object({
+            arr: v.array(v.object({ prop: v.string() })),
+            obj: v.object({}),
           }),
         }),
       );
@@ -514,8 +520,8 @@ test('reports required state for field-level schemas', async () => {
   mountWithHoc({
     setup() {
       useForm();
-      const { meta: req } = useField('req', toTypedSchema(string()));
-      const { meta: nreq } = useField('nreq', toTypedSchema(optional(string())));
+      const { meta: req } = useField('req', toTypedSchema(v.string()));
+      const { meta: nreq } = useField('nreq', toTypedSchema(v.optional(v.string())));
 
       metaSpy({
         req: req.required,
@@ -540,8 +546,8 @@ test('reports required state for field-level schemas without a form context', as
   const metaSpy = vi.fn();
   mountWithHoc({
     setup() {
-      const { meta: req } = useField('req', toTypedSchema(string()));
-      const { meta: nreq } = useField('nreq', toTypedSchema(optional(string())));
+      const { meta: req } = useField('req', toTypedSchema(v.string()));
+      const { meta: nreq } = useField('nreq', toTypedSchema(v.optional(v.string())));
 
       metaSpy({
         req: req.required,

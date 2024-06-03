@@ -1,25 +1,37 @@
 import { PartialDeep } from 'type-fest';
 import { cleanupNonNestedPath, isNotNestedPath, type TypedSchema, type TypedSchemaError } from 'vee-validate';
 import {
-  Output,
-  Input,
+  InferOutput,
+  InferInput,
   BaseSchema,
   BaseSchemaAsync,
   safeParseAsync,
   safeParse,
-  SchemaIssue,
+  BaseIssue,
   getDefault,
   optional,
   ArraySchema,
   ObjectSchema,
+  ErrorMessage,
+  ArrayIssue,
+  ObjectEntries,
+  LooseObjectIssue,
+  ObjectIssue,
+  ObjectWithRestSchema,
+  ObjectWithRestIssue,
+  StrictObjectIssue,
+  StrictObjectSchema,
+  LooseObjectSchema,
 } from 'valibot';
 import { isIndex, isObject, merge, normalizeFormPath } from '../../shared';
 
 export function toTypedSchema<
-  TSchema extends BaseSchema | BaseSchemaAsync,
-  TOutput = Output<TSchema>,
-  TInput = PartialDeep<Input<TSchema>>,
->(valibotSchema: TSchema): TypedSchema<TInput, TOutput> {
+  TSchema extends
+    | BaseSchema<unknown, unknown, BaseIssue<unknown>>
+    | BaseSchemaAsync<unknown, unknown, BaseIssue<unknown>>,
+  TInferOutput = InferOutput<TSchema>,
+  TInferInput = PartialDeep<InferInput<TSchema>>,
+>(valibotSchema: TSchema): TypedSchema<TInferInput, TInferOutput> {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
     async parse(value) {
@@ -92,9 +104,15 @@ export function toTypedSchema<
   return schema;
 }
 
-function processIssues(issues: SchemaIssue[], errors: Record<string, TypedSchemaError>): void {
+function processIssues(issues: BaseIssue<unknown>[], errors: Record<string, TypedSchemaError>): void {
   issues.forEach(issue => {
-    const path = normalizeFormPath((issue.path || []).map(p => p.key).join('.'));
+    const path = normalizeFormPath(
+      (issue.path || [])
+        .filter(p => 'key' in p && (typeof p.key === 'string' || typeof p.key === 'number'))
+        // @ts-expect-error we know that key is string or number
+        .map(p => p.key)
+        .join('.'),
+    );
     if (issue.issues?.length) {
       processIssues(
         issue.issues.flatMap(ue => ue.issues || []),
@@ -114,7 +132,10 @@ function processIssues(issues: SchemaIssue[], errors: Record<string, TypedSchema
   });
 }
 
-function getSchemaForPath(path: string, schema: any): BaseSchema | null {
+function getSchemaForPath(
+  path: string,
+  schema: BaseSchema<unknown, unknown, BaseIssue<unknown>> | BaseSchemaAsync<unknown, unknown, BaseIssue<unknown>>,
+): BaseSchema<unknown, unknown, BaseIssue<unknown>> | null {
   if (!isObjectSchema(schema)) {
     return null;
   }
@@ -125,7 +146,7 @@ function getSchemaForPath(path: string, schema: any): BaseSchema | null {
 
   const paths = (path || '').split(/\.|\[(\d+)\]/).filter(Boolean);
 
-  let currentSchema: BaseSchema = schema;
+  let currentSchema: BaseSchema<unknown, unknown, BaseIssue<unknown>> = schema;
   for (let i = 0; i <= paths.length; i++) {
     const p = paths[i];
     if (!p || !currentSchema) {
@@ -145,14 +166,28 @@ function getSchemaForPath(path: string, schema: any): BaseSchema | null {
   return null;
 }
 
-function queryOptional(schema: BaseSchema | BaseSchemaAsync): boolean {
-  return (schema as any).type === 'optional';
+function queryOptional(
+  schema: BaseSchema<unknown, unknown, BaseIssue<unknown>> | BaseSchemaAsync<unknown, unknown, BaseIssue<unknown>>,
+): boolean {
+  return schema.type === 'optional';
 }
 
-function isArraySchema(schema: unknown): schema is ArraySchema<any> {
-  return isObject(schema) && schema.type === 'array';
+function isArraySchema(
+  schema: unknown,
+): schema is ArraySchema<BaseSchema<unknown, unknown, BaseIssue<unknown>>, ErrorMessage<ArrayIssue> | undefined> {
+  return isObject(schema) && 'item' in schema;
 }
 
-function isObjectSchema(schema: unknown): schema is ObjectSchema<any> {
-  return isObject(schema) && schema.type === 'object';
+function isObjectSchema(
+  schema: unknown,
+): schema is
+  | LooseObjectSchema<ObjectEntries, ErrorMessage<LooseObjectIssue> | undefined>
+  | ObjectSchema<ObjectEntries, ErrorMessage<ObjectIssue> | undefined>
+  | ObjectWithRestSchema<
+      ObjectEntries,
+      BaseSchema<unknown, unknown, BaseIssue<unknown>>,
+      ErrorMessage<ObjectWithRestIssue> | undefined
+    >
+  | StrictObjectSchema<ObjectEntries, ErrorMessage<StrictObjectIssue> | undefined> {
+  return isObject(schema) && 'entries' in schema;
 }
