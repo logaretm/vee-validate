@@ -1,7 +1,7 @@
 import { Ref, ref } from 'vue';
 import { FieldMeta, useField, useForm } from '@/vee-validate';
 import { toTypedSchema } from '@/yup';
-import { mountWithHoc, flushPromises, setValue } from 'vee-validate/tests/helpers';
+import { mountWithHoc, flushPromises, setValue } from '../../vee-validate/tests/helpers';
 import * as yup from 'yup';
 
 const REQUIRED_MSG = 'field is required';
