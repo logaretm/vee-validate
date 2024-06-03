@@ -26,6 +26,37 @@ import required from './required';
 import size from './size';
 import url from './url';
 import { toTypedSchema } from './toTypedSchema';
+import { SimpleValidationRuleFunction } from 'packages/shared';
+
+export const all: Record<string, SimpleValidationRuleFunction<any, any>> = {
+  alpha_dash,
+  alpha_num,
+  alpha_spaces,
+  alpha,
+  between,
+  confirmed,
+  digits,
+  dimensions,
+  email,
+  ext,
+  image,
+  integer,
+  is_not,
+  is,
+  length,
+  max_value,
+  max,
+  mimes,
+  min_value,
+  min,
+  not_one_of,
+  numeric,
+  one_of,
+  regex,
+  required,
+  size,
+  url,
+};
 
 export {
   alpha_dash,
