@@ -1,5 +1,15 @@
 # @vee-validate/valibot
 
+## 4.13.0
+
+### Patch Changes
+
+- Updated dependencies [454bc45]
+- Updated dependencies [ae3772a]
+- Updated dependencies [27fe5c8]
+- Updated dependencies [fd008c1]
+  - vee-validate@4.13.0
+
 ## 4.12.8
 
 ### Patch Changes

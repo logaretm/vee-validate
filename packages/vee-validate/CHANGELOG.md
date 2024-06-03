@@ -1,5 +1,17 @@
 # Change Log
 
+## 4.13.0
+
+### Minor Changes
+
+- 454bc45: fix: force resetForm should not merge values closes #4680 closes #4729
+- 27fe5c8: feat: provide form values as context for yup closes #4753
+
+### Patch Changes
+
+- ae3772a: feat: expose setValue on Field instance and slot props closes #4755
+- fd008c1: feat: added ResetFormOpts arg to useResetForm closes #4707
+
 ## 4.12.8
 
 ### Patch Changes
