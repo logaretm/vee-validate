@@ -22,6 +22,7 @@ import {
   StrictObjectIssue,
   StrictObjectSchema,
   LooseObjectSchema,
+  getDotPath,
 } from 'valibot';
 import { isIndex, isObject, merge, normalizeFormPath } from '../../shared';
 
@@ -106,14 +107,8 @@ export function toTypedSchema<
 
 function processIssues(issues: BaseIssue<unknown>[], errors: Record<string, TypedSchemaError>): void {
   issues.forEach(issue => {
-    const path = normalizeFormPath(
-      (issue.path || [])
-        .filter(p => 'key' in p && (typeof p.key === 'string' || typeof p.key === 'number'))
-        // @ts-expect-error we know that key is string or number
-        .map(p => p.key)
-        .join('.'),
-    );
-    if (issue.issues?.length) {
+    const path = normalizeFormPath(getDotPath(issue) || '');
+    if (issue.issues) {
       processIssues(
         issue.issues.flatMap(ue => ue.issues || []),
         errors,

@@ -282,8 +282,8 @@ importers:
         specifier: ^4.8.3
         version: 4.8.3
       valibot:
-        specifier: 0.31.0-rc.11
-        version: 0.31.0-rc.11
+        specifier: 0.31.0-rc.12
+        version: 0.31.0-rc.12
       vee-validate:
         specifier: 4.13.0
         version: 4.13.0(vue@3.4.26(typescript@5.4.5))
@@ -7099,8 +7099,8 @@ packages:
   valibot@0.30.0:
     resolution: {integrity: sha512-5POBdbSkM+3nvJ6ZlyQHsggisfRtyT4tVTo1EIIShs6qCdXJnyWU5TJ68vr8iTg5zpOLjXLRiBqNx+9zwZz/rA==}
 
-  valibot@0.31.0-rc.11:
-    resolution: {integrity: sha512-WAyZUdU0RP93vl0A8HyCUi5q4oveLjglou4X/Zn7a9T/lQLHb8J376SXjMqaMweG+XBZJ0bU2b156+d/nAlJ+A==}
+  valibot@0.31.0-rc.12:
+    resolution: {integrity: sha512-vAI18A65Og1BwuVqC3Zvr0+yNxOANLHDVo3r5VOTsVItfBl6KcykmY7fioSU5CVSlrj2JgViHjcsfAofO2h0rw==}
 
   validate-npm-package-license@3.0.4:
     resolution: {integrity: sha512-DpKm2Ui/xN7/HQKCtpZxoRWBhZ9Z0kqtygG8XCgNQ8ZlDnxuQmWhj566j8fN4Cu3/JmbhsDo7fcAJq4s9h27Ew==}
@@ -16081,7 +16081,7 @@ snapshots:
 
   valibot@0.30.0: {}
 
-  valibot@0.31.0-rc.11: {}
+  valibot@0.31.0-rc.12: {}
 
   validate-npm-package-license@3.0.4:
     dependencies:
