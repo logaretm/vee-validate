@@ -213,8 +213,8 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       valibot:
-        specifier: ^0.28.1
-        version: 0.28.1
+        specifier: 0.31.0-rc.12
+        version: 0.31.0-rc.12
       vee-validate:
         specifier: ^4.13.0
         version: 4.13.0(vue@3.4.26(typescript@5.4.5))
@@ -7092,9 +7092,6 @@ packages:
     resolution: {integrity: sha512-+g8ENReyr8YsOc6fv/NVJs2vFdHBnBNdfE49rshrTzDWOlUx4Gq7KOS2GD8eqhy2j+Ejq29+SbKH8yjkAqXqoA==}
     engines: {node: '>=8'}
     hasBin: true
-
-  valibot@0.28.1:
-    resolution: {integrity: sha512-zQnjwNJuXk6362Leu0+4eFa/SMwRom3/hEvH6s1EGf3oXIPbo2WFKDra9ymnbVh3clLRvd8hw4sKF5ruI2Lyvw==}
 
   valibot@0.30.0:
     resolution: {integrity: sha512-5POBdbSkM+3nvJ6ZlyQHsggisfRtyT4tVTo1EIIShs6qCdXJnyWU5TJ68vr8iTg5zpOLjXLRiBqNx+9zwZz/rA==}
@@ -16076,8 +16073,6 @@ snapshots:
       diff: 5.1.0
       kleur: 4.1.5
       sade: 1.8.1
-
-  valibot@0.28.1: {}
 
   valibot@0.30.0: {}
 

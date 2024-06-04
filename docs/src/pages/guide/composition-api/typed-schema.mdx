@@ -299,15 +299,15 @@ This makes the form values and submitted values typed automatically and caters f
 
 ```ts
 import { useForm } from 'vee-validate';
-import { object, string, minLength } from 'valibot';
+import * as v from 'valibot';
 import { toTypedSchema } from '@vee-validate/valibot';
 
 const { values, handleSubmit } = useForm({
   validationSchema: toTypedSchema(
-    object({
-      email: string([minLength(1, 'required')]),
-      password: string([minLength(1, 'required')]),
-      name: string(),
+    v.object({
+      name: v.pipe(string()),
+      email: v.pipe(v.string() v.nonEmpty('required')),
+      password: v.pipe(string(), v.minLength(6, 'Must be at least 6 characters')),
     }),
   ),
 });
@@ -331,14 +331,14 @@ You can also define default values on your schema directly and it will be picked
 
 ```ts
 import { useForm } from 'vee-validate';
-import { object, string, optional, minLength } from 'valibot';
+import * as v from 'valibot';
 import { toTypedSchema } from '@vee-validate/valibot';
 
 const { values, handleSubmit } = useForm({
   validationSchema: toTypedSchema(
-    object({
-      email: optional(string([minLength(1, 'required')]), 'something@email.com'),
-      password: optional(string([minLength(1, 'required')]), ''),
+    v.object({
+      email: v.optional(v.pipe(string(), v.nonEmpty('required')), 'something@email.com'),
+      password: optional(v.pipe(v.string(), v.nonEmpty('required')), ''),
       name: optional(string(), ''),
     }),
   ),
@@ -353,13 +353,16 @@ You can also define transforms to cast your fields before submission:
 
 ```ts
 import { useForm } from 'vee-validate';
-import { object, number, coerce, any } from 'valibot';
+import * as v from 'valibot';
 import { toTypedSchema } from '@vee-validate/valibot';
 
 const { values, handleSubmit } = useForm({
   validationSchema: toTypedSchema(
     object({
-      age: coerce(any(), arg => Number(arg)),
+      age: v.pipe(
+        v.unknown(),
+        v.transform(v => Number(v)),
+      ),
     }),
   ),
 });

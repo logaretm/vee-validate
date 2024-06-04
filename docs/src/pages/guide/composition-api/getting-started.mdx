@@ -285,13 +285,13 @@ Then you can wrap your Valibot schemas with `toTypedSchema` function which allow
 
 ```ts
 import { useForm } from 'vee-validate';
-import { string, object, email, minLength } from 'valibot';
+import * as v from 'valibot';
 import { toTypedSchema } from '@vee-validate/valibot';
 
 // Creates a typed schema for vee-validate
 const schema = toTypedSchema(
-  object({
-    email: string([minLength(1, 'required'), email()]),
+  v.object({
+    email: v.pipe(v.string(), v.email('Invalid email'), v.nonEmpty('required')),
   }),
 );
 

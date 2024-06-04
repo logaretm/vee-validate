@@ -1,13 +1,13 @@
 <script setup>
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/valibot';
-import { email as emailValidator, string, minLength, object } from 'valibot';
+import * as v from 'valibot';
 
 const { errors, defineField } = useForm({
   validationSchema: toTypedSchema(
-    object({
-      email: string([minLength(1, 'Email is required'), emailValidator()]),
-      password: string([minLength(6, 'password too short')]),
+    v.object({
+      email: v.pipe(v.string(), v.email('Invalid Email'), v.nonEmpty('Email is required')),
+      password: v.pipe(v.string(), v.minLength(6, 'password too short')),
     }),
   ),
 });

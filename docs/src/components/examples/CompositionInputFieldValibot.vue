@@ -6,7 +6,10 @@
 <script setup>
 import { useField } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/valibot';
-import { string, email, minLength } from 'valibot';
+import * as v from 'valibot';
 
-const { value, errorMessage } = useField('email', toTypedSchema(string([minLength(1, 'Required'), email()])));
+const { value, errorMessage } = useField(
+  'email',
+  toTypedSchema(v.pipe(v.string(), v.email('Invalid email'), v.nonEmpty('Required'))),
+);
 </script>
