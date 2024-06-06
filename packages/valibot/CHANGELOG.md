@@ -1,5 +1,12 @@
 # @vee-validate/valibot
 
+## 4.13.1
+
+### Patch Changes
+
+- ddc2151: feat: support valibot 0.31.0
+  - vee-validate@4.13.1
+
 ## 4.13.0
 
 ### Patch Changes

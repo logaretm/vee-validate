@@ -1,5 +1,11 @@
 # @vee-validate/nuxt
 
+## 4.13.1
+
+### Patch Changes
+
+- vee-validate@4.13.1
+
 ## 4.13.0
 
 ### Patch Changes
