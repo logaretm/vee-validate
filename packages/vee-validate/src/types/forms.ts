@@ -52,7 +52,6 @@ export interface FieldMeta<TValue> {
   dirty: boolean;
   valid: boolean;
   validated: boolean;
-  required: boolean;
   pending: boolean;
   initialValue?: TValue;
 }
