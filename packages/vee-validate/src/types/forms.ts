@@ -61,7 +61,6 @@ export interface FormMeta<TValues extends GenericObject> {
   touched: boolean;
   dirty: boolean;
   valid: boolean;
-  validated: boolean;
   pending: boolean;
   initialValues?: Partial<TValues>;
 }
