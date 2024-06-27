@@ -28,6 +28,8 @@ You can specify a field to be nested in an object using dot paths, like what you
 </template>
 
 <script setup>
+import { Form, Field } from "vee-validate";
+
 function onSubmit(values) {
   alert(JSON.stringify(values, null, 2));
 }
@@ -64,6 +66,8 @@ Here is the same example as above but in array format:
 </template>
 
 <script setup>
+import { Form, Field } from "vee-validate";
+
 function onSubmit(values) {
   alert(JSON.stringify(values, null, 2));
 }
@@ -102,6 +106,8 @@ If your fields' names are using the dot notation and you want to avoid the nesti
 </template>
 
 <script setup>
+import { Form, Field } from "vee-validate";
+
 function onSubmit(values) {
   alert(JSON.stringify(values, null, 2));
 }
@@ -143,6 +149,8 @@ Here is a small example that shows how easy it is to create a repeatable `URL` f
 </template>
 
 <script setup>
+import { Form, FieldArray, Field } from "vee-validate";
+
 const initialValues = {
   links: ['https://github.com/logaretm'],
 };
@@ -271,10 +279,16 @@ Note that the priority of this configuration follows the field config first then
 </template>
 
 <script>
+import { Form, Field } from "vee-validate";
+
 export default {
   data: () => ({
     showFields: true,
   }),
+components:{
+Form,
+Field
+}
 };
 </script>
 ```
@@ -302,6 +316,7 @@ If you are using yup, you can utilize the nested `yup.object` or `yup.array` sch
 </template>
 
 <script setup>
+import { Form, Field } from "vee-validate";
 import * as yup from 'yup';
 
 const schema = yup.object({
