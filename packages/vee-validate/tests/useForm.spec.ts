@@ -1136,6 +1136,32 @@ describe('useForm()', () => {
     expect(form.meta.value.dirty).toBe(false);
   });
 
+  // #4678
+  test('form is marked as dirty when key is removed', async () => {
+    let form!: FormContext<any>;
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          initialValues: {
+            fname: {
+              key1: 'value1',
+              key2: 'value2',
+            },
+          },
+        });
+
+        useField('fname');
+
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    form.setFieldValue('fname', { key1: 'value1' });
+    await flushPromises();
+    expect(form.meta.value.dirty).toBe(true);
+  });
+
   describe('error paths can have dot or square bracket for the same field', () => {
     test('path is bracket, mutations are dot', async () => {
       let field!: FieldContext<unknown>;
