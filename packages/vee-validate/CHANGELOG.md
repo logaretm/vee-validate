@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.13.2
+
+### Patch Changes
+
+- afbd0e5: feat: support valibot 0.33.0
+
 ## 4.13.1
 
 ## 4.13.0
