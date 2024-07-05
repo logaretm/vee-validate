@@ -39,7 +39,7 @@ store.setImportMap({
     toposort: 'https://esm-repo.netlify.app/topsort.esm.js',
     yup: 'https://unpkg.com/yup@1.2.0/index.esm.js',
     zod: 'https://unpkg.com/zod@3.21.4/lib/index.mjs',
-    valibot: 'https://unpkg.com/valibot@0.31.0/dist/index.js',
+    valibot: 'https://unpkg.com/valibot@0.33.0/dist/index.js',
     '@vue/devtools-api': 'https://unpkg.com/@vue/devtools-api@6.5.0/lib/esm/index.js',
     vue: `https://unpkg.com/vue@${version}/dist/vue.esm-browser.prod.js`,
   },
