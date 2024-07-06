@@ -28,8 +28,13 @@
     "dist/*.d.ts"
   ],
   "dependencies": {
-    "type-fest": "^4.8.3",
+    "type-fest": "^4.8.3"
+  },
+  "peerDependencies": {
     "valibot": "^0.33.0",
     "vee-validate": "workspace:*"
+  },
+  "devDependencies": {
+    "valibot": "^0.33.0"
   }
 }
