@@ -30,11 +30,11 @@ You can use joi as a typed schema with the `@vee-validate/joi` package:
 
 ```sh
 # npm
-npm install @vee-validate/joi
+npm install @vee-validate/joi joi
 # yarn
-yarn add @vee-validate/joi
+yarn add @vee-validate/joi joi
 # pnpm
-pnpm add @vee-validate/joi
+pnpm add @vee-validate/joi joi
 ```
 
 The `@vee-valdiate/joi` package exposes a `toTypedSchema` function that accepts any joi schema. Which then you can pass along to `validationSchema` option on `useForm`.
