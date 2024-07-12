@@ -21,11 +21,11 @@ You can use [yup](https://github.com/jquense/yup) as a typed schema with the `@v
 
 ```sh
 # npm
-npm install @vee-validate/yup
+npm install @vee-validate/yup yup
 # yarn
-yarn add @vee-validate/yup
+yarn add @vee-validate/yup yup
 # pnpm
-pnpm add @vee-validate/yup
+pnpm add @vee-validate/yup yup
 ```
 
 The `@vee-valdiate/yup` package exposes a `toTypedSchema` function that accepts any yup schema. Which then you can pass along to `validationSchema` option on `useForm`.

@@ -27,7 +27,7 @@
     "dist/*.js",
     "dist/*.d.ts"
   ],
-  "dependencies": {
+  "peerDependencies": {
     "vee-validate": "workspace:*"
   }
 }
