@@ -424,8 +424,8 @@ Checkboxes are a hard type of input to implement, mainly because of the expectat
 This means checkboxes have three states to maintain:
 
 - It's own checked value. In HTML this is done with the `value` attribute for native `input[type="checkbox"]` elements.
-- The current from value and if it is a checkbox group or a single checkbox. This is usually the `modelValue` prop for components.
-- If it is checked or not, if the checked value equals or is in the form value then it is checked. This should be computed based on the previous fact.
+- The current form value and if it is a checkbox group or a single checkbox. This is usually the `modelValue` prop for components.
+- Whether it's checked or not, if the checked value equals or is in the form value then it is checked. This should be computed based on the previous fact.
 
 All of this can be hard to wrap your head around. However, `useField` makes this easy as it already handles the nuances of checkboxes.
 
