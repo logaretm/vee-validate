@@ -1,8 +1,8 @@
 /* eslint-disable no-useless-escape */
 import { isEmpty } from './utils';
 
-// https://github.com/colinhacks/zod/blob/master/src/types.ts#L567
-const emailRE = /^(?!\.)(?!.*\.\.)([A-Z0-9_+-\.]*)[A-Z0-9_+-]@([A-Z0-9][A-Z0-9\-]*\.)+[A-Z]{2,}$/i;
+// https://github.com/colinhacks/zod/blob/40e72f9eaf576985f876d1afc2dbc22f73abc1ba/src/types.ts#L595
+const emailRE = /^(?!\.)(?!.*\.\.)([A-Z0-9_'+\-\.]*)[A-Z0-9_+-]@([A-Z0-9][A-Z0-9\-]*\.)+[A-Z]{2,}$/i;
 
 const emailValidator = (value: unknown) => {
   if (isEmpty(value)) {
