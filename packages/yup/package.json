@@ -32,6 +32,9 @@
     "vee-validate": "workspace:*",
     "yup": "^1.3.2"
   },
+  "peerDependencies": {
+    "yup": "^1.3.2"
+  },
   "publishConfig": {
     "access": "public"
   }
