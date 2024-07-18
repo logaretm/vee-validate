@@ -6,7 +6,7 @@ import { InterpolateOptions } from '../../shared/types';
 export function interpolate(template: string, values: Record<string, any>, options: InterpolateOptions): string {
   const { prefix, suffix } = options;
 
-  const regExp = new RegExp(`([0-9]:)?${prefix}([^${suffix}]+)${suffix}`, 'g');
+  const regExp = buildRegex(prefix, suffix);
 
   return template.replace(regExp, function (_, param, placeholder): string {
     if (!param || !values.params) {
@@ -27,4 +27,15 @@ export function interpolate(template: string, values: Record<string, any>, optio
 
     return paramIndex in values.params ? values.params[paramIndex] : `${param}${prefix}${placeholder}${suffix}`;
   });
+}
+
+function escapeRegex(string: string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+export function buildRegex(prefix: string, suffix: string): RegExp {
+  const safePrefix = escapeRegex(prefix);
+  const safeSuffix = escapeRegex(suffix);
+
+  return new RegExp(`([0-9]:)?${safePrefix}((?:(?!${safeSuffix}).)+)${safeSuffix}`, 'g');
 }
