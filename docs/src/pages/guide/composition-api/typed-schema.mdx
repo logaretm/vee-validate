@@ -305,7 +305,7 @@ import { toTypedSchema } from '@vee-validate/valibot';
 const { values, handleSubmit } = useForm({
   validationSchema: toTypedSchema(
     v.object({
-      name: v.pipe(string()),
+      name: v.pipe(v.string()),
       email: v.pipe(v.string() v.nonEmpty('required')),
       password: v.pipe(string(), v.minLength(6, 'Must be at least 6 characters')),
     }),
