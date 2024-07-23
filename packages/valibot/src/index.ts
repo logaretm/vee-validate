@@ -3,6 +3,7 @@ import { cleanupNonNestedPath, isNotNestedPath, type TypedSchema, type TypedSche
 import {
   InferOutput,
   InferInput,
+  InferIssue,
   BaseSchema,
   BaseSchemaAsync,
   safeParseAsync,
