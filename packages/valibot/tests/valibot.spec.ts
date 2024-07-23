@@ -567,3 +567,31 @@ test('reports required state for field-level schemas without a form context', as
     }),
   );
 });
+
+test('allows passing valibot config', async () => {
+  let errors!: Ref<string[]>;
+  const wrapper = mountWithHoc({
+    setup() {
+      const schema = v.pipe(v.string(), v.minLength(1, REQUIRED_MSG), v.minLength(8, MIN_MSG));
+      const rules = toTypedSchema(schema, { abortEarly: true });
+      const { value, errors: fieldErrors } = useField('test', rules);
+
+      errors = fieldErrors;
+      return {
+        value,
+      };
+    },
+    template: `
+      <div>
+          <input v-model="value" type="text">
+      </div>
+    `,
+  });
+
+  const input = wrapper.$el.querySelector('input');
+
+  setValue(input, '');
+  await flushPromises();
+  expect(errors.value).toHaveLength(1);
+  expect(errors.value).toEqual([REQUIRED_MSG]);
+});
