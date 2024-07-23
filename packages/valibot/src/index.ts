@@ -23,6 +23,7 @@ import {
   StrictObjectSchema,
   LooseObjectSchema,
   getDotPath,
+  Config, 
 } from 'valibot';
 import { isIndex, isObject, merge, normalizeFormPath } from '../../shared';
 
@@ -32,11 +33,11 @@ export function toTypedSchema<
     | BaseSchemaAsync<unknown, unknown, BaseIssue<unknown>>,
   TInferOutput = InferOutput<TSchema>,
   TInferInput = PartialDeep<InferInput<TSchema>>,
->(valibotSchema: TSchema): TypedSchema<TInferInput, TInferOutput> {
+>(valibotSchema: TSchema, config?: Config<InferIssue<TSchema>> ): TypedSchema<TInferInput, TInferOutput> {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
     async parse(value) {
-      const result = await safeParseAsync(valibotSchema, value);
+      const result = await safeParseAsync(valibotSchema, value, config);
       if (result.success) {
         return {
           value: result.output,
@@ -56,7 +57,7 @@ export function toTypedSchema<
         return values;
       }
 
-      const result = safeParse(valibotSchema, values);
+      const result = safeParse(valibotSchema, values, config);
       if (result.success) {
         return result.output;
       }
