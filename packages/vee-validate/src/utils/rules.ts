@@ -119,7 +119,7 @@ export const parseRule = (rule: string) => {
 
 function createLocator(value: string): Locator {
   const locator: Locator = (crossTable: Record<string, unknown>) => {
-    const val = getFromPath(crossTable, value) || crossTable[value];
+    const val = getFromPath(crossTable, value) ?? crossTable[value];
 
     return val;
   };
