@@ -310,7 +310,7 @@ export async function validateTypedSchema<TValues extends GenericObject, TOutput
   values: TValues,
 ): Promise<FormValidationResult<TValues, TOutput>> {
   const typedSchema = isTypedSchema(schema) ? schema : yupToTypedSchema(schema);
-  const validationResult = await typedSchema.parse(deepCopy(values));
+  const validationResult = await typedSchema.parse(deepCopy(values), { formData: deepCopy(values) });
 
   const results: Partial<FlattenAndMapPathsValidationResult<TValues, TOutput>> = {};
   const errors: Partial<Record<Path<TValues>, string>> = {};

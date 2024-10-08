@@ -3222,3 +3222,48 @@ test('provides form values as yup context refs', async () => {
   expect(pwError?.textContent).toBeFalsy();
   expect(cpwError?.textContent).toBeFalsy();
 });
+
+test('provides form values as yup context refs for schema validation', async () => {
+  mountWithHoc({
+    setup() {
+      const validationSchema = yup.object({
+        password: yup.string().required().min(3).label('Password'),
+        confirmPassword: yup
+          .string()
+          .required()
+          .oneOf([yup.ref('$password')])
+          .label('Confirm Password'),
+      });
+
+      return {
+        validationSchema,
+      };
+    },
+    template: `
+      <VForm  v-slot="{ errors }" :validation-schema="validationSchema">
+        <Field id="password" name="password" type="password" />
+        <span id="passwordErr">{{ errors.password }}</span>
+
+        <Field id="confirmPassword" name="confirmPassword" type="password" />
+        <span id="confirmPasswordErr">{{ errors.confirmPassword }}</span>
+
+        <button>Validate</button>
+      </VForm>
+    `,
+  });
+
+  const pwError = document.querySelector('#passwordErr');
+  const cpwError = document.querySelector('#confirmPasswordErr');
+
+  await flushPromises();
+  setValue(document.querySelector('#password') as HTMLInputElement, '123');
+  setValue(document.querySelector('#confirmPassword') as HTMLInputElement, '12');
+  await flushPromises();
+
+  expect(pwError?.textContent).toBeFalsy();
+  expect(cpwError?.textContent).toBeTruthy();
+  setValue(document.querySelector('#confirmPassword') as HTMLInputElement, '123');
+  await flushPromises();
+  expect(pwError?.textContent).toBeFalsy();
+  expect(cpwError?.textContent).toBeFalsy();
+});
