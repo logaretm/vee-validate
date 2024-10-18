@@ -45,7 +45,6 @@ function installDevtoolsPlugin(app: App) {
         logo: 'https://vee-validate.logaretm.com/v4/logo.png',
       },
       api => {
-        console.log('api', api);
         API = api;
 
         api.addInspector({
