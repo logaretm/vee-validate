@@ -38,7 +38,7 @@
     "vue": "^3.4.26"
   },
   "dependencies": {
-    "@vue/devtools-api": "^6.6.1",
+    "@vue/devtools-api": "^7.5.2",
     "type-fest": "^4.8.3"
   }
 }

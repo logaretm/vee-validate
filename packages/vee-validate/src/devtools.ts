@@ -1,15 +1,37 @@
-import { ComponentInternalInstance, getCurrentInstance, nextTick, onUnmounted, unref } from 'vue';
-import {
-  App,
-  setupDevtoolsPlugin,
-  DevtoolsPluginApi,
-  CustomInspectorNode,
-  CustomInspectorState,
-  InspectorNodeTag,
-} from '@vue/devtools-api';
+import { App, ComponentInternalInstance, getCurrentInstance, nextTick, onUnmounted, unref } from 'vue';
+import { setupDevtoolsPlugin } from '@vue/devtools-api';
+import type { InspectorNodeTag, CustomInspectorState, CustomInspectorNode } from '@vue/devtools-kit';
 import { PathState, PrivateFieldContext, PrivateFormContext } from './types';
 import { keysOf, setInPath, throttle } from './utils';
 import { isObject } from '../../shared';
+
+const DEVTOOLS_FORMS: Record<string, PrivateFormContext & { _vm?: ComponentInternalInstance | null }> = {};
+const DEVTOOLS_FIELDS: Record<string, PrivateFieldContext & { _vm?: ComponentInternalInstance | null }> = {};
+
+const INSPECTOR_ID = 'vee-validate-inspector';
+
+const COLORS = {
+  error: 0xbd4b4b,
+  success: 0x06d77b,
+  unknown: 0x54436b,
+  white: 0xffffff,
+  black: 0x000000,
+  blue: 0x035397,
+  purple: 0xb980f0,
+  orange: 0xf5a962,
+  gray: 0xbbbfca,
+};
+
+let SELECTED_NODE:
+  | { type: 'pathState'; form: PrivateFormContext; state: PathState }
+  | { type: 'form'; form: PrivateFormContext & { _vm?: ComponentInternalInstance | null } }
+  | { type: 'field'; field: PrivateFieldContext & { _vm?: ComponentInternalInstance | null } }
+  | null = null;
+
+/**
+ * Plugin API
+ */
+let API: any;
 
 function installDevtoolsPlugin(app: App) {
   if (__DEV__) {
@@ -22,15 +44,123 @@ function installDevtoolsPlugin(app: App) {
         app,
         logo: 'https://vee-validate.logaretm.com/v4/logo.png',
       },
-      setupApiHooks,
+      api => {
+        console.log('api', api);
+        API = api;
+
+        api.addInspector({
+          id: INSPECTOR_ID,
+          icon: 'rule',
+          label: 'vee-validate',
+          noSelectionText: 'Select a vee-validate node to inspect',
+          actions: [
+            {
+              icon: 'done_outline',
+              tooltip: 'Validate selected item',
+              action: async () => {
+                if (!SELECTED_NODE) {
+                  console.error('There is not a valid selected vee-validate node or component');
+                  return;
+                }
+
+                if (SELECTED_NODE.type === 'field') {
+                  await SELECTED_NODE.field.validate();
+                  return;
+                }
+
+                if (SELECTED_NODE.type === 'form') {
+                  await SELECTED_NODE.form.validate();
+                  return;
+                }
+
+                if (SELECTED_NODE.type === 'pathState') {
+                  await SELECTED_NODE.form.validateField(SELECTED_NODE.state.path);
+                }
+              },
+            },
+            {
+              icon: 'delete_sweep',
+              tooltip: 'Clear validation state of the selected item',
+              action: () => {
+                if (!SELECTED_NODE) {
+                  console.error('There is not a valid selected vee-validate node or component');
+                  return;
+                }
+
+                if (SELECTED_NODE.type === 'field') {
+                  SELECTED_NODE.field.resetField();
+                  return;
+                }
+
+                if (SELECTED_NODE.type === 'form') {
+                  SELECTED_NODE.form.resetForm();
+                }
+
+                if (SELECTED_NODE.type === 'pathState') {
+                  SELECTED_NODE.form.resetField(SELECTED_NODE.state.path);
+                }
+              },
+            },
+          ],
+        });
+
+        api.on.getInspectorTree(payload => {
+          if (payload.inspectorId !== INSPECTOR_ID) {
+            return;
+          }
+
+          const forms = Object.values(DEVTOOLS_FORMS);
+          const fields = Object.values(DEVTOOLS_FIELDS);
+
+          payload.rootNodes = [
+            ...forms.map(mapFormForDevtoolsInspector),
+            ...fields.map(field => mapFieldForDevtoolsInspector(field)),
+          ];
+        });
+
+        api.on.getInspectorState(payload => {
+          if (payload.inspectorId !== INSPECTOR_ID) {
+            return;
+          }
+
+          const { form, field, state, type } = decodeNodeId(payload.nodeId);
+
+          api.unhighlightElement();
+
+          if (form && type === 'form') {
+            payload.state = buildFormState(form);
+            SELECTED_NODE = { type: 'form', form };
+            api.highlightElement(form._vm);
+            return;
+          }
+
+          if (state && type === 'pathState' && form) {
+            payload.state = buildFieldState(state);
+            SELECTED_NODE = { type: 'pathState', state, form };
+            return;
+          }
+
+          if (field && type === 'field') {
+            payload.state = buildFieldState({
+              errors: field.errors.value,
+              dirty: field.meta.dirty,
+              valid: field.meta.valid,
+              touched: field.meta.touched,
+              value: field.value.value,
+              initialValue: field.meta.initialValue,
+            });
+            SELECTED_NODE = { field, type: 'field' };
+            api.highlightElement(field._vm);
+            return;
+          }
+
+          SELECTED_NODE = null;
+          api.unhighlightElement();
+        });
+      },
     );
   }
 }
-
-const DEVTOOLS_FORMS: Record<string, PrivateFormContext & { _vm?: ComponentInternalInstance | null }> = {};
-const DEVTOOLS_FIELDS: Record<string, PrivateFieldContext & { _vm?: ComponentInternalInstance | null }> = {};
-
-let API: DevtoolsPluginApi<Record<string, any>> | undefined;
 
 export const refreshInspector = throttle(() => {
   setTimeout(async () => {
@@ -80,154 +210,6 @@ export function registerSingleFieldWithDevtools(field: PrivateFieldContext) {
   });
 
   refreshInspector();
-}
-
-const INSPECTOR_ID = 'vee-validate-inspector';
-
-const COLORS = {
-  error: 0xbd4b4b,
-  success: 0x06d77b,
-  unknown: 0x54436b,
-  white: 0xffffff,
-  black: 0x000000,
-  blue: 0x035397,
-  purple: 0xb980f0,
-  orange: 0xf5a962,
-  gray: 0xbbbfca,
-};
-
-let SELECTED_NODE:
-  | { type: 'pathState'; form: PrivateFormContext; state: PathState }
-  | { type: 'form'; form: PrivateFormContext & { _vm?: ComponentInternalInstance | null } }
-  | { type: 'field'; field: PrivateFieldContext & { _vm?: ComponentInternalInstance | null } }
-  | null = null;
-
-function setupApiHooks(api: DevtoolsPluginApi<Record<string, any>>) {
-  API = api;
-  // let highlightTimeout: number | null = null;
-  function highlightSelected() {
-    // const vm = SELECTED_NODE?._vm;
-    // if (!vm) {
-    //   return;
-    // }
-    // if (highlightTimeout) {
-    //   window.clearTimeout(highlightTimeout);
-    // }
-    // api.unhighlightElement();
-    // api.highlightElement(vm);
-    // highlightTimeout = window.setTimeout(() => {
-    //   api.unhighlightElement();
-    //   highlightTimeout = null;
-    // }, 3000);
-  }
-
-  api.addInspector({
-    id: INSPECTOR_ID,
-    icon: 'rule',
-    label: 'vee-validate',
-    noSelectionText: 'Select a vee-validate node to inspect',
-    actions: [
-      {
-        icon: 'done_outline',
-        tooltip: 'Validate selected item',
-        action: async () => {
-          if (!SELECTED_NODE) {
-            console.error('There is not a valid selected vee-validate node or component');
-            return;
-          }
-
-          if (SELECTED_NODE.type === 'field') {
-            await SELECTED_NODE.field.validate();
-            return;
-          }
-
-          if (SELECTED_NODE.type === 'form') {
-            await SELECTED_NODE.form.validate();
-            return;
-          }
-
-          if (SELECTED_NODE.type === 'pathState') {
-            await SELECTED_NODE.form.validateField(SELECTED_NODE.state.path);
-          }
-        },
-      },
-      {
-        icon: 'delete_sweep',
-        tooltip: 'Clear validation state of the selected item',
-        action: () => {
-          if (!SELECTED_NODE) {
-            console.error('There is not a valid selected vee-validate node or component');
-            return;
-          }
-
-          if (SELECTED_NODE.type === 'field') {
-            SELECTED_NODE.field.resetField();
-            return;
-          }
-
-          if (SELECTED_NODE.type === 'form') {
-            SELECTED_NODE.form.resetForm();
-          }
-
-          if (SELECTED_NODE.type === 'pathState') {
-            SELECTED_NODE.form.resetField(SELECTED_NODE.state.path);
-          }
-        },
-      },
-    ],
-  });
-
-  api.on.getInspectorTree(payload => {
-    if (payload.inspectorId !== INSPECTOR_ID) {
-      return;
-    }
-
-    const forms = Object.values(DEVTOOLS_FORMS);
-    const fields = Object.values(DEVTOOLS_FIELDS);
-
-    payload.rootNodes = [
-      ...forms.map(mapFormForDevtoolsInspector),
-      ...fields.map(field => mapFieldForDevtoolsInspector(field)),
-    ];
-  });
-
-  api.on.getInspectorState((payload, ctx) => {
-    if (payload.inspectorId !== INSPECTOR_ID || ctx.currentTab !== `custom-inspector:${INSPECTOR_ID}`) {
-      return;
-    }
-
-    const { form, field, state, type } = decodeNodeId(payload.nodeId);
-
-    if (form && type === 'form') {
-      payload.state = buildFormState(form);
-      SELECTED_NODE = { type: 'form', form };
-      highlightSelected();
-      return;
-    }
-
-    if (state && type === 'pathState' && form) {
-      payload.state = buildFieldState(state);
-      SELECTED_NODE = { type: 'pathState', state, form };
-      highlightSelected();
-      return;
-    }
-
-    if (field && type === 'field') {
-      payload.state = buildFieldState({
-        errors: field.errors.value,
-        dirty: field.meta.dirty,
-        valid: field.meta.valid,
-        touched: field.meta.touched,
-        value: field.value.value,
-        initialValue: field.meta.initialValue,
-      });
-      SELECTED_NODE = { field, type: 'field' };
-      highlightSelected();
-      return;
-    }
-
-    SELECTED_NODE = null;
-  });
 }
 
 function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorNode {
