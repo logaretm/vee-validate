@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.14.2
+
+### Patch Changes
+
+- f0d4e24: fix: upgrade vue devtools dependency version closes #4863
+
 ## 4.14.1
 
 ## 4.14.0

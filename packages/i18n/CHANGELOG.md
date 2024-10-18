@@ -1,5 +1,7 @@
 # Change Log
 
+## 4.14.2
+
 ## 4.14.1
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @vee-validate/valibot
 
+## 4.14.2
+
+### Patch Changes
+
+- Updated dependencies [f0d4e24]
+  - vee-validate@4.14.2
+
 ## 4.14.1
 
 ### Patch Changes
