@@ -282,8 +282,8 @@ importers:
         specifier: ^4.8.3
         version: 4.8.3
       valibot:
-        specifier: ^0.33.0
-        version: 0.33.3
+        specifier: 1.0.0-beta.0
+        version: 1.0.0-beta.0(typescript@5.4.5)
       vee-validate:
         specifier: workspace:*
         version: link:../vee-validate
@@ -7312,6 +7312,14 @@ packages:
 
   valibot@0.33.3:
     resolution: {integrity: sha512-/fuY1DlX8uiQ7aphlzrrI2DbG0YJk84JMgvz2qKpUIdXRNsS53varfo4voPjSrjUr5BSV2K0miSEJUOlA5fQFg==}
+
+  valibot@1.0.0-beta.0:
+    resolution: {integrity: sha512-Q/oine+NPMXdIy3vwluw0vidHLk0mTPUQBRHc+EHZXnEWF3KzLx1YLsVHPVrgHaMGRfV58P9eGOgxJvi0a059w==}
+    peerDependencies:
+      typescript: '>=5'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   validate-npm-package-license@3.0.4:
     resolution: {integrity: sha512-DpKm2Ui/xN7/HQKCtpZxoRWBhZ9Z0kqtygG8XCgNQ8ZlDnxuQmWhj566j8fN4Cu3/JmbhsDo7fcAJq4s9h27Ew==}
@@ -16529,6 +16537,10 @@ snapshots:
       sade: 1.8.1
 
   valibot@0.33.3: {}
+
+  valibot@1.0.0-beta.0(typescript@5.4.5):
+    optionalDependencies:
+      typescript: 5.4.5
 
   validate-npm-package-license@3.0.4:
     dependencies:

@@ -36,7 +36,7 @@
   ],
   "dependencies": {
     "type-fest": "^4.8.3",
-    "valibot": "^0.33.0",
+    "valibot": "1.0.0-beta.0",
     "vee-validate": "workspace:*"
   }
 }
