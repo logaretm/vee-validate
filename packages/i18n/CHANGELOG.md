@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.14.1
+
+### Patch Changes
+
+- c118e86: fix: nested exports for the i18n package closes #4899
+
 ## 4.14.0
 
 ### Minor Changes
