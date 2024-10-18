@@ -53,9 +53,16 @@ async function createConfig(pkg, format) {
   const config = {
     input: {
       input: slashes(path.resolve(__dirname, `../packages/${pkg}/src/index.ts`)),
-      external: ['vue', isEsm ? '@vue/devtools-api' : undefined, 'zod', 'yup', 'vee-validate', 'valibot', 'joi'].filter(
-        Boolean,
-      ),
+      external: [
+        'vue',
+        isEsm ? '@vue/devtools-api' : undefined,
+        isEsm ? '@vue/devtools-kit' : undefined,
+        'zod',
+        'yup',
+        'vee-validate',
+        'valibot',
+        'joi',
+      ].filter(Boolean),
       plugins: [
         replace({
           preventAssignment: true,
