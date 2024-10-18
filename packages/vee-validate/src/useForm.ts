@@ -16,6 +16,7 @@ import {
   toValue,
   MaybeRef,
   MaybeRefOrGetter,
+  inject,
 } from 'vue';
 import { PartialDeep } from 'type-fest';
 import { klona as deepCopy } from 'klona/full';
@@ -68,7 +69,7 @@ import {
   debounceNextTick,
   normalizeEventValue,
 } from './utils';
-import { FormContextKey } from './symbols';
+import { FormContextKey, PublicFormContextKey } from './symbols';
 import { validateTypedSchema, validateObjectSchema } from './validate';
 import { refreshInspector, registerFormWithDevTools } from './devtools';
 import { isCallable, merge, normalizeFormPath } from '../../shared';
@@ -1197,12 +1198,16 @@ export function useForm<
     });
   }
 
-  return {
+  const ctx: FormContext<TValues, TOutput> = {
     ...formCtx,
     values: readonly(formValues) as TValues,
     handleReset: () => resetForm(),
     submitForm,
   };
+
+  provide(PublicFormContextKey, ctx);
+
+  return ctx;
 }
 
 /**
@@ -1327,4 +1332,11 @@ function mergeValidationResults<TValue extends GenericObject>(
     valid: a.valid && b.valid,
     errors: [...a.errors, ...b.errors],
   };
+}
+
+export function useFormContext<
+  TValues extends GenericObject = GenericObject,
+  TOutput extends GenericObject = TValues,
+>(): FormContext<TValues, TOutput> {
+  return inject(PublicFormContextKey) as FormContext<TValues, TOutput>;
 }
