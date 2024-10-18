@@ -42,7 +42,7 @@ export interface ComponentFieldBindingObject<TValue = any> extends SharedBinding
   modelValue?: TValue;
 }
 
-interface FieldSlotProps<TValue = unknown>
+export interface FieldSlotProps<TValue = unknown>
   extends Pick<
     FieldContext,
     'validate' | 'resetField' | 'handleChange' | 'handleReset' | 'handleBlur' | 'setTouched' | 'setErrors' | 'setValue'
