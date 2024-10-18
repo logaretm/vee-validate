@@ -1,5 +1,22 @@
 # Change Log
 
+## 4.14.0
+
+### Minor Changes
+
+- 404cf57: chore: bump release
+
+### Patch Changes
+
+- a8524a1: fix: incorrect shared type import in rules
+- 97cebd8: chore: add 'exports' field in package.json for all packages
+- e69e0df: fix: updated email regex closes #4801
+- Updated dependencies [f7a4929]
+- Updated dependencies [97cebd8]
+- Updated dependencies [404cf57]
+- Updated dependencies [421ae69]
+  - vee-validate@4.14.0
+
 ## 4.13.2
 
 ### Patch Changes

@@ -1,10 +1,22 @@
 # Change Log
 
+## 4.14.0
+
+### Minor Changes
+
+- 404cf57: chore: bump release
+
+### Patch Changes
+
+- f7a4929: feat: expose useFormContext closes #4490
+- 97cebd8: chore: add 'exports' field in package.json for all packages
+- 421ae69: "fix(types): export component internal types"
+
 ## 4.13.2
 
 ### Patch Changes
 
-- 194a4af: feat: support valibot 0.33.0
+- afbd0e5: feat: support valibot 0.33.0
 
 ## 4.13.1
 

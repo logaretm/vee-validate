@@ -1,5 +1,19 @@
 # @vee-validate/nuxt
 
+## 4.14.0
+
+### Minor Changes
+
+- 404cf57: chore: bump release
+
+### Patch Changes
+
+- Updated dependencies [f7a4929]
+- Updated dependencies [97cebd8]
+- Updated dependencies [404cf57]
+- Updated dependencies [421ae69]
+  - vee-validate@4.14.0
+
 ## 4.13.2
 
 ### Patch Changes
