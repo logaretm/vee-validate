@@ -4,7 +4,7 @@ import { SubmissionHandler, InvalidSubmissionHandler, GenericObject, FormMeta, F
 import { isEvent, isFormSubmitEvent, normalizeChildren } from './utils';
 import { klona as deepCopy } from 'klona/full';
 
-type FormSlotProps = UnwrapRef<
+export type FormSlotProps = UnwrapRef<
   Pick<
     FormContext,
     | 'meta'

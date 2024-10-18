@@ -2,7 +2,7 @@ import { inject, h, defineComponent, computed, resolveDynamicComponent, VNode } 
 import { FormContextKey } from './symbols';
 import { normalizeChildren } from './utils';
 
-interface ErrorMessageSlotProps {
+export interface ErrorMessageSlotProps {
   message: string | undefined;
 }
 
