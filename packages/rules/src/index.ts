@@ -26,7 +26,7 @@ import required from './required';
 import size from './size';
 import url from './url';
 import { toTypedSchema } from './toTypedSchema';
-import { SimpleValidationRuleFunction } from 'packages/shared';
+import { SimpleValidationRuleFunction } from '../../shared/types';
 
 export const all: Record<string, SimpleValidationRuleFunction<any, any>> = {
   alpha_dash,
