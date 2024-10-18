@@ -14,7 +14,8 @@
       "types": "./dist/vee-validate-i18n.d.ts",
       "import": "./dist/vee-validate-i18n.esm.js",
       "require": "./dist/vee-validate-i18n.js"
-    }
+    },
+    "./dist/locale/*.json": "./dist/locale/*.json"
   },
   "sideEffects": false,
   "files": [
