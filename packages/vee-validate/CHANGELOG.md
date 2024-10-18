@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.14.3
+
+### Patch Changes
+
+- 07c27d5: fix: remove rogue console.log
+
 ## 4.14.2
 
 ### Patch Changes
