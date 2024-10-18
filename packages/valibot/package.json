@@ -7,6 +7,13 @@
   "module": "dist/vee-validate-valibot.esm.js",
   "unpkg": "dist/vee-validate-valibot.js",
   "main": "dist/vee-validate-valibot.js",
+  "exports": {
+    ".": {
+      "types": "./dist/vee-validate-valibot.d.ts",
+      "import": "./dist/vee-validate-valibot.esm.js",
+      "require": "./dist/vee-validate-valibot.js"
+    }
+  },
   "types": "dist/vee-validate-valibot.d.ts",
   "homepage": "https://vee-validate.logaretm.com/v4/integrations/zod-schema-validation/",
   "repository": {

@@ -8,6 +8,13 @@
   "unpkg": "dist/vee-validate-rules.js",
   "main": "dist/vee-validate-rules.js",
   "types": "dist/vee-validate-rules.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/vee-validate-rules.d.ts",
+      "import": "./dist/vee-validate-rules.esm.js",
+      "require": "./dist/vee-validate-rules.js"
+    }
+  },
   "homepage": "https://vee-validate.logaretm.com/v4/guide/global-validators",
   "repository": {
     "url": "https://github.com/logaretm/vee-validate.git",

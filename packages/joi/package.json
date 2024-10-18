@@ -8,6 +8,13 @@
   "unpkg": "dist/vee-validate-joi.js",
   "main": "dist/vee-validate-joi.js",
   "types": "dist/vee-validate-joi.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/vee-validate-joi.d.ts",
+      "import": "./dist/vee-validate-joi.esm.js",
+      "require": "./dist/vee-validate-joi.js"
+    }
+  },
   "homepage": "https://vee-validate.logaretm.com/v4/integrations/joi-schema-validation/",
   "repository": {
     "url": "https://github.com/logaretm/vee-validate.git",

@@ -7,6 +7,13 @@
   "module": "dist/vee-validate.esm.js",
   "unpkg": "dist/vee-validate.js",
   "main": "dist/vee-validate.js",
+  "exports": {
+    ".": {
+      "types": "./dist/vee-validate.d.ts",
+      "import": "./dist/vee-validate.esm.js",
+      "require": "./dist/vee-validate.js"
+    }
+  },
   "types": "dist/vee-validate.d.ts",
   "homepage": "https://vee-validate.logaretm.com/",
   "repository": {
