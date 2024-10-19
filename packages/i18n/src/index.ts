@@ -17,6 +17,7 @@ export type RootI18nDictionary = Record<string, PartialI18nDictionary>;
 
 class Dictionary {
   public locale: string;
+  public fallbackLocale?: string;
 
   private container: RootI18nDictionary;
   private interpolateOptions: InterpolateOptions;
@@ -33,7 +34,19 @@ class Dictionary {
   }
 
   public resolve(ctx: FieldValidationMetaInfo, interpolateOptions?: InterpolateOptions) {
-    return this.format(this.locale, ctx, interpolateOptions);
+    let result = this.format(this.locale, ctx, interpolateOptions);
+    if (!result && this.fallbackLocale && this.fallbackLocale !== this.locale) {
+      result = this.format(this.fallbackLocale, ctx, interpolateOptions);
+    }
+
+    return result || this.getDefaultMessage(this.locale, ctx);
+  }
+
+  public getDefaultMessage(locale: string, ctx: FieldValidationMetaInfo) {
+    const { label, name } = ctx;
+    const fieldName = this.resolveLabel(locale, name, label);
+
+    return `${fieldName} is not valid`;
   }
 
   public getLocaleDefault(locale: string, field: string): string | ValidationMessageGenerator | undefined {
@@ -54,7 +67,7 @@ class Dictionary {
     const fieldName = this.resolveLabel(locale, name, label);
 
     if (!rule) {
-      message = this.getLocaleDefault(locale, name) || `${fieldName} is not valid`;
+      message = this.getLocaleDefault(locale, name) || '';
       return isCallable(message)
         ? message(ctx)
         : interpolate(message, { ...form, field: fieldName }, interpolateOptions ?? this.interpolateOptions);
@@ -63,7 +76,7 @@ class Dictionary {
     // find if specific message for that field was specified.
     message = this.container[locale]?.fields?.[name]?.[rule.name] || this.container[locale]?.messages?.[rule.name];
     if (!message) {
-      message = this.getLocaleDefault(locale, name) || `${fieldName} is not valid`;
+      message = this.getLocaleDefault(locale, name) || '';
     }
 
     return isCallable(message)
@@ -122,6 +135,13 @@ function setLocale(locale: string) {
 }
 
 /**
+ * Sets the fallback locale.
+ */
+function setFallbackLocale(locale: string) {
+  DICTIONARY.fallbackLocale = locale;
+}
+
+/**
  * Loads a locale file from URL and merges it with the current dictionary
  */
 async function loadLocaleFromURL(url: string) {
@@ -143,4 +163,4 @@ async function loadLocaleFromURL(url: string) {
   }
 }
 
-export { localize, setLocale, loadLocaleFromURL };
+export { localize, setLocale, loadLocaleFromURL, setFallbackLocale };

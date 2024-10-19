@@ -1,7 +1,7 @@
 import { Ref } from 'vue';
 import { defineRule, configure, useField } from '@/vee-validate';
 import { required, between } from '@/rules';
-import { localize, setLocale } from '@/i18n';
+import { localize, setFallbackLocale, setLocale } from '@/i18n';
 import { mountWithHoc, setValue, flushPromises } from '../../vee-validate/tests/helpers';
 
 defineRule('required', required);
@@ -550,7 +550,7 @@ describe('interpolation preserves placeholders if not found', () => {
   });
 });
 
-// begin - #4726 - custom interpolation options
+// #4726 - custom interpolation options
 test('custom interpolation options - interpolates object params with short format', async () => {
   configure({
     generateMessage: localize(
@@ -833,4 +833,40 @@ describe('interpolation preserves placeholders if not found', () => {
     expect(error.textContent).toContain('The name field must be between 0 and {{max}}');
   });
 });
-// end - #4726 - custom interpolation options tests
+
+test('can define fallback locale', async () => {
+  configure({
+    generateMessage: localize({
+      en: {
+        messages: {
+          test: `Field is required`,
+        },
+      },
+      ar: {
+        messages: {},
+      },
+    }),
+  });
+
+  setLocale('ar');
+  setFallbackLocale('en');
+  defineRule('test', () => false);
+
+  const wrapper = mountWithHoc({
+    template: `
+      <div>
+        <Field name="name" rules="test" v-slot="{ field, errors }">
+          <input v-bind="field" type="text">
+          <span id="error">{{ errors[0] }}</span>
+        </Field>
+      </div>
+    `,
+  });
+
+  const error = wrapper.$el.querySelector('#error');
+  const input = wrapper.$el.querySelector('input');
+  setValue(input, '12');
+  await flushPromises();
+
+  expect(error.textContent).toContain('Field is required');
+});
