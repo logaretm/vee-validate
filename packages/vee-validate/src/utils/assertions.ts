@@ -108,6 +108,8 @@ export function isPropPresent(obj: Record<string, unknown>, prop: string) {
  * Compares if two values are the same borrowed from:
  * https://github.com/epoberezkin/fast-deep-equal
  * We added a case for file matching since `Object.keys` doesn't work with Files.
+ *
+ * NB: keys with the value undefined are ignored in the evaluation and considered equal to missing keys.
  * */
 export function isEqual(a: any, b: any) {
   if (a === b) return true;
@@ -162,7 +164,13 @@ export function isEqual(a: any, b: any) {
     if (a.toString !== Object.prototype.toString) return a.toString() === b.toString();
 
     keys = Object.keys(a);
-    length = keys.length;
+    length = keys.length - countUndefinedValues(a, keys);
+
+    if (length !== Object.keys(b).length - countUndefinedValues(b, Object.keys(b))) return false;
+
+    for (i = length; i-- !== 0; ) {
+      if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;
+    }
 
     for (i = length; i-- !== 0; ) {
       // eslint-disable-next-line no-var
@@ -177,6 +185,17 @@ export function isEqual(a: any, b: any) {
   // true if both NaN, false otherwise
 
   return a !== a && b !== b;
+}
+
+function countUndefinedValues(a: any, keys: string[]) {
+  let result = 0;
+  for (let i = keys.length; i-- !== 0; ) {
+    // eslint-disable-next-line no-var
+    var key = keys[i];
+
+    if (a[key] === undefined) result++;
+  }
+  return result;
 }
 
 export function isFile(a: unknown): a is File {
