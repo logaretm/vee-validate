@@ -1,4 +1,4 @@
-import { App, ComponentInternalInstance, getCurrentInstance, nextTick, onUnmounted, unref } from 'vue';
+import { App, ComponentInternalInstance, getCurrentInstance, nextTick, onUnmounted, toValue, unref } from 'vue';
 import { setupDevtoolsPlugin } from '@vue/devtools-api';
 import type { InspectorNodeTag, CustomInspectorState, CustomInspectorNode } from '@vue/devtools-kit';
 import { PathState, PrivateFieldContext, PrivateFormContext } from './types';
@@ -216,7 +216,7 @@ function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorN
 
   const formTreeNodes = {};
   Object.values(form.getAllPathStates()).forEach(state => {
-    setInPath(formTreeNodes, unref(state.path), mapPathForDevtoolsInspector(state, form));
+    setInPath(formTreeNodes, toValue(state.path), mapPathForDevtoolsInspector(state, form));
   });
 
   function buildFormTree(tree: any[] | Record<string, any>, path: string[] = []): CustomInspectorNode {
@@ -271,7 +271,7 @@ function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorN
 function mapPathForDevtoolsInspector(state: PathState, form?: PrivateFormContext): CustomInspectorNode {
   return {
     id: encodeNodeId(form, state),
-    label: unref(state.path),
+    label: toValue(state.path),
     tags: getFieldNodeTags(state.multiple, state.fieldsCount, state.type, state.valid, form),
   };
 }
