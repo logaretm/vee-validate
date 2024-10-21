@@ -196,11 +196,16 @@ function resolveModelValue<TValue>(
     return unref(modelValue);
   }
 
+  const currentValue = getFromPath(form.values, unref(path), unref(initialValue)) as TValue;
+  if (currentValue !== undefined) {
+    return currentValue;
+  }
+
   if (modelValue !== undefined) {
     return modelValue;
   }
 
-  return getFromPath(form.values, unref(path), unref(initialValue)) as TValue;
+  return unref(initialValue) as TValue;
 }
 
 /**
