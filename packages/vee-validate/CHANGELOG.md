@@ -1,5 +1,14 @@
 # Change Log
 
+## 4.14.4
+
+### Patch Changes
+
+- f33974c: fix(types): expose field and form slot prop types closes #4900
+- 0991c01: fix: devtools crashing when a field name is defined as getter
+- ecb540a: fix: handle getter field names properly closes #4877
+- 4f88d85: fix: specify module type on package.json
+
 ## 4.14.3
 
 ### Patch Changes

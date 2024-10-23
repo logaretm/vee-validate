@@ -4,6 +4,19 @@
 
 ### Patch Changes
 
+- Updated dependencies [f33974c]
+- Updated dependencies [0991c01]
+- Updated dependencies [ecb540a]
+- Updated dependencies [4f88d85]
+  - vee-validate@4.14.4
+  - @vee-validate/valibot@4.14.4
+  - @vee-validate/yup@4.14.4
+  - @vee-validate/zod@4.14.4
+
+## null
+
+### Patch Changes
+
 - Updated dependencies [07c27d5]
   - vee-validate@4.14.3
   - @vee-validate/valibot@4.14.3

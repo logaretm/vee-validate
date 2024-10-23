@@ -1,5 +1,12 @@
 # Change Log
 
+## 4.14.4
+
+### Patch Changes
+
+- 193a96f: feat: add setFallbackLocale for i18n closes #4872
+- 4f88d85: fix: specify module type on package.json
+
 ## 4.14.3
 
 ## 4.14.2
