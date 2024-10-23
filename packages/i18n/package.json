@@ -5,15 +5,16 @@
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "homepage": "https://vee-validate.logaretm.com/v4/guide/i18n",
   "license": "MIT",
-  "module": "dist/vee-validate-i18n.esm.js",
-  "unpkg": "dist/vee-validate-i18n.js",
-  "main": "dist/vee-validate-i18n.js",
+  "module": "dist/vee-validate-i18n.mjs",
+  "unpkg": "dist/vee-validate-i18n.iife.js",
+  "main": "dist/vee-validate-i18n.mjs",
   "types": "dist/vee-validate-i18n.d.ts",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/vee-validate-i18n.d.ts",
-      "import": "./dist/vee-validate-i18n.esm.js",
-      "require": "./dist/vee-validate-i18n.js"
+      "import": "./dist/vee-validate-i18n.mjs",
+      "require": "./dist/vee-validate-i18n.cjs"
     },
     "./dist/locale/*.json": "./dist/locale/*.json"
   },
@@ -21,6 +22,8 @@
   "files": [
     "dist/*.js",
     "dist/*.d.ts",
+    "dist/*.cjs",
+    "dist/*.mjs",
     "dist/locale/*.json"
   ],
   "repository": {

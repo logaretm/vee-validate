@@ -38,8 +38,8 @@ async function minify({ code, pkg, bundleName }) {
     mangle: true,
   });
 
-  const fileName = bundleName.replace(/\.js$/, '.min.js');
-  const filePath = `${pkgout}/${fileName}`;
+  const fileName = bundleName.replace(/\.js$/, '.prod.js');
+  const filePath = `${pkgout}/${fileName}.mjs`;
   fs.outputFileSync(filePath, output.code);
   const stats = reportSize({ code: output.code, path: filePath });
   console.log(`${chalk.green('Output File:')} ${fileName} ${stats}`);
@@ -64,7 +64,9 @@ async function build(pkg) {
 
   console.log(chalk.magenta(`Generating bundle for ${pkg}`));
   const pkgout = path.join(__dirname, `../packages/${pkg}/dist`);
-  for (const format of ['es', 'umd']) {
+  await fs.emptyDir(pkgout);
+
+  for (const format of ['esm', 'iife', 'cjs']) {
     const { input, output, bundleName } = await createConfig(pkg, format);
     const bundle = await rollup(input);
     const {
@@ -74,10 +76,10 @@ async function build(pkg) {
     const outputPath = path.join(pkgout, bundleName);
     fs.outputFileSync(outputPath, code);
     const stats = reportSize({ code, path: outputPath });
-     
+
     console.log(`${chalk.green('Output File:')} ${bundleName} ${stats}`);
 
-    if (format === 'umd') {
+    if (format === 'iife') {
       await minify({ bundleName, pkg, code });
     }
   }

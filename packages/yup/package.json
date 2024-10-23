@@ -4,15 +4,16 @@
   "description": "vee-validate integration with yup schema validation",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
-  "module": "dist/vee-validate-yup.esm.js",
-  "unpkg": "dist/vee-validate-yup.js",
-  "main": "dist/vee-validate-yup.js",
+  "module": "dist/vee-validate-yup.mjs",
+  "unpkg": "dist/vee-validate-yup.iife.js",
+  "main": "dist/vee-validate-yup.mjs",
   "types": "dist/vee-validate-yup.d.ts",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/vee-validate-yup.d.ts",
-      "import": "./dist/vee-validate-yup.esm.js",
-      "require": "./dist/vee-validate-yup.js"
+      "import": "./dist/vee-validate-yup.mjs",
+      "require": "./dist/vee-validate-yup.cjs"
     }
   },
   "homepage": "https://vee-validate.logaretm.com/v4/guide/composition-api/typed-schema/",
@@ -32,7 +33,9 @@
   ],
   "files": [
     "dist/*.js",
-    "dist/*.d.ts"
+    "dist/*.d.ts",
+    "dist/*.cjs",
+    "dist/*.mjs"
   ],
   "dependencies": {
     "type-fest": "^4.8.3",

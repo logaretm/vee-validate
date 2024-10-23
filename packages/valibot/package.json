@@ -4,14 +4,15 @@
   "description": "vee-validate integration with valibot schema validation",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
-  "module": "dist/vee-validate-valibot.esm.js",
-  "unpkg": "dist/vee-validate-valibot.js",
-  "main": "dist/vee-validate-valibot.js",
+  "module": "dist/vee-validate-valibot.mjs",
+  "unpkg": "dist/vee-validate-valibot.iife.js",
+  "main": "dist/vee-validate-valibot.mjs",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/vee-validate-valibot.d.ts",
-      "import": "./dist/vee-validate-valibot.esm.js",
-      "require": "./dist/vee-validate-valibot.js"
+      "import": "./dist/vee-validate-valibot.mjs",
+      "require": "./dist/vee-validate-valibot.cjs"
     }
   },
   "types": "dist/vee-validate-valibot.d.ts",
@@ -32,7 +33,9 @@
   ],
   "files": [
     "dist/*.js",
-    "dist/*.d.ts"
+    "dist/*.d.ts",
+    "dist/*.cjs",
+    "dist/*.mjs"
   ],
   "dependencies": {
     "type-fest": "^4.8.3",

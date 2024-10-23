@@ -29,9 +29,10 @@ const pkgNameMap = {
   joi: 'vee-validate-joi',
 };
 
-const formatMap = {
-  es: 'esm',
-  umd: '',
+const formatExt = {
+  esm: 'mjs',
+  iife: 'iife.js',
+  cjs: 'cjs',
 };
 
 async function createConfig(pkg, format) {
@@ -48,7 +49,7 @@ async function createConfig(pkg, format) {
 
   const { version } = info;
 
-  const isEsm = format === 'es';
+  const isEsm = format === 'esm';
 
   const config = {
     input: {
@@ -85,14 +86,15 @@ async function createConfig(pkg, format) {
   * @license MIT
   */`,
       format,
-      name: format === 'umd' ? formatNameMap[pkg] : undefined,
+      name: format === 'iife' ? formatNameMap[pkg] : undefined,
       globals: {
         vue: 'Vue',
+        'vee-validate': 'VeeValidate',
       },
     },
   };
 
-  config.bundleName = `${pkgNameMap[pkg]}${formatMap[format] ? '.' + formatMap[format] : ''}.js`;
+  config.bundleName = `${pkgNameMap[pkg]}.${formatExt[format] ?? 'js'}`;
 
   // if (options.env) {
   //   config.input.plugins.unshift(
@@ -105,4 +107,4 @@ async function createConfig(pkg, format) {
   return config;
 }
 
-export { formatNameMap, pkgNameMap, formatMap, createConfig };
+export { formatNameMap, pkgNameMap, formatExt, createConfig };

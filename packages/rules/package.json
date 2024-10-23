@@ -4,15 +4,16 @@
   "description": "Form Validation for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
-  "module": "dist/vee-validate-rules.esm.js",
-  "unpkg": "dist/vee-validate-rules.js",
-  "main": "dist/vee-validate-rules.js",
+  "module": "dist/vee-validate-rules.mjs",
+  "unpkg": "dist/vee-validate-rules.iife.js",
+  "main": "dist/vee-validate-rules.mjs",
   "types": "dist/vee-validate-rules.d.ts",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/vee-validate-rules.d.ts",
-      "import": "./dist/vee-validate-rules.esm.js",
-      "require": "./dist/vee-validate-rules.js"
+      "import": "./dist/vee-validate-rules.mjs",
+      "require": "./dist/vee-validate-rules.cjs"
     }
   },
   "homepage": "https://vee-validate.logaretm.com/v4/guide/global-validators",
@@ -32,7 +33,9 @@
   ],
   "files": [
     "dist/*.js",
-    "dist/*.d.ts"
+    "dist/*.d.ts",
+    "dist/*.cjs",
+    "dist/*.mjs"
   ],
   "dependencies": {
     "vee-validate": "workspace:*"

@@ -4,14 +4,15 @@
   "description": "Painless forms for Vue.js",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
-  "module": "dist/vee-validate.esm.js",
-  "unpkg": "dist/vee-validate.js",
-  "main": "dist/vee-validate.js",
+  "module": "dist/vee-validate.mjs",
+  "unpkg": "dist/vee-validate.iife.js",
+  "main": "dist/vee-validate.mjs",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/vee-validate.d.ts",
-      "import": "./dist/vee-validate.esm.js",
-      "require": "./dist/vee-validate.js"
+      "import": "./dist/vee-validate.mjs",
+      "require": "./dist/vee-validate.cjs"
     }
   },
   "types": "dist/vee-validate.d.ts",
@@ -32,7 +33,9 @@
   ],
   "files": [
     "dist/*.js",
-    "dist/*.d.ts"
+    "dist/*.d.ts",
+    "dist/*.cjs",
+    "dist/*.mjs"
   ],
   "peerDependencies": {
     "vue": "^3.4.26"

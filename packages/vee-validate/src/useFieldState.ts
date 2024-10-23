@@ -1,7 +1,6 @@
 import { computed, isRef, reactive, ref, Ref, unref, watch, MaybeRef, MaybeRefOrGetter, toValue } from 'vue';
-import { FieldMeta, FieldState, FieldValidator, InputType, PrivateFormContext, PathState } from './types';
+import { FieldMeta, FieldState, FieldValidator, InputType, PrivateFormContext, PathState, TypedSchema } from './types';
 import { getFromPath, isEqual, normalizeErrorItem } from './utils';
-import { TypedSchema } from '../dist/vee-validate';
 
 export interface StateSetterInit<TValue = unknown> extends FieldState<TValue> {
   initialValue: TValue;
