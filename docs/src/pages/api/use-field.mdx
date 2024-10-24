@@ -122,6 +122,20 @@ You can also bind it with `v-model` to get two-way value binding with validation
 
 <CodeTitle level="4">
 
+`setValue: Ref<TValue = unknown>`
+
+</CodeTitle>
+
+A method to update the fields value.
+
+```js
+const { setValue } = useField('field', value => !!value);
+
+setValue('hello world') // sets the value and validates the field
+```
+
+<CodeTitle level="4">
+
 `meta: FieldMeta<TValue = unknown>`
 
 </CodeTitle>
