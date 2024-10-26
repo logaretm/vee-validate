@@ -6,7 +6,7 @@ jobs:
   # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
   test:
     docker:
-      - image: cimg/node:19.7
+      - image: cimg/node:22.10
     steps:
       # Checkout the code as the first step.
       - checkout
@@ -17,8 +17,9 @@ jobs:
       - run:
           name: Install pnpm package manager
           command: |
-            corepack enable
-            corepack prepare pnpm@latest-8 --activate
+            corepack enable --install-directory ~/bin
+            corepack prepare pnpm@latest-9 --activate
+            pnpm config set store-dir .pnpm-store
       - run:
           name: Install dependencies
           command: pnpm install
@@ -26,7 +27,7 @@ jobs:
           name: Save pnpm Package Cache
           key: pnpm-packages-{{ checksum "pnpm-lock.yaml" }}
           paths:
-            - node_modules
+            - .pnpm-store
       - run:
           name: Build
           command: pnpm build
