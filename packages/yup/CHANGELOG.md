@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.14.6
+
+### Patch Changes
+
+- vee-validate@4.14.6
+
 ## 4.14.5
 
 ### Patch Changes
