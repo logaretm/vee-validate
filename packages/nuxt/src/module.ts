@@ -1,5 +1,5 @@
-import { defineNuxtModule, addComponent, addImports, logger } from '@nuxt/kit';
-import type { NuxtModule } from '@nuxt/schema';
+import { defineNuxtModule, addComponent, addImports, logger, resolveModule } from '@nuxt/kit';
+import type { Nuxt, NuxtModule } from '@nuxt/schema';
 import { isPackageExists } from 'local-pkg';
 
 type ComponentName = 'Field' | 'Form' | 'ErrorMessage' | 'FieldArray';
@@ -51,7 +51,7 @@ export default defineNuxtModule<VeeValidateNuxtOptions>({
     autoImports: true,
     componentNames: {},
   },
-  setup(options) {
+  setup(options, nuxt) {
     if (options.autoImports) {
       composables.forEach(composable => {
         addImports({
@@ -75,25 +75,27 @@ export default defineNuxtModule<VeeValidateNuxtOptions>({
     }
 
     if (options.typedSchemaPackage === 'yup') {
-      checkForYup(options);
+      checkForYup(options, nuxt);
       return;
     }
 
     if (options.typedSchemaPackage === 'zod') {
-      checkForZod(options);
+      checkForZod(options, nuxt);
       return;
     }
 
     if (options.typedSchemaPackage === 'valibot') {
-      checkForValibot(options);
+      checkForValibot(options, nuxt);
       return;
     }
 
-    if (!checkForYup(options)) {
-      if (!checkForZod(options)) {
-        checkForValibot(options);
+    if (!checkForYup(options, nuxt)) {
+      if (!checkForZod(options, nuxt)) {
+        checkForValibot(options, nuxt);
       }
     }
+
+    addMjsAlias('vee-validate', 'vee-validate', nuxt);
   },
 }) as NuxtModule<VeeValidateNuxtOptions>;
 
@@ -113,7 +115,7 @@ function checkSchemaResolverDependencies(pkgName: (typeof schemaProviders)[numbe
   }
 }
 
-function checkForValibot(options: VeeValidateNuxtOptions) {
+function checkForValibot(options: VeeValidateNuxtOptions, nuxt: Nuxt) {
   checkSchemaResolverDependencies('valibot');
   if (isPackageExists('@vee-validate/valibot') && isPackageExists('valibot')) {
     logger.info('Using valibot with vee-validate');
@@ -125,13 +127,15 @@ function checkForValibot(options: VeeValidateNuxtOptions) {
       });
     }
 
+    addMjsAlias('@vee-validate/valibot', 'vee-validate-valibot', nuxt);
+
     return true;
   }
 
   return false;
 }
 
-function checkForZod(options: VeeValidateNuxtOptions) {
+function checkForZod(options: VeeValidateNuxtOptions, nuxt: Nuxt) {
   checkSchemaResolverDependencies('zod');
   if (isPackageExists('@vee-validate/zod') && isPackageExists('zod')) {
     logger.info('Using zod with vee-validate');
@@ -143,13 +147,15 @@ function checkForZod(options: VeeValidateNuxtOptions) {
       });
     }
 
+    addMjsAlias('@vee-validate/zod', 'vee-validate-zod', nuxt);
+
     return true;
   }
 
   return false;
 }
 
-function checkForYup(options: VeeValidateNuxtOptions) {
+function checkForYup(options: VeeValidateNuxtOptions, nuxt: Nuxt) {
   checkSchemaResolverDependencies('yup');
   if (isPackageExists('@vee-validate/yup') && isPackageExists('yup')) {
     logger.info('Using yup with vee-validate');
@@ -161,10 +167,21 @@ function checkForYup(options: VeeValidateNuxtOptions) {
       });
     }
 
+    addMjsAlias('@vee-validate/yup', 'vee-validate-yup', nuxt);
+
     return true;
   }
 
   return false;
+}
+
+function addMjsAlias(pkgName: string, fileName: string, nuxt: Nuxt) {
+  // FIXME: Deprecated, idk why since it duplicate imports
+  nuxt.options.alias[pkgName] =
+    nuxt.options.alias[pkgName] ||
+    resolveModule(`${pkgName}/dist/${fileName}.mjs`, {
+      paths: [nuxt.options.rootDir, import.meta.url],
+    });
 }
 
 declare module '@nuxt/schema' {

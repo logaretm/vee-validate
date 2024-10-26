@@ -14,7 +14,8 @@
       "types": "./dist/vee-validate-joi.d.ts",
       "import": "./dist/vee-validate-joi.mjs",
       "require": "./dist/vee-validate-joi.cjs"
-    }
+    },
+    "./dist/*": "./dist/*"
   },
   "homepage": "https://vee-validate.logaretm.com/v4/integrations/joi-schema-validation/",
   "repository": {

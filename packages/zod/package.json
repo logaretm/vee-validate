@@ -14,7 +14,8 @@
       "types": "./dist/vee-validate-zod.d.ts",
       "import": "./dist/vee-validate-zod.mjs",
       "require": "./dist/vee-validate-zod.cjs"
-    }
+    },
+    "./dist/*": "./dist/*"
   },
   "homepage": "https://vee-validate.logaretm.com/v4/integrations/zod-schema-validation/",
   "repository": {

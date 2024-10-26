@@ -14,7 +14,8 @@
       "types": "./dist/vee-validate-yup.d.ts",
       "import": "./dist/vee-validate-yup.mjs",
       "require": "./dist/vee-validate-yup.cjs"
-    }
+    },
+    "./dist/*": "./dist/*"
   },
   "homepage": "https://vee-validate.logaretm.com/v4/guide/composition-api/typed-schema/",
   "repository": {

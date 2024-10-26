@@ -13,7 +13,8 @@
       "types": "./dist/vee-validate-valibot.d.ts",
       "import": "./dist/vee-validate-valibot.mjs",
       "require": "./dist/vee-validate-valibot.cjs"
-    }
+    },
+    "./dist/*": "./dist/*"
   },
   "types": "dist/vee-validate-valibot.d.ts",
   "homepage": "https://vee-validate.logaretm.com/v4/integrations/zod-schema-validation/",
