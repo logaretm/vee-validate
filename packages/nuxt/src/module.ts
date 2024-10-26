@@ -52,6 +52,9 @@ export default defineNuxtModule<VeeValidateNuxtOptions>({
     componentNames: {},
   },
   setup(options, nuxt) {
+    addMjsAlias('vee-validate', 'vee-validate', nuxt);
+    prepareVeeValidate(nuxt);
+
     if (options.autoImports) {
       composables.forEach(composable => {
         addImports({
@@ -94,8 +97,6 @@ export default defineNuxtModule<VeeValidateNuxtOptions>({
         checkForValibot(options, nuxt);
       }
     }
-
-    addMjsAlias('vee-validate', 'vee-validate', nuxt);
   },
 }) as NuxtModule<VeeValidateNuxtOptions>;
 
@@ -191,4 +192,16 @@ declare module '@nuxt/schema' {
   interface NuxtOptions {
     'vee-validate'?: VeeValidateNuxtOptions;
   }
+}
+
+/**
+ * Excludes vee-validate and vee-validate/rules from the optimization process.
+ * The optimization process causes issues with the symbols export not matching between the module components and the main vee-validate package.
+ * Maybe it is because vite chunks them in different files/sources.
+ * Only happens with SSR tho, SPA works.
+ */
+function prepareVeeValidate(nuxt: Nuxt) {
+  nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {};
+  nuxt.options.vite.optimizeDeps.exclude = nuxt.options.vite.optimizeDeps.exclude || [];
+  nuxt.options.vite.optimizeDeps.exclude.push('vee-validate', '@vee-validate/rules');
 }
