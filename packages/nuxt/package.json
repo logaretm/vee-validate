@@ -4,8 +4,9 @@
   "description": "Official vee-validate nuxt module",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
-  "main": "./dist/module.cjs",
-  "types": "./dist/types.d.ts",
+  "type": "module",
+  "main": "./dist/module.mjs",
+  "types": "./dist/module.d.ts",
   "homepage": "https://vee-validate.logaretm.com/v4/integrations/nuxt",
   "repository": {
     "url": "https://github.com/logaretm/vee-validate.git",
@@ -17,7 +18,7 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/types.d.ts",
+      "types": "./dist/module.d.ts",
       "import": "./dist/module.mjs",
       "require": "./dist/module.cjs"
     }
@@ -37,15 +38,15 @@
     "dist/*"
   ],
   "dependencies": {
-    "@nuxt/kit": "^3.8.2",
+    "@nuxt/kit": "^3.13.2",
     "local-pkg": "^0.5.0",
     "vee-validate": "workspace:*"
   },
   "devDependencies": {
-    "@nuxt/eslint-config": "^0.2.0",
-    "@nuxt/module-builder": "^0.5.4",
-    "@nuxt/schema": "^3.8.2",
-    "@nuxt/test-utils": "^3.8.1",
-    "nuxt": "^3.8.2"
+    "@nuxt/eslint-config": "^0.6.0",
+    "@nuxt/module-builder": "^0.8.4",
+    "@nuxt/schema": "^3.13.2",
+    "@nuxt/test-utils": "^3.14.4",
+    "nuxt": "^3.13.2"
   }
 }
