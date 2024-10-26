@@ -1,5 +1,13 @@
 # Change Log
 
+## 4.14.5
+
+### Patch Changes
+
+- e9f8c88: fix: force loading the mjs module when using nuxt
+- Updated dependencies [e9f8c88]
+  - vee-validate@4.14.5
+
 ## 4.14.4
 
 ### Patch Changes

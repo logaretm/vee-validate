@@ -1,5 +1,14 @@
 # @vee-validate/nuxt
 
+## 4.14.5
+
+### Patch Changes
+
+- 141ad3e: chore: upgrade nuxt module dependencies and switch default to module type
+- e9f8c88: fix: force loading the mjs module when using nuxt
+- Updated dependencies [e9f8c88]
+  - vee-validate@4.14.5
+
 ## 4.14.4
 
 ### Patch Changes
