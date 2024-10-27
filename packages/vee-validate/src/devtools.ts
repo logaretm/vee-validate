@@ -58,6 +58,7 @@ function installDevtoolsPlugin(app: App) {
               tooltip: 'Validate selected item',
               action: async () => {
                 if (!SELECTED_NODE) {
+                  // eslint-disable-next-line no-console
                   console.error('There is not a valid selected vee-validate node or component');
                   return;
                 }
@@ -82,6 +83,7 @@ function installDevtoolsPlugin(app: App) {
               tooltip: 'Clear validation state of the selected item',
               action: () => {
                 if (!SELECTED_NODE) {
+                  // eslint-disable-next-line no-console
                   console.error('There is not a valid selected vee-validate node or component');
                   return;
                 }
