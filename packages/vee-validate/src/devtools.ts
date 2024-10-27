@@ -123,6 +123,7 @@ function installDevtoolsPlugin(app: App) {
           }
 
           const { form, field, state, type } = decodeNodeId(payload.nodeId);
+          console.log(form, field, state, type, payload);
 
           api.unhighlightElement();
 
@@ -203,6 +204,7 @@ export function registerSingleFieldWithDevtools(field: PrivateFieldContext) {
 
   DEVTOOLS_FIELDS[field.id] = { ...field };
   DEVTOOLS_FIELDS[field.id]._vm = vm;
+
   onUnmounted(() => {
     delete DEVTOOLS_FIELDS[field.id];
     refreshInspector();
@@ -334,8 +336,8 @@ function getFieldNodeTags(
 
 function encodeNodeId(form?: PrivateFormContext, stateOrField?: PathState | PrivateFieldContext): string {
   const type = stateOrField ? ('path' in stateOrField ? 'pathState' : 'field') : 'form';
-  const fieldPath = stateOrField ? ('path' in stateOrField ? stateOrField?.path : unref(stateOrField?.name)) : '';
-  const idObject = { f: form?.formId, ff: fieldPath, type };
+  const fieldPath = stateOrField ? ('path' in stateOrField ? stateOrField?.path : toValue(stateOrField?.name)) : '';
+  const idObject = { f: form?.formId, ff: stateOrField?.id || fieldPath, type };
 
   return btoa(encodeURIComponent(JSON.stringify(idObject)));
 }
