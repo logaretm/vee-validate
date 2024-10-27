@@ -552,6 +552,7 @@ function useVModel<TValue = unknown>({ prop, value, handleChange, shouldValidate
   /* istanbul ignore next */
   if (!vm || !prop) {
     if (__DEV__) {
+      // eslint-disable-next-line no-console
       console.warn('Failed to setup model events because `useField` was not called in setup.');
     }
     return;

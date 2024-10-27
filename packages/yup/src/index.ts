@@ -83,6 +83,7 @@ export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchem
         return getDescriptionFromYupSpec(description);
       } catch {
         if (__DEV__) {
+          // eslint-disable-next-line no-console
           console.warn(`Failed to describe path ${path} on the schema, returning a default description.`);
         }
 

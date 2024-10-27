@@ -5,6 +5,7 @@ export function fetchStarCount() {
       return json.stargazers_count as number;
     })
     .catch(err => {
+      // eslint-disable-next-line no-console
       console.error(err);
 
       return 0;

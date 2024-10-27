@@ -59,7 +59,9 @@ export default function highlight() {
         node.value = fragment.querySelector('.shiki-snippet')?.outerHTML;
         node.type = 'html';
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error(err);
+        // eslint-disable-next-line no-console
         console.log(node.lang);
       }
     }

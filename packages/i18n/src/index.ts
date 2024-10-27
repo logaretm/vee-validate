@@ -153,12 +153,14 @@ async function loadLocaleFromURL(url: string) {
     }).then(res => res.json());
 
     if (!locale.code) {
+      // eslint-disable-next-line no-console
       console.error('Could not identify locale, ensure the locale file contains `code` field');
       return;
     }
 
     localize({ [locale.code]: locale });
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.error(`Failed to load locale `);
   }
 }

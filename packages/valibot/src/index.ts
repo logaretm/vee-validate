@@ -24,7 +24,7 @@ import {
   StrictObjectSchema,
   LooseObjectSchema,
   getDotPath,
-  Config, 
+  Config,
 } from 'valibot';
 import { isIndex, isObject, merge, normalizeFormPath } from '../../shared';
 
@@ -34,7 +34,7 @@ export function toTypedSchema<
     | BaseSchemaAsync<unknown, unknown, BaseIssue<unknown>>,
   TInferOutput = InferOutput<TSchema>,
   TInferInput = PartialDeep<InferInput<TSchema>>,
->(valibotSchema: TSchema, config?: Config<InferIssue<TSchema>> ): TypedSchema<TInferInput, TInferOutput> {
+>(valibotSchema: TSchema, config?: Config<InferIssue<TSchema>>): TypedSchema<TInferInput, TInferOutput> {
   const schema: TypedSchema = {
     __type: 'VVTypedSchema',
     async parse(value) {
@@ -93,6 +93,7 @@ export function toTypedSchema<
         };
       } catch {
         if (__DEV__) {
+          // eslint-disable-next-line no-console
           console.warn(`Failed to describe path ${path} on the schema, returning a default description.`);
         }
 
