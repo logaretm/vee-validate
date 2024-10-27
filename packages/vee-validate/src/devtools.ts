@@ -123,7 +123,6 @@ function installDevtoolsPlugin(app: App) {
           }
 
           const { form, field, state, type } = decodeNodeId(payload.nodeId);
-          console.log(form, field, state, type, payload);
 
           api.unhighlightElement();
 
