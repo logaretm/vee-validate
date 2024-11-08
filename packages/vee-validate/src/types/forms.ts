@@ -323,6 +323,7 @@ export interface PrivateFormContext<
   TValues extends GenericObject = GenericObject,
   TOutput extends GenericObject = TValues,
 > extends FormActions<TValues> {
+  name: string;
   formId: number;
   values: TValues;
   initialValues: Ref<Partial<TValues>>;

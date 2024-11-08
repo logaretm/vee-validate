@@ -254,7 +254,7 @@ function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorN
 
   return {
     id: encodeNodeId(form),
-    label: 'Form',
+    label: form.name,
     children,
     tags: [
       {

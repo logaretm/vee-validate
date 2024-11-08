@@ -75,6 +75,10 @@ const FormImpl = /** #__PURE__ */ defineComponent({
       type: Boolean,
       default: false,
     },
+    name: {
+      type: String,
+      default: undefined,
+    },
   },
   setup(props, ctx) {
     const validationSchema = toRef(props, 'validationSchema');
@@ -108,6 +112,7 @@ const FormImpl = /** #__PURE__ */ defineComponent({
       initialTouched: props.initialTouched,
       validateOnMount: props.validateOnMount,
       keepValuesOnUnmount: keepValues,
+      name: props.name,
     });
 
     const submitForm = handleSubmit((_, { evt }) => {
