@@ -92,6 +92,7 @@ export interface FormOptions<
   initialTouched?: FlattenAndSetPathsType<TValues, boolean>;
   validateOnMount?: boolean;
   keepValuesOnUnmount?: MaybeRef<boolean>;
+  name?: string;
 }
 
 let FORM_COUNTER = 0;
@@ -117,6 +118,7 @@ export function useForm<
     | TypedSchema<TValues, TOutput>,
 >(opts?: FormOptions<TValues, TOutput, TSchema>): FormContext<TValues, TOutput> {
   const formId = FORM_COUNTER++;
+  const name = opts?.name || 'Form';
 
   // Prevents fields from double resetting their values, which causes checkboxes to toggle their initial value
   let FIELD_ID_COUNTER = 0;
@@ -638,6 +640,7 @@ export function useForm<
   }
 
   const formCtx: PrivateFormContext<TValues, TOutput> = {
+    name,
     formId,
     values: formValues,
     controlledValues,
