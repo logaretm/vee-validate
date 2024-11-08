@@ -77,7 +77,7 @@ const FormImpl = /** #__PURE__ */ defineComponent({
     },
     name: {
       type: String,
-      default: undefined,
+      default: 'Form',
     },
   },
   setup(props, ctx) {
