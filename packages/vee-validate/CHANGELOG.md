@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.14.7
+
+### Patch Changes
+
+- be994b4: fix: show uncontrolled field info in devtools closes #4914
+
 ## 4.14.6
 
 ## 4.14.5
