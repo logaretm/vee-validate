@@ -149,6 +149,20 @@ const { ... } = useForm({
 
 If true, it will trigger validation for all fields once the form component is mounted.
 
+<CodeTitle level="4">
+
+`name?: string`
+
+</CodeTitle>
+
+If set, it will be used as the form's name in the devtools.
+
+```js
+const { ... } = useForm({
+  name: 'LoginForm', // Defaults to "Form"
+});
+```
+
 ### Composable API
 
 The following sections documents each available property on the `useForm` composable.
