@@ -12,10 +12,10 @@
 <script setup lang="ts">
 const libraries = [
   {
-    name: 'PrimeVue',
-    link: 'https://primevue.org/inputtext/#veevalidate',
-    logoLight: 'https://primefaces.org/cdn/primevue/images/logo.svg',
-    logoDark: 'https://primefaces.org/cdn/primevue/images/logo.svg',
+    name: 'Shadcn Vue',
+    link: 'https://www.shadcn-vue.com/docs/components/form',
+    logoLight: '/img/shadcn.svg',
+    logoDark: '/img/shadcn.svg',
   },
   {
     name: 'Vuetify',
