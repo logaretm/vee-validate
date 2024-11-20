@@ -1,5 +1,4 @@
 import { App, ComponentInternalInstance, getCurrentInstance, nextTick, onUnmounted, toValue, unref } from 'vue';
-import { setupDevtoolsPlugin } from '@vue/devtools-api';
 import type { InspectorNodeTag, CustomInspectorState, CustomInspectorNode } from '@vue/devtools-kit';
 import { PathState, PrivateFieldContext, PrivateFormContext } from './types';
 import { keysOf, setInPath, throttle } from './utils';
@@ -33,9 +32,10 @@ let SELECTED_NODE:
  */
 let API: any;
 
-function installDevtoolsPlugin(app: App) {
+async function installDevtoolsPlugin(app: App) {
   if (__DEV__) {
-    setupDevtoolsPlugin(
+    const devtools = await import('@vue/devtools-api');
+    devtools.setupDevtoolsPlugin(
       {
         id: 'vee-validate-devtools-plugin',
         label: 'VeeValidate Plugin',
