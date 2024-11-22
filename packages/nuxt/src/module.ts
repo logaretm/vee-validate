@@ -11,14 +11,15 @@ export interface VeeValidateNuxtOptions {
   typedSchemaPackage?: TypedSchemaPackage;
 }
 
-const components: ComponentName[] = ['Field', 'Form', 'ErrorMessage', 'FieldArray'];
+const components: ComponentName[] = ['ErrorMessage', 'Field', 'FieldArray', 'Form'];
 
 const composables = [
   'useField',
-  'useForm',
   'useFieldArray',
   'useFieldError',
   'useFieldValue',
+  'useForm',
+  'useFormContext',
   'useFormErrors',
   'useFormValues',
   'useIsFieldDirty',
@@ -28,6 +29,7 @@ const composables = [
   'useIsFormTouched',
   'useIsFormValid',
   'useIsSubmitting',
+  'useIsValidating',
   'useResetForm',
   'useSubmitCount',
   'useSubmitForm',
