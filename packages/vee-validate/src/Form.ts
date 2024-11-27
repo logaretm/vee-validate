@@ -1,8 +1,8 @@
-import { h, defineComponent, toRef, resolveDynamicComponent, PropType, VNode, UnwrapRef } from 'vue';
-import { useForm } from './useForm';
-import { SubmissionHandler, InvalidSubmissionHandler, GenericObject, FormMeta, FormContext, FormErrors } from './types';
-import { isEvent, isFormSubmitEvent, normalizeChildren } from './utils';
 import { klona as deepCopy } from 'klona/full';
+import { defineComponent, h, PropType, resolveDynamicComponent, toRef, UnwrapRef, VNode } from 'vue';
+import { FormContext, FormErrors, FormMeta, GenericObject, InvalidSubmissionHandler, SubmissionHandler } from './types';
+import { useForm } from './useForm';
+import { isEvent, isFormSubmitEvent, normalizeChildren } from './utils';
 
 export type FormSlotProps = UnwrapRef<
   Pick<
@@ -64,7 +64,7 @@ const FormImpl = /** #__PURE__ */ defineComponent({
       default: false,
     },
     onSubmit: {
-      type: Function as PropType<SubmissionHandler>,
+      type: Function as PropType<SubmissionHandler<GenericObject>>,
       default: undefined,
     },
     onInvalidSubmit: {
