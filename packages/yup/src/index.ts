@@ -1,4 +1,4 @@
-import { AnyObjectSchema, ArraySchema, InferType, Schema, ValidateOptions, ValidationError } from 'yup';
+import { AnyObjectSchema, ArraySchema, InferType, Schema, TupleSchema, ValidateOptions, ValidationError } from 'yup';
 import {
   TypedSchema,
   TypedSchemaError,
@@ -123,6 +123,8 @@ function getSpecForPath(path: string, schema: Schema): AnyObjectSchema['spec'] |
     const p = paths[i];
     if (isObjectSchema(currentSchema) && p in currentSchema.fields) {
       currentSchema = currentSchema.fields[p] as AnyObjectSchema;
+    } else if (isTupleSchema(currentSchema) && isIndex(p)) {
+      currentSchema = currentSchema.spec.types[Number(p)] as AnyObjectSchema;
     } else if (isIndex(p) && isArraySchema(currentSchema)) {
       currentSchema = currentSchema.innerType as AnyObjectSchema;
     }
@@ -133,6 +135,10 @@ function getSpecForPath(path: string, schema: Schema): AnyObjectSchema['spec'] |
   }
 
   return null;
+}
+
+function isTupleSchema(schema: unknown): schema is TupleSchema<any, any> {
+  return isObject(schema) && schema.type === 'tuple';
 }
 
 function isObjectSchema(schema: unknown): schema is AnyObjectSchema {

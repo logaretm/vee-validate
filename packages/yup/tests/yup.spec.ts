@@ -340,6 +340,7 @@ test('reports required state on fields', async () => {
               nreq: yup.string(),
             }),
           }),
+          tuple: yup.tuple([yup.string().required(), yup.string()]),
         }),
       );
 
@@ -355,6 +356,8 @@ test('reports required state on fields', async () => {
       const { meta: arrReq } = useField('nested.arr.0.req');
       const { meta: arrNreq } = useField('nested.arr.1.nreq');
       const { meta: nonNested } = useField('[not.nested.req]');
+      const { meta: tupleReq } = useField('tuple.0');
+      const { meta: tupleNreq } = useField('tuple.1');
 
       metaSpy({
         name: name.required,
@@ -365,6 +368,8 @@ test('reports required state on fields', async () => {
         arrReq: arrReq.required,
         arrNreq: arrNreq.required,
         nonNested: nonNested.required,
+        tupleReq: tupleReq.required,
+        tupleNreq: tupleNreq.required,
       });
 
       return {
@@ -385,6 +390,8 @@ test('reports required state on fields', async () => {
       arrReq: true,
       arrNreq: false,
       nonNested: true,
+      tupleReq: true,
+      tupleNreq: false,
     }),
   );
 });
