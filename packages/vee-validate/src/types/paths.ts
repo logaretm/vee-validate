@@ -72,37 +72,64 @@ type AnyIsEqual<T1, T2> = T1 extends T2 ? (IsEqual<T1, T2> extends true ? true :
 type TupleKeys<T extends ReadonlyArray<any>> = Exclude<keyof T, keyof any[]>;
 
 /**
- * Helper type for recursively constructing paths through a type.
- * This actually constructs the strings and recurses into nested
- * object types.
+ * Helper type to construct tuple key paths and recurse into its elements.
  *
  * See {@link Path}
  */
-type PathImpl<K extends string | number, V, TraversedTypes> = V extends Primitive | BrowserNativeObject
-  ? `${K}`
-  : // Check so that we don't recurse into the same type
-    // by ensuring that the types are mutually assignable
-    // mutually required to avoid false positives of subtypes
-    true extends AnyIsEqual<TraversedTypes, V>
-    ? `${K}`
-    : `${K}` | `${K}.${PathInternal<V, TraversedTypes | V>}`;
+type PathInternalTuple<TValue extends ReadonlyArray<any>, TraversedTypes> = {
+  [Key in TupleKeys<TValue> & string]: `[${Key}]` | `[${Key}]${PathInternal<TValue[Key], TraversedTypes, false>}`;
+}[TupleKeys<TValue> & string];
+
+/**
+ * Helper type to construct array key paths and recurse into its elements.
+ *
+ * See {@link Path}
+ */
+type PathInternalArray<TValue extends ReadonlyArray<any>, TraversedTypes> =
+  | `[${ArrayKey}]`
+  | `[${ArrayKey}]${PathInternal<TValue[ArrayKey], TraversedTypes, false>}`;
+
+/**
+ * Helper type to construct object key paths and recurse into its nested values.
+ *
+ * See {@link Path}
+ */
+type PathInternalObject<TValue, TraversedTypes, First extends boolean> = {
+  [Key in keyof TValue & string]: First extends true
+    ? `${Key}` | `${Key}${PathInternal<TValue[Key], TraversedTypes, false>}`
+    : `.${Key}` | `.${Key}${PathInternal<TValue[Key], TraversedTypes, false>}`;
+}[keyof TValue & string];
+
+/**
+ * Helper type to construct nested any object key paths.
+ *
+ * See {@link Path}
+ */
+type PathInternalAny = `.${string}` | `[${string}]` | `[${string}].${string}`;
 
 /**
  * Helper type for recursively constructing paths through a type.
- * This obscures the internal type param TraversedTypes from ed contract.
+ *
+ * This obscures internal type params TraversedTypes and First from ed contract.
  *
  * See {@link Path}
  */
-type PathInternal<T, TraversedTypes = T> =
-  T extends ReadonlyArray<infer V>
-    ? IsTuple<T> extends true
-      ? {
-          [K in TupleKeys<T>]-?: PathImpl<K & string, T[K], TraversedTypes>;
-        }[TupleKeys<T>]
-      : PathImpl<ArrayKey, V, TraversedTypes>
-    : {
-        [K in keyof T]-?: PathImpl<K & string, T[K], TraversedTypes>;
-      }[keyof T];
+type PathInternal<TValue, TraversedTypes, First extends boolean> = TValue extends Primitive | BrowserNativeObject
+  ? IsAny<TValue> extends true
+    ? PathInternalAny
+    : never
+  : TValue extends ReadonlyArray<any>
+    ? // Check so that we don't recurse into the same type by ensuring that the
+      // types are mutually assignable mutually required to avoid false
+      // positives of subtypes
+      true extends AnyIsEqual<TraversedTypes, TValue>
+      ? never
+      : IsTuple<TValue> extends true
+        ? PathInternalTuple<TValue, TraversedTypes | TValue>
+        : PathInternalArray<TValue, TraversedTypes | TValue>
+    : TValue extends Record<string, any>
+      ? PathInternalObject<TValue, TraversedTypes | TValue, First>
+      : '';
 
 /**
  * Helper type for recursively constructing paths through a type.
@@ -200,4 +227,4 @@ export type PathValue<T, P extends Path<T> | ArrayPath<T>> = T extends any
  */
 // We want to explode the union type and process each individually
 // so assignable types don't leak onto the stack from the base.
-export type Path<T> = T extends any ? PathInternal<T> : never;
+export type Path<T> = T extends any ? PathInternal<T, T, true> & string : never;
