@@ -96,7 +96,7 @@ type PathInternalArray<TValue extends ReadonlyArray<any>, TraversedTypes> =
  */
 type PathInternalObject<TValue, TraversedTypes, First extends boolean> = {
   [Key in keyof TValue & string]: First extends true
-    ? '' | `${Key}` | `${Key}${PathInternal<TValue[Key], TraversedTypes, false>}`
+    ? `${Key}` | `${Key}${PathInternal<TValue[Key], TraversedTypes, false>}`
     : `.${Key}` | `.${Key}${PathInternal<TValue[Key], TraversedTypes, false>}`;
 }[keyof TValue & string];
 
@@ -105,11 +105,7 @@ type PathInternalObject<TValue, TraversedTypes, First extends boolean> = {
  *
  * See {@link Path}
  */
-type PathInternalAny<First extends boolean> =
-  | (First extends true ? '' : never)
-  | `.${string}`
-  | `[${string}]`
-  | `[${string}].${string}`;
+type PathInternalAny = `.${string}` | `[${string}]` | `[${string}].${string}`;
 
 /**
  * Helper type for recursively constructing paths through a type.
@@ -120,7 +116,7 @@ type PathInternalAny<First extends boolean> =
  */
 type PathInternal<TValue, TraversedTypes, First extends boolean> = TValue extends Primitive | BrowserNativeObject
   ? IsAny<TValue> extends true
-    ? PathInternalAny<First>
+    ? PathInternalAny
     : never
   : TValue extends ReadonlyArray<any>
     ? // Check so that we don't recurse into the same type by ensuring that the
