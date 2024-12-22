@@ -40,8 +40,7 @@
   ],
   "dependencies": {
     "type-fest": "^4.8.3",
-    "vee-validate": "workspace:*",
-    "yup": "^1.3.2"
+    "vee-validate": "workspace:*"
   },
   "peerDependencies": {
     "yup": "^1.3.2"

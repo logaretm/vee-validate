@@ -40,7 +40,9 @@
   ],
   "dependencies": {
     "type-fest": "^4.8.3",
-    "vee-validate": "workspace:*",
-    "zod": "^3.22.4"
+    "vee-validate": "workspace:*"
+  },
+  "peerDependencies": {
+    "zod": "^3.24.0"
   }
 }

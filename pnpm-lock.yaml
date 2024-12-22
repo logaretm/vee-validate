@@ -324,8 +324,8 @@ importers:
         specifier: workspace:*
         version: link:../vee-validate
       zod:
-        specifier: ^3.22.4
-        version: 3.22.4
+        specifier: ^3.24.0
+        version: 3.24.1
 
 packages:
 
@@ -9083,6 +9083,9 @@ packages:
 
   zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
+
+  zod@3.24.1:
+    resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -19709,5 +19712,7 @@ snapshots:
       readable-stream: 4.5.2
 
   zod@3.22.4: {}
+
+  zod@3.24.1: {}
 
   zwitch@2.0.4: {}
