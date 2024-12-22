@@ -1,7 +1,7 @@
 import { App, ComponentInternalInstance, getCurrentInstance, nextTick, onUnmounted, toValue, unref } from 'vue';
 import type { InspectorNodeTag, CustomInspectorState, CustomInspectorNode } from '@vue/devtools-kit';
 import { PathState, PrivateFieldContext, PrivateFormContext } from './types';
-import { keysOf, setInPath, throttle } from './utils';
+import { isClient, keysOf, setInPath, throttle } from './utils';
 import { isObject } from '../../shared';
 
 const DEVTOOLS_FORMS: Record<string, PrivateFormContext & { _vm?: ComponentInternalInstance | null }> = {};
@@ -34,6 +34,10 @@ let API: any;
 
 async function installDevtoolsPlugin(app: App) {
   if (__DEV__) {
+    if (!isClient) {
+      return;
+    }
+
     const devtools = await import('@vue/devtools-api');
     devtools.setupDevtoolsPlugin(
       {
