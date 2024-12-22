@@ -182,8 +182,8 @@ export interface FormState<TValues> {
   submitCount: number;
 }
 
-export type FormErrors<TValues extends GenericObject> = Partial<Record<Path<TValues>, string | undefined>>;
-export type FormErrorBag<TValues extends GenericObject> = Partial<Record<Path<TValues>, string[]>>;
+export type FormErrors<TValues extends GenericObject> = Partial<Record<Path<TValues> | '', string | undefined>>;
+export type FormErrorBag<TValues extends GenericObject> = Partial<Record<Path<TValues> | '', string[]>>;
 
 export interface ResetFormOpts {
   force: boolean;
