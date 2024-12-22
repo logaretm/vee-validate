@@ -1,5 +1,18 @@
 # @vee-validate/valibot
 
+## 4.15.0
+
+### Minor Changes
+
+- db26a74: chore: bump schema dependencies and move them to peer deps closes #4951
+
+### Patch Changes
+
+- f92455a: chore: upgrade valibot to beta.7
+- Updated dependencies [30281f5]
+- Updated dependencies [ec121b1]
+  - vee-validate@4.15.0
+
 ## 4.14.7
 
 ### Patch Changes

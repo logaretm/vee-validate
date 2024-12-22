@@ -1,6 +1,6 @@
 {
   "name": "@vee-validate/valibot",
-  "version": "4.14.7",
+  "version": "4.15.0",
   "description": "vee-validate integration with valibot schema validation",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",

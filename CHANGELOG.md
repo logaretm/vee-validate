@@ -1,5 +1,12 @@
 # Change Log
 
+## 4.15.0
+
+### Patch Changes
+
+- 30281f5: fix: lazy load the devtools dep to force it out of production bundle
+- ec121b1: fix: skip loading devtools if in SSR
+
 ## 4.14.7
 
 ### Patch Changes
