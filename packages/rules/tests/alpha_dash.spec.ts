@@ -28,11 +28,11 @@ test('validates the string contains alphabetic chars from other locales', () => 
   expect(validate('سلا-م_', [undefined])).toBe(true);
   expect(validate('Привет_-', [undefined])).toBe(true);
 
-  // specfic locale
+  // specific locale
   expect(validate('peace', { locale: 'ar' })).toBe(false);
   expect(validate('peace', { locale: 'ru' })).toBe(false);
 
-  // non-existant locale defaults to english validation.
+  // non-existent locale defaults to english validation.
   expect(validate('peace', { locale: 'blah' })).toBe(true);
   expect(validate('اين اشيائي', { locale: 'blah' })).toBe(false); // non english characters.
 });
