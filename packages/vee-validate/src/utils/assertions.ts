@@ -118,7 +118,7 @@ export function isEqual(a: any, b: any) {
     if (a.constructor !== b.constructor) return false;
 
     // eslint-disable-next-line no-var
-    var length, i, keys;
+    var length, i, keys, key;
     if (Array.isArray(a)) {
       length = a.length;
 
@@ -164,17 +164,19 @@ export function isEqual(a: any, b: any) {
     if (a.toString !== Object.prototype.toString) return a.toString() === b.toString();
 
     keys = Object.keys(a);
-    length = keys.length - countUndefinedValues(a, keys);
+    length = keys.length;
 
-    if (length !== Object.keys(b).length - countUndefinedValues(b, Object.keys(b))) return false;
+    if (keys.length - countUndefinedValues(a, keys) !== Object.keys(b).length - countUndefinedValues(b, Object.keys(b)))
+      return false;
 
     for (i = length; i-- !== 0; ) {
+      key = keys[i];
+      if (a[key] === undefined) continue;
       if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;
     }
 
     for (i = length; i-- !== 0; ) {
-      // eslint-disable-next-line no-var
-      var key = keys[i];
+      key = keys[i];
 
       if (!isEqual(a[key], b[key])) return false;
     }
