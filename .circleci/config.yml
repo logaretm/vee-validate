@@ -18,7 +18,7 @@ jobs:
           name: Use latest Corepack
           command: |
             echo "Before: corepack version => $(corepack --version || echo 'not installed')"
-            npm install -g corepack@latest
+            sudo npm install -g corepack@latest
             echo "After : corepack version => $(corepack --version)"
       - run:
           name: Install pnpm package manager
