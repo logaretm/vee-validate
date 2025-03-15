@@ -118,7 +118,7 @@ export function isEqual(a: any, b: any) {
     if (a.constructor !== b.constructor) return false;
 
     // eslint-disable-next-line no-var
-    var length, i, keys, key;
+    var length, i, keys;
     if (Array.isArray(a)) {
       length = a.length;
 
@@ -163,21 +163,19 @@ export function isEqual(a: any, b: any) {
     if (a.valueOf !== Object.prototype.valueOf) return a.valueOf() === b.valueOf();
     if (a.toString !== Object.prototype.toString) return a.toString() === b.toString();
 
+    // Remove undefined values before object comparison
+    a = normalizeObject(a);
+    b = normalizeObject(b);
+
     keys = Object.keys(a);
     length = keys.length;
+    if (length !== Object.keys(b).length) return false;
 
-    if (keys.length - countUndefinedValues(a, keys) !== Object.keys(b).length - countUndefinedValues(b, Object.keys(b)))
-      return false;
-
-    for (i = length; i-- !== 0; ) {
-      key = keys[i];
-      if (a[key] === undefined) continue;
-      if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;
-    }
+    for (i = length; i-- !== 0; ) if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;
 
     for (i = length; i-- !== 0; ) {
-      key = keys[i];
-
+      // eslint-disable-next-line no-var
+      var key = keys[i];
       if (!isEqual(a[key], b[key])) return false;
     }
 
@@ -185,19 +183,16 @@ export function isEqual(a: any, b: any) {
   }
 
   // true if both NaN, false otherwise
-
   return a !== a && b !== b;
 }
 
-function countUndefinedValues(a: any, keys: string[]) {
-  let result = 0;
-  for (let i = keys.length; i-- !== 0; ) {
-    // eslint-disable-next-line no-var
-    var key = keys[i];
-
-    if (a[key] === undefined) result++;
-  }
-  return result;
+/**
+ * Returns a new object where keys with an `undefined` value are removed.
+ *
+ * @param a object to normalize
+ */
+function normalizeObject(a: Record<PropertyKey, unknown>) {
+  return Object.fromEntries(Object.entries(a).filter(([, value]) => value !== undefined));
 }
 
 export function isFile(a: unknown): a is File {
