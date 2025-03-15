@@ -15,10 +15,17 @@ jobs:
           keys:
             - pnpm-packages-{{ checksum "pnpm-lock.yaml" }}
       - run:
+          name: Use latest Corepack
+          command: |
+            echo "Before: corepack version => $(corepack --version || echo 'not installed')"
+            npm install -g corepack@latest
+            echo "After : corepack version => $(corepack --version)"
+      - run:
           name: Install pnpm package manager
           command: |
             corepack enable --install-directory ~/bin
             corepack prepare pnpm@latest-9 --activate
+            pnpm --version
             pnpm config set store-dir .pnpm-store
       - run:
           name: Install dependencies
