@@ -1,4 +1,14 @@
-import { AnyObjectSchema, ArraySchema, InferType, Schema, TupleSchema, ValidateOptions, ValidationError } from 'yup';
+import {
+  AnyObjectSchema,
+  ArraySchema,
+  InferType,
+  reach,
+  Schema,
+  SchemaDescription,
+  TupleSchema,
+  ValidateOptions,
+  ValidationError,
+} from 'yup';
 import {
   TypedSchema,
   TypedSchemaError,
@@ -66,10 +76,25 @@ export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchem
         return values;
       }
     },
-    describe(path) {
+    describe(path, values) {
       try {
         if (!path) {
+          if (values && yupSchema.conditions?.length > 0) {
+            return getDescriptionFromYupDescription(yupSchema.describe({ value: values }));
+          }
           return getDescriptionFromYupSpec(yupSchema.spec);
+        }
+
+        const pathSchema = reach(yupSchema, path);
+
+        if (pathSchema) {
+          if (isSchema(pathSchema)) {
+            if (pathSchema.conditions?.length > 0) {
+              const description = pathSchema.describe({ value: values });
+              return getDescriptionFromYupDescription(description);
+            }
+            return getDescriptionFromYupSpec(pathSchema.spec);
+          }
         }
 
         const description = getSpecForPath(path, yupSchema);
@@ -101,6 +126,13 @@ export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchem
 function getDescriptionFromYupSpec(spec: AnyObjectSchema['spec']): TypedSchemaPathDescription {
   return {
     required: !spec.optional,
+    exists: true,
+  };
+}
+
+function getDescriptionFromYupDescription(description: SchemaDescription): TypedSchemaPathDescription {
+  return {
+    required: !description.optional,
     exists: true,
   };
 }
@@ -147,4 +179,8 @@ function isObjectSchema(schema: unknown): schema is AnyObjectSchema {
 
 function isArraySchema(schema: unknown): schema is ArraySchema<any, any> {
   return isObject(schema) && schema.type === 'array';
+}
+
+function isSchema(schema: unknown): schema is Schema<never, never, never, never> {
+  return isObject(schema) && !!schema.type && schema.type !== 'lazy';
 }

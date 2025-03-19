@@ -31,7 +31,7 @@ export interface TypedSchema<TInput = any, TOutput = TInput> {
   __type: 'VVTypedSchema';
   parse(values: TInput, context?: TypedSchemaContext): Promise<{ value?: TOutput; errors: TypedSchemaError[] }>;
   cast?(values: Partial<TInput>): TInput;
-  describe?(path?: Path<TInput>): Partial<TypedSchemaPathDescription>;
+  describe?(path?: Path<TInput>, values?: TInput): Partial<TypedSchemaPathDescription>;
 }
 
 export type InferOutput<TSchema extends TypedSchema> =
