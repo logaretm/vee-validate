@@ -25,6 +25,8 @@ import {
   LooseObjectSchema,
   getDotPath,
   Config,
+  IntersectSchema,
+  IntersectIssue,
 } from 'valibot';
 import { isIndex, isObject, merge, normalizeFormPath } from '../../shared';
 
@@ -134,6 +136,10 @@ function getSchemaForPath(
   path: string,
   schema: BaseSchema<unknown, unknown, BaseIssue<unknown>> | BaseSchemaAsync<unknown, unknown, BaseIssue<unknown>>,
 ): BaseSchema<unknown, unknown, BaseIssue<unknown>> | null {
+  if (isIntersectSchema(schema)) {
+    return schema.options.map(o => getSchemaForPath(path, o)).find(Boolean) ?? null;
+  }
+
   if (!isObjectSchema(schema)) {
     return null;
   }
@@ -149,6 +155,10 @@ function getSchemaForPath(
     const p = paths[i];
     if (!p || !currentSchema) {
       return currentSchema;
+    }
+
+    if (isIntersectSchema(currentSchema)) {
+      currentSchema = currentSchema.options.find(o => isObjectSchema(o) && o.entries[p]) ?? currentSchema;
     }
 
     if (isObjectSchema(currentSchema)) {
@@ -188,4 +198,13 @@ function isObjectSchema(
     >
   | StrictObjectSchema<ObjectEntries, ErrorMessage<StrictObjectIssue> | undefined> {
   return isObject(schema) && 'entries' in schema;
+}
+
+function isIntersectSchema(
+  schema: BaseSchema<unknown, unknown, BaseIssue<unknown>> | BaseSchemaAsync<unknown, unknown, BaseIssue<unknown>>,
+): schema is IntersectSchema<
+  BaseSchema<unknown, unknown, BaseIssue<unknown>>[],
+  ErrorMessage<IntersectIssue> | undefined
+> {
+  return schema.type === 'intersect';
 }
