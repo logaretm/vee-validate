@@ -568,6 +568,94 @@ test('reports required state for field-level schemas without a form context', as
   );
 });
 
+test('reports required state for schema intersections', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema(
+        v.intersect([
+          v.object({
+            req: v.string(),
+          }),
+          v.object({
+            nreq: v.optional(v.string()),
+          }),
+        ]),
+      );
+
+      useForm({
+        validationSchema: schema,
+      });
+
+      const { meta: req } = useField('req');
+      const { meta: nreq } = useField('nreq');
+
+      metaSpy({
+        req: req.required,
+        nreq: nreq.required,
+      });
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      req: true,
+      nreq: false,
+    }),
+  );
+});
+
+test('reports required state for schema intersections with nested fields', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const schema = toTypedSchema(
+        v.object({
+          fields: v.intersect([
+            v.object({
+              req: v.string(),
+            }),
+            v.object({
+              nreq: v.optional(v.string()),
+            }),
+          ]),
+        }),
+      );
+
+      useForm({
+        validationSchema: schema,
+      });
+
+      const { meta: req } = useField('fields.req');
+      const { meta: nreq } = useField('fields.nreq');
+
+      metaSpy({
+        req: req.required,
+        nreq: nreq.required,
+      });
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      req: true,
+      nreq: false,
+    }),
+  );
+});
+
 test('allows passing valibot config', async () => {
   let errors!: Ref<string[]>;
   const wrapper = mountWithHoc({
