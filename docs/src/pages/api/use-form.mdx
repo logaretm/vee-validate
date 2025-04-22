@@ -335,11 +335,12 @@ If you try to set a value for a field that doesn't exist, it will be added to th
 
 <CodeTitle level="4">
 
-`setValues: (fields: Record<string, any>) => void`
+`setValues(fields: PartialDeep<TValues>, shouldValidate?: boolean): void;`
 
 </CodeTitle>
 
 Sets all fields values, will trigger validation for the changed fields.
+In order to skip the validation step - you need to set `shouldValidate: false` explicitly
 
 ```js
 const { setValues } = useForm();
