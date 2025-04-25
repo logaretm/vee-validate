@@ -656,6 +656,184 @@ test('reports required state for schema intersections with nested fields', async
   );
 });
 
+test('reports required state for variant schemas', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const ScheduledDateSchema = v.object({
+        dateType: v.literal('schedule'),
+        date: v.pipe(v.string(), v.isoDate()),
+      });
+
+      const ImmediateDateSchema = v.object({
+        dateType: v.literal('immediate'),
+      });
+
+      const PaymentDetailsFormSchema = v.variant('dateType', [ImmediateDateSchema, ScheduledDateSchema]);
+
+      const schema = toTypedSchema(PaymentDetailsFormSchema);
+
+      useForm({
+        validationSchema: schema,
+      });
+
+      const { meta: dateType } = useField('dateType');
+      const { meta: date } = useField('date');
+
+      metaSpy({
+        dateType: dateType.required,
+        date: date.required,
+      });
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      dateType: true,
+      date: true,
+    }),
+  );
+});
+
+test('reports required state for variant schemas with nested fields', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const ComplexVariantSchema = v.variant('kind', [
+        v.variant('type', [
+          v.object({
+            kind: v.literal('fruit'),
+            type: v.literal('apple'),
+            item: v.object({
+              name: v.string(),
+              price: v.number(),
+            }),
+          }),
+          v.object({
+            kind: v.literal('fruit'),
+            type: v.literal('banana'),
+            item: v.object({
+              name: v.string(),
+              price: v.number(),
+            }),
+          }),
+        ]),
+        v.variant('type', [
+          v.object({
+            kind: v.literal('vegetable'),
+            type: v.literal('carrot'),
+            item: v.object({
+              name: v.string(),
+              price: v.number(),
+            }),
+          }),
+          v.object({
+            kind: v.literal('vegetable'),
+            type: v.literal('tomato'),
+            item: v.object({
+              name: v.string(),
+              price: v.number(),
+            }),
+          }),
+        ]),
+      ]);
+
+      const schema = toTypedSchema(ComplexVariantSchema);
+
+      useForm({
+        validationSchema: schema,
+      });
+
+      const { meta: kind } = useField('kind');
+      const { meta: type } = useField('type');
+      const { meta: item } = useField('item');
+
+      metaSpy({
+        kind: kind.required,
+        type: type.required,
+        item: item.required,
+      });
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      kind: true,
+      type: true,
+      item: true,
+    }),
+  );
+});
+
+test('reports required state for variant schemas when combined with intersections', async () => {
+  const metaSpy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const ScheduledDateSchema = v.object({
+        dateType: v.literal('schedule'),
+        date: v.pipe(v.string(), v.isoDate()),
+      });
+
+      const ImmediateDateSchema = v.object({
+        dateType: v.literal('immediate'),
+      });
+
+      const PaymentDetailsFormSchema = v.intersect([
+        v.variant('dateType', [ImmediateDateSchema, ScheduledDateSchema]),
+        v.object({
+          amount: v.pipe(v.number(), v.minValue(1)),
+          note: v.optional(v.string()),
+        }),
+      ]);
+
+      const schema = toTypedSchema(PaymentDetailsFormSchema);
+
+      useForm({
+        validationSchema: schema,
+      });
+
+      const { meta: dateType } = useField('dateType');
+      const { meta: date } = useField('date');
+      const { meta: amount } = useField('amount');
+      const { meta: note } = useField('note');
+
+      metaSpy({
+        dateType: dateType.required,
+        date: date.required,
+        amount: amount.required,
+        note: note.required,
+      });
+
+      return {
+        schema,
+      };
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  await expect(metaSpy).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      dateType: true,
+      date: true,
+      amount: true,
+      note: false,
+    }),
+  );
+});
+
 test('allows passing valibot config', async () => {
   let errors!: Ref<string[]>;
   const wrapper = mountWithHoc({
