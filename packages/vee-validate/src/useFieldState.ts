@@ -1,5 +1,5 @@
-import { computed, isRef, reactive, ref, Ref, unref, watch, MaybeRef, MaybeRefOrGetter, toValue } from 'vue';
-import { FieldMeta, FieldState, FieldValidator, InputType, PrivateFormContext, PathState, TypedSchema } from './types';
+import { computed, isRef, reactive, ref, Ref, unref, watch, MaybeRef, MaybeRefOrGetter } from 'vue';
+import { FieldMeta, FieldState, FieldValidator, InputType, PrivateFormContext, PathState } from './types';
 import { getFromPath, isEqual, normalizeErrorItem } from './utils';
 
 export interface StateSetterInit<TValue = unknown> extends FieldState<TValue> {
@@ -24,7 +24,6 @@ export interface StateInit<TInput = unknown, TOutput = TInput> {
   label?: MaybeRefOrGetter<string | undefined>;
   type?: InputType;
   validate?: FieldValidator<TOutput>;
-  schema?: MaybeRefOrGetter<TypedSchema<TInput> | undefined>;
 }
 
 let ID_COUNTER = 0;
@@ -38,7 +37,7 @@ export function useFieldState<TValue = unknown>(
   if (!init.form) {
     const { errors, setErrors } = createFieldErrors();
     const id = ID_COUNTER >= Number.MAX_SAFE_INTEGER ? 0 : ++ID_COUNTER;
-    const meta = createFieldMeta(value, initialValue, errors, init.schema);
+    const meta = createFieldMeta(value, initialValue, errors);
 
     function setState(state: Partial<StateSetterInit<TValue>>) {
       if ('value' in state) {
@@ -75,7 +74,6 @@ export function useFieldState<TValue = unknown>(
     label: init.label,
     type: init.type,
     validate: init.validate,
-    schema: init.schema,
   });
 
   const errors = computed(() => state.errors);
@@ -209,15 +207,11 @@ function createFieldMeta<TValue>(
   currentValue: Ref<TValue>,
   initialValue: MaybeRef<TValue> | undefined,
   errors: Ref<string[]>,
-  schema?: MaybeRefOrGetter<TypedSchema<TValue> | undefined>,
 ) {
-  const isRequired = computed(() => toValue(schema)?.describe?.().required ?? false);
-
   const meta = reactive({
     touched: false,
     pending: false,
     valid: true,
-    required: isRequired,
     validated: !!unref(errors).length,
     initialValue: computed(() => unref(initialValue) as TValue | undefined),
     dirty: computed(() => {

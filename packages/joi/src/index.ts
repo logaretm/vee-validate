@@ -1,7 +1,7 @@
-import type { TypedSchema, TypedSchemaError } from 'vee-validate';
 import { AsyncValidationOptions, Schema, ValidationError } from 'joi';
-import { merge, normalizeFormPath } from '../../shared';
+import { merge } from '../../shared';
 import { PartialDeep } from 'type-fest';
+import { StandardSchemaV1 } from '@standard-schema/spec';
 
 /**
  * Gets the type of data from the schema
@@ -19,64 +19,42 @@ export function toTypedSchema<
   TSchema extends Schema,
   TOutput = DataTypeOf<TSchema>,
   TInput = PartialDeep<DataTypeOf<TSchema>>,
->(joiSchema: TSchema, opts?: AsyncValidationOptions): TypedSchema<TInput, TOutput> {
+>(joiSchema: TSchema, opts?: AsyncValidationOptions): StandardSchemaV1<TInput, TOutput> {
   const validationOptions: AsyncValidationOptions = merge({ abortEarly: false }, opts || {});
 
-  const schema: TypedSchema = {
-    __type: 'VVTypedSchema',
-    async parse(value) {
-      try {
-        const result = await joiSchema.validateAsync(value, validationOptions);
+  const schema: StandardSchemaV1<TInput, TOutput> = {
+    '~standard': {
+      vendor: 'vee-validate/joi',
+      version: 1,
+      async validate(value) {
+        try {
+          const result = await joiSchema.validateAsync(value, validationOptions);
 
-        return {
-          value: result,
-          errors: [],
-        };
-      } catch (err) {
-        if (!(err instanceof ValidationError)) {
-          throw err;
+          return {
+            value: result,
+            issues: undefined,
+          };
+        } catch (err) {
+          if (!(err instanceof ValidationError)) {
+            throw err;
+          }
+
+          return {
+            issues: processIssues(err),
+          };
         }
-
-        const error = err as ValidationError;
-
-        return {
-          errors: processIssues(error),
-          rawError: err,
-        };
-      }
-    },
-    cast(values) {
-      // Joi doesn't allow us to cast without validating
-      const result = joiSchema.validate(values);
-
-      if (result.error) {
-        return values;
-      }
-
-      return result.value;
+      },
     },
   };
 
   return schema;
 }
 
-function processIssues(error: ValidationError): TypedSchemaError[] {
-  const errors: Record<string, TypedSchemaError> = {};
-
-  error.details.forEach(detail => {
-    const path = normalizeFormPath(detail.path.join('.'));
-
-    if (errors[path]) {
-      errors[path].errors.push(detail.message);
-
-      return;
-    }
-
-    errors[path] = {
-      path,
-      errors: [detail.message],
+function processIssues(error: ValidationError): StandardSchemaV1.Issue[] {
+  return error.details.map<StandardSchemaV1.Issue>(detail => {
+    return {
+      path: detail.path,
+      message: detail.message,
     };
   });
-
-  return Object.values(errors);
 }

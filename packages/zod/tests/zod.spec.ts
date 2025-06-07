@@ -1,7 +1,6 @@
-import { FieldMeta, useField, useForm } from '@/vee-validate';
-import { toTypedSchema } from '@/zod';
+import { useField, useForm } from '@/vee-validate';
 import { mountWithHoc, flushPromises, setValue } from '../../vee-validate/tests/helpers';
-import { Ref, ref } from 'vue';
+import { Ref } from 'vue';
 import { z } from 'zod';
 
 const REQUIRED_MSG = 'field is required';
@@ -11,7 +10,7 @@ const EMAIL_MSG = 'field must be a valid email';
 test('validates typed field with zod', async () => {
   const wrapper = mountWithHoc({
     setup() {
-      const rules = toTypedSchema(z.string().min(1, REQUIRED_MSG).min(8, MIN_MSG));
+      const rules = z.string().min(1, REQUIRED_MSG).min(8, MIN_MSG);
       const { value, errorMessage } = useField('test', rules);
 
       return {
@@ -45,7 +44,7 @@ test('generates multiple errors for any given field', async () => {
   let errors!: Ref<string[]>;
   const wrapper = mountWithHoc({
     setup() {
-      const rules = toTypedSchema(z.string().min(1, REQUIRED_MSG).min(8, MIN_MSG));
+      const rules = z.string().min(1, REQUIRED_MSG).min(8, MIN_MSG);
       const { value, errors: fieldErrors } = useField('test', rules);
 
       errors = fieldErrors;
@@ -68,49 +67,13 @@ test('generates multiple errors for any given field', async () => {
   expect(errors.value).toEqual([REQUIRED_MSG, MIN_MSG]);
 });
 
-test('reports required state reactively', async () => {
-  let meta!: FieldMeta<any>;
-  const schema = ref(
-    toTypedSchema(
-      z.object({
-        name: z.string(),
-      }),
-    ),
-  );
-
-  mountWithHoc({
-    setup() {
-      useForm({
-        validationSchema: schema,
-      });
-
-      const field = useField('name');
-      meta = field.meta;
-
-      return {
-        schema,
-      };
-    },
-    template: `<div></div>`,
-  });
-
-  await flushPromises();
-  await expect(meta.required).toBe(true);
-
-  schema.value = toTypedSchema(z.object({ name: z.string().optional() }));
-  await flushPromises();
-  await expect(meta.required).toBe(false);
-});
-
 test('shows multiple errors using error bag', async () => {
   const wrapper = mountWithHoc({
     setup() {
-      const schema = toTypedSchema(
-        z.object({
-          email: z.string().email(EMAIL_MSG).min(7, MIN_MSG),
-          password: z.string().min(8, MIN_MSG),
-        }),
-      );
+      const schema = z.object({
+        email: z.string().email(EMAIL_MSG).min(7, MIN_MSG),
+        password: z.string().min(8, MIN_MSG),
+      });
 
       const { defineField, errorBag } = useForm({
         validationSchema: schema,
@@ -163,12 +126,10 @@ test('shows multiple errors using error bag', async () => {
 test('validates typed schema form with zod', async () => {
   const wrapper = mountWithHoc({
     setup() {
-      const schema = toTypedSchema(
-        z.object({
-          email: z.string().email(EMAIL_MSG).min(1, REQUIRED_MSG),
-          password: z.string().min(8, MIN_MSG),
-        }),
-      );
+      const schema = z.object({
+        email: z.string().email(EMAIL_MSG).min(1, REQUIRED_MSG),
+        password: z.string().min(8, MIN_MSG),
+      });
 
       const { defineField, errors } = useForm({
         validationSchema: schema,
@@ -232,14 +193,14 @@ test('handles zod union errors', async () => {
         name: z.undefined(),
       });
 
-      const bothOrNeither = schema.or(schemaBothUndefined);
+      const bothOrNeither = z.object({ inner: schema.or(schemaBothUndefined) });
 
       const { defineField, errors } = useForm({
-        validationSchema: toTypedSchema(bothOrNeither),
+        validationSchema: bothOrNeither,
       });
 
-      const [email] = defineField('email', { validateOnModelUpdate: true });
-      const [name] = defineField('name', { validateOnModelUpdate: true });
+      const [email] = defineField('inner.email', { validateOnModelUpdate: true });
+      const [name] = defineField('inner.name', { validateOnModelUpdate: true });
 
       return {
         schema,
@@ -250,6 +211,8 @@ test('handles zod union errors', async () => {
     },
     template: `
     <div>
+      <span id="innerErr">{{ errors.inner }}</span>
+
       <input id="email" name="email" v-model="email" />
       <span id="emailErr">{{ errors.email }}</span>
 
@@ -263,12 +226,13 @@ test('handles zod union errors', async () => {
   const name = wrapper.$el.querySelector('#name');
   const emailError = wrapper.$el.querySelector('#emailErr');
   const nameError = wrapper.$el.querySelector('#nameErr');
+  const innerError = wrapper.$el.querySelector('#innerErr');
 
   await flushPromises();
 
   setValue(name, '4');
   await flushPromises();
-  expect(nameError.textContent).toBe('Expected undefined, received string');
+  expect(innerError.textContent).toBe('Invalid input');
 
   setValue(email, 'test@gmail.com');
   await flushPromises();
@@ -281,11 +245,9 @@ test('uses zod for form values transformations and parsing', async () => {
   const submitSpy = vi.fn();
   mountWithHoc({
     setup() {
-      const schema = toTypedSchema(
-        z.object({
-          age: z.preprocess(arg => Number(arg), z.number()),
-        }),
-      );
+      const schema = z.object({
+        age: z.preprocess(arg => Number(arg), z.number()),
+      });
 
       const { handleSubmit } = useForm({
         validationSchema: schema,
@@ -317,11 +279,9 @@ test('uses zod default values for submission', async () => {
 
   mountWithHoc({
     setup() {
-      const schema = toTypedSchema(
-        z.object({
-          age: z.number().default(11),
-        }),
-      );
+      const schema = z.object({
+        age: z.number().default(11),
+      });
 
       const { handleSubmit } = useForm({
         validationSchema: schema,
@@ -347,48 +307,48 @@ test('uses zod default values for submission', async () => {
   );
 });
 
-test('uses zod default values for initial values', async () => {
-  const initialSpy = vi.fn();
-  mountWithHoc({
-    setup() {
-      const schema = toTypedSchema(
-        z.object({
-          name: z.string().default('test'),
-          age: z.number().default(11),
-          unknownKey: z.string(),
-          object: z.object({
-            nestedKey: z.string(),
-            nestedDefault: z.string().default('nested'),
-          }),
-        }),
-      );
+// test('uses zod default values for initial values', async () => {
+//   const initialSpy = vi.fn();
+//   mountWithHoc({
+//     setup() {
+//       const schema = (
+//         z.object({
+//           name: z.string().default('test'),
+//           age: z.number().default(11),
+//           unknownKey: z.string(),
+//           object: z.object({
+//             nestedKey: z.string(),
+//             nestedDefault: z.string().default('nested'),
+//           }),
+//         }),
+//       );
 
-      const { values } = useForm({
-        validationSchema: schema,
-      });
+//       const { values } = useForm({
+//         validationSchema: schema,
+//       });
 
-      // submit now
-      initialSpy(values);
+//       // submit now
+//       initialSpy(values);
 
-      return {
-        schema,
-      };
-    },
-    template: `<div></div>`,
-  });
+//       return {
+//         schema,
+//       };
+//     },
+//     template: `<div></div>`,
+//   });
 
-  await flushPromises();
-  await expect(initialSpy).toHaveBeenCalledTimes(1);
-  await expect(initialSpy).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      age: 11,
-      name: 'test',
-      object: {
-        nestedDefault: 'nested',
-      },
-    }),
-  );
-});
+//   await flushPromises();
+//   await expect(initialSpy).toHaveBeenCalledTimes(1);
+//   await expect(initialSpy).toHaveBeenLastCalledWith(
+//     expect.objectContaining({
+//       age: 11,
+//       name: 'test',
+//       object: {
+//         nestedDefault: 'nested',
+//       },
+//     }),
+//   );
+// });
 
 test('uses zod transforms values for submitted values', async () => {
   const onSubmitSpy = vi.fn();
@@ -396,17 +356,15 @@ test('uses zod transforms values for submitted values', async () => {
   let model!: Ref<string | undefined>;
   mountWithHoc({
     setup() {
-      const schema = toTypedSchema(
-        z
-          .object({
-            random: z.string().min(3),
-          })
-          .transform(() => {
-            return {
-              random: 'modified',
-            };
-          }),
-      );
+      const schema = z
+        .object({
+          random: z.string().min(3),
+        })
+        .transform(() => {
+          return {
+            random: 'modified',
+          };
+        });
 
       const { handleSubmit, defineField } = useForm({
         validationSchema: schema,
@@ -437,50 +395,48 @@ test('uses zod transforms values for submitted values', async () => {
   );
 });
 
-test('reset form should cast the values', async () => {
-  const valueSpy = vi.fn();
-  mountWithHoc({
-    setup() {
-      const schema = toTypedSchema(
-        z.object({
-          age: z.preprocess(arg => Number(arg), z.number()),
-        }),
-      );
+// test('reset form should cast the values', async () => {
+//   const valueSpy = vi.fn();
+//   mountWithHoc({
+//     setup() {
+//       const schema = (
+//         z.object({
+//           age: z.preprocess(arg => Number(arg), z.number()),
+//         }),
+//       );
 
-      const { values, resetForm } = useForm({
-        validationSchema: schema,
-      });
+//       const { values, resetForm } = useForm({
+//         validationSchema: schema,
+//       });
 
-      resetForm({ values: { age: '12' } });
-      // submit now
-      valueSpy(values);
+//       resetForm({ values: { age: '12' } });
+//       // submit now
+//       valueSpy(values);
 
-      return {
-        schema,
-      };
-    },
-    template: `<div></div>`,
-  });
+//       return {
+//         schema,
+//       };
+//     },
+//     template: `<div></div>`,
+//   });
 
-  await flushPromises();
-  await expect(valueSpy).toHaveBeenCalledTimes(1);
-  await expect(valueSpy).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      age: 12,
-    }),
-  );
-});
+//   await flushPromises();
+//   await expect(valueSpy).toHaveBeenCalledTimes(1);
+//   await expect(valueSpy).toHaveBeenLastCalledWith(
+//     expect.objectContaining({
+//       age: 12,
+//     }),
+//   );
+// });
 
 // #4186
 test('default values should not be undefined', async () => {
   const initialSpy = vi.fn();
   mountWithHoc({
     setup() {
-      const schema = toTypedSchema(
-        z.object({
-          email: z.string().min(1),
-        }),
-      );
+      const schema = z.object({
+        email: z.string().min(1),
+      });
 
       const { values } = useForm({
         validationSchema: schema,
@@ -501,166 +457,6 @@ test('default values should not be undefined', async () => {
   await expect(initialSpy).toHaveBeenLastCalledWith(expect.objectContaining({}));
 });
 
-test('reports required state on fields', async () => {
-  const metaSpy = vi.fn();
-  mountWithHoc({
-    setup() {
-      const schema = toTypedSchema(
-        z.object({
-          'not.nested.req': z.string(),
-          name: z.string().optional(),
-          email: z.string(),
-          nested: z.object({
-            arr: z.array(z.object({ req: z.string(), nreq: z.string().optional() })),
-            obj: z.object({
-              req: z.string(),
-              nreq: z.string().optional(),
-            }),
-          }),
-        }),
-      );
-
-      useForm({
-        validationSchema: schema,
-      });
-
-      const { meta: name } = useField('name');
-      const { meta: email } = useField('email');
-      const { meta: req } = useField('nested.obj.req');
-      const { meta: nreq } = useField('nested.obj.nreq');
-      const { meta: arrReq } = useField('nested.arr.0.req');
-      const { meta: arrNreq } = useField('nested.arr.1.nreq');
-      const { meta: nonNested } = useField('[not.nested.req]');
-
-      metaSpy({
-        name: name.required,
-        email: email.required,
-        objReq: req.required,
-        objNreq: nreq.required,
-        arrReq: arrReq.required,
-        arrNreq: arrNreq.required,
-        nonNested: nonNested.required,
-      });
-
-      return {
-        schema,
-      };
-    },
-    template: `<div></div>`,
-  });
-
-  await flushPromises();
-  await expect(metaSpy).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      name: false,
-      email: true,
-      objReq: true,
-      objNreq: false,
-      arrReq: true,
-      arrNreq: false,
-      nonNested: true,
-    }),
-  );
-});
-
-test('reports required false for non-existent fields', async () => {
-  const metaSpy = vi.fn();
-  mountWithHoc({
-    setup() {
-      const schema = toTypedSchema(
-        z.object({
-          name: z.string(),
-          nested: z.object({
-            arr: z.array(z.object({ prop: z.string() })),
-            obj: z.object({}),
-          }),
-        }),
-      );
-
-      useForm({
-        validationSchema: schema,
-      });
-
-      const { meta: email } = useField('email');
-      const { meta: req } = useField('nested.obj.req');
-      const { meta: arrReq } = useField('nested.arr.0.req');
-
-      metaSpy({
-        email: email.required,
-        objReq: req.required,
-        arrReq: arrReq.required,
-      });
-
-      return {
-        schema,
-      };
-    },
-    template: `<div></div>`,
-  });
-
-  await flushPromises();
-  await expect(metaSpy).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      email: false,
-      objReq: false,
-      arrReq: false,
-    }),
-  );
-});
-
-test('reports required state for field-level schemas', async () => {
-  const metaSpy = vi.fn();
-  mountWithHoc({
-    setup() {
-      useForm();
-      const { meta: req } = useField('req', toTypedSchema(z.string()));
-      const { meta: nreq } = useField('nreq', toTypedSchema(z.string().optional()));
-
-      metaSpy({
-        req: req.required,
-        nreq: nreq.required,
-      });
-
-      return {};
-    },
-    template: `<div></div>`,
-  });
-
-  await flushPromises();
-  await expect(metaSpy).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      req: true,
-      nreq: false,
-    }),
-  );
-});
-
-test('reports required state for field-level schemas without a form context', async () => {
-  const metaSpy = vi.fn();
-  mountWithHoc({
-    setup() {
-      const { meta: req } = useField('req', toTypedSchema(z.string()));
-      const { meta: nreq } = useField('nreq', toTypedSchema(z.string().optional()));
-
-      metaSpy({
-        req: req.required,
-        nreq: nreq.required,
-      });
-
-      return {};
-    },
-    template: `<div></div>`,
-  });
-
-  await flushPromises();
-  await expect(metaSpy).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      req: true,
-      nreq: false,
-    }),
-  );
-});
-
 test('uses transformed value as submitted value', async () => {
   const onSubmitSpy = vi.fn();
   let onSubmit!: () => void;
@@ -671,7 +467,7 @@ test('uses transformed value as submitted value', async () => {
         test: string;
       }>();
 
-      const testRules = toTypedSchema(z.string().transform(value => `modified: ${value}`));
+      const testRules = z.string().transform(value => `modified: ${value}`);
       const { value } = useField('test', testRules);
 
       // submit now

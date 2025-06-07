@@ -1,6 +1,6 @@
 import { useForm, useFieldArray, FieldEntry, FormContext, FieldArrayContext, useField } from '@/vee-validate';
 import { defineComponent, nextTick, onMounted, Ref } from 'vue';
-import * as yup from 'yup';
+import * as z from 'zod';
 import { mountWithHoc, flushPromises, setValue } from './helpers';
 
 test('can update a field entry model directly', async () => {
@@ -37,10 +37,10 @@ test('can update a field entry deep model directly and validate it', async () =>
     setup() {
       const { errors } = useForm({
         validateOnMount: true,
-        validationSchema: yup.object({
-          users: yup.array().of(
-            yup.object({
-              name: yup.string().required(),
+        validationSchema: z.object({
+          users: z.array(
+            z.object({
+              name: z.string().min(1),
             }),
           ),
         }),
@@ -174,8 +174,8 @@ test('array push should trigger a silent validation', async () => {
         initialValues: {
           users: ['one'],
         },
-        validationSchema: yup.object({
-          users: yup.array().of(yup.string().required().min(1)),
+        validationSchema: z.object({
+          users: z.array(z.string().min(1)),
         }),
       });
 
@@ -201,8 +201,8 @@ test('array push noop when path is not an array', async () => {
         initialValues: {
           users: 'test',
         },
-        validationSchema: yup.object({
-          users: yup.array().of(yup.string().required().min(1)),
+        validationSchema: z.object({
+          users: z.array(z.string().min(1)),
         }),
       });
 
@@ -230,8 +230,8 @@ test('array prepend should trigger a silent validation', async () => {
         initialValues: {
           users: ['one'],
         },
-        validationSchema: yup.object({
-          users: yup.array().of(yup.string().required().min(1)),
+        validationSchema: z.object({
+          users: z.array(z.string().min(1)),
         }),
       });
 
@@ -257,8 +257,8 @@ test('array prepend noop when path is not an array', async () => {
         initialValues: {
           users: 'test',
         },
-        validationSchema: yup.object({
-          users: yup.array().of(yup.string().required().min(1)),
+        validationSchema: z.object({
+          users: z.array(z.string().min(1)),
         }),
       });
 
@@ -286,8 +286,8 @@ test('array insert should trigger a silent validation', async () => {
         initialValues: {
           users: ['one', 'two'],
         },
-        validationSchema: yup.object({
-          users: yup.array().of(yup.string().required().min(1)),
+        validationSchema: z.object({
+          users: z.array(z.string().min(1)),
         }),
       });
 
@@ -313,8 +313,8 @@ test('array insert noop when path is not an array', async () => {
         initialValues: {
           users: 'test',
         },
-        validationSchema: yup.object({
-          users: yup.array().of(yup.string().required().min(1)),
+        validationSchema: z.object({
+          users: z.array(z.string().min(1)),
         }),
       });
 
@@ -340,8 +340,8 @@ test('array move noop when path is not an array', async () => {
         initialValues: {
           users: 'test',
         },
-        validationSchema: yup.object({
-          users: yup.array().of(yup.string().required().min(1)),
+        validationSchema: z.object({
+          users: z.array(z.string().min(1)),
         }),
       });
 
@@ -367,8 +367,8 @@ test('array swap noop when path is not an array', async () => {
         initialValues: {
           users: 'test',
         },
-        validationSchema: yup.object({
-          users: yup.array().of(yup.string().required().min(1)),
+        validationSchema: z.object({
+          users: z.array(z.string().min(1)),
         }),
       });
 
@@ -394,8 +394,8 @@ test('array remove noop when path is not an array', async () => {
         initialValues: {
           users: 'test',
         },
-        validationSchema: yup.object({
-          users: yup.array().of(yup.string().required().min(1)),
+        validationSchema: z.object({
+          users: z.array(z.string().min(1)),
         }),
       });
 
@@ -421,8 +421,8 @@ test('array update noop when path is not an array', async () => {
         initialValues: {
           users: 'test',
         },
-        validationSchema: yup.object({
-          users: yup.array().of(yup.string().required().min(1)),
+        validationSchema: z.object({
+          users: z.array(z.string().min(1)),
         }),
       });
 
@@ -448,8 +448,8 @@ test('array push initializes the array if undefined', async () => {
         initialValues: {
           users: undefined,
         },
-        validationSchema: yup.object({
-          users: yup.array().of(yup.string().required().min(1)),
+        validationSchema: z.object({
+          users: z.array(z.string().min(1)),
         }),
       });
 
@@ -475,8 +475,8 @@ test('array prepend initializes the array if undefined', async () => {
         initialValues: {
           users: undefined,
         },
-        validationSchema: yup.object({
-          users: yup.array().of(yup.string().required().min(1)),
+        validationSchema: z.object({
+          users: z.array(z.string().min(1)),
         }),
       });
 
@@ -502,8 +502,8 @@ test('array move initializes the array if undefined', async () => {
         initialValues: {
           users: undefined,
         },
-        validationSchema: yup.object({
-          users: yup.array().of(yup.string().required().min(1)),
+        validationSchema: z.object({
+          users: z.array(z.string().min(1)),
         }),
       });
 
@@ -549,8 +549,8 @@ test('errors are available to the newly inserted items', async () => {
         initialValues: {
           users: ['one', 'three'],
         },
-        validationSchema: yup.object({
-          users: yup.array().of(yup.string().required().min(1)),
+        validationSchema: z.object({
+          users: z.array(z.string().min(1)),
         }),
       });
 
