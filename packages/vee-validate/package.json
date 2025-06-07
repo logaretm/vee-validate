@@ -42,6 +42,7 @@
     "vue": "^3.4.26"
   },
   "dependencies": {
+    "@standard-schema/spec": "^1.0.0",
     "@vue/devtools-api": "^7.5.2",
     "type-fest": "^4.8.3"
   }
