@@ -1,5 +1,12 @@
 # Change Log
 
+## 4.15.1
+
+### Patch Changes
+
+- 721e980: Align FormErrors type with its actual structure at runtime.
+- 546d82e: fix: normalize objects before equality checks closes #5006
+
 ## 4.15.0
 
 ### Patch Changes

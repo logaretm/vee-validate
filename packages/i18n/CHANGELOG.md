@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.15.1
+
+### Patch Changes
+
+- 0c8a539: fix(i18n): add missing messages for Slovenian locale
+
 ## 4.15.0
 
 ## 4.14.7
