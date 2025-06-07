@@ -1,6 +1,6 @@
 import { Form, defineRule, useField } from '@/vee-validate';
 import { toRef, ref, defineComponent } from 'vue';
-import * as yup from 'yup';
+import * as z from 'zod';
 import { mountWithHoc, setValue, getValue, dispatchEvent, flushPromises } from './helpers';
 
 const REQUIRED_MESSAGE = 'REQUIRED';
@@ -158,15 +158,12 @@ test('can swap array fields with swap helper', async () => {
   const onSubmit = vi.fn();
   mountWithHoc({
     setup() {
-      const schema = yup.object({
-        users: yup
-          .array()
-          .of(
-            yup.object({
-              name: yup.string().required(REQUIRED_MESSAGE),
-            }),
-          )
-          .strict(),
+      const schema = z.object({
+        users: z.array(
+          z.object({
+            name: z.string().min(1, REQUIRED_MESSAGE),
+          }),
+        ),
       });
 
       const initial = {
@@ -588,7 +585,7 @@ test('clears old errors path when item is removed when no form schema is present
         users: [{ name: '' }, { name: '' }, { name: '' }],
       };
 
-      const schema = yup.string().required();
+      const schema = z.string().min(1, REQUIRED_MESSAGE);
 
       return {
         onSubmit,
@@ -678,7 +675,7 @@ test('clears old errors path when last item is removed and value update validati
         users: ['first', 'second', 'third'],
       };
 
-      const schema = yup.string().required();
+      const schema = z.string().min(1, REQUIRED_MESSAGE);
 
       return {
         onSubmit,
@@ -765,7 +762,7 @@ test('keeps the errors intact if an item was removed in the middle of the list',
         users: ['', '', ''],
       };
 
-      const schema = yup.string().required();
+      const schema = z.string().min(1, REQUIRED_MESSAGE);
 
       return {
         schema,

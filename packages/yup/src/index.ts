@@ -1,150 +1,126 @@
-import { AnyObjectSchema, ArraySchema, InferType, Schema, TupleSchema, ValidateOptions, ValidationError } from 'yup';
-import {
-  TypedSchema,
-  TypedSchemaError,
-  isNotNestedPath,
-  cleanupNonNestedPath,
-  TypedSchemaPathDescription,
-} from 'vee-validate';
+import { InferType, Schema, ValidateOptions, ValidationError } from 'yup';
 import { PartialDeep } from 'type-fest';
-import { isIndex, isObject, merge } from '../../shared';
+import { StandardSchemaV1 } from '@standard-schema/spec';
 
 export function toTypedSchema<TSchema extends Schema, TOutput = InferType<TSchema>, TInput = PartialDeep<TOutput>>(
   yupSchema: TSchema,
   opts: ValidateOptions = { abortEarly: false },
-): TypedSchema<TInput, TOutput> {
-  const schema: TypedSchema = {
-    __type: 'VVTypedSchema',
-    async parse(values) {
-      try {
-        // we spread the options because yup mutates the opts object passed
-        const output = await yupSchema.validate(values, { ...opts });
+): StandardSchemaV1<TInput, TOutput> {
+  const schema: StandardSchemaV1<TInput, TOutput> = {
+    '~standard': {
+      vendor: 'vee-validate/yup',
+      version: 1,
+      async validate(values) {
+        try {
+          // we spread the options because yup mutates the opts object passed
+          const output = await yupSchema.validate(values, { ...opts });
 
-        return {
-          value: output,
-          errors: [],
-        };
-      } catch (err) {
-        const error = err as ValidationError;
-        // Yup errors have a name prop one them.
-        // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
-        if (error.name !== 'ValidationError') {
+          return {
+            value: output,
+            issues: undefined,
+          };
+        } catch (err) {
+          if (err instanceof ValidationError) {
+            return {
+              issues: issuesFromValidationError(err),
+            };
+          }
+
           throw err;
         }
-
-        if (!error.inner?.length && error.errors.length) {
-          return { errors: [{ path: error.path, errors: error.errors }] };
-        }
-
-        const errors: Record<string, TypedSchemaError> = error.inner.reduce(
-          (acc, curr) => {
-            const path = curr.path || '';
-            if (!acc[path]) {
-              acc[path] = { errors: [], path };
-            }
-
-            acc[path].errors.push(...curr.errors);
-
-            return acc;
-          },
-          {} as Record<string, TypedSchemaError>,
-        );
-
-        // list of aggregated errors
-        return { errors: Object.values(errors) };
-      }
-    },
-    cast(values) {
-      try {
-        return yupSchema.cast(values);
-      } catch {
-        const defaults = yupSchema.getDefault();
-        if (isObject(defaults) && isObject(values)) {
-          return merge(defaults, values);
-        }
-
-        return values;
-      }
-    },
-    describe(path) {
-      try {
-        if (!path) {
-          return getDescriptionFromYupSpec(yupSchema.spec);
-        }
-
-        const description = getSpecForPath(path, yupSchema);
-        if (!description) {
-          return {
-            required: false,
-            exists: false,
-          };
-        }
-
-        return getDescriptionFromYupSpec(description);
-      } catch {
-        if (__DEV__) {
-          // eslint-disable-next-line no-console
-          console.warn(`Failed to describe path ${path} on the schema, returning a default description.`);
-        }
-
-        return {
-          required: false,
-          exists: false,
-        };
-      }
+      },
     },
   };
 
   return schema;
 }
 
-function getDescriptionFromYupSpec(spec: AnyObjectSchema['spec']): TypedSchemaPathDescription {
-  return {
-    required: !spec.optional,
-    exists: true,
-  };
-}
-
-function getSpecForPath(path: string, schema: Schema): AnyObjectSchema['spec'] | null {
-  if (!isObjectSchema(schema)) {
-    return null;
+function createStandardPath(path: string | undefined): StandardSchemaV1.Issue['path'] {
+  if (!path?.length) {
+    return undefined;
   }
 
-  if (isNotNestedPath(path)) {
-    const field = schema.fields[cleanupNonNestedPath(path)];
+  // Array to store the final path segments
+  const segments: string[] = [];
+  // Buffer for building the current segment
+  let currentSegment = '';
+  // Track if we're inside square brackets (array/property access)
+  let inBrackets = false;
+  // Track if we're inside quotes (for property names with special chars)
+  let inQuotes = false;
 
-    return (field as AnyObjectSchema)?.spec || null;
-  }
+  for (let i = 0; i < path.length; i++) {
+    const char = path[i];
 
-  const paths = (path || '').split(/\.|\[(\d+)\]/).filter(Boolean);
-
-  let currentSchema = schema;
-  for (let i = 0; i < paths.length; i++) {
-    const p = paths[i];
-    if (isObjectSchema(currentSchema) && p in currentSchema.fields) {
-      currentSchema = currentSchema.fields[p] as AnyObjectSchema;
-    } else if (isTupleSchema(currentSchema) && isIndex(p)) {
-      currentSchema = currentSchema.spec.types[Number(p)] as AnyObjectSchema;
-    } else if (isIndex(p) && isArraySchema(currentSchema)) {
-      currentSchema = currentSchema.innerType as AnyObjectSchema;
+    if (char === '[' && !inQuotes) {
+      // When entering brackets, push any accumulated segment after splitting on dots
+      if (currentSegment) {
+        segments.push(...currentSegment.split('.').filter(Boolean));
+        currentSegment = '';
+      }
+      inBrackets = true;
+      continue;
     }
 
-    if (i === paths.length - 1) {
-      return currentSchema.spec;
+    if (char === ']' && !inQuotes) {
+      if (currentSegment) {
+        // Handle numeric indices (e.g. arr[0])
+        if (/^\d+$/.test(currentSegment)) {
+          segments.push(currentSegment);
+        } else {
+          // Handle quoted property names (e.g. obj["foo.bar"])
+          segments.push(currentSegment.replace(/^"|"$/g, ''));
+        }
+        currentSegment = '';
+      }
+      inBrackets = false;
+      continue;
     }
+
+    if (char === '"') {
+      // Toggle quote state for handling quoted property names
+      inQuotes = !inQuotes;
+      continue;
+    }
+
+    if (char === '.' && !inBrackets && !inQuotes) {
+      // On dots outside brackets/quotes, push current segment
+      if (currentSegment) {
+        segments.push(currentSegment);
+        currentSegment = '';
+      }
+      continue;
+    }
+
+    currentSegment += char;
   }
 
-  return null;
+  // Push any remaining segment after splitting on dots
+  if (currentSegment) {
+    segments.push(...currentSegment.split('.').filter(Boolean));
+  }
+
+  return segments;
 }
 
-function isTupleSchema(schema: unknown): schema is TupleSchema<any, any> {
-  return isObject(schema) && schema.type === 'tuple';
+function createStandardIssues(error: ValidationError, parentPath?: string): StandardSchemaV1.Issue[] {
+  const path = parentPath ? `${parentPath}.${error.path}` : error.path;
+
+  return error.errors.map(
+    err =>
+      ({
+        message: err,
+        path: createStandardPath(path),
+      }) satisfies StandardSchemaV1.Issue,
+  );
 }
 
-function isObjectSchema(schema: unknown): schema is AnyObjectSchema {
-  return isObject(schema) && schema.type === 'object';
-}
+function issuesFromValidationError(error: ValidationError, parentPath?: string): StandardSchemaV1.Issue[] {
+  if (!error.inner?.length && error.errors.length) {
+    return createStandardIssues(error, parentPath);
+  }
 
-function isArraySchema(schema: unknown): schema is ArraySchema<any, any> {
-  return isObject(schema) && schema.type === 'array';
+  const path = parentPath ? `${parentPath}.${error.path}` : error.path;
+
+  return error.inner.flatMap(err => issuesFromValidationError(err, path));
 }

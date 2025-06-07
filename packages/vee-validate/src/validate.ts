@@ -1,21 +1,18 @@
 import { resolveRule } from './defineRule';
 import { klona as deepCopy } from 'klona/full';
-import { isLocator, normalizeRules, keysOf, getFromPath, isTypedSchema, isYupValidator } from './utils';
+import { isLocator, normalizeRules, keysOf, getFromPath, isStandardSchema, combineStandardIssues } from './utils';
 import { getConfig } from './config';
 import {
   ValidationResult,
   GenericValidateFunction,
-  TypedSchema,
   FlattenAndMapPathsValidationResult,
   FormValidationResult,
   RawFormSchema,
-  YupSchema,
   GenericObject,
-  TypedSchemaError,
   Path,
-  TypedSchemaContext,
 } from './types';
 import { isCallable, FieldValidationMetaInfo } from '../../shared';
+import { StandardSchemaV1 } from '@standard-schema/spec';
 
 /**
  * Used internally
@@ -26,7 +23,7 @@ interface FieldValidationContext<TInput = unknown, TOutput = TInput> {
   rules:
     | GenericValidateFunction<TInput>
     | GenericValidateFunction<TInput>[]
-    | TypedSchema<TInput, TOutput>
+    | StandardSchemaV1<TInput, TOutput>
     | string
     | Record<string, unknown>;
   bails: boolean;
@@ -50,7 +47,7 @@ export async function validate<TInput, TOutput>(
     | Record<string, unknown | unknown[]>
     | GenericValidateFunction<TInput>
     | GenericValidateFunction<TInput>[]
-    | TypedSchema<TInput, TOutput>,
+    | StandardSchemaV1<TInput, TOutput>,
   options: ValidationOptions = {},
 ): Promise<ValidationResult<TOutput>> {
   const shouldBail = options?.bails;
@@ -78,8 +75,8 @@ async function _validate<TInput = unknown, TOutput = TInput>(
   value: TInput,
 ) {
   const rules = field.rules;
-  if (isTypedSchema(rules) || isYupValidator(rules)) {
-    return validateFieldWithTypedSchema(value, { ...field, rules });
+  if (isStandardSchema(rules)) {
+    return validateFieldWithStandardSchema(value, { ...field, rules });
   }
 
   // if a generic function or chain of generic functions
@@ -153,80 +150,29 @@ async function _validate<TInput = unknown, TOutput = TInput>(
   };
 }
 
-interface YupError {
-  name: 'ValidationError';
-  path?: string;
-  errors: string[];
-  inner: { path?: string; errors: string[] }[];
-}
-
-function isYupError(err: unknown): err is YupError {
-  return !!err && (err as any).name === 'ValidationError';
-}
-
-function yupToTypedSchema(yupSchema: YupSchema): TypedSchema {
-  const schema: TypedSchema = {
-    __type: 'VVTypedSchema',
-    async parse(values: any, context?: TypedSchemaContext) {
-      try {
-        const output = await yupSchema.validate(values, { abortEarly: false, context: context?.formData || {} });
-
-        return {
-          output,
-          errors: [],
-        };
-      } catch (err: unknown) {
-        // Yup errors have a name prop one them.
-        // https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
-        if (!isYupError(err)) {
-          throw err;
-        }
-
-        if (!err.inner?.length && err.errors.length) {
-          return { errors: [{ path: err.path, errors: err.errors }] };
-        }
-
-        const errors: Record<string, TypedSchemaError> = err.inner.reduce(
-          (acc, curr) => {
-            const path = curr.path || '';
-            if (!acc[path]) {
-              acc[path] = { errors: [], path };
-            }
-
-            acc[path].errors.push(...curr.errors);
-
-            return acc;
-          },
-          {} as Record<string, TypedSchemaError>,
-        );
-
-        return { errors: Object.values(errors) };
-      }
-    },
-  };
-
-  return schema;
-}
-
 /**
  * Handles yup validation
  */
-async function validateFieldWithTypedSchema(
+async function validateFieldWithStandardSchema(
   value: unknown,
-  context: FieldValidationContext<any> & { rules: TypedSchema | YupSchema },
+  context: FieldValidationContext<any> & { rules: StandardSchemaV1 },
 ) {
-  const typedSchema = isTypedSchema(context.rules) ? context.rules : yupToTypedSchema(context.rules);
-  const result = await typedSchema.parse(value, { formData: context.formData });
+  const result = await context.rules['~standard'].validate(value);
+  if (!result.issues) {
+    return {
+      value: result.value,
+      errors: [],
+    };
+  }
 
   const messages: string[] = [];
-  for (const error of result.errors) {
-    if (error.errors.length) {
-      messages.push(...error.errors);
+  for (const error of result.issues) {
+    if (error.message) {
+      messages.push(error.message);
     }
   }
 
   return {
-    value: result.value,
     errors: messages,
   };
 }
@@ -305,21 +251,29 @@ function fillTargetValues(params: unknown[] | Record<string, unknown>, crossTabl
   );
 }
 
-export async function validateTypedSchema<TValues extends GenericObject, TOutput extends GenericObject = TValues>(
-  schema: TypedSchema<TValues> | YupSchema<TValues>,
+export async function validateStandardSchema<TValues extends GenericObject, TOutput extends GenericObject = TValues>(
+  schema: StandardSchemaV1<TValues, TOutput>,
   values: TValues,
 ): Promise<FormValidationResult<TValues, TOutput>> {
-  const typedSchema = isTypedSchema(schema) ? schema : yupToTypedSchema(schema);
-  const validationResult = await typedSchema.parse(deepCopy(values), { formData: deepCopy(values) });
+  const validationResult = await schema['~standard'].validate(deepCopy(values));
 
   const results: Partial<FlattenAndMapPathsValidationResult<TValues, TOutput>> = {};
   const errors: Partial<Record<Path<TValues>, string>> = {};
-  for (const error of validationResult.errors) {
-    const messages = error.errors;
-    // Fixes issue with path mapping with Yup 1.0 including quotes around array indices
-    const path = (error.path || '').replace(/\["(\d+)"\]/g, (_, m) => {
-      return `[${m}]`;
-    }) as Path<TValues>;
+  if (!validationResult.issues) {
+    return {
+      valid: true,
+      results: {},
+      errors: {},
+      values: validationResult.value,
+      source: 'schema',
+    };
+  }
+
+  const combinedIssues = combineStandardIssues(validationResult.issues || []);
+
+  for (const error of combinedIssues) {
+    const messages = error.messages;
+    const path = error.path as Path<TValues>;
 
     results[path] = { valid: !messages.length, errors: messages };
     if (messages.length) {
@@ -328,10 +282,10 @@ export async function validateTypedSchema<TValues extends GenericObject, TOutput
   }
 
   return {
-    valid: !validationResult.errors.length,
+    valid: !combinedIssues.length,
     results,
     errors,
-    values: validationResult.value,
+    values: undefined,
     source: 'schema',
   };
 }

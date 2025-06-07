@@ -14,8 +14,10 @@ import {
 import { klona as deepCopy } from 'klona/full';
 import { isIndex, isNullOrUndefined, isObject, toNumber } from '../../../shared';
 import { isContainerValue, isEmptyContainer, isEqual, isNotNestedPath } from './assertions';
-import { GenericObject, MaybePromise } from '../types';
+import { GenericObject, IssueCollection, MaybePromise } from '../types';
 import { FormContextKey, FieldContextKey } from '../symbols';
+import { StandardSchemaV1 } from '@standard-schema/spec';
+import { getDotPath } from '@standard-schema/utils';
 
 export function cleanupNonNestedPath(path: string) {
   if (isNotNestedPath(path)) {
@@ -358,4 +360,37 @@ export function debounceNextTick<
 
     return new Promise<TResult>(resolve => resolves.push(resolve));
   };
+}
+
+function _combineIssueItems<TItem extends StandardSchemaV1.Issue | IssueCollection>(
+  items: TItem[] | readonly TItem[],
+  getPath: (item: TItem) => string,
+) {
+  const issueMap: Record<string, IssueCollection> = {};
+  for (const item of items) {
+    const path = getPath(item);
+    if (!issueMap[path]) {
+      issueMap[path] = {
+        path,
+        messages: [],
+      };
+    }
+
+    if ('messages' in item) {
+      issueMap[path].messages.push(...item.messages);
+    } else {
+      issueMap[path].messages.push(item.message);
+    }
+  }
+
+  return Object.values(issueMap);
+}
+
+/**
+ * Aggregates standard schema issues by path.
+ */
+export function combineStandardIssues(
+  issues: StandardSchemaV1.Issue[] | readonly StandardSchemaV1.Issue[],
+): IssueCollection[] {
+  return _combineIssueItems(issues, issue => (issue.path ? getDotPath(issue) ?? '' : ''));
 }

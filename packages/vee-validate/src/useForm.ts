@@ -39,7 +39,6 @@ import {
   InvalidSubmissionHandler,
   FieldState,
   GenericObject,
-  TypedSchema,
   Path,
   FlattenAndSetPathsType,
   PathValue,
@@ -55,7 +54,6 @@ import {
 } from './types';
 import {
   getFromPath,
-  isYupValidator,
   keysOf,
   setInPath,
   unsetPath,
@@ -63,17 +61,18 @@ import {
   debounceAsync,
   withLatest,
   isEqual,
-  isTypedSchema,
   normalizeErrorItem,
   omit,
   debounceNextTick,
   normalizeEventValue,
+  isStandardSchema,
 } from './utils';
 import { FormContextKey, PublicFormContextKey } from './symbols';
-import { validateTypedSchema, validateObjectSchema } from './validate';
+import { validateStandardSchema, validateObjectSchema } from './validate';
 import { refreshInspector, registerFormWithDevTools } from './devtools';
 import { isCallable, merge, normalizeFormPath } from '../../shared';
 import { getConfig } from './config';
+import { StandardSchemaV1 } from '@standard-schema/spec';
 
 type FormSchema<TValues extends Record<string, unknown>> =
   | FlattenAndSetPathsType<TValues, GenericValidateFunction | string | GenericObject>
@@ -82,11 +81,9 @@ type FormSchema<TValues extends Record<string, unknown>> =
 export interface FormOptions<
   TValues extends GenericObject,
   TOutput = TValues,
-  TSchema extends TypedSchema<TValues, TOutput> | FormSchema<TValues> =
-    | FormSchema<TValues>
-    | TypedSchema<TValues, TOutput>,
+  TSchema extends StandardSchemaV1<TValues, TOutput> | FormSchema<TValues> = FormSchema<TValues>,
 > {
-  validationSchema?: MaybeRef<TSchema extends TypedSchema ? TypedSchema<TValues, TOutput> : any>;
+  validationSchema?: MaybeRef<TSchema extends StandardSchemaV1 ? StandardSchemaV1<TValues, TOutput> : any>;
   initialValues?: PartialDeep<TValues> | undefined | null;
   initialErrors?: FlattenAndSetPathsType<TValues, string | undefined>;
   initialTouched?: FlattenAndSetPathsType<TValues, boolean>;
@@ -102,10 +99,6 @@ const PRIVATE_PATH_STATE_KEYS: (keyof PathState)[] = ['bails', 'fieldsCount', 'i
 function resolveInitialValues<TValues extends GenericObject = GenericObject>(opts?: FormOptions<TValues>): TValues {
   const givenInitial = opts?.initialValues || {};
   const providedValues = { ...toValue(givenInitial) };
-  const schema = unref(opts?.validationSchema);
-  if (schema && isTypedSchema(schema) && isCallable(schema.cast)) {
-    return deepCopy(schema.cast(providedValues) || {});
-  }
 
   return deepCopy(providedValues) as TValues;
 }
@@ -113,9 +106,7 @@ function resolveInitialValues<TValues extends GenericObject = GenericObject>(opt
 export function useForm<
   TValues extends GenericObject = GenericObject,
   TOutput extends GenericObject = TValues,
-  TSchema extends FormSchema<TValues> | TypedSchema<TValues, TOutput> =
-    | FormSchema<TValues>
-    | TypedSchema<TValues, TOutput>,
+  TSchema extends FormSchema<TValues> | StandardSchemaV1<TValues, TOutput> = FormSchema<TValues>,
 >(opts?: FormOptions<TValues, TOutput, TSchema>): FormContext<TValues, TOutput> {
   const formId = FORM_COUNTER++;
   const name = opts?.name || 'Form';
@@ -300,21 +291,6 @@ export function useForm<
       UNSET_BATCH.splice(unsetBatchIndex, 1);
     }
 
-    const isRequired = computed(() => {
-      const schemaValue = toValue(schema);
-      if (isTypedSchema(schemaValue)) {
-        return schemaValue.describe?.(toValue(path)).required ?? false;
-      }
-
-      // Path own schema
-      const configSchemaValue = toValue(config?.schema);
-      if (isTypedSchema(configSchemaValue)) {
-        return configSchemaValue.describe?.().required ?? false;
-      }
-
-      return false;
-    });
-
     const id = FIELD_ID_COUNTER++;
     const state = reactive({
       id,
@@ -323,7 +299,6 @@ export function useForm<
       pending: false,
       valid: true,
       validated: !!initialErrors[pathValue]?.length,
-      required: isRequired,
       initialValue,
       errors: shallowRef([]),
       bails: config?.bails ?? false,
@@ -831,7 +806,7 @@ export function useForm<
   function resetForm(resetState?: Partial<FormState<TValues>>, opts?: ResetFormOpts) {
     let newValues = deepCopy(resetState?.values ? resetState.values : originalInitialValues.value);
     newValues = opts?.force ? newValues : merge(originalInitialValues.value, newValues);
-    newValues = isTypedSchema(schema) && isCallable(schema.cast) ? schema.cast(newValues) : newValues;
+
     setInitialValues(newValues, { force: opts?.force });
     mutateAllPathState(state => {
       state.__flags.pendingReset = true;
@@ -978,13 +953,12 @@ export function useForm<
 
     isValidating.value = true;
 
-    const formResult =
-      isYupValidator(schemaValue) || isTypedSchema(schemaValue)
-        ? await validateTypedSchema<TValues, TOutput>(schemaValue, formValues)
-        : await validateObjectSchema<TValues, TOutput>(schemaValue as RawFormSchema<TValues>, formValues, {
-            names: fieldNames.value,
-            bailsMap: fieldBailsMap.value,
-          });
+    const formResult = isStandardSchema(schemaValue)
+      ? await validateStandardSchema<TValues, TOutput>(schemaValue, formValues)
+      : await validateObjectSchema<TValues, TOutput>(schemaValue as RawFormSchema<TValues>, formValues, {
+          names: fieldNames.value,
+          bailsMap: fieldBailsMap.value,
+        });
 
     isValidating.value = false;
 

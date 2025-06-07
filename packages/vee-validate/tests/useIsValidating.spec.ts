@@ -1,7 +1,7 @@
 import { useForm, useIsValidating } from '@/vee-validate';
 import { mountWithHoc, flushPromises } from './helpers';
 import { expect } from 'vitest';
-import * as yup from 'yup';
+import * as z from 'zod';
 
 describe('useIsValidating()', () => {
   test('indicates if a form is validating', async () => {
@@ -11,10 +11,13 @@ describe('useIsValidating()', () => {
       setup() {
         const { validate } = useForm({
           validationSchema: {
-            name: yup.string().test(() => {
-              spy(isValidating.value);
-              return true;
-            }),
+            name: z
+              .string()
+              .refine(() => {
+                spy(isValidating.value);
+                return true;
+              })
+              .default(''),
           },
         });
 

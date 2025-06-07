@@ -1,6 +1,7 @@
-import { Locator, TypedSchema, YupSchema } from '../types';
+import { Locator } from '../types';
 import { isCallable, isObject } from '../../../shared';
 import { IS_ABSENT } from '../symbols';
+import { StandardSchemaV1 } from '@standard-schema/spec';
 
 export const isClient = typeof window !== 'undefined';
 
@@ -8,12 +9,8 @@ export function isLocator(value: unknown): value is Locator {
   return isCallable(value) && !!(value as Locator).__locatorRef;
 }
 
-export function isTypedSchema(value: unknown): value is TypedSchema {
-  return !!value && isCallable((value as TypedSchema).parse) && (value as TypedSchema).__type === 'VVTypedSchema';
-}
-
-export function isYupValidator(value: unknown): value is YupSchema {
-  return !!value && isCallable((value as YupSchema).validate);
+export function isStandardSchema(value: unknown): value is StandardSchemaV1 {
+  return isObject(value) && '~standard' in (value as unknown as StandardSchemaV1);
 }
 
 export function hasCheckedAttr(type: unknown) {

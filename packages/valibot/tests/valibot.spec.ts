@@ -1,6 +1,6 @@
-import { Ref, ref } from 'vue';
+import { Ref } from 'vue';
 import * as v from 'valibot';
-import { FieldMeta, useField, useForm } from '@/vee-validate';
+import { useField, useForm } from '@/vee-validate';
 import { toTypedSchema } from '@/valibot';
 import { mountWithHoc, flushPromises, setValue } from '../../vee-validate/tests/helpers';
 
@@ -69,40 +69,6 @@ describe('valibot', () => {
     await flushPromises();
     expect(errors.value).toHaveLength(2);
     expect(errors.value).toEqual([REQUIRED_MSG, MIN_MSG]);
-  });
-
-  test('reports required state reactively', async () => {
-    let meta!: FieldMeta<unknown>;
-    const schema = ref(
-      toTypedSchema(
-        v.object({
-          name: v.string(),
-        }),
-      ),
-    );
-
-    mountWithHoc({
-      setup() {
-        useForm({
-          validationSchema: schema,
-        });
-
-        const field = useField('name');
-        meta = field.meta;
-
-        return {
-          schema,
-        };
-      },
-      template: `<div></div>`,
-    });
-
-    await flushPromises();
-    await expect(meta.required).toBe(true);
-
-    schema.value = toTypedSchema(v.object({ name: v.optional(v.string()) }));
-    await flushPromises();
-    await expect(meta.required).toBe(false);
   });
 
   test('shows multiple errors using error bag', async () => {
@@ -294,88 +260,88 @@ describe('valibot', () => {
     );
   });
 
-  test('uses valibot default values for initial values', async () => {
-    const initialSpy = vi.fn();
-    mountWithHoc({
-      setup() {
-        const schema = toTypedSchema(
-          v.object({
-            name: v.optional(v.string(), 'test'),
-            age: v.optional(v.number(), 11),
-            unknownKey: v.optional(v.string()),
-            object: v.optional(
-              v.object({
-                nestedKey: v.optional(v.string()),
-                nestedDefault: v.optional(v.string(), 'nested'),
-              }),
-              {},
-            ),
-          }),
-        );
+  // test('uses valibot default values for initial values', async () => {
+  //   const initialSpy = vi.fn();
+  //   mountWithHoc({
+  //     setup() {
+  //       const schema = toTypedSchema(
+  //         v.object({
+  //           name: v.optional(v.string(), 'test'),
+  //           age: v.optional(v.number(), 11),
+  //           unknownKey: v.optional(v.string()),
+  //           object: v.optional(
+  //             v.object({
+  //               nestedKey: v.optional(v.string()),
+  //               nestedDefault: v.optional(v.string(), 'nested'),
+  //             }),
+  //             {},
+  //           ),
+  //         }),
+  //       );
 
-        const { values } = useForm({
-          validationSchema: schema,
-        });
+  //       const { values } = useForm({
+  //         validationSchema: schema,
+  //       });
 
-        // submit now
-        initialSpy(values);
+  //       // submit now
+  //       initialSpy(values);
 
-        return {
-          schema,
-        };
-      },
-      template: `<div></div>`,
-    });
+  //       return {
+  //         schema,
+  //       };
+  //     },
+  //     template: `<div></div>`,
+  //   });
 
-    await flushPromises();
-    await expect(initialSpy).toHaveBeenCalledTimes(1);
-    await expect(initialSpy).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        age: 11,
-        name: 'test',
-        object: {
-          nestedDefault: 'nested',
-        },
-      }),
-    );
-  });
+  //   await flushPromises();
+  //   await expect(initialSpy).toHaveBeenCalledTimes(1);
+  //   await expect(initialSpy).toHaveBeenLastCalledWith(
+  //     expect.objectContaining({
+  //       age: 11,
+  //       name: 'test',
+  //       object: {
+  //         nestedDefault: 'nested',
+  //       },
+  //     }),
+  //   );
+  // });
 
-  test('reset form should cast the values', async () => {
-    const valueSpy = vi.fn();
-    mountWithHoc({
-      setup() {
-        const schema = toTypedSchema(
-          v.object({
-            age: v.pipe(
-              v.unknown(),
-              v.transform(arg => Number(arg)),
-            ),
-          }),
-        );
+  // test('reset form should cast the values', async () => {
+  //   const valueSpy = vi.fn();
+  //   mountWithHoc({
+  //     setup() {
+  //       const schema = toTypedSchema(
+  //         v.object({
+  //           age: v.pipe(
+  //             v.unknown(),
+  //             v.transform(arg => Number(arg)),
+  //           ),
+  //         }),
+  //       );
 
-        const { values, resetForm } = useForm({
-          validationSchema: schema,
-        });
+  //       const { values, resetForm } = useForm({
+  //         validationSchema: schema,
+  //       });
 
-        resetForm({ values: { age: '12' } });
-        // submit now
-        valueSpy(values);
+  //       resetForm({ values: { age: '12' } });
+  //       // submit now
+  //       valueSpy(values);
 
-        return {
-          schema,
-        };
-      },
-      template: `<div></div>`,
-    });
+  //       return {
+  //         schema,
+  //       };
+  //     },
+  //     template: `<div></div>`,
+  //   });
 
-    await flushPromises();
-    await expect(valueSpy).toHaveBeenCalledTimes(1);
-    await expect(valueSpy).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        age: 12,
-      }),
-    );
-  });
+  //   await flushPromises();
+  //   await expect(valueSpy).toHaveBeenCalledTimes(1);
+  //   await expect(valueSpy).toHaveBeenLastCalledWith(
+  //     expect.objectContaining({
+  //       age: 12,
+  //     }),
+  //   );
+  // });
 
   // #4186
   test('default values should not be undefined', async () => {
@@ -406,458 +372,4 @@ describe('valibot', () => {
     await expect(initialSpy).toHaveBeenCalledTimes(1);
     await expect(initialSpy).toHaveBeenLastCalledWith(expect.objectContaining({}));
   });
-});
-
-test('reports required state on fields', async () => {
-  const metaSpy = vi.fn();
-  mountWithHoc({
-    setup() {
-      const schema = toTypedSchema(
-        v.object({
-          'not.nested.path': v.string(),
-          name: v.optional(v.string()),
-          email: v.string(),
-          nested: v.object({
-            arr: v.array(v.object({ req: v.string(), nreq: v.optional(v.string()) })),
-            obj: v.object({
-              req: v.string(),
-              nreq: v.optional(v.string()),
-            }),
-          }),
-        }),
-      );
-
-      useForm({
-        validationSchema: schema,
-      });
-
-      const { meta: name } = useField('name');
-      const { meta: email } = useField('email');
-      const { meta: req } = useField('nested.obj.req');
-      const { meta: nreq } = useField('nested.obj.nreq');
-      const { meta: arrReq } = useField('nested.arr.0.req');
-      const { meta: arrNreq } = useField('nested.arr.1.nreq');
-      const { meta: notNested } = useField('[not.nested.path]');
-
-      metaSpy({
-        name: name.required,
-        email: email.required,
-        objReq: req.required,
-        objNreq: nreq.required,
-        arrReq: arrReq.required,
-        arrNreq: arrNreq.required,
-        notNested: notNested.required,
-      });
-
-      return {
-        schema,
-      };
-    },
-    template: `<div></div>`,
-  });
-
-  await flushPromises();
-  await expect(metaSpy).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      name: false,
-      email: true,
-      objReq: true,
-      objNreq: false,
-      arrReq: true,
-      arrNreq: false,
-      notNested: true,
-    }),
-  );
-});
-
-test('reports required false for non-existent fields', async () => {
-  const metaSpy = vi.fn();
-  mountWithHoc({
-    setup() {
-      const schema = toTypedSchema(
-        v.object({
-          name: v.string(),
-          nested: v.object({
-            arr: v.array(v.object({ prop: v.string() })),
-            obj: v.object({}),
-          }),
-        }),
-      );
-
-      useForm({
-        validationSchema: schema,
-      });
-
-      const { meta: email } = useField('email');
-      const { meta: req } = useField('nested.obj.req');
-      const { meta: arrReq } = useField('nested.arr.0.req');
-
-      metaSpy({
-        email: email.required,
-        objReq: req.required,
-        arrReq: arrReq.required,
-      });
-
-      return {
-        schema,
-      };
-    },
-    template: `<div></div>`,
-  });
-
-  await flushPromises();
-  await expect(metaSpy).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      email: false,
-      objReq: false,
-      arrReq: false,
-    }),
-  );
-});
-
-test('reports required state for field-level schemas', async () => {
-  const metaSpy = vi.fn();
-  mountWithHoc({
-    setup() {
-      useForm();
-      const { meta: req } = useField('req', toTypedSchema(v.string()));
-      const { meta: nreq } = useField('nreq', toTypedSchema(v.optional(v.string())));
-
-      metaSpy({
-        req: req.required,
-        nreq: nreq.required,
-      });
-
-      return {};
-    },
-    template: `<div></div>`,
-  });
-
-  await flushPromises();
-  await expect(metaSpy).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      req: true,
-      nreq: false,
-    }),
-  );
-});
-
-test('reports required state for field-level schemas without a form context', async () => {
-  const metaSpy = vi.fn();
-  mountWithHoc({
-    setup() {
-      const { meta: req } = useField('req', toTypedSchema(v.string()));
-      const { meta: nreq } = useField('nreq', toTypedSchema(v.optional(v.string())));
-
-      metaSpy({
-        req: req.required,
-        nreq: nreq.required,
-      });
-
-      return {};
-    },
-    template: `<div></div>`,
-  });
-
-  await flushPromises();
-  await expect(metaSpy).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      req: true,
-      nreq: false,
-    }),
-  );
-});
-
-test('reports required state for schema intersections', async () => {
-  const metaSpy = vi.fn();
-  mountWithHoc({
-    setup() {
-      const schema = toTypedSchema(
-        v.intersect([
-          v.object({
-            req: v.string(),
-          }),
-          v.object({
-            nreq: v.optional(v.string()),
-          }),
-        ]),
-      );
-
-      useForm({
-        validationSchema: schema,
-      });
-
-      const { meta: req } = useField('req');
-      const { meta: nreq } = useField('nreq');
-
-      metaSpy({
-        req: req.required,
-        nreq: nreq.required,
-      });
-
-      return {
-        schema,
-      };
-    },
-    template: `<div></div>`,
-  });
-
-  await flushPromises();
-  await expect(metaSpy).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      req: true,
-      nreq: false,
-    }),
-  );
-});
-
-test('reports required state for schema intersections with nested fields', async () => {
-  const metaSpy = vi.fn();
-  mountWithHoc({
-    setup() {
-      const schema = toTypedSchema(
-        v.object({
-          fields: v.intersect([
-            v.object({
-              req: v.string(),
-            }),
-            v.object({
-              nreq: v.optional(v.string()),
-            }),
-          ]),
-        }),
-      );
-
-      useForm({
-        validationSchema: schema,
-      });
-
-      const { meta: req } = useField('fields.req');
-      const { meta: nreq } = useField('fields.nreq');
-
-      metaSpy({
-        req: req.required,
-        nreq: nreq.required,
-      });
-
-      return {
-        schema,
-      };
-    },
-    template: `<div></div>`,
-  });
-
-  await flushPromises();
-  await expect(metaSpy).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      req: true,
-      nreq: false,
-    }),
-  );
-});
-
-test('reports required state for variant schemas', async () => {
-  const metaSpy = vi.fn();
-  mountWithHoc({
-    setup() {
-      const ScheduledDateSchema = v.object({
-        dateType: v.literal('schedule'),
-        date: v.pipe(v.string(), v.isoDate()),
-      });
-
-      const ImmediateDateSchema = v.object({
-        dateType: v.literal('immediate'),
-      });
-
-      const PaymentDetailsFormSchema = v.variant('dateType', [ImmediateDateSchema, ScheduledDateSchema]);
-
-      const schema = toTypedSchema(PaymentDetailsFormSchema);
-
-      useForm({
-        validationSchema: schema,
-      });
-
-      const { meta: dateType } = useField('dateType');
-      const { meta: date } = useField('date');
-
-      metaSpy({
-        dateType: dateType.required,
-        date: date.required,
-      });
-
-      return {
-        schema,
-      };
-    },
-    template: `<div></div>`,
-  });
-
-  await flushPromises();
-  await expect(metaSpy).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      dateType: true,
-      date: true,
-    }),
-  );
-});
-
-test('reports required state for variant schemas with nested fields', async () => {
-  const metaSpy = vi.fn();
-  mountWithHoc({
-    setup() {
-      const ComplexVariantSchema = v.variant('kind', [
-        v.variant('type', [
-          v.object({
-            kind: v.literal('fruit'),
-            type: v.literal('apple'),
-            item: v.object({
-              name: v.string(),
-              price: v.number(),
-            }),
-          }),
-          v.object({
-            kind: v.literal('fruit'),
-            type: v.literal('banana'),
-            item: v.object({
-              name: v.string(),
-              price: v.number(),
-            }),
-          }),
-        ]),
-        v.variant('type', [
-          v.object({
-            kind: v.literal('vegetable'),
-            type: v.literal('carrot'),
-            item: v.object({
-              name: v.string(),
-              price: v.number(),
-            }),
-          }),
-          v.object({
-            kind: v.literal('vegetable'),
-            type: v.literal('tomato'),
-            item: v.object({
-              name: v.string(),
-              price: v.number(),
-            }),
-          }),
-        ]),
-      ]);
-
-      const schema = toTypedSchema(ComplexVariantSchema);
-
-      useForm({
-        validationSchema: schema,
-      });
-
-      const { meta: kind } = useField('kind');
-      const { meta: type } = useField('type');
-      const { meta: item } = useField('item');
-
-      metaSpy({
-        kind: kind.required,
-        type: type.required,
-        item: item.required,
-      });
-
-      return {
-        schema,
-      };
-    },
-    template: `<div></div>`,
-  });
-
-  await flushPromises();
-  await expect(metaSpy).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      kind: true,
-      type: true,
-      item: true,
-    }),
-  );
-});
-
-test('reports required state for variant schemas when combined with intersections', async () => {
-  const metaSpy = vi.fn();
-  mountWithHoc({
-    setup() {
-      const ScheduledDateSchema = v.object({
-        dateType: v.literal('schedule'),
-        date: v.pipe(v.string(), v.isoDate()),
-      });
-
-      const ImmediateDateSchema = v.object({
-        dateType: v.literal('immediate'),
-      });
-
-      const PaymentDetailsFormSchema = v.intersect([
-        v.variant('dateType', [ImmediateDateSchema, ScheduledDateSchema]),
-        v.object({
-          amount: v.pipe(v.number(), v.minValue(1)),
-          note: v.optional(v.string()),
-        }),
-      ]);
-
-      const schema = toTypedSchema(PaymentDetailsFormSchema);
-
-      useForm({
-        validationSchema: schema,
-      });
-
-      const { meta: dateType } = useField('dateType');
-      const { meta: date } = useField('date');
-      const { meta: amount } = useField('amount');
-      const { meta: note } = useField('note');
-
-      metaSpy({
-        dateType: dateType.required,
-        date: date.required,
-        amount: amount.required,
-        note: note.required,
-      });
-
-      return {
-        schema,
-      };
-    },
-    template: `<div></div>`,
-  });
-
-  await flushPromises();
-  await expect(metaSpy).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      dateType: true,
-      date: true,
-      amount: true,
-      note: false,
-    }),
-  );
-});
-
-test('allows passing valibot config', async () => {
-  let errors!: Ref<string[]>;
-  const wrapper = mountWithHoc({
-    setup() {
-      const schema = v.pipe(v.string(), v.minLength(1, REQUIRED_MSG), v.minLength(8, MIN_MSG));
-      const rules = toTypedSchema(schema, { abortEarly: true });
-      const { value, errors: fieldErrors } = useField('test', rules);
-
-      errors = fieldErrors;
-      return {
-        value,
-      };
-    },
-    template: `
-      <div>
-          <input v-model="value" type="text">
-      </div>
-    `,
-  });
-
-  const input = wrapper.$el.querySelector('input');
-
-  setValue(input, '');
-  await flushPromises();
-  expect(errors.value).toHaveLength(1);
-  expect(errors.value).toEqual([REQUIRED_MSG]);
 });

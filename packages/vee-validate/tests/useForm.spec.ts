@@ -9,7 +9,7 @@ import {
   FieldContext,
 } from '@/vee-validate';
 import { mountWithHoc, setValue, flushPromises, dispatchEvent } from './helpers';
-import * as yup from 'yup';
+import * as z from 'zod';
 import { onMounted, ref, Ref } from 'vue';
 import { ModelComp, CustomModelComp } from './helpers/ModelComp';
 
@@ -172,7 +172,7 @@ describe('useForm()', () => {
     let form!: FormContext<any>;
     mountWithHoc({
       setup() {
-        form = useForm({ validationSchema: yup.object().shape({ field: yup.string().required(REQUIRED_MESSAGE) }) });
+        form = useForm({ validationSchema: z.object({ field: z.string().min(1, REQUIRED_MESSAGE) }) });
         form.defineField('field');
 
         return {};
@@ -192,7 +192,7 @@ describe('useForm()', () => {
     let form!: FormContext<any>;
     mountWithHoc({
       setup() {
-        form = useForm({ validationSchema: yup.object().shape({ field: yup.string().required(REQUIRED_MESSAGE) }) });
+        form = useForm({ validationSchema: z.object({ field: z.string().min(1, REQUIRED_MESSAGE) }) });
         form.defineField('field');
 
         return {};
@@ -250,9 +250,9 @@ describe('useForm()', () => {
     mountWithHoc({
       setup() {
         const form = useForm({
-          validationSchema: yup.object({
-            field1: yup.string().required(REQUIRED_MESSAGE),
-            field2: yup.string().required(REQUIRED_MESSAGE),
+          validationSchema: z.object({
+            field1: z.string().min(1, 'Required'),
+            field2: z.string().min(1, 'Required'),
           }),
         });
 
@@ -273,17 +273,17 @@ describe('useForm()', () => {
       valid: false,
       source: 'schema',
       errors: {
-        field1: REQUIRED_MESSAGE,
-        field2: REQUIRED_MESSAGE,
+        field1: 'Required',
+        field2: 'Required',
       },
       results: {
         field1: {
           valid: false,
-          errors: [REQUIRED_MESSAGE],
+          errors: ['Required'],
         },
         field2: {
           valid: false,
-          errors: [REQUIRED_MESSAGE],
+          errors: ['Required'],
         },
       },
     });
@@ -349,9 +349,9 @@ describe('useForm()', () => {
     mountWithHoc({
       setup() {
         form = useForm({
-          validationSchema: yup.object({
-            name: yup.object({
-              value: yup.string().required(REQUIRED_MESSAGE),
+          validationSchema: z.object({
+            name: z.object({
+              value: z.string().min(1, 'Required'),
             }),
           }),
           validateOnMount: true,
@@ -367,7 +367,7 @@ describe('useForm()', () => {
     });
 
     await flushPromises();
-    expect(form.errors.value.name).toBe(REQUIRED_MESSAGE);
+    expect(form.errors.value.name).toBe('Required');
     expect(form.meta.value.valid).toBe(false);
   });
 
@@ -376,9 +376,9 @@ describe('useForm()', () => {
     mountWithHoc({
       setup() {
         form = useForm({
-          validationSchema: yup.object({
-            names: yup.object({
-              value: yup.array().of(yup.object({ name: yup.string().required(REQUIRED_MESSAGE) })),
+          validationSchema: z.object({
+            names: z.object({
+              value: z.array(z.object({ name: z.string().min(1, REQUIRED_MESSAGE) })),
             }),
           }),
           validateOnMount: true,
@@ -673,8 +673,8 @@ describe('useForm()', () => {
     mountWithHoc({
       setup() {
         const { validate } = useForm({
-          validationSchema: yup.object({
-            name: yup.string().required(),
+          validationSchema: z.object({
+            name: z.string().min(1),
           }),
         });
 
@@ -734,8 +734,11 @@ describe('useForm()', () => {
       setup() {
         const { meta, resetForm } = useForm({
           initialValues: { field: { name: '1' } },
-          validationSchema: yup.object({
-            name: yup.string().required(),
+          validationSchema: z.object({
+            name: z.string().min(1),
+            field: z.object({
+              name: z.string().min(1),
+            }),
           }),
         });
 
@@ -776,8 +779,8 @@ describe('useForm()', () => {
         },
         setup() {
           const { defineField, values, errors } = useForm({
-            validationSchema: yup.object({
-              name: yup.string().required(),
+            validationSchema: z.object({
+              name: z.string().min(1),
             }),
           });
 
@@ -798,7 +801,7 @@ describe('useForm()', () => {
       setValue(document.querySelector('input') as any, '');
       dispatchEvent(document.querySelector('input') as any, 'blur');
       await flushPromises();
-      expect(errorEl?.textContent).toBe('name is a required field');
+      expect(errorEl?.textContent).toBe('String must contain at least 1 character(s)');
       setValue(document.querySelector('input') as any, '123');
       dispatchEvent(document.querySelector('input') as any, 'blur');
       await flushPromises();
@@ -813,8 +816,8 @@ describe('useForm()', () => {
         },
         setup() {
           const { defineField, values, errors } = useForm({
-            validationSchema: yup.object({
-              name: yup.string().required(),
+            validationSchema: z.object({
+              name: z.string().min(1),
             }),
           });
 
@@ -838,7 +841,7 @@ describe('useForm()', () => {
       expect(errorEl?.textContent).toBe('');
       dispatchEvent(input, 'blur');
       await flushPromises();
-      expect(errorEl?.textContent).toBe('name is a required field');
+      expect(errorEl?.textContent).toBe('String must contain at least 1 character(s)');
       setValue(input, '123');
       dispatchEvent(input, 'blur');
       await flushPromises();
@@ -853,8 +856,8 @@ describe('useForm()', () => {
         },
         setup() {
           const { defineField } = useForm({
-            validationSchema: yup.object({
-              name: yup.string().required(),
+            validationSchema: z.object({
+              name: z.string().min(1),
             }),
           });
 
@@ -886,8 +889,8 @@ describe('useForm()', () => {
         },
         setup() {
           const { defineField } = useForm({
-            validationSchema: yup.object({
-              name: yup.string().required(),
+            validationSchema: z.object({
+              name: z.string().min(1),
             }),
           });
 
@@ -919,8 +922,8 @@ describe('useForm()', () => {
         },
         setup() {
           const { defineField, values, errors } = useForm({
-            validationSchema: yup.object({
-              name: yup.string().required(),
+            validationSchema: z.object({
+              name: z.string().min(1),
             }),
           });
 
@@ -941,7 +944,7 @@ describe('useForm()', () => {
       setValue(document.querySelector('input') as any, '');
       dispatchEvent(document.querySelector('input') as any, 'blur');
       await flushPromises();
-      expect(errorEl?.textContent).toBe('name is a required field');
+      expect(errorEl?.textContent).toBe('String must contain at least 1 character(s)');
       setValue(document.querySelector('input') as any, '123');
       dispatchEvent(document.querySelector('input') as any, 'blur');
       await flushPromises();
@@ -953,8 +956,8 @@ describe('useForm()', () => {
       mountWithHoc({
         setup() {
           const { defineField, values, errors } = useForm({
-            validationSchema: yup.object({
-              name: yup.string().required(),
+            validationSchema: z.object({
+              name: z.string().min(1),
             }),
           });
 
@@ -975,7 +978,7 @@ describe('useForm()', () => {
       setValue(document.querySelector('input') as any, '');
       dispatchEvent(document.querySelector('input') as any, 'blur');
       await flushPromises();
-      expect(errorEl?.textContent).toBe('name is a required field');
+      expect(errorEl?.textContent).toBe('String must contain at least 1 character(s)');
       setValue(document.querySelector('input') as any, '123');
       dispatchEvent(document.querySelector('input') as any, 'blur');
       await flushPromises();
@@ -987,8 +990,8 @@ describe('useForm()', () => {
       mountWithHoc({
         setup() {
           const { defineField, values, errors } = useForm({
-            validationSchema: yup.object({
-              name: yup.string().required(),
+            validationSchema: z.object({
+              name: z.string().min(1),
             }),
           });
 
@@ -1008,7 +1011,7 @@ describe('useForm()', () => {
       const valuesEl = document.getElementById('values');
       setValue(document.querySelector('input') as any, '');
       await flushPromises();
-      expect(errorEl?.textContent).toBe('name is a required field');
+      expect(errorEl?.textContent).toBe('String must contain at least 1 character(s)');
       setValue(document.querySelector('input') as any, '123');
       await flushPromises();
       expect(errorEl?.textContent).toBe('');
@@ -1019,8 +1022,8 @@ describe('useForm()', () => {
       mountWithHoc({
         setup() {
           const { defineField } = useForm({
-            validationSchema: yup.object({
-              name: yup.string().required(),
+            validationSchema: z.object({
+              name: z.string().min(1),
             }),
           });
 
@@ -1052,8 +1055,8 @@ describe('useForm()', () => {
         },
         setup() {
           const { defineField } = useForm({
-            validationSchema: yup.object({
-              name: yup.string().required(),
+            validationSchema: z.object({
+              name: z.string().min(1),
             }),
           });
 
@@ -1291,9 +1294,9 @@ describe('useForm()', () => {
     mountWithHoc({
       setup() {
         form = useForm({
-          validationSchema: yup.object({
-            fname: yup.string().required(),
-            lname: yup.string().required(),
+          validationSchema: z.object({
+            fname: z.string().min(1),
+            lname: z.string().min(1),
           }),
         });
 
@@ -1438,8 +1441,9 @@ describe('useForm()', () => {
       setup() {
         form = useForm({
           initialValues: { fname: '123', lname: '456' },
-          validationSchema: yup.object({
-            fname: yup.string().required(),
+          validationSchema: z.object({
+            fname: z.string().min(1),
+            lname: z.string().min(1),
           }),
         });
 
