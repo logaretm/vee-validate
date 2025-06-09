@@ -140,6 +140,9 @@ importers:
       yup:
         specifier: ^1.4.0
         version: 1.4.0
+      zod:
+        specifier: ^3.22.4
+        version: 3.24.1
 
   docs:
     dependencies:
@@ -235,6 +238,9 @@ importers:
 
   packages/joi:
     dependencies:
+      '@standard-schema/spec':
+        specifier: ^1.0.0
+        version: 1.0.0
       joi:
         specifier: 17.11.0
         version: 17.11.0
@@ -275,12 +281,18 @@ importers:
 
   packages/rules:
     dependencies:
+      '@standard-schema/spec':
+        specifier: ^1.0.0
+        version: 1.0.0
       vee-validate:
         specifier: workspace:*
         version: link:../vee-validate
 
   packages/valibot:
     dependencies:
+      '@standard-schema/spec':
+        specifier: ^1.0.0
+        version: 1.0.0
       type-fest:
         specifier: ^4.8.3
         version: 4.8.3
@@ -293,6 +305,12 @@ importers:
 
   packages/vee-validate:
     dependencies:
+      '@standard-schema/spec':
+        specifier: ^1.0.0
+        version: 1.0.0
+      '@standard-schema/utils':
+        specifier: ^0.3.0
+        version: 0.3.0
       '@vue/devtools-api':
         specifier: ^7.5.2
         version: 7.5.2
@@ -305,6 +323,9 @@ importers:
 
   packages/yup:
     dependencies:
+      '@standard-schema/spec':
+        specifier: ^1.0.0
+        version: 1.0.0
       type-fest:
         specifier: ^4.8.3
         version: 4.8.3
@@ -317,6 +338,9 @@ importers:
 
   packages/zod:
     dependencies:
+      '@standard-schema/spec':
+        specifier: ^1.0.0
+        version: 1.0.0
       type-fest:
         specifier: ^4.8.3
         version: 4.8.3
@@ -2878,6 +2902,12 @@ packages:
 
   '@stackblitz/sdk@1.9.0':
     resolution: {integrity: sha512-3m6C7f8pnR5KXys/Hqx2x6ylnpqOak6HtnZI6T5keEO0yT+E4Spkw37VEbdwuC+2oxmjdgq6YZEgiKX7hM1GmQ==}
+
+  '@standard-schema/spec@1.0.0':
+    resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
+
+  '@standard-schema/utils@0.3.0':
+    resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
 
   '@stylistic/eslint-plugin@2.9.0':
     resolution: {integrity: sha512-OrDyFAYjBT61122MIY1a3SfEgy3YCMgt2vL4eoPmvTwDBwyQhAXurxNQznlRD/jESNfYWfID8Ej+31LljvF7Xg==}
@@ -5968,6 +5998,7 @@ packages:
 
   lodash.isequal@4.5.0:
     resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
+    deprecated: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
 
   lodash.isplainobject@4.0.6:
     resolution: {integrity: sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==}
@@ -9276,7 +9307,7 @@ snapshots:
   '@astrojs/sitemap@3.0.3':
     dependencies:
       sitemap: 7.1.1
-      zod: 3.22.4
+      zod: 3.24.1
 
   '@astrojs/telemetry@3.0.4':
     dependencies:
@@ -11749,6 +11780,10 @@ snapshots:
 
   '@stackblitz/sdk@1.9.0': {}
 
+  '@standard-schema/spec@1.0.0': {}
+
+  '@standard-schema/utils@0.3.0': {}
+
   '@stylistic/eslint-plugin@2.9.0(eslint@9.15.0(jiti@2.4.0))(typescript@5.6.3)':
     dependencies:
       '@typescript-eslint/utils': 8.11.0(eslint@9.15.0(jiti@2.4.0))(typescript@5.6.3)
@@ -12862,7 +12897,7 @@ snapshots:
       vitefu: 0.2.5(vite@4.5.0(@types/node@22.9.0)(terser@5.36.0))
       which-pm: 2.1.1
       yargs-parser: 21.1.1
-      zod: 3.22.4
+      zod: 3.24.1
     optionalDependencies:
       sharp: 0.32.6
     transitivePeerDependencies:

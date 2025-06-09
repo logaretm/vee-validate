@@ -38,6 +38,7 @@
     "dist/*.mjs"
   ],
   "dependencies": {
+    "@standard-schema/spec": "^1.0.0",
     "vee-validate": "workspace:*"
   }
 }

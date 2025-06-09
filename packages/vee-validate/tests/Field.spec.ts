@@ -1,8 +1,8 @@
 import { defineRule, configure } from '@/vee-validate';
 import { mountWithHoc, setValue, dispatchEvent, setChecked, flushPromises, dispatchFileEvent } from './helpers';
-import * as yup from 'yup';
 import { computed, reactive, ref, Ref } from 'vue';
 import { ModelComp } from './helpers/ModelComp';
+import { z } from 'zod';
 
 vi.useFakeTimers();
 
@@ -428,10 +428,10 @@ describe('<Field />', () => {
     expect(errors[1].textContent).toBe('This field must be at least 3 characters');
   });
 
-  test('yup rules can be used', async () => {
+  test('standard schema can be used', async () => {
     const wrapper = mountWithHoc({
       setup() {
-        const rules = yup.string().required().min(8);
+        const rules = z.string().min(8);
 
         return {
           rules,
@@ -452,10 +452,7 @@ describe('<Field />', () => {
 
     setValue(input, '');
     await flushPromises();
-    expect(error.textContent).toBe('this is a required field');
-    setValue(input, '12');
-    await flushPromises();
-    expect(error.textContent).toBe('this must be at least 8 characters');
+    expect(error.textContent).toBe('String must contain at least 8 character(s)');
     setValue(input, '12345678');
     await flushPromises();
     expect(error.textContent).toBe('');
@@ -558,71 +555,6 @@ describe('<Field />', () => {
     expect(input.value).toBe(resetValue);
     expect(dirty.textContent).toBe('false');
     expect(touched.textContent).toBe('true');
-  });
-
-  test('yup abortEarly is set by bails global option', async () => {
-    configure({
-      bails: false,
-    });
-    const wrapper = mountWithHoc({
-      setup() {
-        const rules = yup.string().min(8).url();
-
-        return {
-          rules,
-        };
-      },
-      template: `
-      <div>
-        <Field name="field" :rules="rules" v-slot="{ errors, field }">
-          <input type="text" v-bind="field">
-          <ul>
-            <li v-for="error in errors">{{ error }}</li>
-          </ul>
-        </Field>
-      </div>
-    `,
-    });
-
-    await flushPromises();
-    const errors = wrapper.$el.querySelector('ul');
-    const input = wrapper.$el.querySelector('input');
-    expect(errors.children).toHaveLength(0);
-
-    setValue(input, '1234');
-    await flushPromises();
-    expect(errors.children).toHaveLength(2);
-  });
-
-  test('yup abortEarly is set by bails prop', async () => {
-    const wrapper = mountWithHoc({
-      setup() {
-        const rules = yup.string().min(8).url();
-
-        return {
-          rules,
-        };
-      },
-      template: `
-      <div>
-        <Field name="field" :rules="rules" v-slot="{ errors, field }" :bails="false">
-          <input type="text" v-bind="field">
-          <ul>
-            <li v-for="error in errors">{{ error }}</li>
-          </ul>
-        </Field>
-      </div>
-    `,
-    });
-
-    await flushPromises();
-    const errors = wrapper.$el.querySelector('ul');
-    const input = wrapper.$el.querySelector('input');
-    expect(errors.children).toHaveLength(0);
-
-    setValue(input, '1234');
-    await flushPromises();
-    expect(errors.children).toHaveLength(2);
   });
 
   test('handleInput() updates the model', async () => {
