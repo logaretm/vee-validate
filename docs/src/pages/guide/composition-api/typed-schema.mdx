@@ -306,7 +306,7 @@ const { values, handleSubmit } = useForm({
   validationSchema: toTypedSchema(
     v.object({
       name: v.pipe(v.string()),
-      email: v.pipe(v.string() v.nonEmpty('required')),
+      email: v.pipe(v.string(), v.nonEmpty('required')),
       password: v.pipe(v.string(), v.minLength(6, 'Must be at least 6 characters')),
     }),
   ),
