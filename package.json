@@ -18,7 +18,11 @@
     "typecheck": "pnpm tsc --noEmit --project ./tsconfig.json --skipLibCheck",
     "docs:dev": "cd ./docs && pnpm dev && cd -",
     "postinstall": "husky install",
-    "release": "./scripts/release.sh"
+    "release": "./scripts/release.sh",
+    "ci:copy-mds": "node scripts/copy-mds.mjs",
+    "ci:publish": "pnpm build && pnpm publish --provenance --access public -r",
+    "ci:version": "pnpm changeset version && pnpm ci:copy-mds",
+    "ci:tag": "node scripts/tag-release.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",

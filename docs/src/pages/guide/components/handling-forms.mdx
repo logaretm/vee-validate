@@ -91,9 +91,9 @@ If you have a `submit` listener on the `Form` component, vee-validate assumes yo
 But in the case when you don't have a `submit` listener on your form, vee-validate assumes that the form will be submitted using the native HTML submission that causes the page to "reload". However vee-validate will make sure the form is not submitted unless all fields are valid, here is an example:
 
 ```vue-html
-<Form method="post" action="/api/users" :validation-schema="schema" />
-  <Field name="email" />
-  <Field name="name" type="email" />
+<Form method="post" action="/api/users" :validation-schema="schema">
+  <Field name="email" type="email" />
+  <Field name="name" />
   <Field name="password" type="password" />
 
   <button>Submit</button>

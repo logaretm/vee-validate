@@ -1,5 +1,15 @@
 # @vee-validate/valibot
 
+## 4.15.1
+
+### Patch Changes
+
+- 9867e59: fix: valibot variants not inferring required correctly
+- 9803aa2: fix: valibot intersections
+- Updated dependencies [721e980]
+- Updated dependencies [546d82e]
+  - vee-validate@4.15.1
+
 ## 4.15.0
 
 ### Minor Changes

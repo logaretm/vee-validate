@@ -1,6 +1,7 @@
 {
   "code": "sl",
   "messages": {
+    "_default": "Polje {field} ni veljavno",
     "alpha": "Polje {field} lahko vsebuje le črkovne znake",
     "alpha_dash": "Polje {field} lahko vsebuje le alfanumerične znake kot tudi vezaje in podčrtaje",
     "alpha_num": "Polje {field} lahko vsebuje le alfanumerične znake",
@@ -14,6 +15,10 @@
     "ext": "Datoteka polja {field} mora biti ustrezna",
     "image": "Datoteka polja {field} mora biti slika",
     "one_of": "Polje {field} mora biti ustrezne vrednosti",
+    "integer": "Polje {field} mora biti celo število",
+    "is": "Vrednost polja {field} se ne ujema",
+    "is_not": "Polje {field} vsebuje neveljavno vrednost",
+    "length": "Polje {field} mora biti dolgo 0:{length}",
     "max": "Dolžina polja {field} ne sme biti večja od 0:{length} znakov",
     "max_value": "Vrednost polja {field} mora biti 0:{max} ali manj",
     "mimes": "Datoteka polja {field} mora biti ustreznega tipa",
@@ -23,6 +28,7 @@
     "regex": "Vrednost polja {field} ni v ustreznem formatu",
     "required": "Polje {field} je obvezno",
     "required_if": "Polje {field} je obvezno",
-    "size": "Velikost datoteke {field} mora biti manjša kot 0:{size}KB"
+    "size": "Velikost datoteke {field} mora biti manjša kot 0:{size}KB",
+    "url": "Polje {field} ni veljaven URL"
   }
 }

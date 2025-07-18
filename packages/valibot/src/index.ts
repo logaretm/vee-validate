@@ -27,6 +27,9 @@ import {
   Config,
   IntersectSchema,
   IntersectIssue,
+  VariantSchema,
+  VariantOptions,
+  VariantIssue,
 } from 'valibot';
 import { isIndex, isObject, merge, normalizeFormPath } from '../../shared';
 
@@ -140,6 +143,10 @@ function getSchemaForPath(
     return schema.options.map(o => getSchemaForPath(path, o)).find(Boolean) ?? null;
   }
 
+  if (isVariantSchema(schema)) {
+    return schema.options.map(o => getSchemaForPath(path, o)).find(Boolean) ?? null;
+  }
+
   if (!isObjectSchema(schema)) {
     return null;
   }
@@ -158,6 +165,10 @@ function getSchemaForPath(
     }
 
     if (isIntersectSchema(currentSchema)) {
+      currentSchema = currentSchema.options.find(o => isObjectSchema(o) && o.entries[p]) ?? currentSchema;
+    }
+
+    if (isVariantSchema(currentSchema)) {
       currentSchema = currentSchema.options.find(o => isObjectSchema(o) && o.entries[p]) ?? currentSchema;
     }
 
@@ -207,4 +218,10 @@ function isIntersectSchema(
   ErrorMessage<IntersectIssue> | undefined
 > {
   return schema.type === 'intersect';
+}
+
+function isVariantSchema(
+  schema: BaseSchema<unknown, unknown, BaseIssue<unknown>> | BaseSchemaAsync<unknown, unknown, BaseIssue<unknown>>,
+): schema is VariantSchema<string, VariantOptions<string>, ErrorMessage<VariantIssue> | undefined> {
+  return schema.type === 'variant';
 }
