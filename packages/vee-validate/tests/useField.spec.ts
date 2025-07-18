@@ -1060,4 +1060,50 @@ describe('useField()', () => {
 
     expect(form.values.field).toEqual('test');
   });
+
+  test('it should handle brackets path syntax in path', async () => {
+    let form!: FormContext;
+
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          initialValues: {
+            user: {
+              'full.name': 'full.name initial value',
+              addresses: ['address initial value'],
+            },
+          },
+        });
+
+        return { form };
+      },
+      template: `
+      <div>
+        <CustomField path="user[full.name]" />
+        <CustomField path="user.addresses[0]" />
+        </div>
+        `,
+      components: {
+        CustomField: {
+          props: {
+            path: [Array, String],
+          },
+          setup(props: any) {
+            const { value } = useField(() => props.path);
+            value.value = 'new value';
+
+            return { value };
+          },
+          template: '<input type="text" v-model="value" />',
+        },
+      },
+    });
+
+    await flushPromises();
+
+    expect(form.values.user['full.name']).toEqual('new value');
+    expect(form.values.user.addresses[0]).toEqual('new value');
+    expect(Object.keys(form.values)).toEqual(['user']);
+    expect(Object.keys(form.values.user)).toEqual(['full.name', 'addresses']);
+  });
 });
