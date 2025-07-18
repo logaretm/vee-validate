@@ -1069,8 +1069,19 @@ describe('useField()', () => {
         form = useForm({
           initialValues: {
             user: {
-              'full.name': 'full.name initial value',
-              addresses: ['address initial value'],
+              'full.name': 'user.full.name',
+              addresses: ['user.address[0]'],
+              'first.name': 'user[first.name]',
+              'deep.nested': {
+                'field.0': 'user[deep.nested][field.0]',
+                'field.1': ['user[deep.nested][field.1][0]'],
+                'field.2': [
+                  {
+                    key1: 'user[deep.nested][field.2].key1',
+                    'key.2': 'user[deep.nested][field.2][key.2]',
+                  },
+                ],
+              },
             },
           },
         });
@@ -1081,8 +1092,13 @@ describe('useField()', () => {
       <div>
         <CustomField path="user[full.name]" />
         <CustomField path="user.addresses[0]" />
-        </div>
-        `,
+        <CustomField path="user[first.name]" />
+        <CustomField path="user[deep.nested][field.0]" />
+        <CustomField path="user[deep.nested][field.1][0]" />
+        <CustomField path="user[deep.nested][field.2][0].key1" />
+        <CustomField path="user[deep.nested][field.2][0][key.2]" />
+      </div>
+      `,
       components: {
         CustomField: {
           props: {
@@ -1103,7 +1119,83 @@ describe('useField()', () => {
 
     expect(form.values.user['full.name']).toEqual('new value');
     expect(form.values.user.addresses[0]).toEqual('new value');
+    expect(form.values.user['first.name']).toEqual('new value');
+    expect(form.values.user['deep.nested']['field.0']).toEqual('new value');
+    expect(form.values.user['deep.nested']['field.1'][0]).toEqual('new value');
+    expect(form.values.user['deep.nested']['field.2'][0].key1).toEqual('new value');
+    expect(form.values.user['deep.nested']['field.2'][0]['key.2']).toEqual('new value');
+
     expect(Object.keys(form.values)).toEqual(['user']);
-    expect(Object.keys(form.values.user)).toEqual(['full.name', 'addresses']);
+    expect(Object.keys(form.values.user)).toEqual(['full.name', 'addresses', 'first.name', 'deep.nested']);
+    expect(Object.keys(form.values.user['deep.nested'])).toEqual(['field.0', 'field.1', 'field.2']);
+  });
+
+  test('it should accept a path array', async () => {
+    let form!: FormContext;
+
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          initialValues: {
+            user: {
+              'full.name': 'user.full.name',
+              addresses: ['user.address[0]'],
+              'first.name': 'user[first.name]',
+              'deep.nested': {
+                'field.0': 'user[deep.nested][field.0]',
+                'field.1': ['user[deep.nested][field.1][0]'],
+                'field.2': [
+                  {
+                    key1: 'user[deep.nested][field.2].key1',
+                    'key.2': 'user[deep.nested][field.2][key.2]',
+                  },
+                ],
+              },
+            },
+          },
+        });
+
+        return { form };
+      },
+      template: `
+      <div>
+        <CustomField :path="['user', 'full.name']" />
+        <CustomField :path="['user', 'addresses', 0]" />
+        <CustomField :path="['user', 'first.name']" />
+        <CustomField :path="['user', 'deep.nested', 'field.0']" />
+        <CustomField :path="['user', 'deep.nested', 'field.1', 0]" />
+        <CustomField :path="['user', 'deep.nested', 'field.2', 0, 'key1']" />
+        <CustomField :path="['user', 'deep.nested', 'field.2', 0, 'key.2']" />
+      </div>
+      `,
+      components: {
+        CustomField: {
+          props: {
+            path: [Array, String],
+          },
+          setup(props: any) {
+            const { value } = useField(() => props.path);
+            value.value = 'new value';
+
+            return { value };
+          },
+          template: '<input type="text" v-model="value" />',
+        },
+      },
+    });
+
+    await flushPromises();
+
+    expect(form.values.user['full.name']).toEqual('new value');
+    expect(form.values.user.addresses[0]).toEqual('new value');
+    expect(form.values.user['first.name']).toEqual('new value');
+    expect(form.values.user['deep.nested']['field.0']).toEqual('new value');
+    expect(form.values.user['deep.nested']['field.1'][0]).toEqual('new value');
+    expect(form.values.user['deep.nested']['field.2'][0].key1).toEqual('new value');
+    expect(form.values.user['deep.nested']['field.2'][0]['key.2']).toEqual('new value');
+
+    expect(Object.keys(form.values)).toEqual(['user']);
+    expect(Object.keys(form.values.user)).toEqual(['full.name', 'addresses', 'first.name', 'deep.nested']);
+    expect(Object.keys(form.values.user['deep.nested'])).toEqual(['field.0', 'field.1', 'field.2']);
   });
 });

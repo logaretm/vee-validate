@@ -30,15 +30,18 @@ type NestedRecord = Record<string, unknown> | { [k: string]: NestedRecord };
 /**
  * Gets a nested property value from an object
  */
-export function getFromPath<TValue = unknown>(object: NestedRecord | undefined, path: string): TValue | undefined;
+export function getFromPath<TValue = unknown>(
+  object: NestedRecord | undefined,
+  path: Array<string | number> | string,
+): TValue | undefined;
 export function getFromPath<TValue = unknown, TFallback = TValue>(
   object: NestedRecord | undefined,
-  path: string,
+  path: Array<string | number> | string,
   fallback?: TFallback,
 ): TValue | TFallback;
 export function getFromPath<TValue = unknown, TFallback = TValue>(
   object: NestedRecord | undefined,
-  path: string,
+  path: Array<string | number> | string,
   fallback?: TFallback,
 ): TValue | TFallback | undefined {
   if (!object) {
@@ -100,10 +103,33 @@ function getPathSegments(
   return segments.filter(Boolean);
 }
 
+export function serializePath<TPath extends string>(path: Array<string | number> | TPath): TPath {
+  if (!Array.isArray(path)) return path;
+
+  const segments = path.map(segment => (typeof segment === 'number' || segment.includes('.') ? [segment] : segment));
+
+  let pathString = '';
+
+  segments.forEach(segment => {
+    const isArray = Array.isArray(segment);
+    const segmentString = isArray ? `[${segment[0]}]` : segment;
+
+    if (pathString === '') {
+      pathString = segmentString;
+    } else if (isArray) {
+      pathString += segmentString;
+    } else {
+      pathString += `.${segmentString}`;
+    }
+  });
+
+  return pathString as TPath;
+}
+
 /**
  * Sets a nested property value in a path, creates the path properties if it doesn't exist
  */
-export function setInPath(object: NestedRecord, path: string, value: unknown): void {
+export function setInPath(object: NestedRecord, path: Array<string | number> | string, value: unknown): void {
   if (isNotNestedPath(path)) {
     object[cleanupNonNestedPath(path)] = value;
     return;
@@ -209,7 +235,6 @@ export function resolveNextCheckboxValue<T>(currentValue: T | T[], checkedValue:
     const newVal = [...currentValue];
     // Use isEqual since checked object values can possibly fail the equality check #3883
     const idx = newVal.findIndex(v => isEqual(v, checkedValue));
-
     if (idx >= 0) {
       newVal.splice(idx, 1);
     } else {

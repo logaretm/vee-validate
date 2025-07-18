@@ -346,9 +346,9 @@ export interface PrivateFormContext<
   stageInitialValue(path: string, value: unknown, updateOriginal?: boolean): void;
   unsetInitialValue(path: string): void;
   handleSubmit: HandleSubmitFactory<TValues, TOutput> & { withControlled: HandleSubmitFactory<TValues, TOutput> };
-  setFieldInitialValue(path: string, value: unknown, updateOriginal?: boolean): void;
+  setFieldInitialValue(path: Array<string | number> | string, value: unknown, updateOriginal?: boolean): void;
   createPathState<TPath extends Path<TValues>>(
-    path: MaybeRef<TPath>,
+    path: MaybeRefOrGetter<Array<string | number> | TPath>,
     config?: Partial<PathStateConfig<TOutput[TPath]>>,
   ): PathState<PathValue<TValues, TPath>>;
   getPathState<TPath extends Path<TValues>>(path: TPath): PathState<PathValue<TValues, TPath>> | undefined;
