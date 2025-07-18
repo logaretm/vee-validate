@@ -160,7 +160,7 @@ function getSchemaForPath(path: string, schema: ZodSchema): ZodSchema | null {
   const paths = (path || '').split(/\.|\[(\d+)\]/).filter(Boolean);
 
   let currentSchema: ZodSchema = schema;
-  for (let i = 0; i <= paths.length; i++) {
+  for (let i = 0; i < paths.length; i++) {
     const p = paths[i];
     if (!p || !currentSchema) {
       return currentSchema;
