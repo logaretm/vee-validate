@@ -63,7 +63,7 @@ export function getFromPath<TValue = unknown, TFallback = TValue>(
   return resolvedValue as TValue | undefined;
 }
 
-function getPathSegments(
+export function getPathSegments(
   path: (() => string) | Array<string | number> | string | undefined | null,
 ): Array<string | number> {
   const segments: string[] = [];

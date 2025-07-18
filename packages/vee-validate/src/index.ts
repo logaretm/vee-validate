@@ -1,7 +1,7 @@
 export { validate, validateObjectSchema as validateObject } from './validate';
 export { defineRule } from './defineRule';
 export { configure } from './config';
-export { normalizeRules, isNotNestedPath, cleanupNonNestedPath } from './utils';
+export { normalizeRules, isNotNestedPath, cleanupNonNestedPath, getPathSegments } from './utils';
 export { Field, FieldBindingObject, ComponentFieldBindingObject, FieldSlotProps } from './Field';
 export { Form, FormSlotProps } from './Form';
 export { FieldArray } from './FieldArray';

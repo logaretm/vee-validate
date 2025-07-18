@@ -12,7 +12,13 @@ import {
   ZodFirstPartyTypeKind,
 } from 'zod';
 import { PartialDeep } from 'type-fest';
-import { isNotNestedPath, type TypedSchema, type TypedSchemaError, cleanupNonNestedPath } from 'vee-validate';
+import {
+  isNotNestedPath,
+  type TypedSchema,
+  type TypedSchemaError,
+  cleanupNonNestedPath,
+  getPathSegments,
+} from 'vee-validate';
 import { isIndex, isObject, merge, normalizeFormPath } from '../../shared';
 
 /**
@@ -157,7 +163,7 @@ function getSchemaForPath(path: string, schema: ZodSchema): ZodSchema | null {
     return schema.shape[cleanupNonNestedPath(path)];
   }
 
-  const paths = (path || '').split(/\.|\[(\d+)\]/).filter(Boolean);
+  const paths = getPathSegments(path);
 
   let currentSchema: ZodSchema = schema;
   for (let i = 0; i <= paths.length; i++) {

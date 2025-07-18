@@ -5,6 +5,7 @@ import {
   isNotNestedPath,
   cleanupNonNestedPath,
   TypedSchemaPathDescription,
+  getPathSegments,
 } from 'vee-validate';
 import { PartialDeep } from 'type-fest';
 import { isIndex, isObject, merge } from '../../shared';
@@ -116,7 +117,7 @@ function getSpecForPath(path: string, schema: Schema): AnyObjectSchema['spec'] |
     return (field as AnyObjectSchema)?.spec || null;
   }
 
-  const paths = (path || '').split(/\.|\[(\d+)\]/).filter(Boolean);
+  const paths = getPathSegments(path);
 
   let currentSchema = schema;
   for (let i = 0; i < paths.length; i++) {
