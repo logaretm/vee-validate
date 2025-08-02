@@ -30,15 +30,18 @@ type NestedRecord = Record<string, unknown> | { [k: string]: NestedRecord };
 /**
  * Gets a nested property value from an object
  */
-export function getFromPath<TValue = unknown>(object: NestedRecord | undefined, path: string): TValue | undefined;
+export function getFromPath<TValue = unknown>(
+  object: NestedRecord | undefined,
+  path: Array<string | number> | string,
+): TValue | undefined;
 export function getFromPath<TValue = unknown, TFallback = TValue>(
   object: NestedRecord | undefined,
-  path: string,
+  path: Array<string | number> | string,
   fallback?: TFallback,
 ): TValue | TFallback;
 export function getFromPath<TValue = unknown, TFallback = TValue>(
   object: NestedRecord | undefined,
-  path: string,
+  path: Array<string | number> | string,
   fallback?: TFallback,
 ): TValue | TFallback | undefined {
   if (!object) {
@@ -49,30 +52,90 @@ export function getFromPath<TValue = unknown, TFallback = TValue>(
     return object[cleanupNonNestedPath(path)] as TValue | undefined;
   }
 
-  const resolvedValue = (path || '')
-    .split(/\.|\[(\d+)\]/)
-    .filter(Boolean)
-    .reduce((acc, propKey) => {
-      if (isContainerValue(acc) && propKey in acc) {
-        return acc[propKey];
-      }
+  const resolvedValue = getPathSegments(path).reduce((acc, propKey) => {
+    if (isContainerValue(acc) && propKey in acc) {
+      return acc[propKey];
+    }
 
-      return fallback;
-    }, object as unknown);
+    return fallback;
+  }, object as unknown);
 
   return resolvedValue as TValue | undefined;
+}
+
+export function getPathSegments(
+  path: (() => string) | Array<string | number> | string | undefined | null,
+): Array<string | number> {
+  const segments: string[] = [];
+
+  if (!path) return segments;
+
+  if (Array.isArray(path)) return path;
+
+  let isInsideBrackets = false;
+
+  let segment = '';
+  const pathString = typeof path === 'function' ? path() : path;
+
+  for (const char of pathString) {
+    if (char === '[') {
+      segments.push(segment);
+      segment = '';
+      isInsideBrackets = true;
+    } else if (char === ']' && isInsideBrackets) {
+      segments.push(segment);
+      segment = '';
+      isInsideBrackets = false;
+    } else if (char === '.' && !isInsideBrackets) {
+      segments.push(segment);
+      segment = '';
+    } else {
+      segment += char;
+    }
+  }
+
+  segments.push(segment);
+
+  if (isInsideBrackets) {
+    throw new Error('Invalid path syntax: ' + path);
+  }
+
+  return segments.filter(Boolean);
+}
+
+export function serializePath<TPath extends string>(path: Array<string | number> | TPath): TPath {
+  if (!Array.isArray(path)) return path;
+
+  const segments = path.map(segment => (typeof segment === 'number' || segment.includes('.') ? [segment] : segment));
+
+  let pathString = '';
+
+  segments.forEach(segment => {
+    const isArray = Array.isArray(segment);
+    const segmentString = isArray ? `[${segment[0]}]` : segment;
+
+    if (pathString === '') {
+      pathString = segmentString;
+    } else if (isArray) {
+      pathString += segmentString;
+    } else {
+      pathString += `.${segmentString}`;
+    }
+  });
+
+  return pathString as TPath;
 }
 
 /**
  * Sets a nested property value in a path, creates the path properties if it doesn't exist
  */
-export function setInPath(object: NestedRecord, path: string, value: unknown): void {
+export function setInPath(object: NestedRecord, path: Array<string | number> | string, value: unknown): void {
   if (isNotNestedPath(path)) {
     object[cleanupNonNestedPath(path)] = value;
     return;
   }
 
-  const keys = path.split(/\.|\[(\d+)\]/).filter(Boolean);
+  const keys = getPathSegments(path);
   let acc: Record<string, unknown> = object;
   for (let i = 0; i < keys.length; i++) {
     // Last key, set it
@@ -111,7 +174,7 @@ export function unsetPath(object: NestedRecord, path: string): void {
     return;
   }
 
-  const keys = path.split(/\.|\[(\d+)\]/).filter(Boolean);
+  const keys = getPathSegments(path);
   let acc: Record<string, unknown> = object;
   for (let i = 0; i < keys.length; i++) {
     // Last key, unset it
@@ -172,7 +235,11 @@ export function resolveNextCheckboxValue<T>(currentValue: T | T[], checkedValue:
     const newVal = [...currentValue];
     // Use isEqual since checked object values can possibly fail the equality check #3883
     const idx = newVal.findIndex(v => isEqual(v, checkedValue));
-    idx >= 0 ? newVal.splice(idx, 1) : newVal.push(checkedValue);
+    if (idx >= 0) {
+      newVal.splice(idx, 1);
+    } else {
+      newVal.push(checkedValue);
+    }
 
     return newVal;
   }

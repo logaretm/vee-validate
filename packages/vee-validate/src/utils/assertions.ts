@@ -38,7 +38,9 @@ export function isEmptyContainer(value: unknown): boolean {
 /**
  * Checks if the path opted out of nested fields using `[fieldName]` syntax
  */
-export function isNotNestedPath(path: string) {
+export function isNotNestedPath(path: Array<string | number> | string): path is string {
+  if (Array.isArray(path)) return false;
+
   return /^\[.+\]$/i.test(path);
 }
 

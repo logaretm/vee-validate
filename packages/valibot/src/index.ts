@@ -1,5 +1,11 @@
 import { PartialDeep } from 'type-fest';
-import { cleanupNonNestedPath, isNotNestedPath, type TypedSchema, type TypedSchemaError } from 'vee-validate';
+import {
+  cleanupNonNestedPath,
+  isNotNestedPath,
+  getPathSegments,
+  type TypedSchema,
+  type TypedSchemaError,
+} from 'vee-validate';
 import {
   InferOutput,
   InferInput,
@@ -155,7 +161,7 @@ function getSchemaForPath(
     return schema.entries[cleanupNonNestedPath(path)];
   }
 
-  const paths = (path || '').split(/\.|\[(\d+)\]/).filter(Boolean);
+  const paths = getPathSegments(path);
 
   let currentSchema: BaseSchema<unknown, unknown, BaseIssue<unknown>> = schema;
   for (let i = 0; i <= paths.length; i++) {

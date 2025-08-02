@@ -99,7 +99,7 @@ export function useField<TValue = unknown>(
 }
 
 function _useField<TValue = unknown>(
-  path: MaybeRefOrGetter<string>,
+  path: MaybeRefOrGetter<Array<string | number> | string>,
   rules?: MaybeRef<RuleExpression<TValue>>,
   opts?: Partial<FieldOptions<TValue>>,
 ): FieldContext<TValue> {
@@ -143,7 +143,7 @@ function _useField<TValue = unknown>(
   });
 
   const isTyped = !isCallable(validator.value) && isTypedSchema(toValue(rules));
-  const { id, value, initialValue, meta, setState, errors, flags } = useFieldState<TValue>(name, {
+  const { id, value, initialValue, meta, setState, errors, flags } = useFieldState<TValue>(path, {
     modelValue,
     form,
     bails,
@@ -325,7 +325,11 @@ function _useField<TValue = unknown>(
           return;
         }
 
-        meta.validated ? validateWithStateMutation() : validateValidStateOnly();
+        if (meta.validated) {
+          validateWithStateMutation();
+        } else {
+          validateValidStateOnly();
+        }
       },
       {
         deep: true,
@@ -399,7 +403,11 @@ function _useField<TValue = unknown>(
 
     const shouldValidate = !isEqual(deps, oldDeps);
     if (shouldValidate) {
-      meta.validated ? validateWithStateMutation() : validateValidStateOnly();
+      if (meta.validated) {
+        validateWithStateMutation();
+      } else {
+        validateValidStateOnly();
+      }
     }
   });
 

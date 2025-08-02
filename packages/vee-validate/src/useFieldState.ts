@@ -1,6 +1,6 @@
 import { computed, isRef, reactive, ref, Ref, unref, watch, MaybeRef, MaybeRefOrGetter, toValue } from 'vue';
 import { FieldMeta, FieldState, FieldValidator, InputType, PrivateFormContext, PathState, TypedSchema } from './types';
-import { getFromPath, isEqual, normalizeErrorItem } from './utils';
+import { getFromPath, isEqual, normalizeErrorItem, serializePath } from './utils';
 
 export interface StateSetterInit<TValue = unknown> extends FieldState<TValue> {
   initialValue: TValue;
@@ -8,7 +8,7 @@ export interface StateSetterInit<TValue = unknown> extends FieldState<TValue> {
 
 export interface FieldStateComposable<TValue = unknown> {
   id: number;
-  path: MaybeRef<string>;
+  path: MaybeRefOrGetter<Array<string | number> | string>;
   meta: FieldMeta<TValue>;
   value: Ref<TValue>;
   flags: PathState['__flags'];
@@ -30,7 +30,7 @@ export interface StateInit<TInput = unknown, TOutput = TInput> {
 let ID_COUNTER = 0;
 
 export function useFieldState<TValue = unknown>(
-  path: MaybeRef<string>,
+  path: MaybeRefOrGetter<Array<string | number> | string>,
   init: Partial<StateInit<TValue>>,
 ): FieldStateComposable<TValue> {
   const { value, initialValue, setInitialValue } = _useFieldValue<TValue>(path, init.modelValue, init.form);
@@ -86,11 +86,11 @@ export function useFieldState<TValue = unknown>(
     }
 
     if ('errors' in state) {
-      init.form?.setFieldError(unref(path), state.errors);
+      init.form?.setFieldError(serializePath(toValue(path)), state.errors);
     }
 
     if ('touched' in state) {
-      init.form?.setFieldTouched(unref(path), state.touched ?? false);
+      init.form?.setFieldTouched(serializePath(toValue(path)), state.touched ?? false);
     }
 
     if ('initialValue' in state) {
@@ -120,7 +120,7 @@ interface FieldValueComposable<TValue = unknown> {
  * Creates the field value and resolves the initial value
  */
 export function _useFieldValue<TValue = unknown>(
-  path: MaybeRef<string>,
+  path: MaybeRefOrGetter<Array<string | number> | string>,
   modelValue?: MaybeRef<TValue>,
   form?: PrivateFormContext,
 ): FieldValueComposable<TValue> {
@@ -131,7 +131,7 @@ export function _useFieldValue<TValue = unknown>(
       return unref(modelRef) as TValue;
     }
 
-    return getFromPath<TValue>(form.initialValues.value, unref(path), unref(modelRef)) as TValue;
+    return getFromPath<TValue>(form.initialValues.value, toValue(path), unref(modelRef)) as TValue;
   }
 
   function setInitialValue(value: TValue) {
@@ -140,7 +140,7 @@ export function _useFieldValue<TValue = unknown>(
       return;
     }
 
-    form.setFieldInitialValue(unref(path), value, true);
+    form.setFieldInitialValue(toValue(path), value, true);
   }
 
   const initialValue = computed(resolveInitialValue);
@@ -161,14 +161,14 @@ export function _useFieldValue<TValue = unknown>(
   // prioritize model value over form values
   // #3429
   const currentValue = resolveModelValue(modelValue, form, initialValue, path);
-  form.stageInitialValue(unref(path), currentValue, true);
+  form.stageInitialValue(serializePath(toValue(path)), currentValue, true);
   // otherwise use a computed setter that triggers the `setFieldValue`
   const value = computed<TValue>({
     get() {
-      return getFromPath<TValue>(form.values, unref(path)) as TValue;
+      return getFromPath<TValue>(form.values, toValue(path)) as TValue;
     },
     set(newVal) {
-      form.setFieldValue(unref(path), newVal, false);
+      form.setFieldValue(serializePath(toValue(path)), newVal, false);
     },
   }) as Ref<TValue>;
 
@@ -189,7 +189,7 @@ function resolveModelValue<TValue>(
   modelValue: MaybeRef<TValue> | undefined,
   form: PrivateFormContext,
   initialValue: MaybeRef<TValue> | undefined,
-  path: MaybeRef<string>,
+  path: MaybeRefOrGetter<Array<string | number> | string>,
 ): TValue {
   if (isRef(modelValue)) {
     return unref(modelValue);
@@ -199,7 +199,7 @@ function resolveModelValue<TValue>(
     return modelValue;
   }
 
-  return getFromPath(form.values, unref(path), unref(initialValue)) as TValue;
+  return getFromPath(form.values, toValue(path), unref(initialValue)) as TValue;
 }
 
 /**

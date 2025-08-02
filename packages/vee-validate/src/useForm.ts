@@ -68,6 +68,7 @@ import {
   omit,
   debounceNextTick,
   normalizeEventValue,
+  serializePath,
 } from './utils';
 import { FormContextKey, PublicFormContextKey } from './symbols';
 import { validateTypedSchema, validateObjectSchema } from './validate';
@@ -271,11 +272,11 @@ export function useForm<
   const schema = opts?.validationSchema;
 
   function createPathState<TPath extends Path<TValues>>(
-    path: MaybeRefOrGetter<TPath>,
+    path: MaybeRefOrGetter<Array<string | number> | TPath>,
     config?: Partial<PathStateConfig<TOutput[TPath]>>,
   ): PathState<TValues[TPath], TOutput[TPath]> {
     const initialValue = computed(() => getFromPath(initialValues.value, toValue(path)));
-    const pathStateExists = pathStateLookup.value[toValue(path)];
+    const pathStateExists = pathStateLookup.value[serializePath(toValue(path))];
     const isCheckboxOrRadio = config?.type === 'checkbox' || config?.type === 'radio';
     if (pathStateExists && isCheckboxOrRadio) {
       pathStateExists.multiple = true;
@@ -343,12 +344,13 @@ export function useForm<
     }) as PathState<TValues[TPath], TOutput[TPath]>;
 
     pathStates.value.push(state);
-    pathStateLookup.value[pathValue] = state;
+    const pathString = serializePath(pathValue);
+    pathStateLookup.value[pathString] = state;
     rebuildPathLookup();
 
-    if (errors.value[pathValue] && !initialErrors[pathValue]) {
+    if (errors.value[pathString] && !initialErrors[pathString]) {
       nextTick(() => {
-        validateField(pathValue, { mode: 'silent' });
+        validateField(pathString, { mode: 'silent' });
       });
     }
 
@@ -357,7 +359,8 @@ export function useForm<
       watch(path, newPath => {
         rebuildPathLookup();
         const nextValue = deepCopy(currentValue.value);
-        pathStateLookup.value[newPath] = state;
+        const pathString = serializePath(newPath);
+        pathStateLookup.value[pathString] = state;
 
         nextTick(() => {
           setInPath(formValues, newPath, nextValue);
@@ -842,7 +845,12 @@ export function useForm<
       setFieldError(toValue(state.path) as Path<TValues>, undefined);
     });
 
-    opts?.force ? forceSetValues(newValues, false) : setValues(newValues, false);
+    if (opts?.force) {
+      forceSetValues(newValues, false);
+    } else {
+      setValues(newValues, false);
+    }
+
     setErrors(resetState?.errors || {});
     submitCount.value = resetState?.submitCount || 0;
     nextTick(() => {
@@ -963,7 +971,7 @@ export function useForm<
     }
   }
 
-  function setFieldInitialValue(path: string, value: unknown, updateOriginal = false) {
+  function setFieldInitialValue(path: Array<string | number> | string, value: unknown, updateOriginal = false) {
     setInPath(initialValues.value, path, deepCopy(value));
     if (updateOriginal) {
       setInPath(originalInitialValues.value, path, deepCopy(value));

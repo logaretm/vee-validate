@@ -69,8 +69,8 @@ export function merge(target: any, source: any) {
 /**
  * Constructs a path with dot paths for arrays to use brackets to be compatible with vee-validate path syntax
  */
-export function normalizeFormPath(path: string): string {
-  const pathArr = path.split('.');
+export function normalizeFormPath(path: Array<string | number> | string): string {
+  const pathArr = Array.isArray(path) ? path : path.split('.');
   if (!pathArr.length) {
     return '';
   }
