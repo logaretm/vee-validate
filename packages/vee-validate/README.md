@@ -69,7 +69,7 @@ The main v4 version supports Vue 3.x only, for previous versions of Vue, check t
 | vue Version | vee-validate version | Documentation Link                                                                       |
 | ----------- | -------------------- | ---------------------------------------------------------------------------------------- |
 | `2.x`       | `2.x` or `3.x`       | [v2](https://vee-validate.logaretm.com/v2) or [v3](https://vee-validate.logaretm.com/v3) |
-| `3.x`       | `4.x`                | [v4](https://vee-validate.logaretm.com/v4)                                               |
+| `3.x`       | `4.x` or `5.x`       | [v4](https://vee-validate.logaretm.com/v4) or [v5](https://vee-validate.logaretm.com/v5) |
 
 ### Usage
 

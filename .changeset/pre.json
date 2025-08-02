@@ -8,5 +8,7 @@
     "@vee-validate/rules": "4.15.1",
     "vee-validate": "4.15.1"
   },
-  "changesets": []
+  "changesets": [
+    "smart-needles-own"
+  ]
 }

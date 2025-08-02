@@ -1,5 +1,16 @@
 # @vee-validate/nuxt
 
+## 5.0.0-beta.0
+
+### Major Changes
+
+- 04ff47c: feat: implement standard schema
+
+### Patch Changes
+
+- Updated dependencies [04ff47c]
+  - vee-validate@5.0.0-beta.0
+
 ## 4.15.1
 
 ### Patch Changes
