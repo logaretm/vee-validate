@@ -7,13 +7,22 @@ order: 10
 
 # Migrating from v4 to v5
 
-vee-validate v5 is a major release yet it does not introduce any breaking changes except when it comes to validation schemas. This is because vee-validate v5 now supports [standard schema](https://standardschema.dev/) libraries like zod, valibot, yup, and more.
+vee-validate v5 is a major release that brings support to [standard schema](https://standardschema.dev/) libraries like zod, valibot, yup, and more.
 
 This means most of the companion packages like `@vee-validate/zod`, `@vee-validate/yup`, `@vee-validate/valibot` are no longer needed and are now deprecated.
 
 ## Changes to Nuxt Module
 
 The nuxt module won't suggest installing any packages anymore since most providers that were supported in v4 are now supported in v5 via standard schema API.
+
+## Changes to schema behavior
+
+Since vee-validate v5 is considered schema agnostic, you lose some features that were previously possible with each dedicated validation provider.
+
+- Resolving `required` meta flag is no longer supported from schemas.
+- Using defaults to initialize the form values is no longer supported from schemas.
+
+While these features are critical to many apps, the standard schema spec does not provide a way to do that at the moment. Alternatives are being considered via external packages at the moment.
 
 ## Replace Typed Schema calls
 
