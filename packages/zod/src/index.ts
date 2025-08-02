@@ -152,41 +152,55 @@ function getSchemaForPath(path: string, schema: ZodSchema): ZodSchema | null {
   if (!isObjectSchema(schema)) {
     return null;
   }
-
+  
   if (isNotNestedPath(path)) {
     return schema.shape[cleanupNonNestedPath(path)];
   }
-
+  
   const paths = (path || '').split(/\.|\[(\d+)\]/).filter(Boolean);
-
   let currentSchema: ZodSchema = schema;
-  for (let i = 0; i <= paths.length; i++) {
+  
+  for (let i = 0; i < paths.length; i++) {
     const p = paths[i];
     if (!p || !currentSchema) {
       return currentSchema;
     }
-
+    
+    if (isArraySchema(currentSchema) && isIndex(p)) {
+      currentSchema = (currentSchema._def as ZodArrayDef).element;
+      continue;
+    }
+    
     if (isObjectSchema(currentSchema)) {
       currentSchema = currentSchema.shape[p] || null;
       continue;
     }
-
-    if (isIndex(p) && isArraySchema(currentSchema)) {
-      currentSchema = (currentSchema._def as ZodArrayDef).type;
-    }
+    
+    break;
   }
-
-  return null;
+  
+  return currentSchema;
 }
 
-function getDefType(schema: ZodSchema) {
-  return (schema._def as any).typeName as ZodFirstPartyTypeKind;
+function getDefType(schema: ZodSchema): ZodFirstPartyTypeKind | undefined {
+  if (schema._def && (schema._def as any).typeName) {
+    return (schema._def as any).typeName as ZodFirstPartyTypeKind;
+  }
+  
+  if (schema._def && (schema._def as any).type) {
+    if ((schema._def as any).type === 'array') return ZodFirstPartyTypeKind.ZodArray;
+    if ((schema._def as any).type === 'object') return ZodFirstPartyTypeKind.ZodObject;
+  }
+  
+  return undefined;
 }
 
 function isArraySchema(schema: ZodSchema): schema is ZodArray<any, any> {
-  return getDefType(schema) === ZodFirstPartyTypeKind.ZodArray;
+  if (!schema || !schema._def) return false;
+  return (schema._def as any).type === 'array' || getDefType(schema) === ZodFirstPartyTypeKind.ZodArray;
 }
 
 function isObjectSchema(schema: ZodSchema): schema is AnyZodObject {
-  return getDefType(schema) === ZodFirstPartyTypeKind.ZodObject;
+  if (!schema || !schema._def) return false;
+  return (schema._def as any).type === 'object' || getDefType(schema) === ZodFirstPartyTypeKind.ZodObject;
 }
