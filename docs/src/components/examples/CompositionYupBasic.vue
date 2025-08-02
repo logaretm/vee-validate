@@ -1,15 +1,12 @@
 <script setup>
 import { useForm } from 'vee-validate';
-import { toTypedSchema } from '@vee-validate/yup';
 import * as yup from 'yup';
 
 const { errors, defineField } = useForm({
-  validationSchema: toTypedSchema(
-    yup.object({
-      email: yup.string().email().required(),
-      password: yup.string().min(6).required(),
-    }),
-  ),
+  validationSchema: yup.object({
+    email: yup.string().email().required(),
+    password: yup.string().min(6).required(),
+  }),
 });
 
 const [email, emailAttrs] = defineField('email');

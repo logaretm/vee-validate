@@ -1,7 +1,7 @@
 # @vee-validate/yup
 
 <p align="center">
-  <a href="https://vee-validate.logaretm.com/v4/guide/composition-api/typed-schema/" target="_blank">
+  <a href="https://vee-validate.logaretm.com/v5/guide/composition-api/typed-schema/" target="_blank">
     <img width="150" src="https://github.com/logaretm/vee-validate/raw/main/logo.png">
   </a>
 
@@ -43,7 +43,7 @@ const { values, handleSubmit } = useForm({
       email: string().required(),
       password: string().required(),
       name: string(),
-    })
+    }),
   ),
 });
 
@@ -75,7 +75,7 @@ const { values, handleSubmit } = useForm({
       email: string().required().default('something@email.com'),
       password: string().required().default(''),
       name: string().default(''),
-    })
+    }),
   ),
 });
 ```
@@ -97,7 +97,7 @@ const { values, handleSubmit } = useForm({
       age: number()
         .transform(val => Number(val))
         .required(),
-    })
+    }),
   ),
 });
 ```

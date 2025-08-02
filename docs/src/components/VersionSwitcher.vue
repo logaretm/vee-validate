@@ -37,6 +37,11 @@ import FloatingMenu from '@/components/FloatingMenu.vue';
 
 const versions = [
   {
+    text: 'v5.x',
+    vueVersion: '3.x',
+    link: 'https://vee-validate.logaretm.com/v5/',
+  },
+  {
     text: 'v4.x',
     vueVersion: '3.x',
     link: 'https://vee-validate.logaretm.com/v4/',
@@ -53,7 +58,7 @@ const versions = [
   },
 ];
 
-function onChange(version: typeof versions[0]) {
+function onChange(version: (typeof versions)[0]) {
   window.location.href = version.link;
 }
 </script>

@@ -13,7 +13,7 @@ import partytown from '@astrojs/partytown';
 export default defineConfig({
   site: process.env.NODE_ENV === 'production' ? 'https://vee-validate.logaretm.com/' : 'http://localhost:4321/',
   trailingSlash: 'always',
-  base: '/v4',
+  base: '/v5',
   vite: {
     ssr: {
       noExternal: ['@vue/repl'],
@@ -23,7 +23,7 @@ export default defineConfig({
     vue(),
     sitemap(),
     mdx({
-      remarkPlugins: [baseLink('/v4'), highlight, remarkGfm],
+      remarkPlugins: [baseLink('/v5'), highlight, remarkGfm],
     }),
     svgSprite,
     partytown({

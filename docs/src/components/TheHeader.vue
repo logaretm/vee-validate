@@ -23,7 +23,7 @@
     </svg>
 
     <div class="flex items-center header__content px-6 lg:px-10" :class="{ 'lg:mt-8': displayWarning }">
-      <a class="mr-auto flex items-center" href="/v4/">
+      <a class="mr-auto flex items-center" href="/v5/">
         <Icon name="logo" class="h-8 w-8 lg:w-10 lg:h-10 logo" />
 
         <span

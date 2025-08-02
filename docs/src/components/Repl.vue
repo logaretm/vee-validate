@@ -29,9 +29,6 @@ const store = new ReplStore({
 store.setImportMap({
   imports: {
     'vee-validate': 'https://unpkg.com/vee-validate@latest/dist/vee-validate.mjs',
-    '@vee-validate/zod': 'https://unpkg.com/@vee-validate/zod@latest/dist/vee-validate-zod.mjs',
-    '@vee-validate/yup': 'https://unpkg.com/@vee-validate/yup@latest/dist/vee-validate-yup.mjs',
-    '@vee-validate/valibot': 'https://unpkg.com/@vee-validate/valibot@latest/dist/vee-validate-valibot.mjs',
     '@vee-validate/i18n': 'https://unpkg.com/@vee-validate/i18n@latest/dist/vee-validate-i18n.esm.js',
     '@vee-validate/rules': 'https://unpkg.com/@vee-validate/rules@latest/dist/vee-validate-rules.esm.js',
     'property-expr': 'https://esm-repo.netlify.app/property-expr.esm.js',

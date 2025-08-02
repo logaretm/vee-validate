@@ -17,7 +17,7 @@
     },
     "./dist/*": "./dist/*"
   },
-  "homepage": "https://vee-validate.logaretm.com/v4/integrations/joi-schema-validation/",
+  "homepage": "https://vee-validate.logaretm.com/v5/integrations/joi-schema-validation/",
   "repository": {
     "url": "https://github.com/logaretm/vee-validate.git",
     "type": "git",

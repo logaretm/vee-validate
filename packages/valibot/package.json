@@ -17,7 +17,7 @@
     "./dist/*": "./dist/*"
   },
   "types": "dist/vee-validate-valibot.d.ts",
-  "homepage": "https://vee-validate.logaretm.com/v4/integrations/zod-schema-validation/",
+  "homepage": "https://vee-validate.logaretm.com/v5/integrations/zod-schema-validation/",
   "repository": {
     "url": "https://github.com/logaretm/vee-validate.git",
     "type": "git",

@@ -46,7 +46,7 @@ async function installDevtoolsPlugin(app: App) {
         packageName: 'vee-validate',
         homepage: 'https://vee-validate.logaretm.com/v4',
         app,
-        logo: 'https://vee-validate.logaretm.com/v4/logo.png',
+        logo: 'https://vee-validate.logaretm.com/v5/logo.png',
       },
       api => {
         API = api;

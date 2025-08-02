@@ -1,7 +1,7 @@
 # @vee-validate/nuxt
 
 <p align="center">
-  <a href="https://vee-validate.logaretm.com/v4/guide/global-validators" target="_blank">
+  <a href="https://vee-validate.logaretm.com/v5/guide/global-validators" target="_blank">
     <img width="150" src="https://github.com/logaretm/vee-validate/raw/main/logo.png">
   </a>
 

@@ -1,7 +1,7 @@
 # @vee-validate/zod
 
 <p align="center">
-  <a href="https://vee-validate.logaretm.com/v4/integrations/zod-schema-validation/" target="_blank">
+  <a href="https://vee-validate.logaretm.com/v5/integrations/zod-schema-validation/" target="_blank">
     <img width="150" src="https://github.com/logaretm/vee-validate/raw/main/logo.png">
   </a>
 
@@ -52,7 +52,7 @@ const { values, handleSubmit } = useForm({
       email: string().min(1, 'required'),
       password: string().min(1, 'required'),
       name: string().optional(),
-    })
+    }),
   ),
 });
 
@@ -83,7 +83,7 @@ const { values, handleSubmit } = useForm({
     object({
       email: string().default('something@email.com'),
       password: string().default(''),
-    })
+    }),
   ),
 });
 ```
@@ -103,7 +103,7 @@ const { values, handleSubmit } = useForm({
   validationSchema: toTypedSchema(
     object({
       age: preprocess(val => Number(val), number()),
-    })
+    }),
   ),
 });
 

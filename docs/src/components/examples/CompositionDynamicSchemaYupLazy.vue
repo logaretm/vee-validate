@@ -1,18 +1,15 @@
 <script setup>
 import { ref } from 'vue';
 import { useForm } from 'vee-validate';
-import { toTypedSchema } from '@vee-validate/yup';
 import * as yup from 'yup';
 
 const limit = ref(5);
 
 const { errors, defineField } = useForm({
-  validationSchema: toTypedSchema(
-    yup.lazy(() =>
-      yup.object({
-        content: yup.string().max(limit.value),
-      }),
-    ),
+  validationSchema: yup.lazy(() =>
+    yup.object({
+      content: yup.string().max(limit.value),
+    }),
   ),
 });
 

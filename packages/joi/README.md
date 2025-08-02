@@ -1,7 +1,7 @@
 # @vee-validate/joi
 
 <p align="center">
-  <a href="https://vee-validate.logaretm.com/v4/integrations/joi-schema-validation/" target="_blank">
+  <a href="https://vee-validate.logaretm.com/v5/integrations/joi-schema-validation/" target="_blank">
     <img width="150" src="https://github.com/logaretm/vee-validate/raw/main/logo.png">
   </a>
 

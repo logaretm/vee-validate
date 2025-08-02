@@ -14,7 +14,7 @@ const [password, passwordAttrs] = defineField('password');
 </script>
 
 <template>
-  <form action="/v4/submit-target/" method="get" target="_blank" @submit="submitForm">
+  <form action="/v5/submit-target/" method="get" target="_blank" @submit="submitForm">
     <input name="email" v-model="email" v-bind="emailAttrs" />
     <span>{{ errors.email }}</span>
 
