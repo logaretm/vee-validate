@@ -170,18 +170,6 @@ const schema = yup.object({
 
 For more information on the `Form` component, read [the API reference](/api/form).
 
-<DocTip title="Yup Schema Optimizations" type="warn">
-
-There are a couple of optimization caveats when it comes to using `yup` schemas to validate your forms, be sure to check the [best practices guide](/guide/best-practices).
-
-</DocTip>
-
-<DocTip title="Zod Schema Plugin">
-
-There is an official integration available for [Zod validation](https://github.com/colinhacks/zod) that you can use as a drop-in replacement for `yup`. Check the [zod integration page](/integrations/zod-schema-validation).
-
-</DocTip>
-
 ### Reactive Form Schema
 
 You can have reactive form schemas using `computed` if you are looking to create dynamic schemas using either `yup` or a validation object.
@@ -478,7 +466,7 @@ interface FieldMeta {
 ```
 
 <DocTip title="Field Dirty Flag and Initial Values">
-  
+
 The default value is `undefined` unless specified which may cause unexpected `meta.dirty` results. To get accurate results for the `meta.dirty` flag, you must provide an initial value to your field even if the values are empty.
 
 ```vue-html
@@ -493,7 +481,7 @@ To reduce the verbosity of adding a `value` prop to each field, you could provid
 </DocTip>
 
 <DocTip title="Valid Flag Combinations">
-  
+
 Since the `meta.valid` flag is initially `true` (because it just means there are no errors yet), it would cause problems if you have a "success" UI state an indicator.
 
 To avoid this case you could combine the `valid` flag with either `meta.dirty` or `meta.touched` to get accurate representation:
@@ -556,13 +544,13 @@ export default {
 ```
 
 <DocTip title="Form Dirty Flag and Initial Values">
-  
+
 Notice that the `initial-values` in the previous example were provided, like mentioned for the `meta.dirty` accuracy for fields, to get accurate results for the `meta.dirty` flag, you must provide initial values to your forms even if the values are empty.
 
 </DocTip>
 
 <DocTip title="Valid Flag Combinations">
-  
+
 Forms `meta.valid` flag is also initially `true` (because it just means there are no errors yet), it would cause problems if you have a "success" UI state or an indicator.
 
 To avoid this case you could combine the form's `valid` flag with either `meta.dirty` or `meta.touched` to get accurate representation:
