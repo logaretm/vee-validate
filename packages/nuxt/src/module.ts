@@ -2,12 +2,10 @@ import { defineNuxtModule, addComponent, addImports, resolveModule } from '@nuxt
 import type { Nuxt, NuxtModule } from '@nuxt/schema';
 
 type ComponentName = 'Field' | 'Form' | 'ErrorMessage' | 'FieldArray';
-type TypedSchemaPackage = 'yup' | 'zod' | 'valibot' | 'none';
 
 export interface VeeValidateNuxtOptions {
   autoImports?: boolean;
   componentNames?: Partial<Record<ComponentName, string>>;
-  typedSchemaPackage?: TypedSchemaPackage;
 }
 
 const components: ComponentName[] = ['ErrorMessage', 'Field', 'FieldArray', 'Form'];
@@ -65,10 +63,6 @@ export default defineNuxtModule<VeeValidateNuxtOptions>({
           filePath: 'vee-validate',
         });
       });
-    }
-
-    if (options.typedSchemaPackage === 'none') {
-      return;
     }
   },
 }) as NuxtModule<VeeValidateNuxtOptions>;
