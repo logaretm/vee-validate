@@ -1,0 +1,70 @@
+---
+layout: ../../layouts/PageLayout.astro
+title: Migration Guide
+description: How to migrate from vee-validate v4 to v5
+order: 10
+---
+
+# Migrating from v4 to v5
+
+vee-validate v5 is a major release yet it does not introduce any breaking changes except when it comes to validation schemas. This is because vee-validate v5 now supports [standard schema](https://standardschema.dev/) libraries like zod, valibot, yup, and more.
+
+This means most of the companion packages like `@vee-validate/zod`, `@vee-validate/yup`, `@vee-validate/valibot` are no longer needed and are now deprecated.
+
+The only needed step is to remove all calls to `toTypedSchema` and replace them with the standard schema library of your choice.
+
+## Replace `toTypedSchema` schema calls
+
+### Zod
+
+vee-validate is compatible with zod 3.24.0 and above.
+
+```ts
+import { z } from 'zod';
+
+// v4
+const schema = toTypedSchema(z.object({ name: z.string().min(1) }));
+
+// v5 - remove the call to `toTypedSchema`
+const schema = z.object({ name: z.string().min(1) });
+
+const { value, errorMessage } = useForm({ validationSchema: schema });
+```
+
+### Yup
+
+You will need to upgrade `yup` to 1.7.0 or above since the standard schema support was added in that version.
+
+#### If you are using `@vee-validate/yup`
+
+```ts
+import * as yup from 'yup';
+
+// v4
+const schema = toTypedSchema(yup.object({ name: yup.string().min(1) }));
+
+// v5 - remove the call to `toTypedSchema`
+const schema = yup.object({ name: yup.string().min(1) });
+
+const { value, errorMessage } = useForm({ validationSchema: schema });
+```
+
+#### If you are using yup directly
+
+Continue using your yup schema as you've been doing in the past. You will start getting type safety features out of the box, just make sure you are using yup 1.7.0 or above.
+
+### Valibot
+
+vee-validate is compatible with valibot 1.0 and above.
+
+```ts
+import * as v from 'valibot';
+
+// v4
+const schema = toTypedSchema(v.object({ email: v.pipe(v.string(), v.email()) }));
+
+// v5 - remove the call to `toTypedSchema`
+const schema = v.object({ email: v.pipe(v.string(), v.email()) });
+
+const { value, errorMessage } = useForm({ validationSchema: schema });
+```
