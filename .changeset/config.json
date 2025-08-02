@@ -2,19 +2,7 @@
   "$schema": "https://unpkg.com/@changesets/config@2.3.0/schema.json",
   "changelog": "@changesets/cli/changelog",
   "commit": false,
-  "fixed": [
-    [
-      "vee-validate",
-      "@vee-validate/rules",
-      "@vee-validate/i18n",
-      "@vee-validate/rules",
-      "@vee-validate/zod",
-      "@vee-validate/yup",
-      "@vee-validate/valibot",
-      "@vee-validate/nuxt",
-      "@vee-validate/joi"
-    ]
-  ],
+  "fixed": [["vee-validate", "@vee-validate/i18n", "@vee-validate/rules", "@vee-validate/nuxt"]],
   "linked": [],
   "access": "public",
   "baseBranch": "main",
