@@ -14,8 +14,8 @@ const libraries = [
   {
     name: 'Shadcn Vue',
     link: 'https://www.shadcn-vue.com/docs/components/form',
-    logoLight: '/v4/img/shadcn.svg',
-    logoDark: '/v4/img/shadcn.svg',
+    logoLight: '/v5/img/shadcn.svg',
+    logoDark: '/v5/img/shadcn.svg',
   },
   {
     name: 'Vuetify',

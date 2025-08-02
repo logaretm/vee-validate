@@ -13,20 +13,12 @@ const formatNameMap = {
   'vee-validate': 'VeeValidate',
   rules: 'VeeValidateRules',
   i18n: 'VeeValidateI18n',
-  zod: 'VeeValidateZod',
-  yup: 'VeeValidateYup',
-  valibot: 'VeeValidateValibot',
-  joi: 'VeeValidateJoi',
 };
 
 const pkgNameMap = {
   'vee-validate': 'vee-validate',
   rules: 'vee-validate-rules',
   i18n: 'vee-validate-i18n',
-  zod: 'vee-validate-zod',
-  yup: 'vee-validate-yup',
-  valibot: 'vee-validate-valibot',
-  joi: 'vee-validate-joi',
 };
 
 const formatExt = {
@@ -58,11 +50,7 @@ async function createConfig(pkg, format) {
         'vue',
         isEsm ? '@vue/devtools-api' : undefined,
         isEsm ? '@vue/devtools-kit' : undefined,
-        'zod',
-        'yup',
         'vee-validate',
-        'valibot',
-        'joi',
       ].filter(Boolean),
       plugins: [
         replace({

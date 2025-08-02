@@ -1,7 +1,6 @@
 # redirects old component api paths to new one
-/guide/validation                     /v4/guide/components/validation
-/guide/handling-forms                 /v4/guide/components/handling-forms
-/guide/nested-objects-and-arrays      /v4/guide/components/nested-objects-and-arrays
-/tutorials/best-practices             /v4/guide/best-practices
+/guide/validation                     /v5/guide/components/validation
+/guide/handling-forms                 /v5/guide/components/handling-forms
+/guide/nested-objects-and-arrays      /v5/guide/components/nested-objects-and-arrays
 
-/v4/guide/composition/validation     /v4/guide/composition/getting-started
+/v5/guide/composition/validation     /v5/guide/composition/getting-started

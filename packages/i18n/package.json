@@ -3,7 +3,7 @@
   "version": "4.15.1",
   "description": "Localization module for VeeValidate",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
-  "homepage": "https://vee-validate.logaretm.com/v4/guide/i18n",
+  "homepage": "https://vee-validate.logaretm.com/v5/guide/i18n",
   "license": "MIT",
   "module": "dist/vee-validate-i18n.mjs",
   "unpkg": "dist/vee-validate-i18n.iife.js",

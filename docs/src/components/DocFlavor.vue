@@ -4,7 +4,7 @@
     <p class="mt-4">Before you go on, you should choose which flavor of vee-validate you want to use.</p>
 
     <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-8 text-white">
-      <a :href="`/v4/guide/components/${next}/`" class="bg-gray-600 hover:bg-accent-900 p-6 rounded-lg relative">
+      <a :href="`/v5/guide/components/${next}/`" class="bg-gray-600 hover:bg-accent-900 p-6 rounded-lg relative">
         <p class="text-xl font-semibold font-display">Components</p>
         <p class="mt-8">Simple, high-level, dynamic template-based higher-order components.</p>
         <p class="mt-4">Great for simple UI components and native HTML elements with custom styling.</p>
@@ -25,7 +25,7 @@
         </svg>
       </a>
 
-      <a :href="`/v4/guide/composition-api/${next}/`" class="bg-gray-600 hover:bg-accent-900 p-6 rounded-lg relative">
+      <a :href="`/v5/guide/composition-api/${next}/`" class="bg-gray-600 hover:bg-accent-900 p-6 rounded-lg relative">
         <p class="text-xl font-semibold font-display">Composition API</p>
         <p class="mt-8">Low level, intuitive composition API functions.</p>
         <p class="mt-4">Great for building complex UI form components and general purpose data validation.</p>

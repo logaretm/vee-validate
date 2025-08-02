@@ -1,15 +1,12 @@
 <script setup>
 import { useForm } from 'vee-validate';
-import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 
 const { errors, defineField } = useForm({
-  validationSchema: toTypedSchema(
-    z.object({
-      email: z.string().min(1).email(),
-      password: z.string().min(6),
-    }),
-  ),
+  validationSchema: z.object({
+    email: z.string().min(1).email(),
+    password: z.string().min(6),
+  }),
 });
 
 const [email, emailAttrs] = defineField('email');

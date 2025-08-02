@@ -100,24 +100,8 @@ async function build(pkg) {
     await build('rules');
   }
 
-  if (arg === 'zod' || !arg) {
-    await build('zod');
-  }
-
-  if (arg === 'yup' || !arg) {
-    await build('yup');
-  }
-
-  if (arg === 'valibot' || !arg) {
-    await build('valibot');
-  }
-
   if (arg === 'nuxt' || !arg) {
     await build('nuxt');
-  }
-
-  if (arg === 'joi' || !arg) {
-    await build('joi');
   }
 
   if (arg === 'i18n' || !arg) {

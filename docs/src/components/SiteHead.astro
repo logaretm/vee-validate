@@ -6,7 +6,7 @@ const { frontmatter } = Astro.props;
 
 const title = frontmatter?.title || 'VeeValidate: Painless Vue.js forms';
 const description = frontmatter?.description || 'Painless Vue.js forms';
-const path = frontmatter?.url || '/v4/';
+const path = frontmatter?.url || '/v5/';
 const image = generateSocialImage({
   title: title,
   tagline: description,
@@ -28,11 +28,11 @@ const links = generateLinks({
 <head>
   <title>{title}</title>
   <meta charset="utf-8" />
-  <link rel="icon" type="image/x-icon" href="/v4/img/favicon.ico" />
+  <link rel="icon" type="image/x-icon" href="/v5/img/favicon.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   {metaTags.map(t => <meta content={t.content} name={t.name} property={t.property} />)}
   {links.map(t => <link href={t.href} rel={t.rel} />)}
-  <script is:inline src="/v4/loadTheme.js"></script>
+  <script is:inline src="/v5/loadTheme.js"></script>
   <script type="text/partytown" src="https://www.googletagmanager.com/gtag/js?id=G-T7VXTJ0MFH"></script>
   <script type="text/partytown">
     window.dataLayer = window.dataLayer || [];

@@ -7,7 +7,7 @@
   "type": "module",
   "main": "./dist/module.mjs",
   "types": "./dist/module.d.ts",
-  "homepage": "https://vee-validate.logaretm.com/v4/integrations/nuxt",
+  "homepage": "https://vee-validate.logaretm.com/v5/integrations/nuxt",
   "repository": {
     "url": "https://github.com/logaretm/vee-validate.git",
     "type": "git",

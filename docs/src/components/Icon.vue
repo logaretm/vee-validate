@@ -9,5 +9,5 @@ const props = defineProps<{
   name: string;
 }>();
 
-const basePath = import.meta.env.DEV ? '' : '/v4/sprite.svg';
+const basePath = import.meta.env.DEV ? '' : '/v5/sprite.svg';
 </script>

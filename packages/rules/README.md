@@ -1,7 +1,7 @@
 # @vee-validate/rules
 
 <p align="center">
-  <a href="https://vee-validate.logaretm.com/v4/guide/global-validators" target="_blank">
+  <a href="https://vee-validate.logaretm.com/v5/guide/global-validators" target="_blank">
     <img width="150" src="https://github.com/logaretm/vee-validate/blob/main/logo.png">
   </a>
 </p>
@@ -83,7 +83,7 @@ Object.keys(rules).forEach(rule => {
 - required_if
 - size
 
-For more information about each rules, check the [documentation for global validators](https://vee-validate.logaretm.com/v4/guide/global-validators)
+For more information about each rules, check the [documentation for global validators](https://vee-validate.logaretm.com/v5/guide/global-validators)
 
 ## Credits
 

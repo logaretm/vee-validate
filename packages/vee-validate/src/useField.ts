@@ -17,7 +17,6 @@ import { klona as deepCopy } from 'klona/full';
 import { validate as validateValue } from './validate';
 import {
   GenericValidateFunction,
-  TypedSchema,
   FieldContext,
   FieldState,
   PrivateFieldContext,
@@ -25,7 +24,6 @@ import {
   ValidationOptions,
   FormContext,
   PrivateFormContext,
-  YupSchema,
   InputType,
 } from './types';
 import {
@@ -36,16 +34,16 @@ import {
   getFromPath,
   injectWithSelf,
   resolveNextCheckboxValue,
-  isYupValidator,
   applyModelModifiers,
   withLatest,
   isEqual,
-  isTypedSchema,
+  isStandardSchema,
 } from './utils';
 import { isCallable, normalizeFormPath } from '../../shared';
 import { FieldContextKey, FormContextKey, IS_ABSENT } from './symbols';
 import { useFieldState } from './useFieldState';
 import { refreshInspector, registerSingleFieldWithDevtools } from './devtools';
+import { StandardSchemaV1 } from '@standard-schema/spec';
 
 export interface FieldOptions<TValue = unknown> {
   initialValue?: MaybeRef<TValue>;
@@ -79,8 +77,7 @@ export type RuleExpression<TValue> =
   | Record<string, unknown>
   | GenericValidateFunction<TValue>
   | GenericValidateFunction<TValue>[]
-  | TypedSchema<TValue>
-  | YupSchema<TValue>
+  | StandardSchemaV1<TValue>
   | undefined;
 
 /**
@@ -130,19 +127,13 @@ function _useField<TValue = unknown>(
 
     const rulesValue = unref(rules);
 
-    if (
-      isYupValidator(rulesValue) ||
-      isTypedSchema(rulesValue) ||
-      isCallable(rulesValue) ||
-      Array.isArray(rulesValue)
-    ) {
+    if (isStandardSchema(rulesValue) || isCallable(rulesValue) || Array.isArray(rulesValue)) {
       return rulesValue;
     }
 
     return normalizeRules(rulesValue);
   });
 
-  const isTyped = !isCallable(validator.value) && isTypedSchema(toValue(rules));
   const { id, value, initialValue, meta, setState, errors, flags } = useFieldState<TValue>(name, {
     modelValue,
     form,
@@ -150,7 +141,6 @@ function _useField<TValue = unknown>(
     label,
     type,
     validate: validator.value ? validate : undefined,
-    schema: isTyped ? (rules as any) : undefined,
   });
 
   const errorMessage = computed(() => errors.value[0]);
@@ -354,14 +344,8 @@ function _useField<TValue = unknown>(
   // extract cross-field dependencies in a computed prop
   const dependencies = computed(() => {
     const rulesVal = validator.value;
-    // is falsy, a function schema or a yup schema
-    if (
-      !rulesVal ||
-      isCallable(rulesVal) ||
-      isYupValidator(rulesVal) ||
-      isTypedSchema(rulesVal) ||
-      Array.isArray(rulesVal)
-    ) {
+    // is falsy, a function schema or a standard schema
+    if (!rulesVal || isCallable(rulesVal) || isStandardSchema(rulesVal) || Array.isArray(rulesVal)) {
       return {};
     }
 

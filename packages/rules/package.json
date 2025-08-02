@@ -16,7 +16,7 @@
       "require": "./dist/vee-validate-rules.cjs"
     }
   },
-  "homepage": "https://vee-validate.logaretm.com/v4/guide/global-validators",
+  "homepage": "https://vee-validate.logaretm.com/v5/guide/global-validators",
   "repository": {
     "url": "https://github.com/logaretm/vee-validate.git",
     "type": "git",
@@ -38,6 +38,7 @@
     "dist/*.mjs"
   ],
   "dependencies": {
+    "@standard-schema/spec": "^1.0.0",
     "vee-validate": "workspace:*"
   }
 }

@@ -3,6 +3,7 @@ import { GenericObject, MaybeArray, MaybePromise, FlattenAndSetPathsType, MapVal
 import { FieldValidationMetaInfo } from '../../../shared';
 import { Path, PathValue } from './paths';
 import { PartialDeep } from 'type-fest';
+import type { StandardSchemaV1 } from '@standard-schema/spec';
 
 export interface ValidationResult<TValue = unknown> {
   errors: string[];
@@ -14,37 +15,6 @@ export type FlattenAndMapPathsValidationResult<TInput extends GenericObject, TOu
   [K in Path<TInput>]: ValidationResult<TOutput[K]>;
 };
 
-export interface TypedSchemaError {
-  path?: string;
-  errors: string[];
-}
-export interface TypedSchemaPathDescription {
-  required: boolean;
-  exists: boolean;
-}
-
-export interface TypedSchemaContext {
-  formData: GenericObject;
-}
-
-export interface TypedSchema<TInput = any, TOutput = TInput> {
-  __type: 'VVTypedSchema';
-  parse(values: TInput, context?: TypedSchemaContext): Promise<{ value?: TOutput; errors: TypedSchemaError[] }>;
-  cast?(values: Partial<TInput>): TInput;
-  describe?(path?: Path<TInput>): Partial<TypedSchemaPathDescription>;
-}
-
-export type InferOutput<TSchema extends TypedSchema> =
-  TSchema extends TypedSchema<any, infer TOutput> ? TOutput : never;
-
-export type InferInput<TSchema extends TypedSchema> = TSchema extends TypedSchema<infer TInput, any> ? TInput : never;
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export type YupSchema<TValues = any> = {
-  __isYupSchema__: boolean;
-  validate(value: any, options: GenericObject): Promise<any>;
-};
-
 export type Locator = { __locatorRef: string } & ((values: GenericObject) => unknown);
 
 export interface FieldMeta<TValue> {
@@ -52,7 +22,6 @@ export interface FieldMeta<TValue> {
   dirty: boolean;
   valid: boolean;
   validated: boolean;
-  required: boolean;
   pending: boolean;
   initialValue?: TValue;
 }
@@ -92,8 +61,13 @@ export interface PathStateConfig<TOutput> {
   label: MaybeRefOrGetter<string | undefined>;
   type: InputType;
   validate: FieldValidator<TOutput>;
-  schema?: MaybeRefOrGetter<TypedSchema | undefined>;
+  schema?: MaybeRefOrGetter<StandardSchemaV1 | undefined>;
 }
+
+export type IssueCollection<TPath = string> = {
+  path: TPath;
+  messages: string[];
+};
 
 export interface PathState<TInput = unknown, TOutput = TInput> {
   id: number | number[];
@@ -101,7 +75,6 @@ export interface PathState<TInput = unknown, TOutput = TInput> {
   touched: boolean;
   dirty: boolean;
   valid: boolean;
-  required: boolean;
   validated: boolean;
   pending: boolean;
   initialValue: TInput | undefined;
@@ -330,7 +303,7 @@ export interface PrivateFormContext<
   controlledValues: Ref<TValues>;
   fieldArrays: PrivateFieldArrayContext[];
   submitCount: Ref<number>;
-  schema?: MaybeRef<RawFormSchema<TValues> | TypedSchema<TValues, TOutput> | YupSchema<TValues> | undefined>;
+  schema?: MaybeRef<RawFormSchema<TValues> | StandardSchemaV1<TValues, TOutput> | undefined>;
   errorBag: Ref<FormErrorBag<TValues>>;
   errors: ComputedRef<FormErrors<TValues>>;
   meta: ComputedRef<FormMeta<TValues>>;

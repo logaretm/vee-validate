@@ -61,6 +61,7 @@ export default tseslint.config(
       'packages/rules/dist/*',
       'packages/i18n/dist/*',
       'packages/nuxt/dist/*',
+      'docs/dist/*',
     ],
   },
 );

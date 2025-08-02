@@ -1,5 +1,5 @@
 <template>
-  <div class="my-8 h-[500px] relative">
+  <div class="my-8 relative">
     <Suspense v-if="editor">
       <Repl :editor="editor" :files="files" />
 

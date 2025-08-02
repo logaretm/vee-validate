@@ -18,7 +18,7 @@ Painless Vue forms
   <img src="https://img.shields.io/npm/dm/vee-validate.svg?color=05bd6d&label=">
 </a>
 
-<a href="https://vee-validate.logaretm.com/v4/" target="_blank">
+<a href="https://vee-validate.logaretm.com/v5/" target="_blank">
   <img src="https://img.shields.io/badge/-docs%20and%20demos-009f53">
 </a>
 
@@ -117,7 +117,7 @@ const onSubmit = handleSubmit(values => {
 </template>
 ```
 
-You can do so much more than this, for more info [check the composition API documentation](https://vee-validate.logaretm.com/v4/guide/composition-api/getting-started/).
+You can do so much more than this, for more info [check the composition API documentation](https://vee-validate.logaretm.com/v5/guide/composition-api/getting-started/).
 
 #### Declarative Components
 
@@ -150,7 +150,7 @@ function onSubmit(values) {
 </template>
 ```
 
-The `Field` component renders an `input` of type `text` by default but you can [control that](https://vee-validate.logaretm.com/v4/api/field#rendering-fields)
+The `Field` component renders an `input` of type `text` by default but you can [control that](https://vee-validate.logaretm.com/v5/api/field#rendering-fields)
 
 ## 📚 Documentation
 

@@ -25,7 +25,7 @@
     "ci:tag": "node scripts/tag-release.mjs"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.27.1",
+    "@changesets/cli": "^2.29.5",
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
     "@eslint/js": "^9.2.0",
@@ -68,7 +68,8 @@
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^1.6.0",
     "vue": "^3.4.26",
-    "yup": "^1.4.0"
+    "yup": "^1.7.0",
+    "zod": "^4.0.14"
   },
   "peerDependencies": {
     "vue": "^3.4.26"

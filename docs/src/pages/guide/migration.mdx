@@ -1,0 +1,91 @@
+---
+layout: ../../layouts/PageLayout.astro
+title: Migration Guide
+description: How to migrate from vee-validate v4 to v5
+order: 10
+---
+
+# Migrating from v4 to v5
+
+vee-validate v5 is a major release that brings support to [standard schema](https://standardschema.dev/) libraries like zod, valibot, yup, and more.
+
+This means most of the companion packages like `@vee-validate/zod`, `@vee-validate/yup`, `@vee-validate/valibot` are no longer needed and are now deprecated.
+
+## Changes to Nuxt Module
+
+The nuxt module won't suggest installing any packages anymore since most providers that were supported in v4 are now supported in v5 via standard schema API.
+
+## Changes to schema behavior
+
+Since vee-validate v5 is considered schema agnostic, you lose some features that were previously possible with each dedicated validation provider.
+
+- Resolving `required` meta flag is no longer supported from schemas.
+- Using defaults to initialize the form values is no longer supported from schemas.
+
+While these features are critical to many apps, the standard schema spec does not provide a way to do that at the moment. Alternatives are being considered via external packages at the moment.
+
+## Replace Typed Schema calls
+
+Typed schemas were a way for vee-validate v4 to support a common interface for multiple validation providers. However, there is a community driven package called [standard schema](https://standardschema.dev/) that provides a common interface for multiple validation providers that is becoming very popular and is already supported by the most popular validation providers.
+
+So in v5 we now introduced support for standard schema libraries, which means you can use any of the most popular validation providers with vee-validate v5 without installing any resolvers or adapter packages. This includes almost all the previous providers like zod, yup, and valibot.
+
+The only needed step is to remove all calls to `toTypedSchema` and replace them with the standard schema library of your choice.
+
+### Zod
+
+vee-validate is compatible with zod 3.24.0 and above.
+
+```ts
+import { z } from 'zod';
+
+// v4
+const schema = toTypedSchema(z.object({ name: z.string().min(1) }));
+
+// v5 - remove the call to `toTypedSchema`
+const schema = z.object({ name: z.string().min(1) });
+
+const { value, errorMessage } = useForm({ validationSchema: schema });
+```
+
+### Yup
+
+You will need to upgrade `yup` to 1.7.0 or above since the standard schema support was added in that version.
+
+#### If you are using `@vee-validate/yup`
+
+```ts
+import * as yup from 'yup';
+
+// v4
+const schema = toTypedSchema(yup.object({ name: yup.string().min(1) }));
+
+// v5 - remove the call to `toTypedSchema`
+const schema = yup.object({ name: yup.string().min(1) });
+
+const { value, errorMessage } = useForm({ validationSchema: schema });
+```
+
+#### If you are using yup directly
+
+Continue using your yup schema as you've been doing in the past. You will start getting type safety features out of the box, just make sure you are using yup 1.7.0 or above.
+
+### Valibot
+
+vee-validate is compatible with valibot 1.0 and above.
+
+```ts
+import * as v from 'valibot';
+
+// v4
+const schema = toTypedSchema(v.object({ email: v.pipe(v.string(), v.email()) }));
+
+// v5 - remove the call to `toTypedSchema`
+const schema = v.object({ email: v.pipe(v.string(), v.email()) });
+
+const { value, errorMessage } = useForm({ validationSchema: schema });
+```
+
+### Joi
+
+Joi is no longer supported in vee-validate v5, you can create a custom adapter using the `@standard-schema/spec` for it or ask their maintainers to add support for standard schema.

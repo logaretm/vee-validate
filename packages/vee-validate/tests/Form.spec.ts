@@ -1,6 +1,6 @@
 import { defineRule, Field, Form, useField, useForm, useIsValidating } from '@/vee-validate';
 import { computed, defineComponent, onErrorCaptured, ref, Ref } from 'vue';
-import * as yup from 'yup';
+import * as z from 'zod';
 import { InvalidSubmissionContext, PrivateFormContext } from '../src/types';
 import { dispatchEvent, flushPromises, mountWithHoc, setChecked, setValue } from './helpers';
 
@@ -302,9 +302,9 @@ describe('<Form />', () => {
   test('validation schema with yup', async () => {
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object({
-          email: yup.string().required().email(),
-          password: yup.string().required().min(8),
+        const schema = z.object({
+          email: z.string().email(),
+          password: z.string().min(8),
         });
 
         return {
@@ -333,16 +333,16 @@ describe('<Form />', () => {
 
     await flushPromises();
 
-    expect(emailError.textContent).toBe('email is a required field');
-    expect(passwordError.textContent).toBe('password is a required field');
+    expect(emailError.textContent).toBe('Invalid input: expected string, received undefined');
+    expect(passwordError.textContent).toBe('Invalid input: expected string, received undefined');
 
     setValue(email, 'hello@');
     setValue(password, '1234');
 
     await flushPromises();
 
-    expect(emailError.textContent).toBe('email must be a valid email');
-    expect(passwordError.textContent).toBe('password must be at least 8 characters');
+    expect(emailError.textContent).toBe('Invalid email address');
+    expect(passwordError.textContent).toBe('Too small: expected string to have >=8 characters');
 
     setValue(email, 'hello@email.com');
     setValue(password, '12346789');
@@ -391,10 +391,15 @@ describe('<Form />', () => {
   test('cross field validation with yup schema', async () => {
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object({
-          password: yup.string().required(),
-          confirmation: yup.string().oneOf([yup.ref('password')], 'passwords must match'),
-        });
+        const schema = z
+          .object({
+            password: z.string().min(1, REQUIRED_MESSAGE),
+            confirmation: z.string().min(1, REQUIRED_MESSAGE),
+          })
+          .refine(data => data.password === data.confirmation, {
+            message: 'Passwords must match',
+            path: ['confirmation'],
+          });
 
         return {
           schema,
@@ -423,7 +428,7 @@ describe('<Form />', () => {
     setValue(password, 'hello@');
     setValue(confirmation, '1234');
     await flushPromises();
-    expect(confirmationError.textContent).toBe('passwords must match');
+    expect(confirmationError.textContent).toBe('Passwords must match');
 
     setValue(password, '1234');
     setValue(confirmation, '1234');
@@ -1105,11 +1110,11 @@ describe('<Form />', () => {
     });
   });
 
-  test('checkboxes with yup schema', async () => {
+  test('checkboxes with zod schema', async () => {
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object({
-          drink: yup.array().required().min(1),
+        const schema = z.object({
+          drink: z.array(z.string()).min(1),
         });
 
         return {
@@ -1136,7 +1141,7 @@ describe('<Form />', () => {
 
     wrapper.$el.querySelector('button').click();
     await flushPromises();
-    expect(err.textContent).toBe('drink is a required field');
+    expect(err.textContent).toBe('Invalid input: expected array, received undefined');
     setChecked(inputs[2]);
     await flushPromises();
     expect(err.textContent).toBe('');
@@ -1159,8 +1164,8 @@ describe('<Form />', () => {
   test('checkboxes with object values', async () => {
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object({
-          drink: yup.array().required().min(1),
+        const schema = z.object({
+          drink: z.array(z.any()).min(1),
         });
 
         return {
@@ -1187,7 +1192,7 @@ describe('<Form />', () => {
 
     wrapper.$el.querySelector('button').click();
     await flushPromises();
-    expect(err.textContent).toBe('drink is a required field');
+    expect(err.textContent).toBe('Invalid input: expected array, received undefined');
     setChecked(inputs[2]);
     await flushPromises();
     expect(err.textContent).toBe('');
@@ -1211,8 +1216,8 @@ describe('<Form />', () => {
     const drinks = ref<string[]>([]);
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object({
-          drink: yup.array().required().min(1),
+        const schema = z.object({
+          drink: z.array(z.string()).min(1),
         });
 
         return {
@@ -1240,7 +1245,7 @@ describe('<Form />', () => {
 
     wrapper.$el.querySelector('button').click();
     await flushPromises();
-    expect(err.textContent).toBe('drink field must have at least 1 items');
+    expect(err.textContent).toBe('Too small: expected array to have >=1 items');
     setChecked(inputs[1]);
     await flushPromises();
     expect(err.textContent).toBe('');
@@ -1248,7 +1253,7 @@ describe('<Form />', () => {
 
     drinks.value = [];
     await flushPromises();
-    expect(err.textContent).toBe('drink field must have at least 1 items');
+    expect(err.textContent).toBe('Too small: expected array to have >=1 items');
     expect(values.textContent).toBe('');
 
     drinks.value = ['Coke'];
@@ -1400,10 +1405,10 @@ describe('<Form />', () => {
     const wrapper = mountWithHoc({
       setup() {
         return {
-          schema: yup.object({
-            user: yup.object({
-              name: yup.string().required(),
-              addresses: yup.array().of(yup.string().required().min(3)).required(),
+          schema: z.object({
+            user: z.object({
+              name: z.string().min(1, REQUIRED_MESSAGE),
+              addresses: z.array(z.string().min(3, REQUIRED_MESSAGE)).min(1, REQUIRED_MESSAGE),
             }),
           }),
           onSubmit(values: any) {
@@ -1482,9 +1487,9 @@ describe('<Form />', () => {
   test('validate fields on mount with validateOnMount = true', async () => {
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object({
-          email: yup.string().required().email(),
-          password: yup.string().required().min(8),
+        const schema = z.object({
+          email: z.string().email(),
+          password: z.string().min(8),
         });
 
         return {
@@ -1511,8 +1516,8 @@ describe('<Form />', () => {
 
     await flushPromises();
 
-    expect(emailError.textContent).toBe('email is a required field');
-    expect(passwordError.textContent).toBe('password is a required field');
+    expect(emailError.textContent).toBe('Invalid input: expected string, received undefined');
+    expect(passwordError.textContent).toBe('Invalid input: expected string, received undefined');
   });
 
   test('sets individual field error message with setFieldError()', async () => {
@@ -1648,9 +1653,9 @@ describe('<Form />', () => {
     const spy = vi.fn();
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object({
-          email: yup.string().required().email(),
-          password: yup.string().required().min(8),
+        const schema = z.object({
+          email: z.string().email(),
+          password: z.string().min(8),
         });
 
         return {
@@ -1681,8 +1686,8 @@ describe('<Form />', () => {
     wrapper.$el.querySelector('button').click();
     await flushPromises();
 
-    expect(emailError.textContent).toBe('email is a required field');
-    expect(passwordError.textContent).toBe('password is a required field');
+    expect(emailError.textContent).toBe('Invalid input: expected string, received undefined');
+    expect(passwordError.textContent).toBe('Invalid input: expected string, received undefined');
     expect(spy).toHaveBeenCalledTimes(0);
 
     setValue(email, 'hello@email.com');
@@ -1700,9 +1705,9 @@ describe('<Form />', () => {
     const spy = vi.fn();
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object({
-          email: yup.string().required().email(),
-          password: yup.string().required().min(8),
+        const schema = z.object({
+          email: z.string().email(),
+          password: z.string().min(8),
         });
 
         return {
@@ -1733,8 +1738,8 @@ describe('<Form />', () => {
     wrapper.$el.querySelector('button').click();
     await flushPromises();
 
-    expect(emailError.textContent).toBe('email is a required field');
-    expect(passwordError.textContent).toBe('password is a required field');
+    expect(emailError.textContent).toBe('Invalid input: expected string, received undefined');
+    expect(passwordError.textContent).toBe('Invalid input: expected string, received undefined');
     expect(spy).toHaveBeenCalledTimes(0);
 
     setValue(email, 'hello@email.com');
@@ -2051,9 +2056,9 @@ describe('<Form />', () => {
   test('should not validate touched fields with yup schema if other fields value change', async () => {
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object({
-          email: yup.string().required(),
-          password: yup.string().required(),
+        const schema = z.object({
+          email: z.string().min(1, REQUIRED_MESSAGE),
+          password: z.string().min(1, REQUIRED_MESSAGE),
         });
 
         return {
@@ -2116,8 +2121,10 @@ describe('<Form />', () => {
       setup() {
         const acceptList = ref(['1', '2']);
         const schema = computed(() => {
-          return yup.object({
-            password: yup.string().oneOf(acceptList.value),
+          return z.object({
+            password: z.string().refine(val => acceptList.value.includes(val), {
+              message: 'not allowed',
+            }),
           });
         });
 
@@ -2157,9 +2164,17 @@ describe('<Form />', () => {
     mountWithHoc({
       setup() {
         const schema = computed(() => {
-          return yup.object({
-            password: yup.string().oneOf(acceptList.value),
-          });
+          // register dependency
+          acceptList.value.length;
+
+          return z
+            .object({
+              password: z.string(),
+            })
+            .refine(val => acceptList.value.includes(val.password), {
+              message: 'not allowed',
+              path: ['password'],
+            });
         });
 
         return {
@@ -2180,7 +2195,7 @@ describe('<Form />', () => {
     setValue(input, '3');
     await flushPromises();
     // 3 is not allowed yet
-    expect(document.querySelector('span')?.textContent).toBeTruthy();
+    expect(document.querySelector('span')?.textContent).toBe('not allowed');
 
     // field is re-validated automatically
     addItem('3');
@@ -2223,9 +2238,9 @@ describe('<Form />', () => {
   test('non-rendered fields defined in yup schema are not ignored', async () => {
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object({
-          email: yup.string().required(),
-          password: yup.string().required(),
+        const schema = z.object({
+          email: z.string().min(1, REQUIRED_MESSAGE),
+          password: z.string().min(1, REQUIRED_MESSAGE),
         });
 
         return {
@@ -2584,9 +2599,9 @@ describe('<Form />', () => {
     const validSpy = vi.fn();
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object({
-          email: yup.string().required().email(),
-          password: yup.string().required().min(8),
+        const schema = z.object({
+          email: z.string().min(1, REQUIRED_MESSAGE).email(),
+          password: z.string().min(1, REQUIRED_MESSAGE),
         });
 
         return {
@@ -2608,8 +2623,8 @@ describe('<Form />', () => {
     `,
     });
 
-    const expectedEmailError = 'email is a required field';
-    const expectedPasswordError = 'password is a required field';
+    const expectedEmailError = 'Invalid input: expected string, received undefined';
+    const expectedPasswordError = 'Invalid input: expected string, received undefined';
     await flushPromises();
     wrapper.$el.querySelector('button').click();
     await flushPromises();
@@ -2643,9 +2658,9 @@ describe('<Form />', () => {
     const validSpy = vi.fn();
     const wrapper = mountWithHoc({
       setup() {
-        const schema = yup.object({
-          email: yup.string().required().email(),
-          password: yup.string().required().min(8),
+        const schema = z.object({
+          email: z.string().min(1, REQUIRED_MESSAGE).email(),
+          password: z.string().min(1, REQUIRED_MESSAGE),
         });
 
         return {
@@ -2669,8 +2684,8 @@ describe('<Form />', () => {
     `,
     });
 
-    const expectedEmailError = 'email is a required field';
-    const expectedPasswordError = 'password is a required field';
+    const expectedEmailError = 'Invalid input: expected string, received undefined';
+    const expectedPasswordError = 'Invalid input: expected string, received undefined';
     await flushPromises();
     wrapper.$el.querySelector('button').click();
     await flushPromises();
@@ -3179,102 +3194,13 @@ test('removes proper pathState when field is unmounting', async () => {
   expect(form.getAllPathStates()).toMatchObject([{ id: 0, path: 'foo' }]);
 });
 
-test('provides form values as yup context refs', async () => {
-  mountWithHoc({
-    setup() {
-      const pw = yup.string().required().min(3).label('Password');
-      const cpw = yup
-        .string()
-        .required()
-        .oneOf([yup.ref('$password')])
-        .label('Confirm Password');
-
-      return {
-        pw,
-        cpw,
-      };
-    },
-    template: `
-      <VForm  v-slot="{ errors }">
-        <Field id="password" name="password" type="password" :rules="pw" />
-        <span id="passwordErr">{{ errors.password }}</span>
-
-        <Field id="confirmPassword" name="confirmPassword" type="password" :rules="cpw" />
-        <span id="confirmPasswordErr">{{ errors.confirmPassword }}</span>
-
-        <button>Validate</button>
-      </VForm>
-    `,
+test('handles onSubmit with generic object from zod schema', async () => {
+  const schema = z.object({
+    email: z.string().email(),
+    password: z.string().min(8),
   });
 
-  const pwError = document.querySelector('#passwordErr');
-  const cpwError = document.querySelector('#confirmPasswordErr');
-
-  await flushPromises();
-  setValue(document.querySelector('#password') as HTMLInputElement, '123');
-  setValue(document.querySelector('#confirmPassword') as HTMLInputElement, '12');
-  await flushPromises();
-
-  expect(pwError?.textContent).toBeFalsy();
-  expect(cpwError?.textContent).toBeTruthy();
-  setValue(document.querySelector('#confirmPassword') as HTMLInputElement, '123');
-  await flushPromises();
-  expect(pwError?.textContent).toBeFalsy();
-  expect(cpwError?.textContent).toBeFalsy();
-});
-
-test('provides form values as yup context refs for schema validation', async () => {
-  mountWithHoc({
-    setup() {
-      const validationSchema = yup.object({
-        password: yup.string().required().min(3).label('Password'),
-        confirmPassword: yup
-          .string()
-          .required()
-          .oneOf([yup.ref('$password')])
-          .label('Confirm Password'),
-      });
-
-      return {
-        validationSchema,
-      };
-    },
-    template: `
-      <VForm  v-slot="{ errors }" :validation-schema="validationSchema">
-        <Field id="password" name="password" type="password" />
-        <span id="passwordErr">{{ errors.password }}</span>
-
-        <Field id="confirmPassword" name="confirmPassword" type="password" />
-        <span id="confirmPasswordErr">{{ errors.confirmPassword }}</span>
-
-        <button>Validate</button>
-      </VForm>
-    `,
-  });
-
-  const pwError = document.querySelector('#passwordErr');
-  const cpwError = document.querySelector('#confirmPasswordErr');
-
-  await flushPromises();
-  setValue(document.querySelector('#password') as HTMLInputElement, '123');
-  setValue(document.querySelector('#confirmPassword') as HTMLInputElement, '12');
-  await flushPromises();
-
-  expect(pwError?.textContent).toBeFalsy();
-  expect(cpwError?.textContent).toBeTruthy();
-  setValue(document.querySelector('#confirmPassword') as HTMLInputElement, '123');
-  await flushPromises();
-  expect(pwError?.textContent).toBeFalsy();
-  expect(cpwError?.textContent).toBeFalsy();
-});
-
-test('handles onSubmit with generic object from yup schema', async () => {
-  const schema = yup.object({
-    email: yup.string().required().email(),
-    password: yup.string().required().min(8),
-  });
-
-  type FormValues = yup.InferType<typeof schema>;
+  type FormValues = z.infer<typeof schema>;
 
   const submitSpy = vi.fn((values: FormValues) => {
     void values.email;

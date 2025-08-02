@@ -17,14 +17,11 @@ export function getViteProjectConfig(files: Record<string, string>): Project {
     "preview": "vite preview"
   },
   "dependencies": {
-    "@vee-validate/zod": "^${version}",
-    "@vee-validate/yup": "^${version}",
-    "@vee-validate/rules": "^${version}",
-    "@vee-validate/i18n": "^${version}",
     "vee-validate": "^${version}",
     "vue": "^3.3.11",
     "yup": "latest",
-    "zod": "latest"
+    "zod": "latest",
+    "valibot": "latest"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
