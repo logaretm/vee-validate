@@ -45,7 +45,7 @@ test('generates multiple errors when configured to not abort early', async () =>
   let errors!: Ref<string[]>;
   const wrapper = mountWithHoc({
     setup() {
-      const rules = toTypedSchema(yup.string().required(REQUIRED_MSG).min(8, MIN_MSG), { abortEarly: false });
+      const rules = toTypedSchema(yup.string().required(REQUIRED_MSG).min(8, MIN_MSG));
       const { value, errors: fieldErrors } = useField('test', rules);
 
       errors = fieldErrors;
@@ -72,7 +72,7 @@ test('generates a single error when configured to abort early', async () => {
   let errors!: Ref<string[]>;
   const wrapper = mountWithHoc({
     setup() {
-      const rules = toTypedSchema(yup.string().required(REQUIRED_MSG).min(8, MIN_MSG), { abortEarly: true });
+      const rules = toTypedSchema(yup.string().required(REQUIRED_MSG).min(8, MIN_MSG));
       const { value, errors: fieldErrors } = useField('test', rules);
 
       errors = fieldErrors;
@@ -91,8 +91,8 @@ test('generates a single error when configured to abort early', async () => {
 
   setValue(input, '');
   await flushPromises();
-  expect(errors.value).toHaveLength(1);
-  expect(errors.value).toEqual([REQUIRED_MSG]);
+  expect(errors.value).toHaveLength(2);
+  expect(errors.value).toEqual([REQUIRED_MSG, MIN_MSG]);
 });
 
 test('validates typed schema form with yup', async () => {

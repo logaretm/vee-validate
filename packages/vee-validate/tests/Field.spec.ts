@@ -452,7 +452,7 @@ describe('<Field />', () => {
 
     setValue(input, '');
     await flushPromises();
-    expect(error.textContent).toBe('String must contain at least 8 character(s)');
+    expect(error.textContent).toBe('Too small: expected string to have >=8 characters');
     setValue(input, '12345678');
     await flushPromises();
     expect(error.textContent).toBe('');

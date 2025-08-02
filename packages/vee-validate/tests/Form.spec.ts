@@ -333,16 +333,16 @@ describe('<Form />', () => {
 
     await flushPromises();
 
-    expect(emailError.textContent).toBe('Required');
-    expect(passwordError.textContent).toBe('Required');
+    expect(emailError.textContent).toBe('Invalid input: expected string, received undefined');
+    expect(passwordError.textContent).toBe('Invalid input: expected string, received undefined');
 
     setValue(email, 'hello@');
     setValue(password, '1234');
 
     await flushPromises();
 
-    expect(emailError.textContent).toBe('Invalid email');
-    expect(passwordError.textContent).toBe('String must contain at least 8 character(s)');
+    expect(emailError.textContent).toBe('Invalid email address');
+    expect(passwordError.textContent).toBe('Too small: expected string to have >=8 characters');
 
     setValue(email, 'hello@email.com');
     setValue(password, '12346789');
@@ -1141,7 +1141,7 @@ describe('<Form />', () => {
 
     wrapper.$el.querySelector('button').click();
     await flushPromises();
-    expect(err.textContent).toBe('Required');
+    expect(err.textContent).toBe('Invalid input: expected array, received undefined');
     setChecked(inputs[2]);
     await flushPromises();
     expect(err.textContent).toBe('');
@@ -1192,7 +1192,7 @@ describe('<Form />', () => {
 
     wrapper.$el.querySelector('button').click();
     await flushPromises();
-    expect(err.textContent).toBe('Required');
+    expect(err.textContent).toBe('Invalid input: expected array, received undefined');
     setChecked(inputs[2]);
     await flushPromises();
     expect(err.textContent).toBe('');
@@ -1245,7 +1245,7 @@ describe('<Form />', () => {
 
     wrapper.$el.querySelector('button').click();
     await flushPromises();
-    expect(err.textContent).toBe('Array must contain at least 1 element(s)');
+    expect(err.textContent).toBe('Too small: expected array to have >=1 items');
     setChecked(inputs[1]);
     await flushPromises();
     expect(err.textContent).toBe('');
@@ -1253,7 +1253,7 @@ describe('<Form />', () => {
 
     drinks.value = [];
     await flushPromises();
-    expect(err.textContent).toBe('Array must contain at least 1 element(s)');
+    expect(err.textContent).toBe('Too small: expected array to have >=1 items');
     expect(values.textContent).toBe('');
 
     drinks.value = ['Coke'];
@@ -1516,8 +1516,8 @@ describe('<Form />', () => {
 
     await flushPromises();
 
-    expect(emailError.textContent).toBe('Required');
-    expect(passwordError.textContent).toBe('Required');
+    expect(emailError.textContent).toBe('Invalid input: expected string, received undefined');
+    expect(passwordError.textContent).toBe('Invalid input: expected string, received undefined');
   });
 
   test('sets individual field error message with setFieldError()', async () => {
@@ -1686,8 +1686,8 @@ describe('<Form />', () => {
     wrapper.$el.querySelector('button').click();
     await flushPromises();
 
-    expect(emailError.textContent).toBe('Required');
-    expect(passwordError.textContent).toBe('Required');
+    expect(emailError.textContent).toBe('Invalid input: expected string, received undefined');
+    expect(passwordError.textContent).toBe('Invalid input: expected string, received undefined');
     expect(spy).toHaveBeenCalledTimes(0);
 
     setValue(email, 'hello@email.com');
@@ -1738,8 +1738,8 @@ describe('<Form />', () => {
     wrapper.$el.querySelector('button').click();
     await flushPromises();
 
-    expect(emailError.textContent).toBe('Required');
-    expect(passwordError.textContent).toBe('Required');
+    expect(emailError.textContent).toBe('Invalid input: expected string, received undefined');
+    expect(passwordError.textContent).toBe('Invalid input: expected string, received undefined');
     expect(spy).toHaveBeenCalledTimes(0);
 
     setValue(email, 'hello@email.com');
@@ -2623,8 +2623,8 @@ describe('<Form />', () => {
     `,
     });
 
-    const expectedEmailError = 'Required';
-    const expectedPasswordError = 'Required';
+    const expectedEmailError = 'Invalid input: expected string, received undefined';
+    const expectedPasswordError = 'Invalid input: expected string, received undefined';
     await flushPromises();
     wrapper.$el.querySelector('button').click();
     await flushPromises();
@@ -2684,8 +2684,8 @@ describe('<Form />', () => {
     `,
     });
 
-    const expectedEmailError = 'Required';
-    const expectedPasswordError = 'Required';
+    const expectedEmailError = 'Invalid input: expected string, received undefined';
+    const expectedPasswordError = 'Invalid input: expected string, received undefined';
     await flushPromises();
     wrapper.$el.querySelector('button').click();
     await flushPromises();

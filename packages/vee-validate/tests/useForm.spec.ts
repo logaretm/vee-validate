@@ -273,17 +273,17 @@ describe('useForm()', () => {
       valid: false,
       source: 'schema',
       errors: {
-        field1: 'Required',
-        field2: 'Required',
+        field1: 'Invalid input: expected string, received undefined',
+        field2: 'Invalid input: expected string, received undefined',
       },
       results: {
         field1: {
           valid: false,
-          errors: ['Required'],
+          errors: ['Invalid input: expected string, received undefined'],
         },
         field2: {
           valid: false,
-          errors: ['Required'],
+          errors: ['Invalid input: expected string, received undefined'],
         },
       },
     });
@@ -367,7 +367,7 @@ describe('useForm()', () => {
     });
 
     await flushPromises();
-    expect(form.errors.value.name).toBe('Required');
+    expect(form.errors.value.name).toBe('Invalid input: expected object, received undefined');
     expect(form.meta.value.valid).toBe(false);
   });
 
@@ -801,7 +801,7 @@ describe('useForm()', () => {
       setValue(document.querySelector('input') as any, '');
       dispatchEvent(document.querySelector('input') as any, 'blur');
       await flushPromises();
-      expect(errorEl?.textContent).toBe('String must contain at least 1 character(s)');
+      expect(errorEl?.textContent).toBe('Too small: expected string to have >=1 characters');
       setValue(document.querySelector('input') as any, '123');
       dispatchEvent(document.querySelector('input') as any, 'blur');
       await flushPromises();
@@ -841,7 +841,7 @@ describe('useForm()', () => {
       expect(errorEl?.textContent).toBe('');
       dispatchEvent(input, 'blur');
       await flushPromises();
-      expect(errorEl?.textContent).toBe('String must contain at least 1 character(s)');
+      expect(errorEl?.textContent).toBe('Too small: expected string to have >=1 characters');
       setValue(input, '123');
       dispatchEvent(input, 'blur');
       await flushPromises();
@@ -944,7 +944,7 @@ describe('useForm()', () => {
       setValue(document.querySelector('input') as any, '');
       dispatchEvent(document.querySelector('input') as any, 'blur');
       await flushPromises();
-      expect(errorEl?.textContent).toBe('String must contain at least 1 character(s)');
+      expect(errorEl?.textContent).toBe('Too small: expected string to have >=1 characters');
       setValue(document.querySelector('input') as any, '123');
       dispatchEvent(document.querySelector('input') as any, 'blur');
       await flushPromises();
@@ -978,7 +978,7 @@ describe('useForm()', () => {
       setValue(document.querySelector('input') as any, '');
       dispatchEvent(document.querySelector('input') as any, 'blur');
       await flushPromises();
-      expect(errorEl?.textContent).toBe('String must contain at least 1 character(s)');
+      expect(errorEl?.textContent).toBe('Too small: expected string to have >=1 characters');
       setValue(document.querySelector('input') as any, '123');
       dispatchEvent(document.querySelector('input') as any, 'blur');
       await flushPromises();
@@ -1011,7 +1011,7 @@ describe('useForm()', () => {
       const valuesEl = document.getElementById('values');
       setValue(document.querySelector('input') as any, '');
       await flushPromises();
-      expect(errorEl?.textContent).toBe('String must contain at least 1 character(s)');
+      expect(errorEl?.textContent).toBe('Too small: expected string to have >=1 characters');
       setValue(document.querySelector('input') as any, '123');
       await flushPromises();
       expect(errorEl?.textContent).toBe('');
