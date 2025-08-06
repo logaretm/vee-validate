@@ -934,9 +934,9 @@ describe('useField()', () => {
 
     await flushPromises();
     const input = document.querySelector('input') as HTMLInputElement;
-    setValue(input, '123');
+    setValue(input, '0.00');
     await flushPromises();
-    expect(field.value.value).toBe(123);
+    expect(field.value.value).toBe('0.00');
 
     setValue(input, '');
     await flushPromises();
