@@ -2,10 +2,6 @@ import { hasCheckedAttr, isNativeMultiSelect, isNativeSelect, isEvent } from './
 import { getBoundValue, hasValueBinding } from './vnode';
 
 function parseInputValue(el: HTMLInputElement) {
-  if (el.type === 'number') {
-    return Number.isNaN(el.valueAsNumber) ? el.value : el.valueAsNumber;
-  }
-
   if (el.type === 'range') {
     return Number.isNaN(el.valueAsNumber) ? el.value : el.valueAsNumber;
   }
