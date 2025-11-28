@@ -1,7 +1,7 @@
 {
   "code": "pt_PT",
   "messages": {
-    "_default": "O {campo} é inválido",
+    "_default": "O {field} é inválido",
     "alpha": "O campo {field} deve conter somente letras",
     "alpha_dash": "O campo {field} deve conter letras, números e traços",
     "alpha_num": "O campo {field} deve conter somente letras e números",

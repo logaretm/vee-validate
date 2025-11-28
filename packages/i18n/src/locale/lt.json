@@ -1,7 +1,7 @@
 {
   "code": "lt",
   "messages": {
-    "_default": "{Laukelis} yra neteisingas",
+    "_default": "{field} yra neteisingas",
     "alpha": "Laukelyje {field} leidžiamos tik raidės",
     "alpha_dash": "Laukelyje {field} leidžiamos tik raidės, skaičiai bei brūkšneliai",
     "alpha_num": "Laukelyje {field} leidžiamos tik raidės ir skaičiai",

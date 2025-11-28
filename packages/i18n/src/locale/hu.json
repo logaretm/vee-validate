@@ -1,7 +1,7 @@
 {
   "code": "hu",
   "messages": {
-    "_default": "A {mező} nem érvényes",
+    "_default": "A {field} nem érvényes",
     "alpha": "A(z) {field} kizárólag betűket tartalmazhat",
     "alpha_dash": "A(z) {field} kizárólag betűket, számokat, kötőjeleket és alulvonásokat tartalmazhat",
     "alpha_num": "A(z) {field} kizárólag betűket és számokat tartalmazhat",
