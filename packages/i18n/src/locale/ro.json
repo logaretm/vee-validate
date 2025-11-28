@@ -1,6 +1,7 @@
 {
   "code": "ro",
   "messages": {
+    "_default": "Câmpul {field} nu este valid",
     "alpha": "Câmpul {field} poate conține doar literele alfabetului",
     "alpha_dash": "Câmpul {field} poate conține litere și caracterele '-' sau '_'",
     "alpha_num": "Câmpul {field} poate conține doar caractere alfanumerice",

@@ -1,6 +1,7 @@
 {
   "code": "vi",
   "messages": {
+    "_default": "Trường {field} không hợp lệ",
     "alpha": "{field} chỉ có thể chứa các kí tự chữ",
     "alpha_dash": "{field} có thể chứa các kí tự chữ (A-Z a-z), số (0-9), gạch ngang (-) và gạch dưới (_)",
     "alpha_num": "{field} chỉ có thể chứa các kí tự chữ và số",

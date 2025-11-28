@@ -1,6 +1,7 @@
 {
   "code": "tr",
   "messages": {
+    "_default": "{alan} geçerli değil",
     "alpha": "{field} yalnızca harf içerebilir",
     "alpha_dash": "{field} alanı harf ve tire (-) ya da alttan tire (_) içerebilir",
     "alpha_num": "{field} yalnızca harf ve rakam içerebilir",

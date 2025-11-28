@@ -1,6 +1,7 @@
 {
   "code": "hr",
   "messages": {
+    "_default": "{field} nije valjana",
     "alpha": "{field} može sadržavati samo abecedne znakove",
     "alpha_num": "{field} može sadržavati samo alfanumeričke znakove",
     "alpha_dash": "{field} može sadržavati alfanumeričke znakove kao i crtice i podvlake",

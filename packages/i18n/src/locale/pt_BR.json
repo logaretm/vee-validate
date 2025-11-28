@@ -1,6 +1,7 @@
 {
   "code": "pt_BR",
   "messages": {
+    "_default": "O {campo} não é válido",
     "alpha": "O campo {field} deve conter somente letras",
     "alpha_dash": "O campo {field} deve conter letras, números e traços",
     "alpha_num": "O campo {field} deve conter somente letras e números",
