@@ -176,6 +176,10 @@ export const refreshInspector = throttle(() => {
 }, 100);
 
 export function registerFormWithDevTools(form: PrivateFormContext) {
+  if (!__DEV__ || !isClient) {
+    return;
+  }
+
   const vm = getCurrentInstance();
   if (!API) {
     const app = vm?.appContext.app;
@@ -197,6 +201,10 @@ export function registerFormWithDevTools(form: PrivateFormContext) {
 }
 
 export function registerSingleFieldWithDevtools(field: PrivateFieldContext) {
+  if (!__DEV__ || !isClient) {
+    return;
+  }
+
   const vm = getCurrentInstance();
   if (!API) {
     const app = vm?.appContext.app;
