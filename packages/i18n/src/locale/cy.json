@@ -1,6 +1,7 @@
 {
   "code": "cy",
   "messages": {
+    "_default": "Nid yw'r {field} yn ddilys",
     "alpha": "Gall {field} ond gynnwys llythrennau'r wyddor",
     "alpha_num": "Gall {field} ond gynnwys llythrennau'r wyddor a rhifau",
     "alpha_dash": "Gall {field} ond gynnwys llythrennau'r wyddor a chysylltnod",

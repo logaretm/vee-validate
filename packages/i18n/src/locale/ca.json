@@ -1,6 +1,7 @@
 {
   "code": "ca",
   "messages": {
+    "_default": "El {field} no és vàlid",
     "alpha": "El camp {field} només ha de contenir lletres",
     "alpha_num": "El camp {field} només ha de contenir lletres i números",
     "alpha_dash": "El camp {field} només ha de contenir lletres, números i guions",

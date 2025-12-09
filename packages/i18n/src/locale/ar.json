@@ -1,6 +1,7 @@
 {
   "code": "ar",
   "messages": {
+    "_default": "الحقل {field} غير صالح",
     "alpha": "{field} يجب ان يحتوي على حروف فقط",
     "alpha_num": "{field} قد يحتوي فقط على حروف وارقام",
     "alpha_dash": "{field} قد يحتوي على حروف او الرموز - و _",

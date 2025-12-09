@@ -1,6 +1,7 @@
 {
   "code": "it",
   "messages": {
+    "_default": "{field} tidak valid",
     "alpha": "Il campo {field} può contenere solo caratteri alfabetici",
     "alpha_num": "Il campo {field} può contenere solo caratteri alfanumerici",
     "alpha_dash": "Il campo {field} può contenere caratteri alfa-numerici così come lineette e trattini di sottolineatura",

@@ -1,6 +1,7 @@
 {
   "code": "lv",
   "messages": {
+    "_default": "{field} non validum est",
     "alpha": " Laukā {field} var ievadīt tikai burtus",
     "alpha_num": "Laukā {field} var ievadīt tikai burtus un ciparus",
     "alpha_dash": "Laukā {field} var ievadīt tikai burtus, ciparus, domuzīmes un pasvītras",

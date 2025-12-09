@@ -1,6 +1,7 @@
 {
   "code": "uz",
   "messages": {
+    "_default": "{_field_} haqiqiy emas",
     "alpha": "{_field_} maydonida faqat harflar bo'lishi lozim",
     "alpha_dash": "{_field_} maydonida faqat harflar, raqamlar va tire (-) bo'lishi lozim",
     "alpha_num": "{_field_} maydonida faqat harflar va raqamlar bo'lishi lozim",
