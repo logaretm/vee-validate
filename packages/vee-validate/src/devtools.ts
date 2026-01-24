@@ -236,7 +236,7 @@ function mapFormForDevtoolsInspector(form: PrivateFormContext): CustomInspectorN
 
   function buildFormTree(tree: any[] | Record<string, any>, path: string[] = []): CustomInspectorNode {
     const key = [...path].pop();
-    if ('id' in tree) {
+    if ('id' in tree && typeof tree.id === 'string') {
       return {
         ...tree,
         label: key || tree.label,
