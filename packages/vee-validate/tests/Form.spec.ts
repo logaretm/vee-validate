@@ -2481,14 +2481,14 @@ describe('<Form />', () => {
     expect(span.textContent).toBe('');
   });
 
-  test('standalone fields are excluded from form state', async () => {
+  test('uncontrolled fields are excluded from form state', async () => {
     const wrapper = mountWithHoc({
       setup() {
         return {};
       },
       template: `
       <VForm  v-slot="{ errors, meta }">
-        <Field name="fname" standalone v-slot="{ errorMessage, field }" rules="required">
+        <Field name="fname" :controlled="false" v-slot="{ errorMessage, field }" rules="required">
           <input v-bind="field" />
           <span id="fieldError">{{ errorMessage }}</span>
         </Field>

@@ -116,9 +116,9 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
       type: null as unknown as PropType<((e: any) => unknown) | undefined>,
       default: undefined,
     },
-    standalone: {
+    controlled: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     keepValue: {
       type: Boolean,
@@ -149,7 +149,7 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
     } = useField(name, rules, {
       validateOnMount: props.validateOnMount,
       bails: props.bails,
-      standalone: props.standalone,
+      controlled: props.controlled,
       type: ctx.attrs.type as InputType,
       initialValue: resolveInitialValue(props, ctx),
       // Only for checkboxes and radio buttons

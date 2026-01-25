@@ -51,23 +51,11 @@ export interface FieldOptions<TValue = unknown> {
   validateOnMount?: boolean;
   bails?: boolean;
   type?: InputType;
-  /**
-   * @deprecated Use `checkedValue` instead.
-   */
-  valueProp?: MaybeRefOrGetter<TValue>;
   checkedValue?: MaybeRefOrGetter<TValue>;
   uncheckedValue?: MaybeRefOrGetter<TValue>;
   label?: MaybeRefOrGetter<string | undefined>;
   controlled?: boolean;
-  /**
-   * @deprecated Use `controlled` instead, controlled is opposite of standalone.
-   */
-  standalone?: boolean;
   keepValueOnUnmount?: MaybeRefOrGetter<boolean | undefined>;
-  /**
-   * @deprecated Pass the model prop name to `syncVModel` instead.
-   */
-  modelPropName?: string;
   syncVModel?: boolean | string;
   form?: FormContext;
 }
@@ -443,7 +431,7 @@ function normalizeOptions<TValue>(opts: Partial<FieldOptions<TValue>> | undefine
   });
 
   const isVModelSynced = !!opts?.syncVModel;
-  const modelPropName = typeof opts?.syncVModel === 'string' ? opts.syncVModel : opts?.modelPropName || 'modelValue';
+  const modelPropName = typeof opts?.syncVModel === 'string' ? opts.syncVModel : 'modelValue';
   const initialValue =
     isVModelSynced && !('initialValue' in (opts || {}))
       ? getCurrentModelValue(getCurrentInstance(), modelPropName)
@@ -453,17 +441,15 @@ function normalizeOptions<TValue>(opts: Partial<FieldOptions<TValue>> | undefine
     return { ...defaults(), initialValue } as FieldOptions<TValue>;
   }
 
-  // TODO: Deprecate this in next major release
-  const checkedValue = 'valueProp' in opts ? opts.valueProp : opts.checkedValue;
-  const controlled = 'standalone' in opts ? !opts.standalone : opts.controlled;
-  const syncVModel = opts?.modelPropName || opts?.syncVModel || false;
+  const controlled = opts.controlled ?? true;
+  const syncVModel = opts?.syncVModel || false;
 
   return {
     ...defaults(),
     ...(opts || {}),
     initialValue,
     controlled: controlled ?? true,
-    checkedValue,
+    checkedValue: opts?.checkedValue,
     syncVModel,
   } as FieldOptions<TValue>;
 }
@@ -473,7 +459,7 @@ function useFieldWithChecked<TValue = unknown>(
   rules?: MaybeRef<RuleExpression<TValue>>,
   opts?: Partial<FieldOptions<TValue>>,
 ): FieldContext<TValue> {
-  const form = !opts?.standalone ? injectWithSelf(FormContextKey) : undefined;
+  const form = opts?.controlled ? injectWithSelf(FormContextKey) : undefined;
   const checkedValue = opts?.checkedValue;
   const uncheckedValue = opts?.uncheckedValue;
 
