@@ -14,6 +14,12 @@ import DocBadge from '@/components/DocBadge.vue';
 
 `useForm` is a custom composition API function that allows you to group fields created by `useField` and aggregates their state. It should be used to create logical forms or custom form components similar to the `<Form/>` component which is just a consumer of `useForm`.
 
+<DocTip type="warn">
+
+Note that you can only have one `useForm` per component. See this issue: https://github.com/logaretm/vee-validate/issues/4550
+
+</DocTip>
+
 ## Field Types
 
 The `useForm` function has field typing capabilities if you need it, getting type information for your fields and their values can be very powerful when building complex forms.
