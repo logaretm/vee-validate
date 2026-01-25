@@ -48,9 +48,6 @@ import {
   InputBindsConfig,
   LazyInputBindsConfig,
   ResetFormOpts,
-  MapValuesPathsToRefs,
-  ComponentBindsConfig,
-  LazyComponentBindsConfig,
 } from './types';
 import {
   getFromPath,
@@ -64,7 +61,6 @@ import {
   normalizeErrorItem,
   omit,
   debounceNextTick,
-  normalizeEventValue,
   isStandardSchema,
 } from './utils';
 import { FormContextKey, PublicFormContextKey } from './symbols';
@@ -640,9 +636,6 @@ export function useForm<
     resetForm,
     resetField,
     handleSubmit,
-    useFieldModel,
-    defineInputBinds,
-    defineComponentBinds: defineComponentBinds as any,
     defineField,
     stageInitialValue,
     unsetInitialValue,
@@ -1089,90 +1082,6 @@ export function useForm<
     );
 
     return [model, props] as [Ref<TValue>, Ref<BaseFieldProps & TExtras>];
-  }
-
-  /**
-   * @deprecated use defineField instead
-   */
-  function useFieldModel<TPath extends Path<TValues>>(path: TPath): Ref<PathValue<TValues, TPath>>;
-  function useFieldModel<TPaths extends readonly [...MaybeRef<Path<TValues>>[]]>(
-    paths: TPaths,
-  ): MapValuesPathsToRefs<TValues, TPaths>;
-  function useFieldModel<TPaths extends Path<TValues> | readonly [...MaybeRef<Path<TValues>>[]]>(pathOrPaths: TPaths) {
-    if (!Array.isArray(pathOrPaths)) {
-      return createModel(pathOrPaths as any);
-    }
-
-    return pathOrPaths.map(p => createModel(p, true)) as unknown as MapValuesPathsToRefs<TValues, any>;
-  }
-
-  /**
-   * @deprecated use defineField instead
-   */
-  function defineInputBinds<
-    TPath extends Path<TValues>,
-    TValue = PathValue<TValues, TPath>,
-    TExtras extends GenericObject = GenericObject,
-  >(
-    path: MaybeRefOrGetter<TPath>,
-    config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>,
-  ) {
-    const [model, props] = defineField(path, config);
-
-    function onBlur() {
-      props.value.onBlur();
-    }
-
-    function onInput(e: Event) {
-      const value = normalizeEventValue(e) as PathValue<TValues, TPath>;
-      setFieldValue(toValue(path), value, false);
-      props.value.onInput();
-    }
-
-    function onChange(e: Event) {
-      const value = normalizeEventValue(e) as PathValue<TValues, TPath>;
-      setFieldValue(toValue(path), value, false);
-      props.value.onChange();
-    }
-
-    return computed(() => {
-      return {
-        ...props.value,
-        onBlur,
-        onInput,
-        onChange,
-        value: model.value,
-      };
-    });
-  }
-
-  /**
-   * @deprecated use defineField instead
-   */
-  function defineComponentBinds<
-    TPath extends Path<TValues>,
-    TValue = PathValue<TValues, TPath>,
-    TModel extends string = 'modelValue',
-    TExtras extends GenericObject = GenericObject,
-  >(
-    path: MaybeRefOrGetter<TPath>,
-    config?: Partial<ComponentBindsConfig<TValue, TExtras, TModel>> | LazyComponentBindsConfig<TValue, TExtras, TModel>,
-  ) {
-    const [model, props] = defineField(path, config);
-    const pathState = findPathState(toValue(path)) as PathState<TValue>;
-
-    function onUpdateModelValue(value: TValue) {
-      model.value = value;
-    }
-
-    return computed(() => {
-      const conf = isCallable(config) ? config(omit(pathState, PRIVATE_PATH_STATE_KEYS)) : config || {};
-      return {
-        [conf.model || 'modelValue']: model.value,
-        [`onUpdate:${conf.model || 'modelValue'}`]: onUpdateModelValue,
-        ...props.value,
-      };
-    });
   }
 
   const ctx: FormContext<TValues, TOutput> = {

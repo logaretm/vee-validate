@@ -1,5 +1,5 @@
 import { ComputedRef, Ref, MaybeRef, MaybeRefOrGetter } from 'vue';
-import { GenericObject, MaybeArray, MaybePromise, FlattenAndSetPathsType, MapValuesPathsToRefs } from './common';
+import { GenericObject, MaybeArray, MaybePromise, FlattenAndSetPathsType } from './common';
 import { FieldValidationMetaInfo } from '../../../shared';
 import { Path, PathValue } from './paths';
 import { PartialDeep } from 'type-fest';
@@ -340,39 +340,6 @@ export interface PrivateFormContext<
     path: MaybeRefOrGetter<TPath>,
     config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>,
   ): [Ref<TValue>, Ref<BaseFieldProps & TExtras>];
-  /**
-   * @deprecated use defineField instead
-   */
-  useFieldModel<TPath extends Path<TValues>>(path: TPath): Ref<PathValue<TValues, TPath>>;
-  /**
-   * @deprecated use defineField instead
-   */
-  useFieldModel<TPaths extends readonly [...MaybeRef<Path<TValues>>[]]>(
-    paths: TPaths,
-  ): MapValuesPathsToRefs<TValues, TPaths>;
-  /**
-   * @deprecated use defineField instead
-   */
-  defineComponentBinds<
-    TPath extends Path<TValues>,
-    TValue = PathValue<TValues, TPath>,
-    TModel extends string = 'modelValue',
-    TExtras extends GenericObject = GenericObject,
-  >(
-    path: MaybeRefOrGetter<TPath>,
-    config?: Partial<ComponentBindsConfig<TValue, TExtras, TModel>> | LazyComponentBindsConfig<TValue, TExtras, TModel>,
-  ): Ref<BaseComponentBinds<TValue, TModel> & TExtras>;
-  /**
-   * @deprecated use defineField instead
-   */
-  defineInputBinds<
-    TPath extends Path<TValues>,
-    TValue = PathValue<TValues, TPath>,
-    TExtras extends GenericObject = GenericObject,
-  >(
-    path: MaybeRefOrGetter<TPath>,
-    config?: Partial<InputBindsConfig<TValue, TExtras>> | LazyInputBindsConfig<TValue, TExtras>,
-  ): Ref<BaseInputBinds<TValue> & TExtras>;
 }
 
 export interface FormContext<TValues extends GenericObject = GenericObject, TOutput extends GenericObject = TValues>
