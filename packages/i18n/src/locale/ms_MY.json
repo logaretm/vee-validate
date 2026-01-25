@@ -1,6 +1,7 @@
 {
   "code": "ms_MY",
   "messages": {
+    "_default": "{field} tidak sah",
     "alpha": "{field} hanya boleh mempunyai karakter abjad sahaja",
     "alpha_dash": "{field} boleh mempunyai karakter angka-abjad, sengkang dan garis bawah",
     "alpha_num": "{field} hanya boleh mempunyai karakter angka-abjad",

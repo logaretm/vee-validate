@@ -1,6 +1,7 @@
 {
   "code": "nb_NO",
   "messages": {
+    "_default": "Feltet {field} er ikke gyldig",
     "alpha": "{field}-feltet kan bare inneholde bokstaver",
     "alpha_dash": "{field}-feltet kan bare inneholde alfanumeriske tegn, samt bindestrek og understrek",
     "alpha_num": "{field} kan bare inneholde alfanumeriske tegn",

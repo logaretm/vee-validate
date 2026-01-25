@@ -1,6 +1,7 @@
 {
   "code": "sq",
   "messages": {
+    "_default": "{field} nuk është i vlefshëm",
     "alpha": "{field} mund të përmbaj vetëm shkronja",
     "alpha_dash": "{field} mund të përmbaj karaktere alfanumerike, shenja si viza dhe shenja të pikësimit",
     "alpha_num": "{field} mund të përmbaj vetëm shenja alfanumerike",

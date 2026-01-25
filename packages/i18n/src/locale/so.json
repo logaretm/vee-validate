@@ -1,6 +1,7 @@
 {
   "code": "so",
   "messages": {
+    "_default": "{field} sax ma aha",
     "alpha": "Dhulka {field} dhulku wuxuu lahaan karaa oo keliya xarfaha alifbeetada",
     "alpha_num": "Dhulka {field} dhulku wuxuu lahaan karaa oo keliya xarfaha alfa-tirada ah",
     "alpha_dash": "Dhismaha {field} waxaa ku jiri kara jilayaasha alfa tiro ahaan ah iyo sidoo kale burburin iyo hoosta",

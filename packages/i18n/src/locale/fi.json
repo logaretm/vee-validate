@@ -1,6 +1,7 @@
 {
   "code": "fi",
   "messages": {
+    "_default": "Kenttä {field} ei ole kelvollinen",
     "alpha": "{field} voi sisältää vain kirjaimia",
     "alpha_dash": "{field} voi sisältää vain kirajimia, numeroita, ja tavu-, tai alaviivoja",
     "alpha_num": "{field} voi sisältää vain kirjaimia ja numeroita",

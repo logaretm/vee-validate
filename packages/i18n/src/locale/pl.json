@@ -1,6 +1,7 @@
 {
   "code": "pl",
   "messages": {
+    "_default": "Pole {field} jest nieprawidłowe",
     "alpha": "Pole {field} może zawierać tylko litery",
     "alpha_dash": "Pole {field} może zawierać litery, cyfry oraz myślnik lub podkreślnik",
     "alpha_num": "Pole {field} może zawierać tylko litery i cyfry",
