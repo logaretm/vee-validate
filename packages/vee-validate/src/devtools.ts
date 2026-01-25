@@ -350,7 +350,8 @@ function getFieldNodeTags(
 function encodeNodeId(form?: PrivateFormContext, stateOrField?: PathState | PrivateFieldContext): string {
   const type = stateOrField ? ('path' in stateOrField ? 'pathState' : 'field') : 'form';
   const fieldPath = stateOrField ? ('path' in stateOrField ? stateOrField?.path : toValue(stateOrField?.name)) : '';
-  const idObject = { f: form?.formId, ff: stateOrField?.id || fieldPath, type };
+  const ff = type === 'field' ? stateOrField?.id : fieldPath;
+  const idObject = { f: form?.formId, ff, type };
 
   return btoa(encodeURIComponent(JSON.stringify(idObject)));
 }
