@@ -244,7 +244,7 @@ export function useForm<
   );
 
   // form meta aggregations
-  const meta = useFormMeta(pathStates, formValues, originalInitialValues, errors);
+  const meta = useFormMeta(pathStates, formValues, originalInitialValues, errors, !!opts?.validationSchema);
 
   const controlledValues = computed(() => {
     return pathStates.value.reduce((acc, state) => {
@@ -293,7 +293,7 @@ export function useForm<
       path,
       touched: false,
       pending: false,
-      valid: true,
+      valid: !schema,
       validated: !!initialErrors[pathValue]?.length,
       initialValue,
       errors: shallowRef([]),
@@ -1104,6 +1104,7 @@ function useFormMeta<TValues extends Record<string, unknown>>(
   currentValues: TValues,
   initialValues: MaybeRef<PartialDeep<TValues>>,
   errors: Ref<FormErrors<TValues>>,
+  hasSchema?: boolean,
 ) {
   const MERGE_STRATEGIES: Record<keyof Pick<FieldMeta<unknown>, 'touched' | 'pending' | 'valid'>, 'every' | 'some'> = {
     touched: 'some',
@@ -1121,7 +1122,14 @@ function useFormMeta<TValues extends Record<string, unknown>>(
     return keysOf(MERGE_STRATEGIES).reduce(
       (acc, flag) => {
         const mergeMethod = MERGE_STRATEGIES[flag];
-        acc[flag] = states[mergeMethod](s => s[flag]);
+        // When a schema is provided and there are no path states yet,
+        // [].every() returns true (vacuous truth), which incorrectly reports valid as true.
+        // In this case, we should report valid as false since no validation has occurred.
+        if (flag === 'valid' && hasSchema && !states.length) {
+          acc[flag] = false;
+        } else {
+          acc[flag] = states[mergeMethod](s => s[flag]);
+        }
 
         return acc;
       },
