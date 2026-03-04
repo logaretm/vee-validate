@@ -262,7 +262,7 @@ export function useForm<
     config?: Partial<PathStateConfig<TOutput[TPath]>>,
   ): PathState<TValues[TPath], TOutput[TPath]> {
     const initialValue = computed(() => getFromPath(initialValues.value, toValue(path)));
-    const pathStateExists = pathStateLookup.value[toValue(path)];
+    const pathStateExists = pathStateLookup.value[normalizeFormPath(toValue(path))];
     const isCheckboxOrRadio = config?.type === 'checkbox' || config?.type === 'radio';
     if (pathStateExists && isCheckboxOrRadio) {
       pathStateExists.multiple = true;
@@ -281,8 +281,9 @@ export function useForm<
 
     const currentValue = computed(() => getFromPath(formValues, toValue(path)));
     const pathValue = toValue(path);
+    const normalizedPathValue = normalizeFormPath(pathValue);
 
-    const unsetBatchIndex = UNSET_BATCH.findIndex(_path => _path === pathValue);
+    const unsetBatchIndex = UNSET_BATCH.findIndex(_path => normalizeFormPath(_path as string) === normalizedPathValue);
     if (unsetBatchIndex !== -1) {
       UNSET_BATCH.splice(unsetBatchIndex, 1);
     }
@@ -314,12 +315,12 @@ export function useForm<
     }) as PathState<TValues[TPath], TOutput[TPath]>;
 
     pathStates.value.push(state);
-    pathStateLookup.value[pathValue] = state;
+    pathStateLookup.value[normalizedPathValue] = state;
     rebuildPathLookup();
 
-    if (errors.value[pathValue] && !initialErrors[pathValue]) {
+    if (errors.value[normalizedPathValue] && !initialErrors[normalizedPathValue]) {
       nextTick(() => {
-        validateField(pathValue, { mode: 'silent' });
+        validateField(normalizedPathValue, { mode: 'silent' });
       });
     }
 

@@ -1489,4 +1489,165 @@ describe('useForm()', () => {
     form.setValues({ file: f2 });
     expect(form.values.file).toEqual(f2);
   });
+
+  // #4999
+  test('setFieldValue preserves sibling fields when updating nested property in array of objects', async () => {
+    let form!: FormContext<any>;
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          initialValues: {
+            items_attributes: [
+              { id: 1, name: 'Item 1', _destroy: '0' },
+              { id: 2, name: 'Item 2', _destroy: '0' },
+            ],
+          },
+        });
+
+        useField('items_attributes');
+
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    await flushPromises();
+
+    // Verify initial state
+    expect(form.values.items_attributes).toHaveLength(2);
+    expect(form.values.items_attributes[0]).toEqual({ id: 1, name: 'Item 1', _destroy: '0' });
+    expect(form.values.items_attributes[1]).toEqual({ id: 2, name: 'Item 2', _destroy: '0' });
+
+    // Update only _destroy on the first item
+    form.setFieldValue('items_attributes.0._destroy', '1');
+    await flushPromises();
+
+    // The first item should still have all its fields, with only _destroy changed
+    expect(form.values.items_attributes[0]).toEqual({ id: 1, name: 'Item 1', _destroy: '1' });
+    // The second item should be completely untouched
+    expect(form.values.items_attributes[1]).toEqual({ id: 2, name: 'Item 2', _destroy: '0' });
+  });
+
+  // #4999 - with individually registered nested fields and Zod schema
+  test('setFieldValue preserves sibling fields with individually registered nested fields', async () => {
+    let form!: FormContext<any>;
+    const schema = z.object({
+      items_attributes: z.array(
+        z.object({
+          id: z.number(),
+          name: z.string(),
+          _destroy: z.string().default('0'),
+        }),
+      ),
+    });
+
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          validationSchema: schema,
+          initialValues: {
+            items_attributes: [
+              { id: 1, name: 'Item 1', _destroy: '0' },
+              { id: 2, name: 'Item 2', _destroy: '0' },
+            ],
+          },
+        });
+
+        // Register individual fields for each property of each array item
+        useField('items_attributes.0.id');
+        useField('items_attributes.0.name');
+        useField('items_attributes.0._destroy');
+        useField('items_attributes.1.id');
+        useField('items_attributes.1.name');
+        useField('items_attributes.1._destroy');
+
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    await flushPromises();
+
+    // Verify initial state
+    expect(form.values.items_attributes[0]).toEqual({ id: 1, name: 'Item 1', _destroy: '0' });
+    expect(form.values.items_attributes[1]).toEqual({ id: 2, name: 'Item 2', _destroy: '0' });
+
+    // Update only _destroy on the first item
+    form.setFieldValue('items_attributes.0._destroy', '1');
+    await flushPromises();
+
+    // The first item should still have all its fields, with only _destroy changed
+    expect(form.values.items_attributes[0]).toEqual({ id: 1, name: 'Item 1', _destroy: '1' });
+    // The second item should be completely untouched
+    expect(form.values.items_attributes[1]).toEqual({ id: 2, name: 'Item 2', _destroy: '0' });
+  });
+
+  // #4999 - with Zod schema + FieldArray + Field components (closest to real world)
+  test('setFieldValue preserves sibling fields with Field components inside FieldArray', async () => {
+    const onSubmit = vi.fn();
+    const schema = z.object({
+      items_attributes: z.array(
+        z.object({
+          id: z.number(),
+          name: z.string(),
+          _destroy: z.string().default('0'),
+        }),
+      ),
+    });
+
+    mountWithHoc({
+      setup() {
+        const initialValues = {
+          items_attributes: [
+            { id: 1, name: 'Item 1', _destroy: '0' },
+            { id: 2, name: 'Item 2', _destroy: '0' },
+          ],
+        };
+
+        return {
+          onSubmit,
+          initialValues,
+          schema,
+        };
+      },
+      template: `
+        <VForm @submit="onSubmit" :initial-values="initialValues" :validation-schema="schema" v-slot="{ setFieldValue, values }">
+          <FieldArray name="items_attributes" v-slot="{ fields }">
+            <fieldset v-for="(field, idx) in fields" :key="field.key">
+              <Field :name="'items_attributes[' + idx + '].id'" />
+              <Field :name="'items_attributes[' + idx + '].name'" />
+              <Field :name="'items_attributes[' + idx + ']._destroy'" />
+            </fieldset>
+          </FieldArray>
+
+          <span id="item0">{{ JSON.stringify(values.items_attributes && values.items_attributes[0]) }}</span>
+          <span id="item1">{{ JSON.stringify(values.items_attributes && values.items_attributes[1]) }}</span>
+          <button class="destroy" type="button" @click="setFieldValue('items_attributes.0._destroy', '1')">Destroy</button>
+          <button class="submit" type="submit">Submit</button>
+        </VForm>
+      `,
+    });
+
+    await flushPromises();
+
+    // Verify initial state
+    const item0El = document.querySelector('#item0') as HTMLSpanElement;
+    const item1El = document.querySelector('#item1') as HTMLSpanElement;
+    expect(JSON.parse(item0El.textContent!)).toEqual({ id: 1, name: 'Item 1', _destroy: '0' });
+    expect(JSON.parse(item1El.textContent!)).toEqual({ id: 2, name: 'Item 2', _destroy: '0' });
+
+    // Click the destroy button which calls setFieldValue('items_attributes.0._destroy', '1')
+    (document.querySelector('.destroy') as HTMLButtonElement).click();
+    await flushPromises();
+
+    // The first item should still have all its fields, with only _destroy changed
+    const item0After = JSON.parse(item0El.textContent!);
+    expect(item0After.id).toBe(1);
+    expect(item0After.name).toBe('Item 1');
+    expect(item0After._destroy).toBe('1');
+
+    // The second item should be completely untouched
+    const item1After = JSON.parse(item1El.textContent!);
+    expect(item1After).toEqual({ id: 2, name: 'Item 2', _destroy: '0' });
+  });
 });
