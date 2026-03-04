@@ -19,7 +19,7 @@ import {
   inject,
 } from 'vue';
 import { PartialDeep } from 'type-fest';
-import { klona as deepCopy } from 'klona/full';
+import { klona as deepCopy } from 'klona';
 import {
   FieldMeta,
   SubmissionHandler,

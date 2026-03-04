@@ -13,7 +13,7 @@ import {
   MaybeRefOrGetter,
   unref,
 } from 'vue';
-import { klona as deepCopy } from 'klona/full';
+import { klona as deepCopy } from 'klona';
 import { validate as validateValue } from './validate';
 import {
   GenericValidateFunction,

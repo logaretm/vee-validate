@@ -62,7 +62,7 @@ async function createConfig(pkg, format) {
         }),
         tsPlugin,
         resolve({
-          dedupe: ['klona', 'klona/full'],
+          dedupe: ['klona'],
         }),
         commonjs(),
       ],

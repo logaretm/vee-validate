@@ -1,5 +1,5 @@
 import { resolveRule } from './defineRule';
-import { klona as deepCopy } from 'klona/full';
+import { klona as deepCopy } from 'klona';
 import { isLocator, normalizeRules, keysOf, getFromPath, isStandardSchema, combineStandardIssues } from './utils';
 import { getConfig } from './config';
 import {
