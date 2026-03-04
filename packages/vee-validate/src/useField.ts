@@ -207,6 +207,10 @@ function _useField<TValue = unknown>(
       return validateValidStateOnly();
     }
 
+    if (opts?.mode === 'validated-only' && !meta.validated) {
+      return validateValidStateOnly();
+    }
+
     return validateWithStateMutation();
   }
 
