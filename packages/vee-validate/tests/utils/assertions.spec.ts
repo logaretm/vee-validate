@@ -1,4 +1,4 @@
-import { isEqual } from 'packages/vee-validate/src/utils';
+import { isEqual, deepCopy } from 'packages/vee-validate/src/utils';
 
 describe('assertions', () => {
   test('equal objects are equal', () => {
@@ -227,5 +227,127 @@ describe('assertions', () => {
 
     expect(isEqual(a6, b1)).toBe(false);
     expect(isEqual(a6, b2)).toBe(false);
+  });
+
+  test('class instances with private properties do not throw in isEqual (#4977)', () => {
+    class MyClass {
+      #secret: string;
+      public name: string;
+
+      constructor(name: string, secret: string) {
+        this.name = name;
+        this.#secret = secret;
+      }
+
+      getSecret() {
+        return this.#secret;
+      }
+    }
+
+    const a = new MyClass('test', 'secret1');
+    const b = new MyClass('test', 'secret2');
+
+    // Same reference should be equal
+    expect(isEqual(a, a)).toBe(true);
+    // Different instances should not be equal (reference equality for class instances)
+    expect(isEqual(a, b)).toBe(false);
+  });
+
+  test('class instances with private properties nested in plain objects (#4977)', () => {
+    class DataObj {
+      #value: number;
+
+      constructor(value: number) {
+        this.#value = value;
+      }
+
+      getValue() {
+        return this.#value;
+      }
+    }
+
+    const obj1 = { name: 'test', data: new DataObj(1) };
+    const obj2 = { name: 'test', data: obj1.data };
+    const obj3 = { name: 'test', data: new DataObj(1) };
+
+    // Same nested reference should be equal
+    expect(isEqual(obj1, obj2)).toBe(true);
+    // Different class instance references should not be equal
+    expect(isEqual(obj1, obj3)).toBe(false);
+  });
+
+  test('deepCopy does not throw on class instances with private properties (#4977)', () => {
+    class MyClass {
+      #secret: string;
+      public name: string;
+
+      constructor(name: string, secret: string) {
+        this.name = name;
+        this.#secret = secret;
+      }
+
+      getSecret() {
+        return this.#secret;
+      }
+    }
+
+    const instance = new MyClass('test', 'secret');
+    const values = { field1: 'hello', myObj: instance };
+
+    // Should not throw
+    const cloned = deepCopy(values);
+
+    // The plain object should be cloned
+    expect(cloned).not.toBe(values);
+    expect(cloned.field1).toBe('hello');
+    // The class instance should be returned by reference, not cloned
+    expect(cloned.myObj).toBe(instance);
+    expect(cloned.myObj.getSecret()).toBe('secret');
+  });
+
+  test('deepCopy handles class instances nested in arrays (#4977)', () => {
+    class Item {
+      #id: number;
+
+      constructor(id: number) {
+        this.#id = id;
+      }
+
+      getId() {
+        return this.#id;
+      }
+    }
+
+    const item1 = new Item(1);
+    const item2 = new Item(2);
+    const values = { items: [item1, item2] };
+
+    const cloned = deepCopy(values);
+
+    expect(cloned).not.toBe(values);
+    expect(cloned.items).not.toBe(values.items);
+    // Class instances should be the same references
+    expect(cloned.items[0]).toBe(item1);
+    expect(cloned.items[1]).toBe(item2);
+    expect(cloned.items[0].getId()).toBe(1);
+    expect(cloned.items[1].getId()).toBe(2);
+  });
+
+  test('deepCopy still clones plain objects and primitive values', () => {
+    const values = {
+      name: 'test',
+      nested: { a: 1, b: 2 },
+      arr: [1, 2, 3],
+      date: new Date('2024-01-01'),
+    };
+
+    const cloned = deepCopy(values);
+
+    expect(cloned).not.toBe(values);
+    expect(cloned.name).toBe('test');
+    expect(cloned.nested).not.toBe(values.nested);
+    expect(cloned.nested).toEqual({ a: 1, b: 2 });
+    expect(cloned.arr).not.toBe(values.arr);
+    expect(cloned.arr).toEqual([1, 2, 3]);
   });
 });

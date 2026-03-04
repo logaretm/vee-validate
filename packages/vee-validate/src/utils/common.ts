@@ -11,13 +11,63 @@ import {
   MaybeRefOrGetter,
   toValue,
 } from 'vue';
-import { klona as deepCopy } from 'klona/full';
-import { isIndex, isNullOrUndefined, isObject, toNumber } from '../../../shared';
+import { klona } from 'klona/full';
+import { isIndex, isNullOrUndefined, isObject, isPlainObject, toNumber } from '../../../shared';
 import { isContainerValue, isEmptyContainer, isEqual, isNotNestedPath } from './assertions';
 import { GenericObject, IssueCollection, MaybePromise } from '../types';
 import { FormContextKey, FieldContextKey } from '../symbols';
 import { StandardSchemaV1 } from '@standard-schema/spec';
 import { getDotPath } from '@standard-schema/utils';
+
+/**
+ * A wrapper around klona that handles class instances with private properties.
+ * Non-plain objects (class instances) are returned by reference instead of being deeply cloned,
+ * which avoids errors when private fields are present (#4977).
+ */
+export function deepCopy<T>(value: T): T {
+  if (typeof value !== 'object' || value === null) {
+    return value;
+  }
+
+  // Non-plain objects with [object Object] tag are class instances.
+  // They may have private fields that cannot be cloned, so return by reference.
+  if (isClassInstance(value)) {
+    return value;
+  }
+
+  // For arrays, recursively process each item to protect nested class instances
+  if (Array.isArray(value)) {
+    return value.map(item => deepCopy(item)) as T;
+  }
+
+  // For other known types that klona handles (Date, RegExp, Map, Set, etc.), delegate to klona
+  const tag = Object.prototype.toString.call(value);
+  if (tag !== '[object Object]') {
+    return klona(value);
+  }
+
+  // For plain objects, recursively deep copy each property
+  const result: Record<string, unknown> = {};
+  for (const key of Object.keys(value as Record<string, unknown>)) {
+    result[key] = deepCopy((value as Record<string, unknown>)[key]);
+  }
+  return result as T;
+}
+
+function isClassInstance(value: unknown): boolean {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return false;
+  }
+
+  const tag = Object.prototype.toString.call(value);
+  // Only treat [object Object] as potentially a class instance.
+  // Other types (Date, RegExp, Map, Set, etc.) are safely handled by klona.
+  if (tag !== '[object Object]') {
+    return false;
+  }
+
+  return !isPlainObject(value);
+}
 
 export function cleanupNonNestedPath(path: string) {
   if (isNotNestedPath(path)) {

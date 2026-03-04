@@ -13,7 +13,6 @@ import {
   MaybeRefOrGetter,
   unref,
 } from 'vue';
-import { klona as deepCopy } from 'klona/full';
 import { validate as validateValue } from './validate';
 import {
   GenericValidateFunction,
@@ -27,6 +26,7 @@ import {
   InputType,
 } from './types';
 import {
+  deepCopy,
   normalizeRules,
   extractLocators,
   normalizeEventValue,

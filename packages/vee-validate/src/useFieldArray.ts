@@ -1,9 +1,8 @@
 import { Ref, unref, ref, onBeforeUnmount, watch, MaybeRefOrGetter, toValue } from 'vue';
-import { klona as deepCopy } from 'klona/full';
 import { isNullOrUndefined } from '../../shared';
 import { FormContextKey } from './symbols';
 import { FieldArrayContext, FieldEntry, PrivateFieldArrayContext, PrivateFormContext } from './types';
-import { computedDeep, getFromPath, injectWithSelf, warn, isEqual, setInPath } from './utils';
+import { deepCopy, computedDeep, getFromPath, injectWithSelf, warn, isEqual, setInPath } from './utils';
 
 export function useFieldArray<TValue = unknown>(arrayPath: MaybeRefOrGetter<string>): FieldArrayContext<TValue> {
   const form = injectWithSelf(FormContextKey, undefined) as PrivateFormContext;
