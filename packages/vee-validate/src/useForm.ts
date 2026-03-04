@@ -869,7 +869,7 @@ export function useForm<
         errors: validation.errors,
       };
 
-      if (validation.value) {
+      if (validation.value !== undefined) {
         setInPath(values, validation.key, validation.value);
       }
 

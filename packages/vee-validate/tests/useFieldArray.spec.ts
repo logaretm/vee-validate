@@ -521,6 +521,45 @@ test('array move initializes the array if undefined', async () => {
   expect(arr.fields.value).toHaveLength(0);
 });
 
+// #5094
+test('boolean false values in field arrays are not pruned from submitted values', async () => {
+  const spy = vi.fn();
+  mountWithHoc({
+    setup() {
+      const { handleSubmit } = useForm({
+        initialValues: {
+          roles: [
+            { text: 'Admin', isDefault: true },
+            { text: 'User', isDefault: false },
+          ],
+        },
+      });
+
+      useFieldArray('roles');
+
+      useField('roles[0].text');
+      useField('roles[0].isDefault');
+      useField('roles[1].text');
+      useField('roles[1].isDefault');
+
+      const onSubmit = handleSubmit(values => {
+        spy(values);
+      });
+
+      onMounted(onSubmit);
+
+      return {};
+    },
+    template: `<div></div>`,
+  });
+
+  await flushPromises();
+  expect(spy).toHaveBeenCalledTimes(1);
+  const submitted = spy.mock.calls[0][0];
+  expect(submitted.roles[0].isDefault).toBe(true);
+  expect(submitted.roles[1].isDefault).toBe(false);
+});
+
 // #4557
 test('errors are available to the newly inserted items', async () => {
   let arr!: FieldArrayContext;
