@@ -19,7 +19,6 @@ import {
   inject,
 } from 'vue';
 import { PartialDeep } from 'type-fest';
-import { klona as deepCopy } from 'klona/full';
 import {
   FieldMeta,
   SubmissionHandler,
@@ -50,6 +49,7 @@ import {
   ResetFormOpts,
 } from './types';
 import {
+  deepCopy,
   getFromPath,
   keysOf,
   setInPath,

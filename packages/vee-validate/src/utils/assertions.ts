@@ -1,5 +1,5 @@
 import { Locator } from '../types';
-import { isCallable, isObject } from '../../../shared';
+import { isCallable, isObject, isPlainObject } from '../../../shared';
 import { IS_ABSENT } from '../symbols';
 import { StandardSchemaV1 } from '@standard-schema/spec';
 
@@ -159,6 +159,10 @@ export function isEqual(a: any, b: any) {
     if (a.constructor === RegExp) return a.source === b.source && a.flags === b.flags;
     if (a.valueOf !== Object.prototype.valueOf) return a.valueOf() === b.valueOf();
     if (a.toString !== Object.prototype.toString) return a.toString() === b.toString();
+
+    // Class instances (non-plain objects) should use reference equality
+    // to avoid errors with private properties (#4977)
+    if (!isPlainObject(a) || !isPlainObject(b)) return a === b;
 
     // Remove undefined values before object comparison
     a = normalizeObject(a);
