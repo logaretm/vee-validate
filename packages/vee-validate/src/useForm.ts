@@ -366,7 +366,9 @@ export function useForm<
       const results = paths.reduce(
         (validation, _path) => {
           const expectedPath = _path as Path<TValues>;
-          const pathState = findPathState(expectedPath) || findHoistedPath(expectedPath);
+          const isFieldArrayPath = fieldArrays.some(a => toValue(a.path) === expectedPath);
+          const pathState =
+            findPathState(expectedPath) || (isFieldArrayPath ? undefined : findHoistedPath(expectedPath));
           const messages = formResult.results[expectedPath]?.errors || [];
           // This is the real path of the field, because it might've been a hoisted field
           const path = (toValue(pathState?.path) || expectedPath) as Path<TValues>;
