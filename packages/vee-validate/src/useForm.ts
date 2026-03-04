@@ -684,6 +684,9 @@ export function useForm<
       setFieldValue(path as Path<TValues>, fields[path], false);
     });
 
+    // regenerate the arrays when the form values change
+    fieldArrays.forEach(f => f && f.reset());
+
     if (shouldValidate) {
       validate();
     }
