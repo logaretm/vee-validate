@@ -159,7 +159,15 @@ export function _useFieldValue<TValue = unknown>(
   // prioritize model value over form values
   // #3429
   const currentValue = resolveModelValue(modelValue, form, initialValue, path);
-  form.stageInitialValue(unref(path), currentValue, true);
+  // Skip staging if the path already has an initial value on the form and no explicit
+  // modelValue was provided to this field. This preserves dirty state when a field
+  // component mounts after the value was changed programmatically (e.g., via setFieldValue).
+  // Without this check, stageInitialValue would overwrite the original initial value with
+  // the current (dirty) value, making dirty=false (#5072).
+  const existingInitial = getFromPath(form.initialValues.value, unref(path));
+  if (existingInitial === undefined || modelValue !== undefined) {
+    form.stageInitialValue(unref(path), currentValue, true);
+  }
   // otherwise use a computed setter that triggers the `setFieldValue`
   const value = computed<TValue>({
     get() {

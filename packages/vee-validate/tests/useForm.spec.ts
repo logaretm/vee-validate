@@ -1489,4 +1489,87 @@ describe('useForm()', () => {
     form.setValues({ file: f2 });
     expect(form.values.file).toEqual(f2);
   });
+
+  // #5072
+  test('preserves dirty meta when field component mounts after programmatic value changes', async () => {
+    let form!: FormContext<{ name: string }>;
+    const showField = ref(false);
+
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          initialValues: { name: '' },
+        });
+
+        return {
+          showField,
+        };
+      },
+      template: `
+        <div>
+          <template v-if="showField">
+            <Field name="name" />
+          </template>
+        </div>
+      `,
+    });
+
+    await flushPromises();
+
+    // Set the field value programmatically before the field component is mounted
+    form.setFieldValue('name', 'John');
+    await flushPromises();
+
+    // Verify the field is dirty before mount
+    expect(form.isFieldDirty('name')).toBe(true);
+    expect(form.meta.value.dirty).toBe(true);
+
+    // Now mount the field component
+    showField.value = true;
+    await flushPromises();
+
+    // The dirty state should be preserved after the field component mounts
+    expect(form.values.name).toBe('John');
+    expect(form.isFieldDirty('name')).toBe(true);
+    expect(form.meta.value.dirty).toBe(true);
+  });
+
+  // #5072
+  test('preserves touched meta when field component mounts after programmatic changes', async () => {
+    let form!: FormContext<{ name: string }>;
+    const showField = ref(false);
+
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          initialValues: { name: '' },
+        });
+
+        return {
+          showField,
+        };
+      },
+      template: `
+        <div>
+          <template v-if="showField">
+            <Field name="name" />
+          </template>
+        </div>
+      `,
+    });
+
+    await flushPromises();
+
+    // Set the field as touched programmatically before the field component is mounted
+    form.setFieldValue('name', 'John');
+    form.setFieldTouched('name', true);
+    await flushPromises();
+
+    // Now mount the field component
+    showField.value = true;
+    await flushPromises();
+
+    // The touched state should be preserved after the field component mounts
+    expect(form.isFieldTouched('name')).toBe(true);
+  });
 });

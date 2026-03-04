@@ -287,11 +287,15 @@ export function useForm<
       UNSET_BATCH.splice(unsetBatchIndex, 1);
     }
 
+    // Preserve touched state from an existing path state that was created
+    // before this field component mounted (e.g., via setFieldValue) (#5072)
+    const existingTouched = pathStateExists ? pathStateExists.touched : false;
+
     const id = FIELD_ID_COUNTER++;
     const state = reactive({
       id,
       path,
-      touched: false,
+      touched: existingTouched,
       pending: false,
       valid: true,
       validated: !!initialErrors[pathValue]?.length,
