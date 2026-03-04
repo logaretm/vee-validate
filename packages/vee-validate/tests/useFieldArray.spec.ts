@@ -521,6 +521,72 @@ test('array move initializes the array if undefined', async () => {
   expect(arr.fields.value).toHaveLength(0);
 });
 
+// #4981
+test('shows validation error when field array is empty after removing all items', async () => {
+  let form!: FormContext;
+  let arr!: FieldArrayContext;
+  mountWithHoc({
+    setup() {
+      form = useForm<any>({
+        initialValues: {
+          users: ['one'],
+        },
+        validationSchema: z.object({
+          users: z.array(z.string()).min(1, 'At least one item is required'),
+        }),
+      });
+
+      arr = useFieldArray('users');
+    },
+    template: `
+      <div></div>
+    `,
+  });
+
+  await flushPromises();
+  expect(form.meta.value.valid).toBe(true);
+  arr.remove(0);
+  await flushPromises();
+  expect(form.meta.value.valid).toBe(false);
+  expect(form.errors.value['users']).toBe('At least one item is required');
+});
+
+// #4981
+test('shows validation error at correct path when nested field array is empty', async () => {
+  let form!: FormContext;
+  let arr!: FieldArrayContext;
+  mountWithHoc({
+    setup() {
+      form = useForm<any>({
+        initialValues: {
+          settings: {
+            items: ['one'],
+          },
+        },
+        validationSchema: z.object({
+          settings: z.object({
+            items: z.array(z.string()).min(1, 'At least one item is required'),
+          }),
+        }),
+      });
+
+      arr = useFieldArray('settings.items');
+    },
+    template: `
+      <div></div>
+    `,
+  });
+
+  await flushPromises();
+  expect(form.meta.value.valid).toBe(true);
+  arr.remove(0);
+  await flushPromises();
+  expect(form.meta.value.valid).toBe(false);
+  // The error should be at 'settings.items', NOT at 'settings'
+  expect(form.errors.value['settings.items']).toBe('At least one item is required');
+  expect(form.errors.value['settings']).toBeUndefined();
+});
+
 // #4557
 test('errors are available to the newly inserted items', async () => {
   let arr!: FieldArrayContext;
