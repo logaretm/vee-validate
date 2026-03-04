@@ -386,10 +386,7 @@ function _useField<TValue = unknown>(
 
     flags.pendingUnmount[field.id] = true;
     const pathState = form.getPathState(path);
-    const matchesId =
-      Array.isArray(pathState?.id) && pathState?.multiple
-        ? pathState?.id.includes(field.id)
-        : pathState?.id === field.id;
+    const matchesId = Array.isArray(pathState?.id) ? pathState?.id.includes(field.id) : pathState?.id === field.id;
     if (!matchesId) {
       return;
     }
@@ -405,7 +402,7 @@ function _useField<TValue = unknown>(
       if (Array.isArray(pathState.id)) {
         pathState.id.splice(pathState.id.indexOf(field.id), 1);
       }
-    } else {
+    } else if (pathState?.multiple || pathState?.fieldsCount <= 1) {
       form.unsetPathValue(toValue(name));
     }
 
