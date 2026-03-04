@@ -3182,16 +3182,14 @@ test('removes proper pathState when field is unmounting', async () => {
   await flushPromises();
 
   expect(form.meta.value.valid).toBe(false);
-  expect(form.getAllPathStates()).toMatchObject([
-    { id: 0, path: 'foo' },
-    { id: 1, path: 'foo' },
-  ]);
+  // Both fields share the same pathState with an array of ids
+  expect(form.getAllPathStates()).toMatchObject([{ id: [0, 1], path: 'foo', fieldsCount: 2 }]);
 
   renderTemplateField.value = false;
   await flushPromises();
 
   expect(form.meta.value.valid).toBe(true);
-  expect(form.getAllPathStates()).toMatchObject([{ id: 0, path: 'foo' }]);
+  expect(form.getAllPathStates()).toMatchObject([{ id: [0], path: 'foo', fieldsCount: 1 }]);
 });
 
 test('handles onSubmit with generic object from zod schema', async () => {
@@ -3240,4 +3238,106 @@ test('handles onSubmit with generic object from zod schema', async () => {
     },
     expect.anything(),
   );
+});
+
+// #5001 - radio buttons without explicit type on Field should share errors
+test('radio buttons with same name should all expose errors even without type=radio on Field', async () => {
+  const REQUIRED_MSG = 'This field is required';
+  defineRule('required', (value: unknown) => {
+    if (!value) {
+      return REQUIRED_MSG;
+    }
+    return true;
+  });
+
+  const wrapper = mountWithHoc({
+    template: `
+      <VForm v-slot="{ errors: formErrors }">
+        <Field name="drink" rules="required" v-slot="{ errors, handleChange }">
+          <input type="radio" name="drink" value="" @change="handleChange" />
+          <span class="err-coffee">{{ errors[0] }}</span>
+        </Field>
+        <Field name="drink" rules="required" v-slot="{ errors, handleChange }">
+          <input type="radio" name="drink" value="Tea" @change="handleChange($event.target.value)" />
+          <span class="err-tea">{{ errors[0] }}</span>
+        </Field>
+        <Field name="drink" rules="required" v-slot="{ errors, handleChange }">
+          <input type="radio" name="drink" value="Coke" @change="handleChange($event.target.value)" />
+          <span class="err-coke">{{ errors[0] }}</span>
+        </Field>
+
+        <span id="form-err">{{ formErrors.drink }}</span>
+        <button>Submit</button>
+      </VForm>
+    `,
+  });
+
+  const errCoffee = wrapper.$el.querySelector('.err-coffee');
+  const errTea = wrapper.$el.querySelector('.err-tea');
+  const errCoke = wrapper.$el.querySelector('.err-coke');
+  const formErr = wrapper.$el.querySelector('#form-err');
+
+  // Submit without selecting a radio button to trigger required error
+  wrapper.$el.querySelector('button').click();
+  await flushPromises();
+
+  // All radio buttons should show the same error, not just the last one
+  expect(formErr.textContent).toBe(REQUIRED_MSG);
+  expect(errCoffee.textContent).toBe(REQUIRED_MSG);
+  expect(errTea.textContent).toBe(REQUIRED_MSG);
+  expect(errCoke.textContent).toBe(REQUIRED_MSG);
+});
+
+// #5001 - radio buttons with explicit type=radio on Field should share errors
+test('radio buttons with type=radio and same name should all expose errors', async () => {
+  const REQUIRED_MSG = 'This field is required';
+  defineRule('required', (value: unknown) => {
+    if (!value) {
+      return REQUIRED_MSG;
+    }
+    return true;
+  });
+
+  const wrapper = mountWithHoc({
+    setup() {
+      const schema = {
+        drink: 'required',
+      };
+
+      return {
+        schema,
+      };
+    },
+    template: `
+      <VForm :validation-schema="schema">
+        <Field name="drink" type="radio" value="" v-slot="{ errors, field }">
+          <input type="radio" v-bind="field" value="" />
+          <span class="err-coffee">{{ errors[0] }}</span>
+        </Field>
+        <Field name="drink" type="radio" value="Tea" v-slot="{ errors, field }">
+          <input type="radio" v-bind="field" value="Tea" />
+          <span class="err-tea">{{ errors[0] }}</span>
+        </Field>
+        <Field name="drink" type="radio" value="Coke" v-slot="{ errors, field }">
+          <input type="radio" v-bind="field" value="Coke" />
+          <span class="err-coke">{{ errors[0] }}</span>
+        </Field>
+
+        <button>Submit</button>
+      </VForm>
+    `,
+  });
+
+  const errCoffee = wrapper.$el.querySelector('.err-coffee');
+  const errTea = wrapper.$el.querySelector('.err-tea');
+  const errCoke = wrapper.$el.querySelector('.err-coke');
+
+  // Submit without selecting a radio button to trigger required error
+  wrapper.$el.querySelector('button').click();
+  await flushPromises();
+
+  // All radio buttons should show the same error
+  expect(errCoffee.textContent).toBe(REQUIRED_MSG);
+  expect(errTea.textContent).toBe(REQUIRED_MSG);
+  expect(errCoke.textContent).toBe(REQUIRED_MSG);
 });
