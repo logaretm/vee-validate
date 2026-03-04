@@ -262,10 +262,14 @@ export function useForm<
     config?: Partial<PathStateConfig<TOutput[TPath]>>,
   ): PathState<TValues[TPath], TOutput[TPath]> {
     const initialValue = computed(() => getFromPath(initialValues.value, toValue(path)));
-    const pathStateExists = pathStateLookup.value[toValue(path)];
+    const pathValue = toValue(path);
+    const pathStateExists = pathStateLookup.value[pathValue];
     const isCheckboxOrRadio = config?.type === 'checkbox' || config?.type === 'radio';
-    if (pathStateExists && isCheckboxOrRadio) {
-      pathStateExists.multiple = true;
+    if (pathStateExists && normalizeFormPath(toValue(pathStateExists.path)) === normalizeFormPath(pathValue)) {
+      if (isCheckboxOrRadio) {
+        pathStateExists.multiple = true;
+      }
+
       const id = FIELD_ID_COUNTER++;
       if (Array.isArray(pathStateExists.id)) {
         pathStateExists.id.push(id);
@@ -280,7 +284,6 @@ export function useForm<
     }
 
     const currentValue = computed(() => getFromPath(formValues, toValue(path)));
-    const pathValue = toValue(path);
 
     const unsetBatchIndex = UNSET_BATCH.findIndex(_path => _path === pathValue);
     if (unsetBatchIndex !== -1) {
@@ -576,7 +579,7 @@ export function useForm<
       validateField(path, { mode: 'silent', warn: false });
     });
 
-    if (pathState.multiple && pathState.fieldsCount) {
+    if (pathState.fieldsCount) {
       pathState.fieldsCount--;
     }
 
@@ -589,7 +592,7 @@ export function useForm<
       delete pathState.__flags.pendingUnmount[id];
     }
 
-    if (!pathState.multiple || pathState.fieldsCount <= 0) {
+    if (pathState.fieldsCount <= 0) {
       pathStates.value.splice(idx, 1);
       unsetInitialValue(path);
       rebuildPathLookup();
