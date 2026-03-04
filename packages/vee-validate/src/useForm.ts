@@ -386,6 +386,13 @@ export function useForm<
             delete extraErrorsBag.value[path];
           }
 
+          // Also clean up extra errors for the expected path when it was hoisted to a different path
+          // This handles cases where schema reports errors at nested sub-paths (e.g., 'someObject.id')
+          // but the field is registered at a parent path (e.g., 'someObject')
+          if (pathState && expectedPath !== path && extraErrorsBag.value[expectedPath]) {
+            delete extraErrorsBag.value[expectedPath];
+          }
+
           // field not rendered
           if (!pathState) {
             setFieldError(path, messages);
@@ -811,6 +818,8 @@ export function useForm<
     });
 
     opts?.force ? forceSetValues(newValues, false) : setValues(newValues, false);
+    // Clear extra errors that were set for paths without a pathState (e.g., nested paths of hoisted fields)
+    extraErrorsBag.value = {};
     setErrors(resetState?.errors || {});
     submitCount.value = resetState?.submitCount || 0;
     nextTick(() => {
