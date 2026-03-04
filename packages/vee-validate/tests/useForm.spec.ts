@@ -10,6 +10,7 @@ import {
 } from '@/vee-validate';
 import { mountWithHoc, setValue, flushPromises, dispatchEvent } from './helpers';
 import * as z from 'zod';
+import * as yup from 'yup';
 import { onMounted, ref, Ref } from 'vue';
 import { ModelComp, CustomModelComp } from './helpers/ModelComp';
 
@@ -1488,5 +1489,75 @@ describe('useForm()', () => {
     expect(form.values.file).toBe(f1);
     form.setValues({ file: f2 });
     expect(form.values.file).toEqual(f2);
+  });
+
+  // #5088 - extraErrorsBag entries for hoisted/nested paths should be cleaned up after validation
+  test('useField with object values validates correctly after resetForm with delayed field rendering', async () => {
+    let form!: FormContext<any>;
+    let fieldCtx!: FieldContext<any>;
+    const showField = ref(false);
+
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          validationSchema: yup.object({
+            someObject: yup
+              .object({
+                id: yup.number().required(),
+                title: yup.string(),
+              })
+              .nullable(),
+          }),
+        });
+
+        return {
+          showField,
+        };
+      },
+      template: `
+        <div>
+          <Child v-if="showField" />
+        </div>
+      `,
+      components: {
+        Child: {
+          setup() {
+            const field = useField('someObject');
+            fieldCtx = field;
+            return { value: field.value };
+          },
+          template: '<span id="fieldValue">{{ value }}</span>',
+        },
+      },
+    });
+
+    await flushPromises();
+
+    // At this point, the initial silent validation has run on empty form values.
+    // Yup reports errors at nested paths like 'someObject.id' (not 'someObject').
+    // These errors go into extraErrorsBag since no pathStates exist yet.
+
+    // Reset the form with valid values and immediately show the field
+    form.resetForm({
+      values: {
+        someObject: {
+          id: 1,
+          title: 'Lorem Ipsum',
+        },
+      },
+    });
+    showField.value = true;
+    await flushPromises();
+
+    // The form values should be set correctly
+    expect(form.values.someObject).toEqual({ id: 1, title: 'Lorem Ipsum' });
+    // The field should have the correct value
+    expect(fieldCtx.value.value).toEqual({ id: 1, title: 'Lorem Ipsum' });
+    // The field meta should report valid
+    expect(fieldCtx.meta.valid).toBe(true);
+    // The form meta should report valid since the values satisfy the schema
+    expect(form.meta.value.valid).toBe(true);
+    // No errors should be reported
+    expect(form.errors.value).toEqual({});
   });
 });
