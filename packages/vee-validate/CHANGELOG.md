@@ -1,5 +1,20 @@
 # Change Log
 
+## 5.0.0-beta.1
+
+### Minor Changes
+
+- f629397: feat: remove deprecated useField props
+- fb5e04e: feat: remove deprecated useForm define methods
+
+### Patch Changes
+
+- f2807b8: fix(devtools): prevent SSR memory leak in DevTools integration
+- e6db423: feat: expose `getConfig` as a public API
+- 49fcf4c: Fix dev tools not showing all field states
+- 1ce0731: fix: revert number input type back to string from number, closes #4699 and #4482
+- 095df65: Fix dev tools do not display nested fields with name 'id'
+
 ## 5.0.0-beta.0
 
 ### Major Changes

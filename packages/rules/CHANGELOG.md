@@ -1,5 +1,18 @@
 # Change Log
 
+## 5.0.0-beta.1
+
+### Patch Changes
+
+- Updated dependencies [f629397]
+- Updated dependencies [f2807b8]
+- Updated dependencies [e6db423]
+- Updated dependencies [49fcf4c]
+- Updated dependencies [1ce0731]
+- Updated dependencies [fb5e04e]
+- Updated dependencies [095df65]
+  - vee-validate@5.0.0-beta.1
+
 ## 5.0.0-beta.0
 
 ### Major Changes

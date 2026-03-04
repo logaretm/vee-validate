@@ -1,6 +1,6 @@
 {
   "name": "@vee-validate/nuxt",
-  "version": "5.0.0-beta.0",
+  "version": "5.0.0-beta.1",
   "description": "Official vee-validate nuxt module",
   "author": "Abdelrahman Awad <logaretm1@gmail.com>",
   "license": "MIT",
