@@ -669,7 +669,7 @@ export function useForm<
 
     setInPath(formValues, path, clonedValue);
     if (shouldValidate) {
-      validateField(path);
+      validateField(path, { mode: 'validated-only' });
     }
   }
 
@@ -892,7 +892,7 @@ export function useForm<
     opts?: Partial<ValidationOptions>,
   ): Promise<ValidationResult<TOutput[TPath]>> {
     const state = findPathState(path);
-    if (state && opts?.mode !== 'silent') {
+    if (state && opts?.mode !== 'silent' && opts?.mode !== 'validated-only') {
       state.validated = true;
     }
 

@@ -3241,3 +3241,76 @@ test('handles onSubmit with generic object from zod schema', async () => {
     expect.anything(),
   );
 });
+
+// #5050
+test('setFieldValue from Form slot should not trigger validation when Field validateOnChange is false', async () => {
+  const REQUIRED_MSG = 'This field is required';
+  defineRule('required_5050', (value: unknown) => {
+    if (!value) {
+      return REQUIRED_MSG;
+    }
+    return true;
+  });
+
+  const wrapper = mountWithHoc({
+    template: `
+      <VForm v-slot="{ setFieldValue, errors }">
+        <Field name="field" rules="required_5050" :validateOnChange="false" :validateOnInput="false" :validateOnBlur="false" :validateOnModelUpdate="false" />
+        <span id="error">{{ errors.field }}</span>
+        <button type="button" @click="setFieldValue('field', '')">Set empty</button>
+      </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const error = wrapper.$el.querySelector('#error');
+  expect(error.textContent).toBe('');
+
+  // Click the button to set the field value to empty string via setFieldValue
+  wrapper.$el.querySelector('button').click();
+  await flushPromises();
+
+  // Should NOT show validation error because validateOnChange/Input/Blur/ModelUpdate are all false
+  expect(error.textContent).toBe('');
+});
+
+// #5050
+test('setFieldValue should still trigger validation on previously validated fields', async () => {
+  const REQUIRED_MSG = 'This field is required';
+  defineRule('required_5050b', (value: unknown) => {
+    if (!value) {
+      return REQUIRED_MSG;
+    }
+    return true;
+  });
+
+  const wrapper = mountWithHoc({
+    template: `
+      <VForm v-slot="{ setFieldValue, errors }" @submit="() => {}">
+        <Field name="field" rules="required_5050b" :validateOnChange="false" :validateOnInput="false" :validateOnBlur="false" :validateOnModelUpdate="false" />
+        <span id="error">{{ errors.field }}</span>
+        <button id="submit" type="submit">Submit</button>
+        <button id="setEmpty" type="button" @click="setFieldValue('field', '')">Set empty</button>
+      </VForm>
+    `,
+  });
+
+  await flushPromises();
+  const error = wrapper.$el.querySelector('#error');
+  expect(error.textContent).toBe('');
+
+  // Submit the form to trigger validation (marks fields as validated)
+  wrapper.$el.querySelector('#submit').click();
+  await flushPromises();
+
+  // After submit, the field should show the error since it's empty and required
+  expect(error.textContent).toBe(REQUIRED_MSG);
+
+  // Set value to empty again via setFieldValue
+  wrapper.$el.querySelector('#setEmpty').click();
+  await flushPromises();
+
+  // After setFieldValue on a previously validated field, validation should still update
+  // The field is already validated so setFieldValue should re-validate
+  expect(error.textContent).toBe(REQUIRED_MSG);
+});
