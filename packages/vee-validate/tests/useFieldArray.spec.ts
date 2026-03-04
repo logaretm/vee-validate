@@ -577,3 +577,59 @@ test('errors are available to the newly inserted items', async () => {
   await flushPromises();
   expect(spanAt(1).textContent).toBeTruthy();
 });
+
+test('resetForm with force: true resets useFieldArray correctly on subsequent resets (#5076)', async () => {
+  let arr!: FieldArrayContext;
+
+  const AddButton = defineComponent({
+    setup() {
+      arr = useFieldArray('options');
+
+      return {
+        fields: arr.fields,
+      };
+    },
+    template: `
+      <div>
+        <p v-for="(field, idx) in fields" :key="field.key">{{ field.value }}</p>
+      </div>
+    `,
+  });
+
+  mountWithHoc({
+    components: {
+      AddButton,
+    },
+    template: `
+      <VForm v-slot="{ resetForm, values }" :initial-values="{ options: ['A', 'B'] }">
+        <AddButton />
+        <span id="count">{{ values.options?.length }}</span>
+        <button id="reset" type="button" @click="resetForm({ values: { options: ['A', 'B'] } }, { force: true })">Reset</button>
+        <button id="add" type="button" @click="() => {}">Add</button>
+      </VForm>
+    `,
+  });
+
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(2);
+
+  // Add an item
+  arr.push('C');
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(3);
+
+  // First reset with force: true
+  (document.querySelector('#reset') as HTMLButtonElement).click();
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(2);
+
+  // Add another item after reset
+  arr.push('D');
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(3);
+
+  // Second reset with force: true — this is the one that fails without the fix
+  (document.querySelector('#reset') as HTMLButtonElement).click();
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(2);
+});
