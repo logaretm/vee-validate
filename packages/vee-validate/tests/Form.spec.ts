@@ -3181,17 +3181,15 @@ test('removes proper pathState when field is unmounting', async () => {
   renderTemplateField.value = true;
   await flushPromises();
 
+  // Both useField calls share the same path state since they use the same path
   expect(form.meta.value.valid).toBe(false);
-  expect(form.getAllPathStates()).toMatchObject([
-    { id: 0, path: 'foo' },
-    { id: 1, path: 'foo' },
-  ]);
+  expect(form.getAllPathStates()).toMatchObject([{ id: [0, 1], path: 'foo' }]);
 
   renderTemplateField.value = false;
   await flushPromises();
 
   expect(form.meta.value.valid).toBe(true);
-  expect(form.getAllPathStates()).toMatchObject([{ id: 0, path: 'foo' }]);
+  expect(form.getAllPathStates()).toMatchObject([{ id: [0], path: 'foo' }]);
 });
 
 test('handles onSubmit with generic object from zod schema', async () => {

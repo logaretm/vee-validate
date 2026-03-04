@@ -1009,6 +1009,60 @@ describe('useField()', () => {
     expect(field.errors.value).toHaveLength(0);
   });
 
+  // #5021
+  test('meta object syncs between multiple useField calls for the same path within a form', async () => {
+    let parentMeta!: FieldContext['meta'];
+    let childMeta!: FieldContext['meta'];
+    let childHandleBlur!: FieldContext['handleBlur'];
+
+    const ChildComponent = defineComponent({
+      setup() {
+        const { meta, handleBlur } = useField('field');
+        childMeta = meta;
+        childHandleBlur = handleBlur;
+
+        return { meta };
+      },
+      template: `<span id="child-touched">{{ meta.touched }}</span>`,
+    });
+
+    mountWithHoc({
+      components: { ChildComponent },
+      setup() {
+        useForm();
+        const { meta } = useField('field');
+        parentMeta = meta;
+
+        return { meta };
+      },
+      template: `
+        <span id="parent-touched">{{ meta.touched }}</span>
+        <ChildComponent />
+      `,
+    });
+
+    await flushPromises();
+
+    const parentTouched = document.querySelector('#parent-touched');
+    const childTouched = document.querySelector('#child-touched');
+
+    // Both should start as not touched
+    expect(parentTouched?.textContent).toBe('false');
+    expect(childTouched?.textContent).toBe('false');
+    expect(parentMeta.touched).toBe(false);
+    expect(childMeta.touched).toBe(false);
+
+    // Touch from child
+    childHandleBlur();
+    await flushPromises();
+
+    // Both should be touched now (meta is shared)
+    expect(parentMeta.touched).toBe(true);
+    expect(childMeta.touched).toBe(true);
+    expect(parentTouched?.textContent).toBe('true');
+    expect(childTouched?.textContent).toBe('true');
+  });
+
   // #4603
   test('should not remove field value if field with same path was created between scheduling and execution of previous field unset operation', async () => {
     vi.useFakeTimers();
