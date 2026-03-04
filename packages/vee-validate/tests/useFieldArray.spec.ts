@@ -577,3 +577,323 @@ test('errors are available to the newly inserted items', async () => {
   await flushPromises();
   expect(spanAt(1).textContent).toBeTruthy();
 });
+
+// #5113
+test('push should set the form as touched', async () => {
+  let form!: FormContext;
+  let arr!: FieldArrayContext;
+  const InputText = defineComponent({
+    props: { name: { type: String, required: true } },
+    setup(props) {
+      const { value } = useField(() => props.name);
+      return { value };
+    },
+    template: '<input v-model="value" />',
+  });
+
+  mountWithHoc({
+    components: { InputText },
+    setup() {
+      form = useForm<any>({
+        initialValues: {
+          users: ['one'],
+        },
+      });
+
+      arr = useFieldArray('users');
+
+      return { fields: arr.fields };
+    },
+    template: `
+      <div>
+        <InputText v-for="(field, idx) in fields" :key="field.key" :name="'users[' + idx + ']'" />
+      </div>
+    `,
+  });
+
+  await flushPromises();
+  expect(form.meta.value.touched).toBe(false);
+  arr.push('two');
+  await flushPromises();
+  expect(form.meta.value.touched).toBe(true);
+});
+
+// #5113
+test('remove should set the form as touched', async () => {
+  let form!: FormContext;
+  let arr!: FieldArrayContext;
+  const InputText = defineComponent({
+    props: { name: { type: String, required: true } },
+    setup(props) {
+      const { value } = useField(() => props.name);
+      return { value };
+    },
+    template: '<input v-model="value" />',
+  });
+
+  mountWithHoc({
+    components: { InputText },
+    setup() {
+      form = useForm<any>({
+        initialValues: {
+          users: ['one', 'two'],
+        },
+      });
+
+      arr = useFieldArray('users');
+
+      return { fields: arr.fields };
+    },
+    template: `
+      <div>
+        <InputText v-for="(field, idx) in fields" :key="field.key" :name="'users[' + idx + ']'" />
+      </div>
+    `,
+  });
+
+  await flushPromises();
+  expect(form.meta.value.touched).toBe(false);
+  arr.remove(0);
+  await flushPromises();
+  expect(form.meta.value.touched).toBe(true);
+});
+
+// #5113
+test('insert should set the form as touched', async () => {
+  let form!: FormContext;
+  let arr!: FieldArrayContext;
+  const InputText = defineComponent({
+    props: { name: { type: String, required: true } },
+    setup(props) {
+      const { value } = useField(() => props.name);
+      return { value };
+    },
+    template: '<input v-model="value" />',
+  });
+
+  mountWithHoc({
+    components: { InputText },
+    setup() {
+      form = useForm<any>({
+        initialValues: {
+          users: ['one', 'two'],
+        },
+      });
+
+      arr = useFieldArray('users');
+
+      return { fields: arr.fields };
+    },
+    template: `
+      <div>
+        <InputText v-for="(field, idx) in fields" :key="field.key" :name="'users[' + idx + ']'" />
+      </div>
+    `,
+  });
+
+  await flushPromises();
+  expect(form.meta.value.touched).toBe(false);
+  arr.insert(1, 'inserted');
+  await flushPromises();
+  expect(form.meta.value.touched).toBe(true);
+});
+
+// #5113
+test('prepend should set the form as touched', async () => {
+  let form!: FormContext;
+  let arr!: FieldArrayContext;
+  const InputText = defineComponent({
+    props: { name: { type: String, required: true } },
+    setup(props) {
+      const { value } = useField(() => props.name);
+      return { value };
+    },
+    template: '<input v-model="value" />',
+  });
+
+  mountWithHoc({
+    components: { InputText },
+    setup() {
+      form = useForm<any>({
+        initialValues: {
+          users: ['one'],
+        },
+      });
+
+      arr = useFieldArray('users');
+
+      return { fields: arr.fields };
+    },
+    template: `
+      <div>
+        <InputText v-for="(field, idx) in fields" :key="field.key" :name="'users[' + idx + ']'" />
+      </div>
+    `,
+  });
+
+  await flushPromises();
+  expect(form.meta.value.touched).toBe(false);
+  arr.prepend('zero');
+  await flushPromises();
+  expect(form.meta.value.touched).toBe(true);
+});
+
+// #5113
+test('swap should set the form as touched', async () => {
+  let form!: FormContext;
+  let arr!: FieldArrayContext;
+  const InputText = defineComponent({
+    props: { name: { type: String, required: true } },
+    setup(props) {
+      const { value } = useField(() => props.name);
+      return { value };
+    },
+    template: '<input v-model="value" />',
+  });
+
+  mountWithHoc({
+    components: { InputText },
+    setup() {
+      form = useForm<any>({
+        initialValues: {
+          users: ['one', 'two'],
+        },
+      });
+
+      arr = useFieldArray('users');
+
+      return { fields: arr.fields };
+    },
+    template: `
+      <div>
+        <InputText v-for="(field, idx) in fields" :key="field.key" :name="'users[' + idx + ']'" />
+      </div>
+    `,
+  });
+
+  await flushPromises();
+  expect(form.meta.value.touched).toBe(false);
+  arr.swap(0, 1);
+  await flushPromises();
+  expect(form.meta.value.touched).toBe(true);
+});
+
+// #5113
+test('move should set the form as touched', async () => {
+  let form!: FormContext;
+  let arr!: FieldArrayContext;
+  const InputText = defineComponent({
+    props: { name: { type: String, required: true } },
+    setup(props) {
+      const { value } = useField(() => props.name);
+      return { value };
+    },
+    template: '<input v-model="value" />',
+  });
+
+  mountWithHoc({
+    components: { InputText },
+    setup() {
+      form = useForm<any>({
+        initialValues: {
+          users: ['one', 'two', 'three'],
+        },
+      });
+
+      arr = useFieldArray('users');
+
+      return { fields: arr.fields };
+    },
+    template: `
+      <div>
+        <InputText v-for="(field, idx) in fields" :key="field.key" :name="'users[' + idx + ']'" />
+      </div>
+    `,
+  });
+
+  await flushPromises();
+  expect(form.meta.value.touched).toBe(false);
+  arr.move(0, 2);
+  await flushPromises();
+  expect(form.meta.value.touched).toBe(true);
+});
+
+// #5113
+test('replace should set the form as touched', async () => {
+  let form!: FormContext;
+  let arr!: FieldArrayContext;
+  const InputText = defineComponent({
+    props: { name: { type: String, required: true } },
+    setup(props) {
+      const { value } = useField(() => props.name);
+      return { value };
+    },
+    template: '<input v-model="value" />',
+  });
+
+  mountWithHoc({
+    components: { InputText },
+    setup() {
+      form = useForm<any>({
+        initialValues: {
+          users: ['one'],
+        },
+      });
+
+      arr = useFieldArray('users');
+
+      return { fields: arr.fields };
+    },
+    template: `
+      <div>
+        <InputText v-for="(field, idx) in fields" :key="field.key" :name="'users[' + idx + ']'" />
+      </div>
+    `,
+  });
+
+  await flushPromises();
+  expect(form.meta.value.touched).toBe(false);
+  arr.replace(['a', 'b']);
+  await flushPromises();
+  expect(form.meta.value.touched).toBe(true);
+});
+
+// #5113
+test('update should set the form as touched', async () => {
+  let form!: FormContext;
+  let arr!: FieldArrayContext;
+  const InputText = defineComponent({
+    props: { name: { type: String, required: true } },
+    setup(props) {
+      const { value } = useField(() => props.name);
+      return { value };
+    },
+    template: '<input v-model="value" />',
+  });
+
+  mountWithHoc({
+    components: { InputText },
+    setup() {
+      form = useForm<any>({
+        initialValues: {
+          users: ['one'],
+        },
+      });
+
+      arr = useFieldArray('users');
+
+      return { fields: arr.fields };
+    },
+    template: `
+      <div>
+        <InputText v-for="(field, idx) in fields" :key="field.key" :name="'users[' + idx + ']'" />
+      </div>
+    `,
+  });
+
+  await flushPromises();
+  expect(form.meta.value.touched).toBe(false);
+  arr.update(0, 'updated');
+  await flushPromises();
+  expect(form.meta.value.touched).toBe(true);
+});
