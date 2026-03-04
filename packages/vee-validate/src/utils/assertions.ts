@@ -10,7 +10,11 @@ export function isLocator(value: unknown): value is Locator {
 }
 
 export function isStandardSchema(value: unknown): value is StandardSchemaV1 {
-  return isObject(value) && '~standard' in (value as unknown as StandardSchemaV1);
+  return (
+    !!value &&
+    (typeof value === 'object' || typeof value === 'function') &&
+    '~standard' in (value as Record<PropertyKey, unknown>)
+  );
 }
 
 export function hasCheckedAttr(type: unknown) {
