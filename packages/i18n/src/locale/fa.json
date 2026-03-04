@@ -25,6 +25,7 @@
     "regex": "قالب {field} قابل قبول نیست",
     "required_if": "{field} الزامی است",
     "required": "{field} الزامی است",
-    "size": "حجم {field} کمتر از 0:{size}KB باشد"
+    "size": "حجم {field} کمتر از 0:{size}KB باشد",
+    "url": "{field} یک URL معتبر نیست"
   }
 }
