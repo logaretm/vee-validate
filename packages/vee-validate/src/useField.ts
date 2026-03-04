@@ -119,6 +119,15 @@ function _useField<TValue = unknown>(
       return rulesValue;
     }
 
+    // If the rules object contains function values (inline validators mixed with global rules),
+    // pass it through as-is so that _validate can handle both types (#5025)
+    if (rulesValue && typeof rulesValue === 'object') {
+      const hasInlineFns = Object.values(rulesValue).some(v => isCallable(v));
+      if (hasInlineFns) {
+        return rulesValue;
+      }
+    }
+
     return normalizeRules(rulesValue);
   });
 

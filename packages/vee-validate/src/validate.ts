@@ -96,6 +96,30 @@ async function _validate<TInput = unknown, TOutput = TInput>(
 
     for (let i = 0; i < length; i++) {
       const rule = pipeline[i];
+
+      // Handle string rules in arrays by resolving them as global rules
+      if (typeof rule === 'string') {
+        const stringRules = normalizeRules(rule);
+        const ruleNames = Object.keys(stringRules);
+        for (let j = 0; j < ruleNames.length; j++) {
+          const normalizedContext = {
+            ...field,
+            rules: stringRules,
+          };
+          const testResult = await _test(normalizedContext, value, {
+            name: ruleNames[j],
+            params: stringRules[ruleNames[j]],
+          });
+          if (testResult.error) {
+            errors.push(testResult.error);
+            if (field.bails) {
+              return { errors };
+            }
+          }
+        }
+        continue;
+      }
+
       const result = await rule(value, ctx);
       const isValid = typeof result !== 'string' && !Array.isArray(result) && result;
       if (isValid) {
@@ -119,6 +143,77 @@ async function _validate<TInput = unknown, TOutput = TInput>(
     return {
       errors,
     };
+  }
+
+  // If it's an object, separate function-valued rules from global rule references
+  if (typeof rules === 'object') {
+    // Check if the object contains any function values that should be treated as inline validators
+    const inlineFns: GenericValidateFunction<TInput>[] = [];
+    const globalRulesObj: Record<string, unknown> = {};
+    for (const key of Object.keys(rules)) {
+      if (isCallable(rules[key])) {
+        inlineFns.push(rules[key] as GenericValidateFunction<TInput>);
+      } else {
+        globalRulesObj[key] = rules[key];
+      }
+    }
+
+    const errors: ReturnType<typeof _generateFieldError>[] = [];
+
+    // Run global rules first
+    if (Object.keys(globalRulesObj).length) {
+      const normalizedContext = {
+        ...field,
+        rules: normalizeRules(globalRulesObj),
+      };
+      const rulesKeys = Object.keys(normalizedContext.rules);
+      for (let i = 0; i < rulesKeys.length; i++) {
+        const rule = rulesKeys[i];
+        const result = await _test(normalizedContext, value, {
+          name: rule,
+          params: normalizedContext.rules[rule],
+        });
+
+        if (result.error) {
+          errors.push(result.error);
+          if (field.bails) {
+            return { errors };
+          }
+        }
+      }
+    }
+
+    // Run inline function validators
+    if (inlineFns.length) {
+      const ctx = {
+        field: field.label || field.name,
+        name: field.name,
+        label: field.label,
+        form: field.formData,
+        value,
+      };
+
+      for (let i = 0; i < inlineFns.length; i++) {
+        const result = await inlineFns[i](value, ctx);
+        const isValid = typeof result !== 'string' && !Array.isArray(result) && result;
+        if (isValid) {
+          continue;
+        }
+
+        if (Array.isArray(result)) {
+          errors.push(...result);
+        } else {
+          const message = typeof result === 'string' ? result : _generateFieldError(ctx);
+          errors.push(message);
+        }
+
+        if (field.bails) {
+          return { errors };
+        }
+      }
+    }
+
+    return { errors };
   }
 
   const normalizedContext = {
