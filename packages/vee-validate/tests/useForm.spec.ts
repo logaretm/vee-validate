@@ -1489,4 +1489,56 @@ describe('useForm()', () => {
     form.setValues({ file: f2 });
     expect(form.values.file).toEqual(f2);
   });
+
+  // #5034
+  test('meta.dirty becomes true when a field initialized with undefined is changed', async () => {
+    let form!: Record<string, any>;
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          initialValues: {
+            test: undefined,
+          },
+        });
+
+        useField('test');
+
+        return {};
+      },
+      template: '<div></div>',
+    });
+
+    await flushPromises();
+    expect(form.meta.value.dirty).toBe(false);
+    form.setFieldValue('test', 'hello');
+    await flushPromises();
+    expect(form.meta.value.dirty).toBe(true);
+  });
+
+  // #5034
+  test('meta.dirty becomes false again when field initialized with undefined is reset', async () => {
+    let form!: Record<string, any>;
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          initialValues: {
+            test: undefined,
+          },
+        });
+
+        useField('test');
+
+        return {};
+      },
+      template: '<div></div>',
+    });
+
+    await flushPromises();
+    form.setFieldValue('test', 'hello');
+    await flushPromises();
+    expect(form.meta.value.dirty).toBe(true);
+    form.resetForm();
+    await flushPromises();
+    expect(form.meta.value.dirty).toBe(false);
+  });
 });

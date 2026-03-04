@@ -228,4 +228,10 @@ describe('assertions', () => {
     expect(isEqual(a6, b1)).toBe(false);
     expect(isEqual(a6, b2)).toBe(false);
   });
+
+  // #5034
+  test('object with undefined value changed to string is not equal', () => {
+    expect(isEqual({ test: undefined }, { test: 'hello' })).toBe(false);
+    expect(isEqual({ a: 1, b: undefined }, { a: 1, b: 'hello' })).toBe(false);
+  });
 });
