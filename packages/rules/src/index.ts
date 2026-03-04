@@ -23,6 +23,7 @@ import numeric from './numeric';
 import one_of from './one_of';
 import regex from './regex';
 import required from './required';
+import required_if from './required_if';
 import size from './size';
 import url from './url';
 import { toTypedSchema } from './toTypedSchema';
@@ -54,6 +55,7 @@ export const all: Record<string, SimpleValidationRuleFunction<any, any>> = {
   one_of,
   regex,
   required,
+  required_if,
   size,
   url,
 };
@@ -84,6 +86,7 @@ export {
   one_of,
   regex,
   required,
+  required_if,
   size,
   url,
   toTypedSchema,
