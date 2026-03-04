@@ -1489,4 +1489,44 @@ describe('useForm()', () => {
     form.setValues({ file: f2 });
     expect(form.values.file).toEqual(f2);
   });
+
+  // #4982
+  test('validation results for not-rendered fields should not be present', async () => {
+    let form!: FormContext<any>;
+    const showFields = ref(true);
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          validationSchema: z.object({
+            fname: z.string().min(1),
+            lname: z.string().min(1),
+          }),
+        });
+
+        return {
+          showFields,
+        };
+      },
+      template: `<div>
+        <template v-if="showFields">
+          <Field name="fname" />
+          <Field name="lname" />
+        </template>
+      </div>`,
+    });
+
+    await flushPromises();
+    // Fields are rendered, no errors should be present (silent validation on mount)
+    expect(form.errors.value.fname).toBe(undefined);
+    expect(form.errors.value.lname).toBe(undefined);
+
+    // Hide the fields
+    showFields.value = false;
+    await flushPromises();
+
+    // Fields are unmounted, their validation errors should NOT be present
+    expect(form.errors.value.fname).toBe(undefined);
+    expect(form.errors.value.lname).toBe(undefined);
+    expect(form.meta.value.valid).toBe(true);
+  });
 });
