@@ -129,6 +129,10 @@ export function useForm<
 
   const extraErrorsBag: Ref<FormErrorBag<TValues>> = ref({});
 
+  // Tracks paths that are being removed due to field unmount, to prevent
+  // re-validation from adding errors back for fields that are no longer rendered (#4982)
+  const REMOVED_PATHS = new Set<string>();
+
   const pathStateLookup = ref<Record<string, PathState>>({});
 
   const rebuildPathLookup = debounceNextTick(() => {
@@ -287,6 +291,9 @@ export function useForm<
       UNSET_BATCH.splice(unsetBatchIndex, 1);
     }
 
+    // Clear removed path tracking when a field is re-mounted (#4982)
+    REMOVED_PATHS.delete(pathValue);
+
     const id = FIELD_ID_COUNTER++;
     const state = reactive({
       id,
@@ -388,7 +395,10 @@ export function useForm<
 
           // field not rendered
           if (!pathState) {
-            setFieldError(path, messages);
+            // Skip setting errors for paths that were explicitly removed due to field unmount (#4982)
+            if (!REMOVED_PATHS.has(path)) {
+              setFieldError(path, messages);
+            }
 
             return validation;
           }
@@ -436,6 +446,14 @@ export function useForm<
 
         setFieldError(pathState, results.results[path]?.errors);
       });
+
+      // Clean up errors and tracking for paths that were removed due to field unmount (#4982)
+      if (REMOVED_PATHS.size) {
+        REMOVED_PATHS.forEach(path => {
+          delete extraErrorsBag.value[path as Path<TValues>];
+        });
+        REMOVED_PATHS.clear();
+      }
 
       return results;
     },
@@ -594,6 +612,10 @@ export function useForm<
       unsetInitialValue(path);
       rebuildPathLookup();
       delete pathStateLookup.value[path];
+
+      // Track this path as removed so the pending silent validation
+      // won't re-add errors for it into extraErrorsBag (#4982)
+      REMOVED_PATHS.add(path);
     }
   }
 
