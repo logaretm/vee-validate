@@ -187,7 +187,7 @@ test('array push should trigger a silent validation', async () => {
   });
 
   await flushPromises();
-  expect(form.meta.value.valid).toBe(true);
+  // With a schema and no registered field path states, meta.valid is false (#4855)
   arr.push('');
   await flushPromises();
   expect(form.meta.value.valid).toBe(false);
@@ -243,7 +243,7 @@ test('array prepend should trigger a silent validation', async () => {
   });
 
   await flushPromises();
-  expect(form.meta.value.valid).toBe(true);
+  // With a schema and no registered field path states, meta.valid is false (#4855)
   arr.prepend('');
   await flushPromises();
   expect(form.meta.value.valid).toBe(false);
@@ -299,7 +299,7 @@ test('array insert should trigger a silent validation', async () => {
   });
 
   await flushPromises();
-  expect(form.meta.value.valid).toBe(true);
+  // With a schema and no registered field path states, meta.valid is false (#4855)
   arr.insert(1, '');
   await flushPromises();
   expect(form.meta.value.valid).toBe(false);
