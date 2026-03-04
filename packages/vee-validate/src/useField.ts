@@ -207,6 +207,12 @@ function _useField<TValue = unknown>(
       return validateValidStateOnly();
     }
 
+    // In validated-only mode, only validate fields that have been previously validated
+    // This prevents showing errors on fields the user hasn't interacted with yet (#5029)
+    if (opts?.mode === 'validated-only' && !meta.validated) {
+      return validateValidStateOnly();
+    }
+
     return validateWithStateMutation();
   }
 
