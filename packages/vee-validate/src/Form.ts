@@ -1,4 +1,4 @@
-import { klona as deepCopy } from 'klona/full';
+import { klona as deepCopy } from 'klona';
 import { defineComponent, h, PropType, resolveDynamicComponent, toRef, UnwrapRef, VNode } from 'vue';
 import { FormContext, FormErrors, FormMeta, GenericObject, InvalidSubmissionHandler, SubmissionHandler } from './types';
 import { useForm } from './useForm';

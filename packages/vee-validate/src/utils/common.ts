@@ -11,7 +11,7 @@ import {
   MaybeRefOrGetter,
   toValue,
 } from 'vue';
-import { klona as deepCopy } from 'klona/full';
+import { klona as deepCopy } from 'klona';
 import { isIndex, isNullOrUndefined, isObject, toNumber } from '../../../shared';
 import { isContainerValue, isEmptyContainer, isEqual, isNotNestedPath } from './assertions';
 import { GenericObject, IssueCollection, MaybePromise } from '../types';

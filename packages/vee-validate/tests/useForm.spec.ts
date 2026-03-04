@@ -1489,4 +1489,96 @@ describe('useForm()', () => {
     form.setValues({ file: f2 });
     expect(form.values.file).toEqual(f2);
   });
+
+  // #4889
+  test('handles initial values with read-only properties like __typename', async () => {
+    // Simulate a GraphQL-like result with read-only nested properties
+    const graphqlResult: Record<string, unknown> = {
+      name: 'test',
+      nested: Object.defineProperties(
+        {},
+        {
+          __typename: { value: 'NestedType', writable: false, configurable: false, enumerable: true },
+          field: { value: 'value', writable: false, configurable: false, enumerable: true },
+        },
+      ),
+    };
+    Object.defineProperty(graphqlResult, '__typename', {
+      value: 'RootType',
+      writable: false,
+      configurable: false,
+      enumerable: true,
+    });
+
+    let form!: FormContext;
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          initialValues: graphqlResult,
+        });
+
+        form.defineField('name');
+        form.defineField('nested.field');
+
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    await flushPromises();
+    // Should not throw when reading values
+    expect(form.values.name).toBe('test');
+
+    // Should not throw when setting a field value
+    expect(() => form.setFieldValue('name', 'updated')).not.toThrow();
+    await flushPromises();
+    expect(form.values.name).toBe('updated');
+
+    // Should not throw when resetting the form
+    expect(() => form.resetForm()).not.toThrow();
+    await flushPromises();
+    expect(form.values.name).toBe('test');
+  });
+
+  // #4889
+  test('handles resetForm with read-only properties in new values', async () => {
+    const readOnlyValues: Record<string, unknown> = {};
+    Object.defineProperty(readOnlyValues, '__typename', {
+      value: 'SomeType',
+      writable: false,
+      configurable: false,
+      enumerable: true,
+    });
+    readOnlyValues.name = 'initial';
+
+    let form!: FormContext;
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          initialValues: { name: 'initial' },
+        });
+
+        form.defineField('name');
+
+        return {};
+      },
+      template: `<div></div>`,
+    });
+
+    await flushPromises();
+
+    // Reset with values that contain read-only properties
+    const newValues: Record<string, unknown> = {};
+    Object.defineProperty(newValues, '__typename', {
+      value: 'AnotherType',
+      writable: false,
+      configurable: false,
+      enumerable: true,
+    });
+    newValues.name = 'reset-value';
+
+    expect(() => form.resetForm({ values: newValues })).not.toThrow();
+    await flushPromises();
+    expect(form.values.name).toBe('reset-value');
+  });
 });
