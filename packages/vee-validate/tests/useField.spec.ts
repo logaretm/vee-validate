@@ -1059,4 +1059,69 @@ describe('useField()', () => {
 
     expect(form.values.field).toEqual('test');
   });
+
+  // #4827
+  test('resetField should use current reactive initial value (without form)', async () => {
+    let field!: FieldContext;
+    const initialValue = ref('before change');
+
+    mountWithHoc({
+      setup() {
+        field = useField('field', undefined, { initialValue });
+
+        return {};
+      },
+      template: '<div></div>',
+    });
+
+    await flushPromises();
+    expect(field.value.value).toBe('before change');
+
+    // Change the reactive initial value
+    initialValue.value = 'after change';
+    await flushPromises();
+
+    // Change the field's current value to something else
+    field.value.value = 'some random value';
+    await flushPromises();
+
+    // Reset field should use the new reactive initial value
+    field.resetField();
+    await flushPromises();
+
+    expect(field.value.value).toBe('after change');
+  });
+
+  // #4827
+  test('resetField should use current reactive initial value (with form)', async () => {
+    let field!: FieldContext;
+    const initialValue = ref('before change');
+
+    mountWithHoc({
+      setup() {
+        useForm();
+        field = useField('field', undefined, { initialValue });
+
+        return {};
+      },
+      template: '<div></div>',
+    });
+
+    await flushPromises();
+    expect(field.value.value).toBe('before change');
+
+    // Change the reactive initial value
+    initialValue.value = 'after change';
+    await flushPromises();
+
+    // Change the field's current value to something else
+    field.value.value = 'some random value';
+    await flushPromises();
+
+    // Reset field should use the new reactive initial value
+    field.resetField();
+    await flushPromises();
+
+    expect(field.value.value).toBe('after change');
+  });
 });

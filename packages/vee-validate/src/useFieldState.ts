@@ -126,6 +126,11 @@ export function _useFieldValue<TValue = unknown>(
 
   function resolveInitialValue() {
     if (!form) {
+      // If the original modelValue is a ref, read from it directly to maintain reactivity
+      if (isRef(modelValue)) {
+        return modelValue.value as TValue;
+      }
+
       return unref(modelRef) as TValue;
     }
 
@@ -160,6 +165,15 @@ export function _useFieldValue<TValue = unknown>(
   // #3429
   const currentValue = resolveModelValue(modelValue, form, initialValue, path);
   form.stageInitialValue(unref(path), currentValue, true);
+
+  // If the modelValue is a ref, watch it and update the form's initial value when it changes
+  // This ensures resetField uses the current reactive initial value (#4827)
+  if (isRef(modelValue)) {
+    watch(modelValue, newVal => {
+      form.setFieldInitialValue(unref(path), newVal as any, true);
+    });
+  }
+
   // otherwise use a computed setter that triggers the `setFieldValue`
   const value = computed<TValue>({
     get() {
