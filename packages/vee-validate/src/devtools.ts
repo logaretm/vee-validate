@@ -4,33 +4,41 @@ import { PathState, PrivateFieldContext, PrivateFormContext } from './types';
 import { isClient, keysOf, setInPath, throttle } from './utils';
 import { isObject } from '../../shared';
 
-const DEVTOOLS_FORMS: Record<string, PrivateFormContext & { _vm?: ComponentInternalInstance | null }> = {};
-const DEVTOOLS_FIELDS: Record<string, PrivateFieldContext & { _vm?: ComponentInternalInstance | null }> = {};
+let DEVTOOLS_FORMS: Record<string, PrivateFormContext & { _vm?: ComponentInternalInstance | null }>;
+let DEVTOOLS_FIELDS: Record<string, PrivateFieldContext & { _vm?: ComponentInternalInstance | null }>;
 
-const INSPECTOR_ID = 'vee-validate-inspector';
+let INSPECTOR_ID: string;
 
-const COLORS = {
-  error: 0xbd4b4b,
-  success: 0x06d77b,
-  unknown: 0x54436b,
-  white: 0xffffff,
-  black: 0x000000,
-  blue: 0x035397,
-  purple: 0xb980f0,
-  orange: 0xf5a962,
-  gray: 0xbbbfca,
-};
+let COLORS: Record<string, number>;
 
 let SELECTED_NODE:
   | { type: 'pathState'; form: PrivateFormContext; state: PathState }
   | { type: 'form'; form: PrivateFormContext & { _vm?: ComponentInternalInstance | null } }
   | { type: 'field'; field: PrivateFieldContext & { _vm?: ComponentInternalInstance | null } }
-  | null = null;
+  | null;
 
 /**
  * Plugin API
  */
 let API: any;
+
+if (__DEV__) {
+  DEVTOOLS_FORMS = {};
+  DEVTOOLS_FIELDS = {};
+  INSPECTOR_ID = 'vee-validate-inspector';
+  COLORS = {
+    error: 0xbd4b4b,
+    success: 0x06d77b,
+    unknown: 0x54436b,
+    white: 0xffffff,
+    black: 0x000000,
+    blue: 0x035397,
+    purple: 0xb980f0,
+    orange: 0xf5a962,
+    gray: 0xbbbfca,
+  };
+  SELECTED_NODE = null;
+}
 
 async function installDevtoolsPlugin(app: App) {
   if (__DEV__) {
@@ -38,7 +46,7 @@ async function installDevtoolsPlugin(app: App) {
       return;
     }
 
-    const devtools = await import('@vue/devtools-api');
+    const devtools = await import(/* @vite-ignore */ '@vue/devtools-api');
     devtools.setupDevtoolsPlugin(
       {
         id: 'vee-validate-devtools-plugin',
@@ -167,13 +175,15 @@ async function installDevtoolsPlugin(app: App) {
   }
 }
 
-export const refreshInspector = throttle(() => {
-  setTimeout(async () => {
-    await nextTick();
-    API?.sendInspectorState(INSPECTOR_ID);
-    API?.sendInspectorTree(INSPECTOR_ID);
-  }, 100);
-}, 100);
+export const refreshInspector = __DEV__
+  ? throttle(() => {
+      setTimeout(async () => {
+        await nextTick();
+        API?.sendInspectorState(INSPECTOR_ID);
+        API?.sendInspectorTree(INSPECTOR_ID);
+      }, 100);
+    }, 100)
+  : () => {};
 
 export function registerFormWithDevTools(form: PrivateFormContext) {
   if (!__DEV__ || !isClient) {
