@@ -41,3 +41,71 @@ test('target params are filled in the params in message context', async () => {
     generateMessage: original,
   });
 });
+
+// #5025
+test('global and local rules can be combined in object syntax', async () => {
+  defineRule('required', (value: any) => {
+    if (!value && value !== 0) {
+      return 'This field is required';
+    }
+    return true;
+  });
+
+  const myLocalRule = (value: any) => {
+    if (typeof value === 'string' && value.length < 3) {
+      return 'Must be at least 3 characters';
+    }
+    return true;
+  };
+
+  // Both global and local rules should run - valid value
+  let result = await validate('hello', { required: true, myLocalRule } as any);
+  expect(result.valid).toBe(true);
+  expect(result.errors).toHaveLength(0);
+
+  // Global rule fails
+  result = await validate('', { required: true, myLocalRule } as any);
+  expect(result.valid).toBe(false);
+  expect(result.errors).toContain('This field is required');
+
+  // Local rule fails (bails: false to see both errors)
+  result = await validate('ab', { required: true, myLocalRule } as any, { bails: false });
+  expect(result.valid).toBe(false);
+  expect(result.errors).toContain('Must be at least 3 characters');
+
+  // Both rules pass
+  result = await validate('abc', { required: true, myLocalRule } as any);
+  expect(result.valid).toBe(true);
+});
+
+// #5025
+test('global and local rules can be combined in array syntax', async () => {
+  defineRule('required', (value: any) => {
+    if (!value && value !== 0) {
+      return 'This field is required';
+    }
+    return true;
+  });
+
+  const myLocalRule = (value: any) => {
+    if (typeof value === 'string' && value.length < 3) {
+      return 'Must be at least 3 characters';
+    }
+    return true;
+  };
+
+  // Both string global rules and function local rules in an array
+  let result = await validate('hello', ['required', myLocalRule] as any);
+  expect(result.valid).toBe(true);
+  expect(result.errors).toHaveLength(0);
+
+  // Global rule fails
+  result = await validate('', ['required', myLocalRule] as any);
+  expect(result.valid).toBe(false);
+  expect(result.errors).toContain('This field is required');
+
+  // Local rule fails
+  result = await validate('ab', ['required', myLocalRule] as any, { bails: false });
+  expect(result.valid).toBe(false);
+  expect(result.errors).toContain('Must be at least 3 characters');
+});
