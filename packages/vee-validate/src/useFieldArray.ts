@@ -110,8 +110,25 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRefOrGetter<stri
 
   function afterMutation() {
     updateEntryFlags();
+    // Marking the field array path states as touched since any mutation is a user interaction #5113
+    markTouched();
     // Should trigger a silent validation since a field may not do that #4096
     form?.validate({ mode: 'silent' });
+  }
+
+  function markTouched() {
+    const pathName = toValue(arrayPath);
+    const pathState = form.getPathState(pathName as any);
+    if (pathState) {
+      pathState.touched = true;
+    }
+
+    const allStates = form.getAllPathStates();
+    allStates
+      .filter(s => toValue(s.path).startsWith(pathName + '['))
+      .forEach(s => {
+        s.touched = true;
+      });
   }
 
   function remove(idx: number) {
@@ -168,7 +185,7 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRefOrGetter<stri
     newFields[indexB] = tempEntry;
     setInPath(form.values, pathName, newValue);
     fields.value = newFields;
-    updateEntryFlags();
+    afterMutation();
   }
 
   function insert(idx: number, initialValue: TValue) {
@@ -205,6 +222,8 @@ export function useFieldArray<TValue = unknown>(arrayPath: MaybeRefOrGetter<stri
     }
 
     setInPath(form.values, `${pathName}[${idx}]`, value);
+    // Marking the field array path states as touched since any mutation is a user interaction #5113
+    markTouched();
     form?.validate({ mode: 'validated-only' });
   }
 
