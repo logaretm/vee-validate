@@ -11,7 +11,7 @@ import {
   GenericObject,
   Path,
 } from './types';
-import { isCallable, FieldValidationMetaInfo } from '../../shared';
+import { isCallable, FieldValidationMetaInfo, normalizeFormPath } from '../../shared';
 import { StandardSchemaV1 } from '@standard-schema/spec';
 
 /**
@@ -273,7 +273,7 @@ export async function validateStandardSchema<TValues extends GenericObject, TOut
 
   for (const error of combinedIssues) {
     const messages = error.messages;
-    const path = error.path as Path<TValues>;
+    const path = normalizeFormPath(error.path) as Path<TValues>;
 
     results[path] = { valid: !messages.length, errors: messages };
     if (messages.length) {
