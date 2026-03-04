@@ -1,4 +1,4 @@
-import { isEqual } from 'packages/vee-validate/src/utils';
+import { isEqual, isStandardSchema } from 'packages/vee-validate/src/utils';
 
 describe('assertions', () => {
   test('equal objects are equal', () => {
@@ -227,5 +227,62 @@ describe('assertions', () => {
 
     expect(isEqual(a6, b1)).toBe(false);
     expect(isEqual(a6, b2)).toBe(false);
+  });
+});
+
+// #5110 - arktype compatibility
+describe('isStandardSchema', () => {
+  test('detects a plain object with ~standard property as a standard schema', () => {
+    const schema = {
+      '~standard': {
+        version: 1,
+        vendor: 'test',
+        validate: (value: unknown) => ({ value }),
+      },
+    };
+
+    expect(isStandardSchema(schema)).toBe(true);
+  });
+
+  test('detects a callable object with ~standard property as a standard schema (like arktype)', () => {
+    // Arktype schemas are functions that also have the ~standard property
+    const callableSchema = Object.assign(
+      function (value: unknown) {
+        return value;
+      },
+      {
+        '~standard': {
+          version: 1,
+          vendor: 'arktype',
+          validate: (value: unknown) => ({ value }),
+        },
+      },
+    );
+
+    expect(isStandardSchema(callableSchema)).toBe(true);
+  });
+
+  test('returns false for a plain function without ~standard', () => {
+    const fn = (value: unknown) => value;
+    expect(isStandardSchema(fn)).toBe(false);
+  });
+
+  test('returns false for primitive values', () => {
+    expect(isStandardSchema(null)).toBe(false);
+    expect(isStandardSchema(undefined)).toBe(false);
+    expect(isStandardSchema('')).toBe(false);
+    expect(isStandardSchema('required')).toBe(false);
+    expect(isStandardSchema(0)).toBe(false);
+    expect(isStandardSchema(true)).toBe(false);
+  });
+
+  test('returns false for arrays', () => {
+    expect(isStandardSchema([])).toBe(false);
+    expect(isStandardSchema([() => true])).toBe(false);
+  });
+
+  test('returns false for plain objects without ~standard', () => {
+    expect(isStandardSchema({})).toBe(false);
+    expect(isStandardSchema({ required: true })).toBe(false);
   });
 });
