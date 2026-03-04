@@ -577,3 +577,35 @@ test('errors are available to the newly inserted items', async () => {
   await flushPromises();
   expect(spanAt(1).textContent).toBeTruthy();
 });
+
+// #5053
+test('resetField should properly reset array fields managed by useFieldArray', async () => {
+  let form!: Record<string, any>;
+  let arr!: Record<string, any>;
+  mountWithHoc({
+    setup() {
+      form = useForm<any>({
+        initialValues: {
+          users: ['one'],
+        },
+      });
+
+      arr = useFieldArray('users');
+      useField('users[0]');
+
+      return {};
+    },
+    template: '<div></div>',
+  });
+
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(1);
+  arr.push('two');
+  arr.push('three');
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(3);
+  form.resetField('users');
+  await flushPromises();
+  expect(arr.fields.value).toHaveLength(1);
+  expect(arr.fields.value[0].value).toBe('one');
+});

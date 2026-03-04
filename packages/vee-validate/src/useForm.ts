@@ -775,7 +775,7 @@ export function useForm<
   }
 
   function resetField(field: Path<TValues>, state?: Partial<FieldState>) {
-    const newValue = state && 'value' in state ? state.value : getFromPath(initialValues.value, field);
+    const newValue = state && 'value' in state ? state.value : getFromPath(originalInitialValues.value, field);
     const pathState = findPathState(field);
     if (pathState) {
       pathState.__flags.pendingReset = true;
@@ -785,6 +785,17 @@ export function useForm<
     setFieldValue(field, newValue as PathValue<TValues, typeof field>, false);
     setFieldTouched(field, state?.touched ?? false);
     setFieldError(field, state?.errors || []);
+
+    // Clear errors on child path states (e.g. users[0], users[1] when resetting 'users')
+    pathStates.value.forEach(s => {
+      if (toValue(s.path).startsWith(field + '[')) {
+        s.errors = [];
+        s.valid = true;
+      }
+    });
+
+    // Trigger field array re-sync so useFieldArray picks up the new value
+    fieldArrays.filter(f => toValue(f.path) === field).forEach(f => f.reset());
 
     nextTick(() => {
       if (pathState) {
