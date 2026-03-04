@@ -779,6 +779,7 @@ export function useForm<
     const pathState = findPathState(field);
     if (pathState) {
       pathState.__flags.pendingReset = true;
+      pathState.validated = false;
     }
 
     setFieldInitialValue(field, deepCopy(newValue), true);
@@ -790,6 +791,8 @@ export function useForm<
       if (pathState) {
         pathState.__flags.pendingReset = false;
       }
+
+      validateField(field, { mode: 'silent' });
     });
   }
 

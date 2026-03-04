@@ -1489,4 +1489,54 @@ describe('useForm()', () => {
     form.setValues({ file: f2 });
     expect(form.values.file).toEqual(f2);
   });
+
+  // #4996
+  test('resetField with undefined value should not prevent form from becoming valid', async () => {
+    let form!: FormContext<{ name: string }>;
+
+    mountWithHoc({
+      setup() {
+        form = useForm({
+          validationSchema: z.object({
+            name: z.string().min(1),
+          }),
+        });
+
+        form.defineField('name');
+
+        return {};
+      },
+      template: `
+        <div></div>
+      `,
+    });
+
+    await flushPromises();
+
+    // Fill in a valid value and validate
+    form.setFieldValue('name', 'John');
+    await flushPromises();
+
+    const pending1 = form.validate();
+    await flushPromises();
+    const result1 = await pending1;
+    expect(result1.valid).toBe(true);
+    expect(form.meta.value.valid).toBe(true);
+
+    // Reset field with undefined value using form-level resetField
+    form.resetField('name', { value: undefined });
+    await flushPromises();
+
+    // After reset, validated should be false so that subsequent validation works correctly
+    const pathState = form.getPathState('name');
+    expect(pathState?.validated).toBe(false);
+
+    // Now fill in a valid value again
+    form.setFieldValue('name', 'Jane');
+    await flushPromises();
+
+    // The form should be valid again
+    expect(form.meta.value.valid).toBe(true);
+    expect(form.errors.value.name).toBeUndefined();
+  });
 });
