@@ -1,6 +1,7 @@
 {
   "code": "id",
   "messages": {
+    "_default": "{field} tidak valid",
     "alpha": "{field} hanya boleh berisi huruf",
     "alpha_num": "{field} hanya boleh berisi huruf dan angka",
     "alpha_dash": "{field} hanya boleh berisi huruf, angka, tanda hubung, dan garis bawah",

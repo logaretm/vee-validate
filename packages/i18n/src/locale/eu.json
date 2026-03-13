@@ -1,6 +1,7 @@
 {
   "code": "eu",
   "messages": {
+    "_default": "{field} ez da baliozkoa",
     "alpha": "{field} eremuak soilik karaktere alfabetikoak eduki ditzake",
     "alpha_dash": "{field} eremuak karaktere alfanumerikoak, marrak eta azpimarrak eduki ditzake",
     "alpha_num": "{field} eremuak soilik karaktere alfanumerikoak eduki ditzake",

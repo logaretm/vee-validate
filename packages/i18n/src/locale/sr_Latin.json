@@ -1,6 +1,7 @@
 {
   "code": "sr_Latin",
   "messages": {
+    "_default": "Polje {field} nije važeće",
     "alpha": "Polje {field} može sadržati samo slova",
     "alpha_dash": "Polje {field} može sadržati alfanumeričke karaktere i povlake",
     "alpha_num": "Polje {field} može sadržati samo alfanumeričke karaktere",

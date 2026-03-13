@@ -1,6 +1,7 @@
 {
   "code": "az",
   "messages": {
+    "_default": "{field} etibarlı deyil",
     "alpha": "{field} yalnız hərflərdən ibarət olmalıdır",
     "alpha_num": "{field} yalnız rəqəmlərdən ibarət ola bilər",
     "alpha_dash": "{field} yalnız hərflər, rəqəmlər və defisdən ibarət ola bilər",
