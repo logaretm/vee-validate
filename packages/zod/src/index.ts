@@ -97,7 +97,8 @@ function processIssues(issues: ZodIssue[], errors: Record<string, TypedSchemaErr
     const path = normalizeFormPath(issue.path.join('.'));
     if (issue.code === 'invalid_union') {
       processIssues(
-        issue.unionErrors.flatMap(ue => ue.issues),
+        // Use `unionErrors` (Zod v3) or fallback to `errors` (Zod v4)
+        issue.unionErrors?.flatMap(ue => ue.issues) || issue.errors?.flatMap(ue => ue),
         errors,
       );
 
