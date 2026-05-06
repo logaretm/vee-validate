@@ -325,11 +325,11 @@ Any missing fields you didn't pass to `setErrors` will be unaffected and their s
 
 <CodeTitle level="4">
 
-`setFieldValue: (field: string, value: any) => void`
+`setFieldValue: (field: string, value: any, shouldValidate = true) => void`
 
 </CodeTitle>
 
-Sets a field's value, if a field does not exist it will not be reflected in the `values` ref. This will trigger validation on the field whose value changed.
+Sets a field's value, if a field does not exist it will not be reflected in the `values` ref. This will trigger validation on the field whose value changed, unless `shouldValidate` is explicitly set to `false`.
 
 ```js
 const { setFieldValue } = useForm();
@@ -585,6 +585,24 @@ resetForm({ values: { fname: 'test' } });
 
 // values: { fname: 'test' }
 resetForm({ values: { fname: 'test' } }, { force: true });
+```
+
+<CodeTitle level="4">
+
+`resetField: (field: string, state?: Partial<FieldState>) => void`
+
+</CodeTitle>
+
+Resets a specific field's state. Identical to `useField`'s `resetField` except it takes the field name as the first argument.
+
+```js
+const { resetField } = useForm();
+
+// Reset to initial value
+resetField('email');
+
+// Reset to a specific state
+resetField('email', { value: 'new@example.com', touched: false, errors: [] });
 ```
 
 <CodeTitle level="4">
