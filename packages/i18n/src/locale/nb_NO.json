@@ -1,6 +1,7 @@
 {
   "code": "nb_NO",
   "messages": {
+    "_default": "{field}-feltet er ikke gyldig",
     "alpha": "{field}-feltet kan bare inneholde bokstaver",
     "alpha_dash": "{field}-feltet kan bare inneholde alfanumeriske tegn, samt bindestrek og understrek",
     "alpha_num": "{field} kan bare inneholde alfanumeriske tegn",
@@ -13,6 +14,8 @@
     "not_one_of": "{field}-feltet må være en gyldig verdi",
     "ext": "{field}-feltet må være en gyldig fil",
     "image": "{field}-feltet må være et bilde",
+    "integer": "{field}-feltet må være et heltall",
+    "length": "{field}-feltet må være 0:{length} langt",
     "one_of": "{field}-feltet må være en gyldig verdi",
     "max": "{field}-feltet kan ikke være lengre enn 0:{length} tegn",
     "max_value": "{field}-feltet må være 0:{max} eller mindre",
@@ -23,6 +26,7 @@
     "regex": "{field}-feltet sin formatering er ugyldig",
     "required": "{field}-feltet er obligatorisk",
     "required_if": "{field}-feltet er obligatorisk",
-    "size": "{field}-feltet må være mindre enn 0:{size}KB"
+    "size": "{field}-feltet må være mindre enn 0:{size}KB",
+    "url": "{field}-feltet er ikke en gyldig URL"
   }
 }
