@@ -57,7 +57,7 @@ export const alphaSpaces: { [k: string]: RegExp } = {
 export const alphanumeric: { [k: string]: RegExp } = {
   en: /^[0-9A-Z]*$/i,
   cs: /^[0-9A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]*$/i,
-  da: /^[0-9A-ZÆØÅ]$/i,
+  da: /^[0-9A-ZÆØÅ]*$/i,
   de: /^[0-9A-ZÄÖÜß]*$/i,
   es: /^[0-9A-ZÁÉÍÑÓÚÜ]*$/i,
   fr: /^[0-9A-ZÀÂÆÇÉÈÊËÏÎÔŒÙÛÜŸ]*$/i,

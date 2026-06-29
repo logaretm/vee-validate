@@ -35,3 +35,14 @@ test('validates the string contains alphabetic chars from other locales', () => 
   expect(validate('peace', { locale: 'blah' })).toBe(true);
   expect(validate('اين اشيائي', { locale: 'blah' })).toBe(false); // non english characters.
 });
+
+test('da locale accepts multi-character alphanumeric values', () => {
+  expect(validate('Soeren123', { locale: 'da' })).toBe(true);
+  expect(validate('Søren', { locale: 'da' })).toBe(true);
+  expect(validate('blåbær2', { locale: 'da' })).toBe(true);
+  expect(validate('Å', { locale: 'da' })).toBe(true);
+  expect(validate('', { locale: 'da' })).toBe(true);
+
+  expect(validate('a b', { locale: 'da' })).toBe(false);
+  expect(validate('a-b', { locale: 'da' })).toBe(false);
+});
