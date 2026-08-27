@@ -58,6 +58,7 @@ export interface FieldOptions<TValue = unknown> {
   keepValueOnUnmount?: MaybeRefOrGetter<boolean | undefined>;
   syncVModel?: boolean | string;
   form?: FormContext;
+  customMessages?: MaybeRefOrGetter<Record<string, string> | undefined>;
 }
 
 export type RuleExpression<TValue> =
@@ -100,6 +101,7 @@ function _useField<TValue = unknown>(
     controlled,
     keepValueOnUnmount,
     syncVModel,
+    customMessages,
     form: controlForm,
   } = normalizeOptions(opts);
 
@@ -165,6 +167,7 @@ function _useField<TValue = unknown>(
         label: toValue(label),
         values: form?.values ?? {},
         bails,
+        customMessages: toValue(customMessages),
       });
     }
 
@@ -428,6 +431,7 @@ function normalizeOptions<TValue>(opts: Partial<FieldOptions<TValue>> | undefine
     keepValueOnUnmount: undefined,
     syncVModel: false,
     controlled: true,
+    customMessages: undefined,
   });
 
   const isVModelSynced = !!opts?.syncVModel;
