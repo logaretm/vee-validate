@@ -1,4 +1,4 @@
-import { FieldContext, FormContext, useField, useForm } from '@/vee-validate';
+import { FieldContext, FormContext, defineRule, useField, useForm } from '@/vee-validate';
 import { defineComponent, onMounted, ref } from 'vue';
 import { mountWithHoc, setValue, flushPromises } from './helpers';
 
@@ -1058,5 +1058,33 @@ describe('useField()', () => {
     await flushPromises();
 
     expect(form.values.field).toEqual('test');
+  });
+
+  test('overrides rule messages with the customMessages option', async () => {
+    const CUSTOM_MESSAGE = 'Custom Message';
+    defineRule('req', (val: unknown) => (val ? true : REQUIRED_MESSAGE));
+
+    mountWithHoc({
+      setup() {
+        const { value, errorMessage } = useField('field', 'req', {
+          customMessages: { req: CUSTOM_MESSAGE },
+        });
+
+        return {
+          value,
+          errorMessage,
+        };
+      },
+      template: `
+      <input name="field" v-model="value" />
+      <span>{{ errorMessage }}</span>
+      `,
+    });
+
+    const input = document.querySelector('input') as HTMLInputElement;
+    const error = document.querySelector('span');
+    setValue(input, '');
+    await flushPromises();
+    expect(error?.textContent).toBe(CUSTOM_MESSAGE);
   });
 });

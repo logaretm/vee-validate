@@ -1192,4 +1192,56 @@ describe('<Field />', () => {
     await flushPromises();
     expect(error.textContent).toBe(REQUIRED_MESSAGE);
   });
+
+  describe('customMessages prop', () => {
+    const CUSTOM_MESSAGE = 'Custom Message';
+
+    test('overrides the messages of the matching rules', async () => {
+      mountWithHoc({
+        template: `
+          <Field name="field" rules="required|min:3" :customMessages="{ required: '${CUSTOM_MESSAGE}' }" :bails="false" v-slot="{ errors, field }">
+            <input v-bind="field" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </Field>
+        `,
+      });
+
+      const input = document.querySelector('input') as HTMLInputElement;
+      const error = document.getElementById('error');
+      setValue(input, '');
+      await flushPromises();
+      expect(error?.textContent).toBe(CUSTOM_MESSAGE);
+
+      setValue(input, '12');
+      await flushPromises();
+      expect(error?.textContent).toBe('This field must be at least 3 characters');
+    });
+
+    test('is reactive', async () => {
+      const messages = ref<Record<string, string>>({ required: CUSTOM_MESSAGE });
+      mountWithHoc({
+        setup() {
+          return { messages };
+        },
+        template: `
+          <Field name="field" rules="required" :customMessages="messages" v-slot="{ errors, field }">
+            <input v-bind="field" type="text">
+            <span id="error">{{ errors[0] }}</span>
+          </Field>
+        `,
+      });
+
+      const input = document.querySelector('input') as HTMLInputElement;
+      const error = document.getElementById('error');
+      setValue(input, '');
+      await flushPromises();
+      expect(error?.textContent).toBe(CUSTOM_MESSAGE);
+
+      messages.value = {};
+      await flushPromises();
+      setValue(input, '');
+      await flushPromises();
+      expect(error?.textContent).toBe(REQUIRED_MESSAGE);
+    });
+  });
 });

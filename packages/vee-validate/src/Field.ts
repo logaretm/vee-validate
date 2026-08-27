@@ -124,6 +124,10 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
       type: Boolean,
       default: undefined,
     },
+    customMessages: {
+      type: Object as PropType<Record<string, string>>,
+      default: undefined,
+    },
   },
   setup(props, ctx) {
     const rules = toRef(props, 'rules');
@@ -131,6 +135,7 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
     const label = toRef(props, 'label');
     const uncheckedValue = toRef(props, 'uncheckedValue');
     const keepValue = toRef(props, 'keepValue');
+    const customMessages = toRef(props, 'customMessages');
 
     const {
       errors,
@@ -159,6 +164,7 @@ const FieldImpl = /** #__PURE__ */ defineComponent({
       validateOnValueUpdate: props.validateOnModelUpdate,
       keepValueOnUnmount: keepValue,
       syncVModel: true,
+      customMessages,
     });
 
     // If there is a v-model applied on the component we need to emit the `update:modelValue` whenever the value binding changes

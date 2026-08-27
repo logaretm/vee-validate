@@ -41,3 +41,55 @@ test('target params are filled in the params in message context', async () => {
     generateMessage: original,
   });
 });
+
+describe('custom messages', () => {
+  test('overrides the messages returned by the rule', async () => {
+    defineRule('truthy', (value: unknown) => (value ? true : 'Original Message'));
+
+    const result = await validate(false, 'truthy', {
+      customMessages: {
+        truthy: 'Custom Message',
+      },
+    });
+
+    expect(result.errors).toEqual(['Custom Message']);
+  });
+
+  test('overrides the globally generated messages', async () => {
+    defineRule('falsy', (value: unknown) => !value);
+
+    const result = await validate(true, 'falsy', {
+      customMessages: {
+        falsy: 'Custom Message',
+      },
+    });
+
+    expect(result.errors).toEqual(['Custom Message']);
+  });
+
+  test('only overrides the messages of the rules it defines', async () => {
+    defineRule('truthy', (value: unknown) => (value ? true : 'Original Message'));
+    defineRule('lengthy', (value: unknown) => (Array.isArray(value) ? true : 'Original Lengthy Message'));
+
+    const result = await validate(false, 'truthy|lengthy', {
+      bails: false,
+      customMessages: {
+        truthy: 'Custom Message',
+      },
+    });
+
+    expect(result.errors).toEqual(['Custom Message', 'Original Lengthy Message']);
+  });
+
+  test('ignores non-string custom messages', async () => {
+    defineRule('truthy', (value: unknown) => (value ? true : 'Original Message'));
+
+    const result = await validate(false, 'truthy', {
+      customMessages: {
+        truthy: undefined as unknown as string,
+      },
+    });
+
+    expect(result.errors).toEqual(['Original Message']);
+  });
+});

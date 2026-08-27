@@ -28,6 +28,7 @@ interface FieldValidationContext<TInput = unknown, TOutput = TInput> {
     | Record<string, unknown>;
   bails: boolean;
   formData: Record<string, unknown>;
+  customMessages: Record<string, string>;
 }
 
 interface ValidationOptions {
@@ -35,6 +36,7 @@ interface ValidationOptions {
   label?: string;
   values?: Record<string, unknown>;
   bails?: boolean;
+  customMessages?: Record<string, string>;
 }
 
 /**
@@ -57,6 +59,7 @@ export async function validate<TInput, TOutput>(
     label: options?.label,
     bails: shouldBail ?? true,
     formData: options?.values || {},
+    customMessages: options?.customMessages || {},
   };
 
   const result = await _validate(field, value);
@@ -204,15 +207,23 @@ async function _test(
   };
 
   const result = await validator(value, params, ctx);
-
-  if (typeof result === 'string') {
+  const isValid = typeof result !== 'string' && result;
+  if (isValid) {
     return {
-      error: result,
+      error: undefined,
+    };
+  }
+
+  // custom messages take precedence over both the rule's own message and the generated one.
+  const customMessage = field.customMessages[rule.name];
+  if (typeof customMessage === 'string') {
+    return {
+      error: customMessage,
     };
   }
 
   return {
-    error: result ? undefined : _generateFieldError(ctx),
+    error: typeof result === 'string' ? result : _generateFieldError(ctx),
   };
 }
 

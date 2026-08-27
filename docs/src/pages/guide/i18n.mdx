@@ -63,6 +63,39 @@ If you want to display different field names in your error messages, the `<Field
 
 The generated message will use `nice name` instead of the badly formatted one.
 
+### Per-field Custom Messages
+
+Sometimes a single field needs a different message than the one its rules produce. Both the `<Field />` component and `useField` accept a `customMessages` object keyed by rule name, and those messages take precedence over the message returned by the rule and over the globally generated one:
+
+```vue-html
+<Form>
+  <Field
+    name="password"
+    rules="required|min:8"
+    :custom-messages="{
+      required: 'Hey! Password cannot be empty',
+      min: 'Pick a longer password',
+    }"
+  />
+  <ErrorMessage name="password" />
+</Form>
+```
+
+The same option is available with `useField`:
+
+```js
+import { useField } from 'vee-validate';
+
+const { errorMessage } = useField('password', 'required|min:8', {
+  customMessages: {
+    required: 'Hey! Password cannot be empty',
+    min: 'Pick a longer password',
+  },
+});
+```
+
+Only the rules you list are overridden, the rest keep their original messages. Note that these messages are used as-is, so unlike the [`@vee-validate/i18n` messages](#custom-messages-for-specific-fields) they don't go through placeholder interpolation.
+
 ## Using @vee-validate/i18n
 
 ### Overview
