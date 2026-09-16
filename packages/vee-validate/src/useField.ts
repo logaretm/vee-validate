@@ -38,6 +38,7 @@ import {
   withLatest,
   isEqual,
   isStandardSchema,
+  isClient,
 } from './utils';
 import { isCallable, normalizeFormPath } from '../../shared';
 import { FieldContextKey, FormContextKey, IS_ABSENT } from './symbols';
@@ -311,7 +312,9 @@ function _useField<TValue = unknown>(
     );
   }
 
-  if (__DEV__) {
+  // Same as in `useForm`: the inspector does not exist on the server, so this
+  // would create a deep watcher per field per request for nothing.
+  if (__DEV__ && isClient) {
     (field as any)._vm = getCurrentInstance();
     watch(() => ({ errors: errors.value, ...meta, value: value.value }), refreshInspector, {
       deep: true,

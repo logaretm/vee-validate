@@ -62,6 +62,7 @@ import {
   omit,
   debounceNextTick,
   isStandardSchema,
+  isClient,
 } from './utils';
 import { FormContextKey, PublicFormContextKey } from './symbols';
 import { validateStandardSchema, validateObjectSchema } from './validate';
@@ -996,7 +997,9 @@ export function useForm<
   // Provide injections
   provide(FormContextKey, formCtx as PrivateFormContext);
 
-  if (__DEV__) {
+  // The devtools watcher only feeds the inspector, which does not exist on the
+  // server. Skipping it there avoids creating a deep watcher per render.
+  if (__DEV__ && isClient) {
     registerFormWithDevTools(formCtx as PrivateFormContext);
     watch(
       () => ({
