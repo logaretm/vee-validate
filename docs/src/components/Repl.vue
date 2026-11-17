@@ -29,8 +29,8 @@ const store = new ReplStore({
 store.setImportMap({
   imports: {
     'vee-validate': 'https://unpkg.com/vee-validate@latest/dist/vee-validate.mjs',
-    '@vee-validate/i18n': 'https://unpkg.com/@vee-validate/i18n@latest/dist/vee-validate-i18n.esm.js',
-    '@vee-validate/rules': 'https://unpkg.com/@vee-validate/rules@latest/dist/vee-validate-rules.esm.js',
+    '@vee-validate/i18n': 'https://unpkg.com/@vee-validate/i18n@latest/dist/vee-validate-i18n.mjs',
+    '@vee-validate/rules': 'https://unpkg.com/@vee-validate/rules@latest/dist/vee-validate-rules.mjs',
     'property-expr': 'https://esm-repo.netlify.app/property-expr.esm.js',
     'tiny-case': 'https://esm-repo.netlify.app/tiny-case.esm.js',
     toposort: 'https://esm-repo.netlify.app/topsort.esm.js',
