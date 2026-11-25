@@ -2,13 +2,22 @@ import { isEmpty } from './utils';
 
 const ADDED_MIME_RE = /\+(.+)?/;
 
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function buildMimePattern(mime: string) {
+  return escapeRegExp(mime).replace(/\\\*/g, '.+');
+}
+
 function buildRegExp(mime: string) {
-  let strPattern = mime;
+  let strPattern = buildMimePattern(mime);
   if (ADDED_MIME_RE.test(mime)) {
-    strPattern = mime.replace(ADDED_MIME_RE, '(\\+$1)?');
+    const [base, suffix = ''] = mime.split('+');
+    strPattern = `${buildMimePattern(base || '')}(\\+${buildMimePattern(suffix)})?`;
   }
 
-  return new RegExp(strPattern.replace('*', '.+'), 'i');
+  return new RegExp(`^${strPattern}$`, 'i');
 }
 
 const mimesValidator = (files: unknown, mimes: string[]) => {
